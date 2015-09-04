@@ -1,0 +1,16 @@
+= Spring Cloud Task
+
+This project allows a user to develop and run a spring boot app as a microservice locally, 
+or in the cloud, or even on Spring XD.  Just add @EnableTask and run your app as a Spring 
+Boot app (single application context). 
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
