@@ -1,0 +1,32 @@
+= Spring Cloud Task
+
+Is a project centered around the idea of processing on demand.  A user is able to develop
+a “task” that can be deployed, executed and removed on demand, yet the result of the
+process persists beyond the life of the task for future reporting.
+
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean install
+----
+
+== Example:
+
+[source,java,indent=2]
+----
+@Task(taskName = "imSampleB")
+public class SampleB implements CommandLineRunner {
+
+	@Override
+	public void run(String... args) {
+		System.out.println("hello world");
+   	}
+
+}
+----
