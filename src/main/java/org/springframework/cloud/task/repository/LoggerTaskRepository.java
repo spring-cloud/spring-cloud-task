@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoggerTaskRepository implements TaskRepository {
-	Logger logger = LoggerFactory.getLogger(LoggerTaskRepository.class);
+	private final static Logger logger = LoggerFactory.getLogger(LoggerTaskRepository.class);
 
 	@Override
 	public void update(TaskExecution taskExecution) {

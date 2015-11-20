@@ -29,7 +29,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 /**
- * Annotation that identifies a class as a task.
+ * Annotation that identifies a class as a task.   This annotation will serve as the
+ * main “hook” to activate the various Spring Cloud Task features.
  *
  * @author Glenn Renfro
  */
@@ -42,8 +43,9 @@ import org.springframework.stereotype.Component;
 @Import({ DefaultTaskConfigurer.class })
 public @interface Task {
 
-	public String taskName() default "";
-
-	Class<?>[] value() default {};
+	/**
+	 * Establishes the name associated with the task.  The default is empty.
+	 */
+	public String value() default "";
 
 }

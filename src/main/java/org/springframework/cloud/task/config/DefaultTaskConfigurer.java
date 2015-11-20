@@ -31,13 +31,13 @@ public class DefaultTaskConfigurer {
 
 	@Bean
 	@Scope("prototype")
-	public TaskHandler getTaskHandler() {
+	public TaskHandler taskHandler() {
 		return new TaskHandler();
 	}
 
 
 	@Bean
-	public TaskRepository getTaskRepository() {
+	public TaskRepository taskRepository() {
 		return new LoggerTaskRepository();
 	}
 

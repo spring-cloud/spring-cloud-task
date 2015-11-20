@@ -2,11 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.0.RELEASE</version>
-	</parent>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>1.3.0.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.cloud</groupId>
@@ -14,11 +22,7 @@
 	<packaging>jar</packaging>
 	<name>task</name>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
-	<description>Spring Cloud Stream task</description>
-
-	<properties>
-		<start-class>org.springframework.cloud.task.module.sample.SampleTaskApplication</start-class>
-	</properties>
+	<description>Spring Cloud Task</description>
 
 	<dependencies>
 		<dependency>

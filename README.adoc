@@ -20,7 +20,7 @@ $ mvn clean install
 
 [source,java,indent=2]
 ----
-@Task(taskName = "imSampleB")
+@Task("imSampleB")
 public class SampleB implements CommandLineRunner {
 
 	@Override

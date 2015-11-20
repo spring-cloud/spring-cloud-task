@@ -68,7 +68,7 @@ public class TaskHandler {
 		taskExecution = new TaskExecution();
 
 		Task a = joinPoint.getTarget().getClass().getAnnotation(Task.class);
-		taskName = a.taskName();
+		taskName = a.value();
 		if (taskName == null || taskName.length() == 0) {
 			taskName = joinPoint.getTarget().getClass().getName();
 		}
