@@ -18,18 +18,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-task</artifactId>
-	<packaging>jar</packaging>
-	<name>task</name>
+	<artifactId>spring-cloud-task-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>task-parent</name>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
-	<description>Spring Cloud Task</description>
+	<description>Spring Cloud Task Parent</description>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-	</dependencies>
+	<modules>
+		<module>spring-cloud-task</module>
+	</modules>
 
 	<build>
 		<plugins>
@@ -41,13 +38,5 @@
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
 
 </project>
