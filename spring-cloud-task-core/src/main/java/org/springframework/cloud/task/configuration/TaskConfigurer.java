@@ -14,31 +14,23 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.config;
+package org.springframework.cloud.task.configuration;
 
-import org.springframework.cloud.task.repository.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 /**
- * If no TaskConfigurer is present this configuration will be used.
+ * Provides a strategy interface for providing configuration
+ * customization to the task system.
+ *
  * @author Glenn Renfro
  */
-@Configuration
-public class DefaultTaskConfigurer {
+public interface TaskConfigurer {
 
-	@Bean
-	@Scope("prototype")
-	public TaskHandler taskHandler() {
-		return new TaskHandler();
-	}
-
-
-	@Bean
-	public TaskRepository taskRepository() {
-		return new LoggerTaskRepository();
-	}
+	/**
+	 * Create a Task Repository for the Task.
+	 *
+	 * @return A TaskRepository
+	 */
+	public TaskRepository taskRepository();
 
 }

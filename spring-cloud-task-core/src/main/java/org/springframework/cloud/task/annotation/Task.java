@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.cloud.task.config.DefaultTaskConfigurer;
+import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
