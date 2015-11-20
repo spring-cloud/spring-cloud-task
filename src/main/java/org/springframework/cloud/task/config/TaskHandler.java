@@ -31,7 +31,6 @@ import org.springframework.cloud.task.annotation.Task;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Offers the advice on how to record tasks to the repository for both applicationrunner
@@ -40,7 +39,6 @@ import org.springframework.stereotype.Component;
  * @author Glenn Renfro
  */
 @Aspect
-@Component
 public class TaskHandler {
 
 	@Autowired

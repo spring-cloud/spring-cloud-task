@@ -19,12 +19,10 @@ package org.springframework.cloud.task.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Glenn Renfro
  */
-@Component
 public class LoggerTaskRepository implements TaskRepository {
 	private final static Logger logger = LoggerFactory.getLogger(LoggerTaskRepository.class);
 
