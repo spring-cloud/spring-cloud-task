@@ -19,20 +19,29 @@ package org.springframework.cloud.task.repository;
 import java.util.Date;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 /**
  * Represents the state of the Task for each execution.
  *
  * @author Glenn Renfro
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public @Data class TaskExecution {
+
+public class TaskExecution {
+
+	public TaskExecution() {
+	}
+
+	public TaskExecution(String executionId, int exitCode, String taskName,
+						 Date startTime, Date endTime, String statusCode,
+						 String exitMessage, List<String> parameters) {
+		this.executionId = executionId;
+		this.exitCode = exitCode;
+		this.taskName = taskName;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.statusCode = statusCode;
+		this.exitMessage = exitMessage;
+		this.parameters = parameters;
+	}
 
 	/**
 	 * The unique id  associated with the task execution.
@@ -74,4 +83,81 @@ public @Data class TaskExecution {
 	 */
 	private List<String> parameters;
 
+	public String getExecutionId() {
+		return executionId;
+	}
+
+	public void setExecutionId(String executionId) {
+		this.executionId = executionId;
+	}
+
+	public int getExitCode() {
+		return exitCode;
+	}
+
+	public void setExitCode(int exitCode) {
+		this.exitCode = exitCode;
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public String getExitMessage() {
+		return exitMessage;
+	}
+
+	public void setExitMessage(String exitMessage) {
+		this.exitMessage = exitMessage;
+	}
+
+	public List<String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<String> parameters) {
+		this.parameters = parameters;
+	}
+
+	@Override
+	public String toString() {
+		return "TaskExecution{" +
+				"executionId='" + executionId + '\'' +
+				", exitCode=" + exitCode +
+				", taskName='" + taskName + '\'' +
+				", startTime=" + startTime +
+				", endTime=" + endTime +
+				", statusCode='" + statusCode + '\'' +
+				", exitMessage='" + exitMessage + '\'' +
+				", parameters=" + parameters +
+				'}';
+	}
 }

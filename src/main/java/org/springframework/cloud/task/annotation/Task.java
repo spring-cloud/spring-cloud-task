@@ -24,7 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.cloud.task.config.DefaultTaskConfigurer;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +37,6 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Configuration
 @Component
 @Import({ DefaultTaskConfigurer.class })
 public @interface Task {
