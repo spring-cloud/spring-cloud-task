@@ -13,7 +13,7 @@ process persists beyond the life of the task for future reporting.
 
 [source,shell,indent=2]
 ----
-$ mvn clean install
+$ mvn -s settings.xml clean install
 ----
 
 == Example:
