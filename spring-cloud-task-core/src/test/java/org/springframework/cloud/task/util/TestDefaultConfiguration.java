@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.configuration;
+package org.springframework.cloud.task.util;
 
-import org.springframework.cloud.task.repository.TaskRepository;
+import org.aspectj.lang.JoinPoint;
+import org.springframework.cloud.task.configuration.TaskHandler;
 import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
+import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * If no {@link TaskConfigurer} is present, then this configuration will be used.
- * The following defaults will be used:
- *
- * <ul>
- * <li>{@link LoggerTaskRepository} will be the default {@link TaskRepository}.</li>
- * </ul>
- *
+ * Initializes the beans needed to test default task behavior.
  *
  * @author Glenn Renfro
  */
-public class DefaultTaskConfigurer implements TaskConfigurer{
+@Configuration
+public class TestDefaultConfiguration {
 
-	public DefaultTaskConfigurer(){
-	}
-
-	public TaskRepository getTaskRepository() {
+	@Bean
+	public TaskRepository taskRepository(){
 		return new LoggerTaskRepository();
 	}
+
+	@Bean
+	public TaskHandler taskHandler(){
+		return new TaskHandler();
+	}
+
+	@Bean
+	public JoinPoint joinPoint(){
+		return new TestJoinPoint();
+	}
+
 
 }

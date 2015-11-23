@@ -26,6 +26,8 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.cloud.task.annotation.Task;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -33,8 +35,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Offers the advice on how to record tasks to the repository for both applicationrunner
- * and commandlinerunner spring boot applications.
+ * Offers the advice on how to record tasks to the repository for both
+ * {@link org.springframework.boot.ApplicationRunner} and
+ * {@link org.springframework.boot.CommandLineRunner} spring boot applications.
  *
  * @author Glenn Renfro
  */
@@ -54,11 +57,12 @@ public class TaskHandler {
 	private TaskExecution taskExecution;
 
 	/**
-	 * Looks for any CommandLineRunner.run method with its class annotated with @Task
+	 * Looks for any {@link CommandLineRunner}.run method with its class annotated with @Task
 	 * and calls the repository implementation to store the start of the task in the repo
 	 * before the run starts.
 	 *
-	 * @param joinPoint
+	 * @param joinPoint the point where the run method in a {@link CommandLineRunner} or
+	 *                     {@link ApplicationRunner} is executed
 	 */
 	@Before("within( @org.springframework.cloud.task.annotation.Task *) && (execution(* org.springframework.boot.CommandLineRunner.run(..)) || execution(* org.springframework.boot.ApplicationRunner.run(..)))")
 	public void beforeCommandLineRunner(JoinPoint joinPoint) {
@@ -78,11 +82,12 @@ public class TaskHandler {
 	}
 
 	/**
-	 * Looks for any CommandLineRunner.run method with its class annotated with @Task
+	 * Looks for any {@link CommandLineRunner}.run method with its class annotated with @Task
 	 * and calls repository implementation to store the exit of the task in the repo after
 	 * run returns result.
 	 *
-	 * @param joinPoint
+	 * @param joinPoint the point where the run method in a {@link CommandLineRunner} or
+	 *                     {@link ApplicationRunner} is executed
 	 */
 	@AfterReturning("within( @org.springframework.cloud.task.annotation.Task *) && (execution(* org.springframework.boot.CommandLineRunner.run(..)) || execution(* org.springframework.boot.ApplicationRunner.run(..)))")
 	public void afterReturnCommandLineRunner(JoinPoint joinPoint) {
@@ -99,11 +104,12 @@ public class TaskHandler {
 	}
 
 	/**
-	 * Looks for any CommandLineRunner. run method with its class annotated with @Task
+	 * Looks for any {@link CommandLineRunner}.run method with its class annotated with @Task
 	 * and calls the repository implementation to store the exitCode of 1
 	 * for the task in the repo in the case of an exception.
 	 *
-	 * @param joinPoint
+	 * @param joinPoint the point where the run method in a {@link CommandLineRunner} or
+	 *                     {@link ApplicationRunner} is executed
 	 */
 	@AfterThrowing("within( @org.springframework.cloud.task.annotation.Task *) && (execution(* org.springframework.boot.CommandLineRunner.run(..)) || execution(* org.springframework.boot.ApplicationRunner.run(..)))")
 	public void logExceptionCommandLineRunner(JoinPoint joinPoint) {
@@ -112,4 +118,7 @@ public class TaskHandler {
 		repository.update(taskExecution);
 	}
 
+	public TaskExecution getTaskExecution() {
+		return taskExecution;
+	}
 }

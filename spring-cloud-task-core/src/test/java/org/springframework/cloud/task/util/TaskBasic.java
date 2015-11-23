@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.repository;
+package org.springframework.cloud.task.util;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.cloud.task.annotation.Task;
+import org.springframework.stereotype.Component;
 
 /**
- * TaskRepository interface offers methods that create and update task execution
- * information.
- *
+ * Basic {@link CommandLineRunner} implementation, with task annotation.
  * @author Glenn Renfro
  */
-public interface TaskRepository {
+@Task
+@Component
+public class TaskBasic implements CommandLineRunner{
 
-	/**
-	 * Notifies the repository that a taskExecution needs to be updated.
-	 *
-	 * @param taskExecution taskExecution to be updated
-	 */
-	public void update(TaskExecution taskExecution);
 
-	/**
-	 * Notifies the repository that a taskExecution needs to be created.
-	 *
-	 * @param taskExecution taskExecution to be recorded
-	 */
-	public void createTaskExecution(TaskExecution taskExecution);
+	@Override
+	public void run(String... args) {
+		//noop
+	}
 }

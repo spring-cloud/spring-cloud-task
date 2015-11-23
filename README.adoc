@@ -20,13 +20,26 @@ $ mvn -s settings.xml clean install
 
 [source,java,indent=2]
 ----
-@Task("imSampleB")
-public class SampleB implements CommandLineRunner {
+@SpringBootApplication
+@EnableTask
+public class MyApp {
 
-	@Override
-	public void run(String... args) {
-		System.out.println("hello world");
-   	}
+	@Bean
+	public MyTask myTask() {
+		return new MyTask();
+	}
 
+	public static void main(String[] args) {
+		SpringApplication.run(MyApp.class);
+	}
+
+	@Task("HelloWorldTask")
+	public static class MyTask implements CommandLineRunner {
+
+		@Override
+		public void run(String... strings) throws Exception {
+			System.out.println("Hello World");
+		}
+	}
 }
 ----

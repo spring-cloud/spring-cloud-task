@@ -24,6 +24,8 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 
 /**
+ * {@link TaskRepository} implementation that will log the task execution information.
+ *
  * @author Glenn Renfro
  */
 public class LoggerTaskRepository implements TaskRepository {
