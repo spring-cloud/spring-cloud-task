@@ -33,8 +33,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Offers the advice on how to record tasks to the repository for both applicationrunner
- * and commandlinerunner spring boot applications.
+ * Offers the advice on how to record tasks to the repository for both
+ * {@link org.springframework.boot.ApplicationRunner} and
+ * {@link org.springframework.boot.CommandLineRunner} spring boot applications.
  *
  * @author Glenn Renfro
  */
@@ -112,4 +113,7 @@ public class TaskHandler {
 		repository.update(taskExecution);
 	}
 
+	public TaskExecution getTaskExecution() {
+		return taskExecution;
+	}
 }

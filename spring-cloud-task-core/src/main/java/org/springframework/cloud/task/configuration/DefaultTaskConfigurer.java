@@ -17,27 +17,21 @@
 package org.springframework.cloud.task.configuration;
 
 import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
+import org.springframework.cloud.task.repository.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
- * If no TaskConfigurer is present this configuration will be used.
+ * If no {@link TaskConfigurer} is present this configuration will be used.
+ *
  * @author Glenn Renfro
  */
-@Configuration
-public class DefaultTaskConfigurer {
+public class DefaultTaskConfigurer implements TaskConfigurer{
 
-	@Bean
-	@Scope("prototype")
-	public TaskHandler taskHandler() {
-		return new TaskHandler();
+	public DefaultTaskConfigurer(){
 	}
 
-
-	@Bean
-	public TaskRepository taskRepository() {
+	public TaskRepository getTaskRepository() {
 		return new LoggerTaskRepository();
 	}
 

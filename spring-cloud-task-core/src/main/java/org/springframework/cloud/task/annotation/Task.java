@@ -23,10 +23,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
-import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
-
 /**
  * Annotation that identifies a class as a task.   This annotation will serve as the
  * main “hook” to activate the various Spring Cloud Task features.
@@ -37,8 +33,6 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Component
-@Import({ DefaultTaskConfigurer.class })
 public @interface Task {
 
 	/**
@@ -46,4 +40,8 @@ public @interface Task {
 	 */
 	public String value() default "";
 
+	/**
+	 * Establishes the timeout for the task.  The default is -1 (meaning no timeout).
+	 */
+	public String timeout() default "-1";
 }

@@ -31,6 +31,6 @@ public interface TaskConfigurer {
 	 *
 	 * @return A TaskRepository
 	 */
-	public TaskRepository taskRepository();
+	public TaskRepository getTaskRepository();
 
 }
