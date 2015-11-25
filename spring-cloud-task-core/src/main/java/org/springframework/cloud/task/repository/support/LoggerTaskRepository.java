@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.repository;
+package org.springframework.cloud.task.repository.support;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskRepository;
 
 /**
  * @author Glenn Renfro
