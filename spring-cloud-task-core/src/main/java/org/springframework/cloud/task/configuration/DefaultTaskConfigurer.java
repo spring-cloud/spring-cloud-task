@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.configuration;
 
-import org.springframework.cloud.task.repository.LoggerTaskRepository;
+import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
