@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import org.springframework.cloud.task.repository.TaskExplorer;
 
-public class NoOpTaskExplorerTest {
+public class NoOpTaskExplorerTests {
 
 	private TaskExplorer taskExplorer;
 

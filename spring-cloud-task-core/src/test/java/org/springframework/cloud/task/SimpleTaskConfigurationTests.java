@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
-import org.springframework.cloud.task.repository.LoggerTaskRepository;
+import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

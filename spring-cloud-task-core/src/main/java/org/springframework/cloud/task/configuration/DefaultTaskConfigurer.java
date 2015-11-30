@@ -16,12 +16,8 @@
 
 package org.springframework.cloud.task.configuration;
 
-<<<<<<< 6319c712fa18a9e749ea9a97f1a12fe6fe568d25
-import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
-=======
->>>>>>> Code Review Cleanup
-import org.springframework.cloud.task.repository.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
 
 /**
  * If no {@link TaskConfigurer} is present, then this configuration will be used.
@@ -34,11 +30,7 @@ import org.springframework.cloud.task.repository.TaskRepository;
  *
  * @author Glenn Renfro
  */
-<<<<<<< 6319c712fa18a9e749ea9a97f1a12fe6fe568d25
 public class DefaultTaskConfigurer implements TaskConfigurer{
-=======
-public class  DefaultTaskConfigurer implements TaskConfigurer{
->>>>>>> Code Review Cleanup
 
 	public DefaultTaskConfigurer(){
 	}
