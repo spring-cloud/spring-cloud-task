@@ -37,11 +37,8 @@ public @interface Task {
 
 	/**
 	 * Establishes the name associated with the task.  The default is empty.
+	 * @return returns name associated with the task or an empty string.
 	 */
 	public String value() default "";
 
-	/**
-	 * Establishes the timeout for the task.  The default is -1 (meaning no timeout).
-	 */
-	public String timeout() default "-1";
 }

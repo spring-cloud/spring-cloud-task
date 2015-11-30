@@ -18,7 +18,7 @@ package org.springframework.cloud.task.repository;
 
 /**
  * TaskRepository interface offers methods that create and update task execution
- * information.  The interface will support the following methods:
+ * information.
  *
  * @author Glenn Renfro
  */

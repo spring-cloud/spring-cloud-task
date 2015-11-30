@@ -1,19 +1,17 @@
 /*
+ * Copyright 2015 the original author or authors.
  *
- *  * Copyright 2015 the original author or authors.
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.configuration;
@@ -21,7 +19,6 @@ package org.springframework.cloud.task.configuration;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -40,23 +37,20 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class SimpleTaskConfiguration {
 
-	@Bean
-	@Scope("prototype")
-	public TaskHandler taskHandler() {
-		return new TaskHandler();
-	}
-
 	@Autowired
 	private ApplicationContext context;
 
 	private boolean initialized = false;
 
-	@Autowired(required = false)
-	private Collection<DataSource> dataSources;
-
 	private TaskRepository taskRepository;
 
 	private TaskConfigurer configurer;
+
+	@Bean
+	@Scope("prototype")
+	public TaskHandler taskHandler() {
+		return new TaskHandler();
+	}
 
 	@Bean
 	public TaskRepository taskRepository(){
@@ -82,19 +76,9 @@ public class SimpleTaskConfiguration {
 			return this.configurer;
 		}
 		if (configurers == null || configurers.isEmpty()) {
-			if (dataSources == null || dataSources.isEmpty()) {
-				DefaultTaskConfigurer configurer = new DefaultTaskConfigurer();
-				this.configurer = configurer;
-				return configurer;
-			} else if(dataSources != null && dataSources.size() == 1) {
-				DataSource dataSource = dataSources.iterator().next();
-				DefaultTaskConfigurer configurer = new DefaultTaskConfigurer(dataSource);
-				this.configurer = configurer;
-				return configurer;
-			} else {
-				throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
-						"one DataSource, found " + dataSources.size());
-			}
+			DefaultTaskConfigurer configurer = new DefaultTaskConfigurer();
+			this.configurer = configurer;
+			return configurer;
 		}
 		if (configurers.size() > 1) {
 			throw new IllegalStateException(
