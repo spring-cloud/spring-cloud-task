@@ -78,6 +78,7 @@ public class TaskHandler {
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(new Date());
 		taskExecution.setExecutionId(executionId);
+		taskExecution.setParameters(new ArrayList<String>());
 		repository.createTaskExecution(taskExecution);
 	}
 

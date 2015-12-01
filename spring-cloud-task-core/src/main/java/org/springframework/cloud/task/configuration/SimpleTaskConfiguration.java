@@ -19,13 +19,18 @@ package org.springframework.cloud.task.configuration;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.cloud.task.repository.support.TaskDatabaseInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Base {@code Configuration} class providing common structure for enabling and using
@@ -39,6 +44,12 @@ public class SimpleTaskConfiguration {
 
 	@Autowired
 	private ApplicationContext context;
+
+	@Autowired(required = false)
+	private Collection<DataSource> dataSources;
+
+	@Autowired
+	ResourceLoader resourceLoader;
 
 	private boolean initialized = false;
 
@@ -56,7 +67,15 @@ public class SimpleTaskConfiguration {
 	public TaskRepository taskRepository(){
 		return taskRepository;
 	}
-	
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "spring.task.initialize", value = "enable", matchIfMissing = true)
+	public TaskDatabaseInitializer taskDatabaseInitializer(){
+		return new TaskDatabaseInitializer();
+	}
+
+
 	/**
 	 * Sets up the basic components by extracting them from the {@link TaskConfigurer}, defaulting to some
 	 * sensible values as long as a unique DataSource is available.
@@ -76,9 +95,17 @@ public class SimpleTaskConfiguration {
 			return this.configurer;
 		}
 		if (configurers == null || configurers.isEmpty()) {
-			DefaultTaskConfigurer configurer = new DefaultTaskConfigurer();
-			this.configurer = configurer;
-			return configurer;
+			if (dataSources == null || dataSources.isEmpty()) {
+				this.configurer = new DefaultTaskConfigurer();
+				return this.configurer;
+			} else if(dataSources != null && dataSources.size() == 1) {
+				DataSource dataSource = dataSources.iterator().next();
+				this.configurer = new DefaultTaskConfigurer(dataSource);
+				return this.configurer;
+			} else {
+				throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
+						"one DataSource, found " + dataSources.size());
+			}
 		}
 		if (configurers.size() > 1) {
 			throw new IllegalStateException(

@@ -31,12 +31,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Verifies that the LoggerRepository has correct prefixes written to logs.
+ * Verifies that the SimpleTaskRepository has correct prefixes written to logs.
  * @author Glenn Renfro
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestDefaultConfiguration.class)
-public class LoggerTaskRepositoryTests {
+public class SimpleTaskRepositoryLoggerTests {
 
 	@Autowired
 	private TaskRepository taskRepository;

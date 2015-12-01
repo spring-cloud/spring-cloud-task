@@ -16,27 +16,57 @@
 
 package org.springframework.cloud.task.configuration;
 
+import javax.sql.DataSource;
+
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
+import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
+import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
+import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
+import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 
 /**
  * If no {@link TaskConfigurer} is present, then this configuration will be used.
  * The following defaults will be used:
- *
  * <ul>
- * <li>{@link LoggerTaskRepository} will be the default {@link TaskRepository}.</li>
+ * <li>{@link SimpleTaskRepository} is the default {@link TaskRepository} returned.
+ * if a data source is present then a data will be stored in the database {@link JdbcTaskExecutionDao} else it will
+ * be stored in a map {@link MapTaskExecutionDao}.  </li>
  * </ul>
- *
  *
  * @author Glenn Renfro
  */
-public class DefaultTaskConfigurer implements TaskConfigurer{
+public class DefaultTaskConfigurer implements TaskConfigurer {
+
+	private DataSource dataSource;
+
+	private TaskRepository taskRepository;
 
 	public DefaultTaskConfigurer(){
 	}
 
+	public DefaultTaskConfigurer(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 	public TaskRepository getTaskRepository() {
-		return new LoggerTaskRepository();
+
+		if (dataSource == null){
+			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
+					new MapTaskRepositoryFactoryBean();
+			taskRepository = mapTaskRepositoryFactoryBean.getObject();
+		}else{
+			JdbcTaskRepositoryFactoryBean jdbcTaskRepositoryFactoryBean =
+					new JdbcTaskRepositoryFactoryBean(dataSource);
+			taskRepository = jdbcTaskRepositoryFactoryBean.getObject();
+		}
+		return taskRepository;
+	}
+
+	public TaskExplorer getTaskExplorer() {
+		return null;
+		//TODO if datasource != null use TaskRepositoryFactoryBean from above like initialize method in DefaultBatchConfigurer
 	}
 
 }

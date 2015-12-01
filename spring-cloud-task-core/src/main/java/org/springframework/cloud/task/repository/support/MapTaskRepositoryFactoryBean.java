@@ -14,38 +14,27 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.util;
+package org.springframework.cloud.task.repository.support;
 
-import org.aspectj.lang.JoinPoint;
-import org.springframework.cloud.task.configuration.TaskHandler;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
-import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
- * Initializes the beans needed to test default task behavior.
+ * Automates the creation of a {@link SimpleTaskRepository} using Map DAO implementations
+ * which persist task execution data into an in memory map. This is meant for development
+ * purposes and not for production use.
  *
  * @author Glenn Renfro
  */
-@Configuration
-public class TestDefaultConfiguration {
+public class MapTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
 
-	@Bean
-	public TaskRepository taskRepository(){
-		return new SimpleTaskRepository(new MapTaskExecutionDao());
+	private TaskRepository taskRepository;
+
+	public MapTaskRepositoryFactoryBean(){
+		taskRepository = new SimpleTaskRepository(new MapTaskExecutionDao());
 	}
 
-	@Bean
-	public TaskHandler taskHandler(){
-		return new TaskHandler();
+	public TaskRepository getObject(){
+		return taskRepository;
 	}
-
-	@Bean
-	public JoinPoint joinPoint(){
-		return new TestJoinPoint();
-	}
-
-
 }
