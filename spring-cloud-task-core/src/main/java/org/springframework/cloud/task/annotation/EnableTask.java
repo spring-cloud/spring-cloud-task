@@ -54,7 +54,7 @@ import org.springframework.context.annotation.Import;
  * You will also be able to <code>&#064;Autowired</code> some useful stuff into your context:
  *
  * <ul>
- * <li>a {@link TaskRepository} (bean name "taskRepository").</li>
+ * <li>a {@link TaskRepository} (bean name "taskRepository").
  * </ul>
  *
  * @author Glenn Renfro

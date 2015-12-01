@@ -18,8 +18,9 @@ package org.springframework.cloud.task.util;
 
 import org.aspectj.lang.JoinPoint;
 import org.springframework.cloud.task.configuration.TaskHandler;
-import org.springframework.cloud.task.repository.support.LoggerTaskRepository;
 import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,7 +34,7 @@ public class TestDefaultConfiguration {
 
 	@Bean
 	public TaskRepository taskRepository(){
-		return new LoggerTaskRepository();
+		return new SimpleTaskRepository(new MapTaskExecutionDao());
 	}
 
 	@Bean
