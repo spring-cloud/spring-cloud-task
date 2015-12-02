@@ -98,11 +98,13 @@ public class SimpleTaskConfiguration {
 			if (dataSources == null || dataSources.isEmpty()) {
 				this.configurer = new DefaultTaskConfigurer();
 				return this.configurer;
-			} else if(dataSources != null && dataSources.size() == 1) {
+			}
+			else if (dataSources != null && dataSources.size() == 1) {
 				DataSource dataSource = dataSources.iterator().next();
 				this.configurer = new DefaultTaskConfigurer(dataSource);
 				return this.configurer;
-			} else {
+			}
+			else {
 				throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
 						"one DataSource, found " + dataSources.size());
 			}

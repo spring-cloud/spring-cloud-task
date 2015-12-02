@@ -51,12 +51,12 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	public TaskRepository getTaskRepository() {
-
-		if (dataSource == null){
+		if (dataSource == null) {
 			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
 					new MapTaskRepositoryFactoryBean();
 			taskRepository = mapTaskRepositoryFactoryBean.getObject();
-		}else{
+		}
+		else {
 			JdbcTaskRepositoryFactoryBean jdbcTaskRepositoryFactoryBean =
 					new JdbcTaskRepositoryFactoryBean(dataSource);
 			taskRepository = jdbcTaskRepositoryFactoryBean.getObject();
