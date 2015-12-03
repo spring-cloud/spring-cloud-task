@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task;
+package org.springframework.cloud.task.repository.support;
 
 import ch.qos.logback.core.Appender;
 import org.junit.Test;

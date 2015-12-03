@@ -62,7 +62,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void saveTaskExecution(TaskExecution taskExecution) {
-
 		validateTaskExecution(taskExecution);
 
 		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
@@ -80,6 +79,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void updateTaskExecution(TaskExecution taskExecution) {
+
+		validateTaskExecution(taskExecution);
+
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (getJdbcTemplate().queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
@@ -91,7 +93,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(), taskExecution.getStatusCode(),
 				taskExecution.getExecutionId() };
-
 		int count = getJdbcTemplate().update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
@@ -124,7 +125,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * @param taskExecution the taskExecution to be evaluagted.
 	 */
 	private void validateTaskExecution(TaskExecution taskExecution) {
-		Assert.notNull(taskExecution);
+		Assert.notNull(taskExecution, "taskExecution should not be null");
+		Assert.notNull(taskExecution.getExecutionId(), "taskExecutionId should not be null");
 		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
 	}
 

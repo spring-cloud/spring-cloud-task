@@ -29,9 +29,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.sql.DataSource;
 
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -39,6 +42,7 @@ import org.mockito.ArgumentMatcher;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Offers utils to test the log results produced by the code being tested.
@@ -179,6 +183,46 @@ public class TestUtils {
 		expectedTaskExecution.setExecutionId(taskExecutionId);
 		taskRepository.update(expectedTaskExecution);
 		return expectedTaskExecution;
+	}
+
+	/**
+	 * Retrieves the TaskExecution from the datasource
+	 * @param dataSource The datasource from which to retrieve the taskExecution
+	 * @param taskExecutionId The id of the task to search .
+	 * @return taskExecution
+	 */
+	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource,
+													   String taskExecutionId){
+		String sql = "SELECT * FROM TASK_EXECUTION WHERE TASK_EXECUTION_ID = '"
+				+ taskExecutionId + "'";
+
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		assertEquals("only one row should be returned", 1, rows.size());
+		TaskExecution taskExecution = new TaskExecution();
+		for (Map row : rows) {
+			taskExecution.setExecutionId((String)row.get("TASK_EXECUTION_ID"));
+			taskExecution.setStartTime((Date) row.get("START_TIME"));
+			taskExecution.setEndTime((Date) row.get("END_TIME"));
+			taskExecution.setExitCode((Integer)row.get("EXIT_CODE"));
+			taskExecution.setExitMessage((String)row.get("EXIT_MESSAGE"));
+			taskExecution.setStatusCode((String)row.get("STATUS_CODE"));
+			taskExecution.setTaskName((String)row.get("TASK_NAME"));
+		}
+		populateParams(dataSource, taskExecution);
+		return taskExecution;
+	}
+	private static void populateParams(DataSource dataSource, TaskExecution taskExecution){
+		String sql = "SELECT * FROM TASK_EXECUTION_PARAMS WHERE TASK_EXECUTION_ID = '"
+				+ taskExecution.getExecutionId() + "'";
+
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+		List<String> params = new ArrayList<>();
+		for (Map row : rows) {
+			params.add((String) row.get("TASK_PARAM"));
+		}
+		taskExecution.setParameters(params);
 	}
 
 }

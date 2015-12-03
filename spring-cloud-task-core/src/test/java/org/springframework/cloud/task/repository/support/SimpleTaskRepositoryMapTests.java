@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task;
+package org.springframework.cloud.task.repository.support;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -25,8 +25,6 @@ import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
-import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
-import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.util.TestUtils;
 
 /**
@@ -45,7 +43,7 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
-	public void testSingleTaskExecutionNoParam() {
+	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
 				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
 		TestUtils.verifyTaskExecution(expectedTaskExecution,
@@ -54,7 +52,7 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
-	public void testSingleTaskExecutionWithParam() {
+	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution =
 				TestUtils.createAndStoreTaskExecutionWithParams(taskRepository);
 		TestUtils.verifyTaskExecution(expectedTaskExecution,
@@ -63,7 +61,7 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
-	public void testUpdateSingleTaskExecution() {
+	public void testUpdateTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution = TestUtils.updateTaskExecution(taskRepository,

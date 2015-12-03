@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
+package org.springframework.cloud.task.repository.support;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.util.TestUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
@@ -59,73 +48,40 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	}
 
-	@Test
-	public void testSingleTaskExecutionNoParam() {
-		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		TaskExecution actualTaskExecution = taskExecutionFromDB(db,
-				expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
-	}
-
-	@Test
-	public void testSingleTaskExecutionWithParam() {
-		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionWithParams(taskRepository);
-		TaskExecution actualTaskExecution = taskExecutionFromDB(
-				db, expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
-	}
-
-	@Test
-	public void testUpdateSingleTaskExecution() {
-		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TestUtils.updateTaskExecution(taskRepository,
-				expectedTaskExecution.getExecutionId());
-		TaskExecution actualTaskExecution = taskExecutionFromDB(
-				db, expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
-	}
-
 	@After
 	public void tearDown() {
 		db.shutdown();
 	}
 
-	private TaskExecution taskExecutionFromDB(DataSource dataSource,
-													String taskExecutionId){
-		String sql = "SELECT * FROM TASK_EXECUTION WHERE TASK_EXECUTION_ID = '"
-				+ taskExecutionId + "'";
-
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		assertEquals("only one row should be returned", 1, rows.size());
-		TaskExecution taskExecution = new TaskExecution();
-		for (Map row : rows) {
-			taskExecution.setExecutionId((String)row.get("TASK_EXECUTION_ID"));
-			taskExecution.setStartTime((Date) row.get("START_TIME"));
-			taskExecution.setEndTime((Date) row.get("END_TIME"));
-			taskExecution.setExitCode((Integer)row.get("EXIT_CODE"));
-			taskExecution.setExitMessage((String)row.get("EXIT_MESSAGE"));
-			taskExecution.setStatusCode((String)row.get("STATUS_CODE"));
-			taskExecution.setTaskName((String)row.get("TASK_NAME"));
-		}
-		populateParams(dataSource, taskExecution);
-		return taskExecution;
+	@Test
+	public void testCreateTaskExecutionNoParam() {
+		TaskExecution expectedTaskExecution =
+				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
+		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(db,
+				expectedTaskExecution.getExecutionId());
+		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
-	private void populateParams(DataSource dataSource, TaskExecution taskExecution){
-		String sql = "SELECT * FROM TASK_EXECUTION_PARAMS WHERE TASK_EXECUTION_ID = '"
-				+ taskExecution.getExecutionId() + "'";
 
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		List<String> params = new ArrayList<>();
-		for (Map row : rows) {
-			params.add((String) row.get("TASK_PARAM"));
-		}
-		taskExecution.setParameters(params);
+	@Test
+	public void testCreateTaskExecutionWithParam() {
+		TaskExecution expectedTaskExecution =
+				TestUtils.createAndStoreTaskExecutionWithParams(taskRepository);
+		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(
+				db, expectedTaskExecution.getExecutionId());
+		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
+
+	@Test
+	public void testUpdateTaskExecution() {
+		TaskExecution expectedTaskExecution =
+				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution = TestUtils.updateTaskExecution(taskRepository,
+				expectedTaskExecution.getExecutionId());
+		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(
+				db, expectedTaskExecution.getExecutionId());
+		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
 
 }
 
