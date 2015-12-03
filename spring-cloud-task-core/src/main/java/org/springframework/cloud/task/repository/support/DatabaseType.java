@@ -89,10 +89,6 @@ public enum DatabaseType {
 		return fromProductName(databaseProductName);
 	}
 
-	private String getProductName() {
-		return productName;
-	}
-
 	/**
 	 * Static method to obtain a DatabaseType from the provided product name.
 	 *
@@ -100,7 +96,7 @@ public enum DatabaseType {
 	 * @return DatabaseType for given product name.
 	 * @throws IllegalArgumentException if none is found.
 	 */
-	private static DatabaseType fromProductName(String productName){
+	public static DatabaseType fromProductName(String productName){
 		if(!nameMap.containsKey(productName)){
 			throw new IllegalArgumentException("DatabaseType not found for product name: [" +
 					productName + "]");
@@ -109,5 +105,11 @@ public enum DatabaseType {
 			return nameMap.get(productName);
 		}
 	}
+
+	private String getProductName() {
+		return productName;
+	}
+
+
 
 }

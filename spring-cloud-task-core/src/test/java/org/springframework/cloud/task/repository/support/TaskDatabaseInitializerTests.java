@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import javax.sql.DataSource;
 
@@ -32,9 +34,12 @@ import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
+ * Verifies that task initialization occurs properly.
+ *
  * @author Glenn Renfro
  */
 public class TaskDatabaseInitializerTests {
@@ -70,9 +75,21 @@ public class TaskDatabaseInitializerTests {
 		assertNotNull(this.context.getBean(SimpleTaskRepository.class));
 		SimpleTaskRepository repository = this.context.getBean(SimpleTaskRepository.class);
 		assertNotNull(repository);
+		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
 		assertEquals(0, dao.getTaskExecutions().size());
 	}
+
+	@Test
+	public void testNoBatchConfiguration() throws Exception {
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.register(EmptyConfiguration.class, TaskDatabaseInitializer.class,
+				EmbeddedDataSourceConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+		this.context.refresh();
+		assertEquals(0, this.context.getBeanNamesForType(SimpleTaskRepository.class).length);
+	}
+
 	@EnableTask
 	protected static class TestConfiguration {
 	}
@@ -83,5 +100,9 @@ public class TaskDatabaseInitializerTests {
 		public TaskRepository getTaskRepository() {
 			return new SimpleTaskRepository(new MapTaskExecutionDao());
 		}
+	}
+
+	@Configuration
+	protected static class EmptyConfiguration {
 	}
 }
