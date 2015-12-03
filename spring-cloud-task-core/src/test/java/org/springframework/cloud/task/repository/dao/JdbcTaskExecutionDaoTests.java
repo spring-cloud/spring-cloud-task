@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
@@ -33,8 +32,6 @@ public class JdbcTaskExecutionDaoTests {
 
 	private EmbeddedDatabase db;
 
-	private JdbcTemplate jdbcTemplate;
-
 	@Before
 	public void setup() {
 		db = new EmbeddedDatabaseBuilder()
@@ -42,7 +39,6 @@ public class JdbcTaskExecutionDaoTests {
 				.addScripts("task-schema.sql")
 				.build();
 
- 		jdbcTemplate = new JdbcTemplate(db) ;
 	}
 
 
@@ -53,7 +49,7 @@ public class JdbcTaskExecutionDaoTests {
 
 	@Test
 	public void saveTaskExecution(){
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(jdbcTemplate);
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(db);
 		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 
@@ -63,7 +59,7 @@ public class JdbcTaskExecutionDaoTests {
 
 	@Test
 	public void updateTaskExecution(){
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(jdbcTemplate);
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(db);
 
 		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);

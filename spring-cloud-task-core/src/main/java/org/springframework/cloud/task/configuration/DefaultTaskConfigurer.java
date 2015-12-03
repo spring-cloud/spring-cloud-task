@@ -31,7 +31,7 @@ import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
  * The following defaults will be used:
  * <ul>
  * <li>{@link SimpleTaskRepository} is the default {@link TaskRepository} returned.
- * if a data source is present then a data will be stored in the database {@link JdbcTaskExecutionDao} else it will
+ * If a data source is present then a data will be stored in the database {@link JdbcTaskExecutionDao} else it will
  * be stored in a map {@link MapTaskExecutionDao}.  </li>
  * </ul>
  *
@@ -44,13 +44,24 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	private TaskRepository taskRepository;
 
 	public DefaultTaskConfigurer(){
+		initialize();
 	}
 
 	public DefaultTaskConfigurer(DataSource dataSource) {
 		this.dataSource = dataSource;
+		initialize();
 	}
 
 	public TaskRepository getTaskRepository() {
+		return taskRepository;
+	}
+
+	public TaskExplorer getTaskExplorer() {
+		return null;
+		//TODO if datasource != null use TaskRepositoryFactoryBean from above like initialize method in DefaultBatchConfigurer
+	}
+
+	private void initialize(){
 		if (dataSource == null) {
 			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
 					new MapTaskRepositoryFactoryBean();
@@ -61,12 +72,6 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 					new JdbcTaskRepositoryFactoryBean(dataSource);
 			taskRepository = jdbcTaskRepositoryFactoryBean.getObject();
 		}
-		return taskRepository;
-	}
-
-	public TaskExplorer getTaskExplorer() {
-		return null;
-		//TODO if datasource != null use TaskRepositoryFactoryBean from above like initialize method in DefaultBatchConfigurer
 	}
 
 }

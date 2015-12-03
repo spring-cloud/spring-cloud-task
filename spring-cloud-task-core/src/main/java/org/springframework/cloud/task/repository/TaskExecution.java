@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 public class TaskExecution {
 
 	public TaskExecution() {
+		parameters = new ArrayList<>();
 	}
 
 	public TaskExecution(String executionId, int exitCode, String taskName,

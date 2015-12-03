@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.task.repository.dao;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
@@ -28,10 +30,10 @@ import org.springframework.cloud.task.repository.TaskExecution;
  */
 public class MapTaskExecutionDao implements TaskExecutionDao {
 
-	private Map<String, TaskExecution> taskExecutions;
+	private ConcurrentMap<String, TaskExecution> taskExecutions;
 
 	public MapTaskExecutionDao() {
-		taskExecutions = new HashMap<String, TaskExecution>();
+		taskExecutions = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -45,6 +47,6 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	public Map<String, TaskExecution> getTaskExecutions(){
-		return taskExecutions;
+		return Collections.unmodifiableMap(taskExecutions);
 	}
 }

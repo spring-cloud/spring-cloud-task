@@ -23,8 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Automates the creation of a {@link SimpleTaskRepository} using JDBC DAO implementations
@@ -39,13 +37,13 @@ public class JdbcTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
 
 	protected static final Log logger = LogFactory.getLog(JdbcTaskRepositoryFactoryBean.class);
 
-	private JdbcOperations jdbcOperations;
+	private DataSource dataSource;
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
 	public JdbcTaskRepositoryFactoryBean(DataSource dataSource)  {
-		if(dataSource != null && jdbcOperations == null) {
-			jdbcOperations = new JdbcTemplate(dataSource);
+		if(dataSource != null) {
+			this.dataSource = dataSource;
 		}
 	}
 
@@ -68,7 +66,7 @@ public class JdbcTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
 	}
 
 	private TaskExecutionDao createJdbcTaskExecutionDao()  {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(jdbcOperations);
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
 		dao.setTablePrefix(tablePrefix);
 		return dao;
 	}

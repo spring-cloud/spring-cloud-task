@@ -20,8 +20,11 @@ import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -55,9 +58,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private JdbcOperations jdbcTemplate;
 
-	public JdbcTaskExecutionDao(JdbcOperations jdbcTemplate) {
-		Assert.notNull(jdbcTemplate);
-		this.jdbcTemplate = jdbcTemplate;
+	public JdbcTaskExecutionDao(DataSource dataSource) {
+		Assert.notNull(dataSource);
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(),
 				taskExecution.getStatusCode() };
-		int addCount = getJdbcTemplate().update(
+		int addCount = jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR,
@@ -84,7 +87,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
-		if (getJdbcTemplate().queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
+		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
 				new Object[]{ taskExecution.getExecutionId() }) != 1) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecution.getExecutionId() + " not found.");
 		}
@@ -93,7 +96,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(), taskExecution.getStatusCode(),
 				taskExecution.getExecutionId() };
-		int count = getJdbcTemplate().update(
+		int count = jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.INTEGER,
@@ -109,14 +112,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 */
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;
-	}
-
-	public void setJdbcTemplate(JdbcOperations jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
-
-	protected JdbcOperations getJdbcTemplate() {
-		return jdbcTemplate;
 	}
 
 	/**
@@ -157,6 +152,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		int[] argTypes = new int[]{ Types.VARCHAR, Types.VARCHAR };
 
 		args = new Object[]{ executionId, param };
-		getJdbcTemplate().update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
+		jdbcTemplate.update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
 	}
+
 }
