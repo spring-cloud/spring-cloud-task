@@ -16,17 +16,14 @@
 
 package org.springframework.cloud.task;
 
-import java.util.UUID;
-
 import ch.qos.logback.core.Appender;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.util.LoggerTestUtils;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
+import org.springframework.cloud.task.util.TestUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -41,31 +38,25 @@ public class SimpleTaskRepositoryLoggerTests {
 	@Autowired
 	private TaskRepository taskRepository;
 
-	private TaskExecution taskExecution;
-
-	private String uuId;
-
-	@Before
-	public void setup(){
-		taskExecution = new TaskExecution();
-		uuId = UUID.randomUUID().toString();
-		taskExecution.setExecutionId(uuId);
-	}
-
 	@Test
 	public void testCreateTaskExecution() {
-		final Appender mockAppender = LoggerTestUtils.getMockAppender();
-		taskRepository.createTaskExecution(taskExecution);
-		LoggerTestUtils.verifyLogEntryExists(mockAppender,
-				"Creating: TaskExecution{executionId='" + uuId);
+		final Appender mockAppender = TestUtils.getMockAppender();
+		TaskExecution expectedTaskExecution =
+				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
+		TestUtils.verifyLogEntryExists(mockAppender,
+				"Creating: TaskExecution{executionId='" + expectedTaskExecution.getExecutionId());
 	}
 
 	@Test
 	public void testTaskUpdate() {
-		final Appender mockAppender = LoggerTestUtils.getMockAppender();
-		taskRepository.update(taskExecution);
-		LoggerTestUtils.verifyLogEntryExists(mockAppender,
-				"Updating: TaskExecution{executionId='" + uuId);
+		final Appender mockAppender = TestUtils.getMockAppender();
+		TaskExecution expectedTaskExecution =
+				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
+		TestUtils.updateTaskExecution(taskRepository,
+				expectedTaskExecution.getExecutionId());
+		TestUtils.verifyLogEntryExists(mockAppender,
+				"Updating: TaskExecution{executionId='"
+						+ expectedTaskExecution.getExecutionId());
 	}
 
 }

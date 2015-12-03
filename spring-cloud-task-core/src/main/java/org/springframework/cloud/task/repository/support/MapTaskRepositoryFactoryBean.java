@@ -34,6 +34,10 @@ public class MapTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
 		taskRepository = new SimpleTaskRepository(new MapTaskExecutionDao());
 	}
 
+	/**
+	 * Returns the a simpleTaskRepository that utilizes a MapTaskExecutionDao
+	 * @return instance of task repository.
+	 */
 	public TaskRepository getObject(){
 		return taskRepository;
 	}

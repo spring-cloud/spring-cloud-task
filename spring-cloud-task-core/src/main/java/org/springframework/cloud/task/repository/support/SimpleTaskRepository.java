@@ -47,4 +47,13 @@ public class SimpleTaskRepository implements TaskRepository {
 		taskExecutionDao.saveTaskExecution(taskExecution);
 		logger.info("Creating: " + taskExecution.toString());
 	}
+
+
+	/**
+	 * Retrieves the taskExecutionDao associated with this repository.
+	 * @return the taskExecutionDao
+	 */
+	public TaskExecutionDao getTaskExecutionDao() {
+		return taskExecutionDao;
+	}
 }

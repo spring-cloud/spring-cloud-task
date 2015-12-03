@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.configuration.TaskHandler;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.util.LoggerTestUtils;
+import org.springframework.cloud.task.util.TestUtils;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -49,9 +49,9 @@ public class TaskHandlerDefaultTests {
 	@Test
 	public void testTaskException() {
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		final Appender mockAppender = LoggerTestUtils.getMockAppender();
+		final Appender mockAppender = TestUtils.getMockAppender();
 		taskHandler.logExceptionCommandLineRunner(joinPoint);
-		LoggerTestUtils.verifyLogEntryExists(mockAppender,
+		TestUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		TaskExecution taskExecution = taskHandler.getTaskExecution();
@@ -61,9 +61,9 @@ public class TaskHandlerDefaultTests {
 
 	@Test
 	public void testTaskCreate() {
-		final Appender mockAppender = LoggerTestUtils.getMockAppender();
+		final Appender mockAppender = TestUtils.getMockAppender();
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		LoggerTestUtils.verifyLogEntryExists(mockAppender,
+		TestUtils.verifyLogEntryExists(mockAppender,
 				"Creating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		assertEquals("Create should report that exit code is zero",
@@ -74,9 +74,9 @@ public class TaskHandlerDefaultTests {
 	@Test
 	public void testTaskUpdate() {
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		final Appender mockAppender = LoggerTestUtils.getMockAppender();
+		final Appender mockAppender = TestUtils.getMockAppender();
 		taskHandler.afterReturnCommandLineRunner(joinPoint);
-		LoggerTestUtils.verifyLogEntryExists(mockAppender,
+		TestUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		assertEquals("Update should report that exit code is zero",

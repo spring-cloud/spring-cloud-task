@@ -43,4 +43,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public void updateTaskExecution(TaskExecution taskExecution) {
 		taskExecutions.put(taskExecution.getExecutionId(), taskExecution);
 	}
+
+	public Map<String, TaskExecution> getTaskExecutions(){
+		return taskExecutions;
+	}
 }

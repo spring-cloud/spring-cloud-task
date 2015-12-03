@@ -57,18 +57,19 @@ public class JdbcTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
 		this.tablePrefix = tablePrefix;
 	}
 
-	public TaskExecutionDao createJdbcTaskExecutionDao()  {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(jdbcOperations);
-		dao.setTablePrefix(tablePrefix);
-		return dao;
-	}
-
+	/**
+	 * Returns the a simpleTaskRepository that utilizes a MapTaskExecutionDao
+	 * @return instance of task repository.
+	 */
 	public TaskRepository getObject(){
 		TaskRepository taskRepository = null;
 		taskRepository =  new SimpleTaskRepository(createJdbcTaskExecutionDao());
 		return taskRepository;
 	}
 
-
-
+	private TaskExecutionDao createJdbcTaskExecutionDao()  {
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(jdbcOperations);
+		dao.setTablePrefix(tablePrefix);
+		return dao;
+	}
 }
