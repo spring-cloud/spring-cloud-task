@@ -20,13 +20,13 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 
 /**
- * Automates the creation of a {@link SimpleTaskRepository} using Map DAO implementations
- * which persist task execution data into an in memory map. This is meant for development
+ * Automates the creation of a {@link SimpleTaskRepository} which will persist task
+ * execution data into an in memory map. This is meant for development
  * purposes and not for production use.
  *
  * @author Glenn Renfro
  */
-public class MapTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
+public class MapTaskRepositoryFactoryBean {
 
 	private TaskRepository taskRepository;
 

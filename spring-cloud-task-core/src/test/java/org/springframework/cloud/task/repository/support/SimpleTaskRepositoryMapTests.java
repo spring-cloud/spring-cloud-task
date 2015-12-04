@@ -25,7 +25,8 @@ import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
-import org.springframework.cloud.task.util.TestUtils;
+import org.springframework.cloud.task.util.TaskExecutionCreator;
+import org.springframework.cloud.task.util.TestVerifierUtils;
 
 /**
  * Tests for the SimpleTaskRepository that uses Map as a datastore.
@@ -45,8 +46,8 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(taskRepository,
 						expectedTaskExecution.getExecutionId()));
 	}
@@ -54,8 +55,8 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionWithParams(taskRepository);
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
+				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(taskRepository,
 						expectedTaskExecution.getExecutionId()));
 	}
@@ -63,10 +64,10 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testUpdateTaskExecution() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TestUtils.updateTaskExecution(taskRepository,
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution = TaskExecutionCreator.updateTaskExecution(taskRepository,
 				expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(taskRepository,
 						expectedTaskExecution.getExecutionId()));
 	}

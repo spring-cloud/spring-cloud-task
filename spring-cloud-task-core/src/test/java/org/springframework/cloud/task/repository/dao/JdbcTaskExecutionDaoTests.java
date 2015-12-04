@@ -16,56 +16,86 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.cloud.task.annotation.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.util.TestUtils;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.cloud.task.util.TestDBUtils;
+import org.springframework.cloud.task.util.TestVerifierUtils;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.DuplicateKeyException;
 
 /**
  * Executes unit tests on JdbcTaskExecutionDao.
+ *
  * @author Glenn Renfro
  */
 public class JdbcTaskExecutionDaoTests {
 
-	private EmbeddedDatabase db;
+	private DataSource dataSource;
+
+	private AnnotationConfigApplicationContext context;
 
 	@Before
 	public void setup() {
-		db = new EmbeddedDatabaseBuilder()
-				.generateUniqueName(true)
-				.addScripts("task-schema.sql")
-				.build();
-
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.register(TestConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+		this.context.refresh();
+		dataSource = this.context.getBean(DataSource.class);
 	}
-
 
 	@After
-	public void tearDown() {
-		db.shutdown();
+	public void close() {
+		if (this.context != null) {
+			this.context.close();
+		}
 	}
 
 	@Test
-	public void saveTaskExecution(){
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(db);
-		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
+	public void saveTaskExecution() {
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
-				TestUtils.getTaskExecutionFromDB(db, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test(expected = DuplicateKeyException.class)
+	public void duplicateSaveTaskExecution() {
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		dao.saveTaskExecution(expectedTaskExecution);
+		dao.saveTaskExecution(expectedTaskExecution);
 	}
 
 	@Test
-	public void updateTaskExecution(){
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(db);
+	public void updateTaskExecution() {
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
 
-		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 		dao.updateTaskExecution(expectedTaskExecution);
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
-				TestUtils.getTaskExecutionFromDB(db, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void updateTaskExecutionWithNoCreate() {
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
+
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		dao.updateTaskExecution(expectedTaskExecution);
+	}
+
+	@EnableTask
+	protected static class TestConfiguration {
+	}
 }

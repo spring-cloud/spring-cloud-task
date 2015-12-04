@@ -25,21 +25,25 @@ import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 
 /**
- * Automates the creation of a {@link SimpleTaskRepository} using JDBC DAO implementations
- * which persist task execution data into the database. Requires the user to describe
- * what kind of database they are using.
+ * Automates the creation of a {@link SimpleTaskRepository} which will persist task
+ * execution data into a database. Requires the user to describe what kind of database
+ * they are using.
  *
  * @author Glenn Renfro
  */
-public class JdbcTaskRepositoryFactoryBean implements TaskRepositoryFactoryBean{
+public class JdbcTaskRepositoryFactoryBean {
 
-	public static final String DEFAULT_TABLE_PREFIX = "";
+	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
 	protected static final Log logger = LogFactory.getLog(JdbcTaskRepositoryFactoryBean.class);
 
 	private DataSource dataSource;
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
+
+	public JdbcTaskRepositoryFactoryBean(){
+
+	}
 
 	public JdbcTaskRepositoryFactoryBean(DataSource dataSource)  {
 		if(dataSource != null) {

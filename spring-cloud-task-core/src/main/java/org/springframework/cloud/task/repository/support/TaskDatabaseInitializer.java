@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -31,29 +29,17 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 
 public class TaskDatabaseInitializer {
 
-	public static final String DEFAULT_TABLE_PREFIX = "";
-
 	private static final String DEFAULT_SCHEMA_LOCATION = "classpath:org/springframework/"
 			+ "cloud/task/schema-@@platform@@.sql";
-
-	@Autowired(required = false)
-	private DataSource dataSource;
-
-	@Autowired
-	private ResourceLoader resourceLoader;
 
 	/**
 	 * Path to the SQL file to use to initialize the database schema.
 	 */
-	private String schema = DEFAULT_SCHEMA_LOCATION;
+	private static String schema = DEFAULT_SCHEMA_LOCATION;
 
-	private String tablePrefix = DEFAULT_TABLE_PREFIX;
-
-
-	@PostConstruct
-	public void initializeDatabase() {
-		if (dataSource !=null) {
-			String platform = getDatabaseType();
+	public static void initializeDatabase(DataSource dataSource, ResourceLoader resourceLoader) {
+		if (dataSource != null) {
+			String platform = getDatabaseType(dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
 			}
@@ -68,12 +54,13 @@ public class TaskDatabaseInitializer {
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);
 			populator.addScript(resourceLoader.getResource(schemaLocation));
 			populator.setContinueOnError(false);
-			DatabasePopulatorUtils.execute(populator, this.dataSource);
+			DatabasePopulatorUtils.execute(populator, dataSource);
 		}
 	}
-	private String getDatabaseType() {
+
+	private static String getDatabaseType(DataSource dataSource) {
 		try {
-			return DatabaseType.fromMetaData(this.dataSource).toString().toLowerCase();
+			return DatabaseType.fromMetaData(dataSource).toString().toLowerCase();
 		}
 		catch (MetaDataAccessException ex) {
 			throw new IllegalStateException("Unable to detect database type", ex);

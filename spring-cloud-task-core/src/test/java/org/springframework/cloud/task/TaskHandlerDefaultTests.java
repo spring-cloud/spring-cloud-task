@@ -23,10 +23,11 @@ import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.task.configuration.TaskHandler;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.util.TestUtils;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
+import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -37,7 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Glenn Renfro
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestDefaultConfiguration.class)
+@ContextConfiguration(classes = {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
 public class TaskHandlerDefaultTests {
 
 	@Autowired
@@ -49,9 +50,9 @@ public class TaskHandlerDefaultTests {
 	@Test
 	public void testTaskException() {
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		final Appender mockAppender = TestUtils.getMockAppender();
+		final Appender mockAppender = TestVerifierUtils.getMockAppender();
 		taskHandler.logExceptionCommandLineRunner(joinPoint);
-		TestUtils.verifyLogEntryExists(mockAppender,
+		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		TaskExecution taskExecution = taskHandler.getTaskExecution();
@@ -61,9 +62,9 @@ public class TaskHandlerDefaultTests {
 
 	@Test
 	public void testTaskCreate() {
-		final Appender mockAppender = TestUtils.getMockAppender();
+		final Appender mockAppender = TestVerifierUtils.getMockAppender();
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		TestUtils.verifyLogEntryExists(mockAppender,
+		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Creating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		assertEquals("Create should report that exit code is zero",
@@ -74,9 +75,9 @@ public class TaskHandlerDefaultTests {
 	@Test
 	public void testTaskUpdate() {
 		taskHandler.beforeCommandLineRunner(joinPoint);
-		final Appender mockAppender = TestUtils.getMockAppender();
+		final Appender mockAppender = TestVerifierUtils.getMockAppender();
 		taskHandler.afterReturnCommandLineRunner(joinPoint);
-		TestUtils.verifyLogEntryExists(mockAppender,
+		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						taskHandler.getTaskExecution().getExecutionId());
 		assertEquals("Update should report that exit code is zero",

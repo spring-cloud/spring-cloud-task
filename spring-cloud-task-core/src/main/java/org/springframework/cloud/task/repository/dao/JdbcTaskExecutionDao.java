@@ -36,23 +36,23 @@ import org.springframework.util.StringUtils;
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 
-	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%TASK_EXECUTION"
+	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
 			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE) values (?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_PARAMETER = "INSERT into "
-			+ "%PREFIX%TASK_EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
+			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
 
 	private static final String CHECK_TASK_EXECUTION_EXISTS = "SELECT COUNT(*) FROM "
-			+ "%PREFIX%TASK_EXECUTION WHERE TASK_EXECUTION_ID = ?";
+			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
 
-	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%TASK_EXECUTION set "
+	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
 			+ "START_TIME = ?, END_TIME = ?, TASK_NAME = ?, EXIT_CODE = ?, "
 			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ?, STATUS_CODE = ? "
 			+ "where TASK_EXECUTION_ID = ?";
 
 
-	private static final String DEFAULT_TABLE_PREFIX = "";
+	private static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
@@ -65,8 +65,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void saveTaskExecution(TaskExecution taskExecution) {
-		validateTaskExecution(taskExecution);
-
 		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
 				taskExecution.getStartTime(), taskExecution.getEndTime(),
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
@@ -82,9 +80,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void updateTaskExecution(TaskExecution taskExecution) {
-
-		validateTaskExecution(taskExecution);
-
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
@@ -112,17 +107,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 */
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;
-	}
-
-	/**
-	 * Validate TaskExecution. At a minimum a startTime.
-	 *
-	 * @param taskExecution the taskExecution to be evaluagted.
-	 */
-	private void validateTaskExecution(TaskExecution taskExecution) {
-		Assert.notNull(taskExecution, "taskExecution should not be null");
-		Assert.notNull(taskExecution.getExecutionId(), "taskExecutionId should not be null");
-		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
 	}
 
 	private String getQuery(String base) {

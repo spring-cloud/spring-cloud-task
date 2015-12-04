@@ -22,8 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.TaskDatabaseInitializer;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Base {@code Configuration} class providing common structure for enabling and using
@@ -39,6 +39,7 @@ import org.springframework.core.io.ResourceLoader;
  *
  * @author Glenn Renfro
  */
+@EnableTransactionManagement
 @Configuration
 public class SimpleTaskConfiguration {
 
@@ -49,7 +50,10 @@ public class SimpleTaskConfiguration {
 	private Collection<DataSource> dataSources;
 
 	@Autowired
-	ResourceLoader resourceLoader;
+	private ResourceLoader resourceLoader;
+
+	@Value("${spring.class.initialize.enable:true}")
+	private Boolean taskInitializationEnable;
 
 	private boolean initialized = false;
 
@@ -67,14 +71,6 @@ public class SimpleTaskConfiguration {
 	public TaskRepository taskRepository(){
 		return taskRepository;
 	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "spring.task.initialize", value = "enable", matchIfMissing = true)
-	public TaskDatabaseInitializer taskDatabaseInitializer(){
-		return new TaskDatabaseInitializer();
-	}
-
 
 	/**
 	 * Sets up the basic components by extracting them from the {@link TaskConfigurer}, defaulting to some
@@ -101,6 +97,9 @@ public class SimpleTaskConfiguration {
 			}
 			else if (dataSources != null && dataSources.size() == 1) {
 				DataSource dataSource = dataSources.iterator().next();
+				if(taskInitializationEnable) {
+					TaskDatabaseInitializer.initializeDatabase(dataSource, resourceLoader);
+				}
 				this.configurer = new DefaultTaskConfigurer(dataSource);
 				return this.configurer;
 			}

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.util.TestUtils;
+import org.springframework.cloud.task.util.TestVerifierUtils;
 
 /**
  * Executes unit tests on MapTaskExecutionDaoTests.
@@ -34,23 +34,23 @@ public class MapTaskExecutionDaoTests {
 	@Test
 	public void saveTaskExecution(){
 		MapTaskExecutionDao dao = new MapTaskExecutionDao();
-		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 		Map<String, TaskExecution> taskExecutionMap = dao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	public void updateTaskExecution(){
 		MapTaskExecutionDao dao = new MapTaskExecutionDao();
-		TaskExecution expectedTaskExecution = TestUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 		dao.updateTaskExecution(expectedTaskExecution);
 		Map<String, TaskExecution> taskExecutionMap = dao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
-		TestUtils.verifyTaskExecution(expectedTaskExecution,
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
 	}
 

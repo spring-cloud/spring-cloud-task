@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.util.Assert;
+
 /**
  * Represents the state of the Task for each execution.
  *
@@ -27,24 +29,6 @@ import java.util.List;
  */
 
 public class TaskExecution {
-
-	public TaskExecution() {
-		parameters = new ArrayList<>();
-	}
-
-	public TaskExecution(String executionId, int exitCode, String taskName,
-						 Date startTime, Date endTime, String statusCode,
-						 String exitMessage, List<String> parameters) {
-		this.executionId = executionId;
-		this.exitCode = exitCode;
-		this.taskName = taskName;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.statusCode = statusCode;
-		this.exitMessage = exitMessage;
-		this.parameters = parameters;
-	}
-
 	/**
 	 * The unique id  associated with the task execution.
 	 */
@@ -84,6 +68,27 @@ public class TaskExecution {
 	 * The parameters that were used for this task execution.
 	 */
 	private List<String> parameters;
+
+	public TaskExecution() {
+		parameters = new ArrayList<>();
+	}
+
+	public TaskExecution(String executionId, int exitCode, String taskName,
+						 Date startTime, Date endTime, String statusCode,
+						 String exitMessage, List<String> parameters) {
+
+		Assert.hasText(executionId, "executionId must not be null nor empty");
+		Assert.notNull(parameters, "parameters must not be null");
+		Assert.notNull(startTime, "startTime must not be null");
+		this.executionId = executionId;
+		this.exitCode = exitCode;
+		this.taskName = taskName;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.statusCode = statusCode;
+		this.exitMessage = exitMessage;
+		this.parameters = parameters;
+	}
 
 	public String getExecutionId() {
 		return executionId;

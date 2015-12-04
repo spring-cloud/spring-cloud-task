@@ -16,14 +16,20 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.cloud.task.annotation.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.util.TestUtils;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.cloud.task.util.TaskExecutionCreator;
+import org.springframework.cloud.task.util.TestDBUtils;
+import org.springframework.cloud.task.util.TestVerifierUtils;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Tests for the SimpleTaskRepository that uses JDBC as a datastore.
@@ -32,56 +38,64 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
  */
 public class SimpleTaskRepositoryJdbcTests {
 
-	private EmbeddedDatabase db;
-
 	private TaskRepository taskRepository;
 
-	@Before
-	public void setUp() {
-		db = new EmbeddedDatabaseBuilder()
-				.generateUniqueName(true)
-				.addScripts("task-schema.sql")
-				.build();
-		JdbcTaskRepositoryFactoryBean factoryBean =
-				new JdbcTaskRepositoryFactoryBean(db);
-		taskRepository = factoryBean.getObject();
+	private DataSource dataSource;
 
+	private AnnotationConfigApplicationContext context;
+
+	@Before
+	public void setup() {
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.register(TestConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+		this.context.refresh();
+		dataSource = this.context.getBean(DataSource.class);
+		JdbcTaskRepositoryFactoryBean factoryBean =
+				new JdbcTaskRepositoryFactoryBean(dataSource);
+		taskRepository = factoryBean.getObject();
 	}
 
 	@After
-	public void tearDown() {
-		db.shutdown();
+	public void close() {
+		if (this.context != null) {
+			this.context.close();
+		}
 	}
 
 	@Test
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(db,
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(dataSource,
 				expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
 	@Test
 	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionWithParams(taskRepository);
-		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(
-				db, expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
+		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
+				dataSource, expectedTaskExecution.getExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
 	@Test
 	public void testUpdateTaskExecution() {
 		TaskExecution expectedTaskExecution =
-				TestUtils.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TestUtils.updateTaskExecution(taskRepository,
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution = TaskExecutionCreator.updateTaskExecution(taskRepository,
 				expectedTaskExecution.getExecutionId());
-		TaskExecution actualTaskExecution = TestUtils.getTaskExecutionFromDB(
-				db, expectedTaskExecution.getExecutionId());
-		TestUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
+				dataSource, expectedTaskExecution.getExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
+	@EnableTask
+	protected static class TestConfiguration {
+	}
 
 }
 

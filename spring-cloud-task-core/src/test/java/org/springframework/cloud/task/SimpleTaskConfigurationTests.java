@@ -22,7 +22,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
@@ -35,16 +37,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Glenn Renfro
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SimpleTaskConfiguration.class)
+@ContextConfiguration(classes = {SimpleTaskConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
 public class SimpleTaskConfigurationTests {
 
 	@Autowired
 	private TaskRepository taskRepository;
 
 	@Test
-	public void testRepository() {
+	public void testRepository() throws Exception {
 		assertNotNull("testRepository should not be null", taskRepository);
-		assertThat(taskRepository, instanceOf(SimpleTaskRepository.class));
+		TaskRepository clazz = (TaskRepository) ((Advised)taskRepository).getTargetSource().getTarget();
+		assertThat(clazz, instanceOf(SimpleTaskRepository.class));
 	}
 }
 

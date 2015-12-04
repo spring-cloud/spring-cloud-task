@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.util.Assert;
 
 /**
  * Records the task execution information to the log and to TaskExecutionDao provided.
@@ -38,12 +39,14 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	@Override
 	public void update(TaskExecution taskExecution) {
+		validateTaskExecution(taskExecution);
 		taskExecutionDao.updateTaskExecution(taskExecution);
 		logger.info("Updating: " + taskExecution.toString());
 	}
 
 	@Override
 	public void createTaskExecution(TaskExecution taskExecution) {
+		validateTaskExecution(taskExecution);
 		taskExecutionDao.saveTaskExecution(taskExecution);
 		logger.info("Creating: " + taskExecution.toString());
 	}
@@ -55,5 +58,16 @@ public class SimpleTaskRepository implements TaskRepository {
 	 */
 	public TaskExecutionDao getTaskExecutionDao() {
 		return taskExecutionDao;
+	}
+
+	/**
+	 * Validate TaskExecution. At a minimum a startTime.
+	 *
+	 * @param taskExecution the taskExecution to be evaluagted.
+	 */
+	private void validateTaskExecution(TaskExecution taskExecution) {
+		Assert.notNull(taskExecution, "taskExecution should not be null");
+		Assert.notNull(taskExecution.getExecutionId(), "taskExecutionId should not be null");
+		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
 	}
 }
