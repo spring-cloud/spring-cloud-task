@@ -1,4 +1,4 @@
-= Spring Cloud Task
+= Spring Cloud Task [![Stories in Ready](https://badge.waffle.io/spring-cloud/spring-cloud-task.svg?label=ready&title=Ready)](http://waffle.io/spring-cloud/spring-cloud-task) [![Stories in Progress](https://badge.waffle.io/spring-cloud/spring-cloud-task.svg?label=In%20Progress&title=In%20Progress)](http://waffle.io/spring-cloud/spring-cloud-task)
 
 Is a project centered around the idea of processing on demand.  A user is able to develop
 a “task” that can be deployed, executed and removed on demand, yet the result of the
