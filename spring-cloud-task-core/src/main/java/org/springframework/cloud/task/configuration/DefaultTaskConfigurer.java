@@ -25,7 +25,6 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
-import org.springframework.util.Assert;
 
 /**
  * Default implementation of the TaskConfigurer interface.  If no {@link TaskConfigurer}
@@ -55,12 +54,11 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	public TaskRepository getTaskRepository() {
-		Assert.notNull(taskRepository, "taskRepository should not be null");
 		return taskRepository;
 	}
 
 	public TaskExplorer getTaskExplorer() {
-		return null;
+		throw new UnsupportedOperationException("method not implemented");
 		//TODO if datasource != null use TaskRepositoryFactoryBean from above like initialize method in DefaultBatchConfigurer
 	}
 
