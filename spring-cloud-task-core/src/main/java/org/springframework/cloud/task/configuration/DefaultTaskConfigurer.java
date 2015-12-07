@@ -25,14 +25,16 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.util.Assert;
 
 /**
- * If no {@link TaskConfigurer} is present, then this configuration will be used.
+ * Default implementation of the TaskConfigurer interface.  If no {@link TaskConfigurer}
+ * implementation is present, then this configuration will be used.
  * The following defaults will be used:
  * <ul>
  * <li>{@link SimpleTaskRepository} is the default {@link TaskRepository} returned.
  * If a data source is present then a data will be stored in the database {@link JdbcTaskExecutionDao} else it will
- * be stored in a map {@link MapTaskExecutionDao}.  </li>
+ * be stored in a map {@link MapTaskExecutionDao}.
  * </ul>
  *
  * @author Glenn Renfro
@@ -53,6 +55,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	public TaskRepository getTaskRepository() {
+		Assert.notNull(taskRepository, "taskRepository should not be null");
 		return taskRepository;
 	}
 

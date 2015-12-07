@@ -39,7 +39,7 @@ public enum DatabaseType {
 	ORACLE("Oracle"),
 	POSTGRES("PostgreSQL");
 
-	private static final Map<String, DatabaseType> nameMap;
+	private static final Map<String, DatabaseType> dbNameMap;
 
 	private final String productName;
 
@@ -47,11 +47,10 @@ public enum DatabaseType {
 		this.productName = productName;
 	}
 
-
 	static{
-		nameMap = new HashMap<String, DatabaseType>();
+		dbNameMap = new HashMap<String, DatabaseType>();
 		for(DatabaseType type: values()){
-			nameMap.put(type.getProductName(), type);
+			dbNameMap.put(type.getProductName(), type);
 		}
 	}
 
@@ -84,24 +83,22 @@ public enum DatabaseType {
 	/**
 	 * Static method to obtain a DatabaseType from the provided product name.
 	 *
-	 * @param productName
+	 * @param productName the name of the database.
 	 * @return DatabaseType for given product name.
 	 * @throws IllegalArgumentException if none is found.
 	 */
 	public static DatabaseType fromProductName(String productName){
-		if(!nameMap.containsKey(productName)){
+		if(!dbNameMap.containsKey(productName)){
 			throw new IllegalArgumentException("DatabaseType not found for product name: [" +
 					productName + "]");
 		}
 		else{
-			return nameMap.get(productName);
+			return dbNameMap.get(productName);
 		}
 	}
 
 	private String getProductName() {
 		return productName;
 	}
-
-
 
 }

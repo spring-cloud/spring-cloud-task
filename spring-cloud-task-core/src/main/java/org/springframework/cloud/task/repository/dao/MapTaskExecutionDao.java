@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.cloud.task.repository.TaskExecution;
 
 /**
- * Stores Task Execution Information to a in memory map.
+ * Stores Task Execution Information to a in-memory map.
  *
  * @author Glenn Renfro
  */
