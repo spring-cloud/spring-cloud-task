@@ -1,0 +1,26 @@
+= Timestamp Job
+
+This is a Spring Cloud Task application that logs a timestamp.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Classes:
+
+* TaskApplication - the Spring Boot Main Application
+* TimestampTask - the module that writes the log entry as Spring Task
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/timestamp-task-1.0.0.BUILD-SNAPSHOT.jar
+----
