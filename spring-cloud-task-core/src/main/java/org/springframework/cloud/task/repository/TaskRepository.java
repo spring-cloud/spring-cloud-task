@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * TaskRepository interface offers methods that create and update task execution
  * information.
@@ -36,5 +38,6 @@ public interface TaskRepository {
 	 *
 	 * @param taskExecution taskExecution to be recorded
 	 */
+	@Transactional
 	public void createTaskExecution(TaskExecution taskExecution);
 }

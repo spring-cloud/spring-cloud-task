@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.repository.support;
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.springframework.cloud.task.repository.dao;
 
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.repository.TaskRepository;
 
 /**
- * {@link TaskRepository} implementation that will log the task execution information.
+ * Data Access Object for task executions.
  *
  * @author Glenn Renfro
  */
-public class LoggerTaskRepository implements TaskRepository {
-	private final static Logger logger = LoggerFactory.getLogger(LoggerTaskRepository.class);
+public interface TaskExecutionDao {
 
-	@Override
-	public void update(TaskExecution taskExecution) {
-		logger.info("Updating: " + taskExecution.toString());
-	}
+	/**
+	 * Save a new {@link TaskExecution}.
+	 *
+	 * @param taskExecution the taskExecution to be stored.
+	 */
+	void saveTaskExecution(TaskExecution taskExecution);
 
-	@Override
-	public void createTaskExecution(TaskExecution taskExecution) {
-		logger.info("Creating: " + taskExecution.toString());
-	}
+	/**
+	 * Update and existing {@link TaskExecution}.
+	 *
+	 * @param taskExecution the taskExecution to be updated.
+	 */
+	void updateTaskExecution(TaskExecution taskExecution);
 }
