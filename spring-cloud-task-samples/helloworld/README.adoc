@@ -1,0 +1,27 @@
+= Timestamp Job
+
+This is Spring Cloud Task boot that uses java based configuration to enable the task.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Classes:
+
+* TaskApplication - the Spring Boot Main Application.
+* SampleTask - prints helloworld as a Spring Task for a class.
+* SampleTaskConfiguration - enables Spring Cloud Task.
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/helloworld-task-1.0.0.BUILD-SNAPSHOT-exec.jar
+----
