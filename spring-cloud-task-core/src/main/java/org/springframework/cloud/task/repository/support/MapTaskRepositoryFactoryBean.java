@@ -35,7 +35,8 @@ public class MapTaskRepositoryFactoryBean {
 	private TaskRepository taskRepository;
 
 	public MapTaskRepositoryFactoryBean(){
-		logger.debug("Creating SimpleTaskRepository that will use a MapTaskExecutionDao");
+		logger.debug(String.format("Creating SimpleTaskRepository that will use a %s",
+				MapTaskExecutionDao.class.getName()));
 		taskRepository = new SimpleTaskRepository(new MapTaskExecutionDao());
 	}
 

@@ -58,7 +58,7 @@ public class SimpleTaskConfiguration {
 	private ResourceLoader resourceLoader;
 
 	@Value("${spring.class.initialize.enable:true}")
-	private Boolean taskInitializationEnable;
+	private boolean taskInitializationEnable;
 
 	private boolean initialized = false;
 

@@ -65,7 +65,8 @@ public class JdbcTaskRepositoryFactoryBean {
 	 */
 	public TaskRepository getObject(){
 		TaskRepository taskRepository = null;
-		logger.debug("Creating SimpleTaskRepository that will use a JdbcTaskExecutionDao");
+		logger.debug(String.format("Creating SimpleTaskRepository that will use a %s",
+				JdbcTaskExecutionDao.class.getName()));
 		taskRepository =  new SimpleTaskRepository(createJdbcTaskExecutionDao());
 		return taskRepository;
 	}
