@@ -21,6 +21,8 @@ import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -42,6 +44,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @Configuration
 public class SimpleTaskConfiguration {
+
+	protected static final Log logger = LogFactory.getLog(SimpleTaskConfiguration.class);
+
 
 	@Autowired
 	private ApplicationContext context;
@@ -81,6 +86,7 @@ public class SimpleTaskConfiguration {
 		if (initialized) {
 			return;
 		}
+		logger.debug("Getting Task Configurer");
 		TaskConfigurer configurer = getConfigurer(context.getBeansOfType(TaskConfigurer.class).values());
 		taskRepository = configurer.getTaskRepository();
 		initialized = true;
@@ -88,19 +94,26 @@ public class SimpleTaskConfiguration {
 
 	private TaskConfigurer getConfigurer(Collection<TaskConfigurer> configurers) {
 		if (this.configurer != null) {
+			logger.debug(String.format("Using %s TaskConfigurer",
+					configurer.getClass().getName()));
 			return this.configurer;
 		}
 		if (configurers == null || configurers.isEmpty()) {
 			if (dataSources == null || dataSources.isEmpty()) {
 				this.configurer = new DefaultTaskConfigurer();
+				logger.debug(String.format("Using %s TaskConfigurer, with no datasource",
+						configurer.getClass().getName()));
 				return this.configurer;
 			}
 			else if (dataSources != null && dataSources.size() == 1) {
 				DataSource dataSource = dataSources.iterator().next();
 				if(taskInitializationEnable) {
+					logger.debug("Initializing Task Schema");
 					TaskDatabaseInitializer.initializeDatabase(dataSource, resourceLoader);
 				}
 				this.configurer = new DefaultTaskConfigurer(dataSource);
+				logger.debug(String.format("Using %s TaskConfigurer, with datasource",
+						configurer.getClass().getName()));
 				return this.configurer;
 			}
 			else {
@@ -114,6 +127,9 @@ public class SimpleTaskConfiguration {
 							+ configurers.size());
 		}
 		this.configurer = configurers.iterator().next();
+		logger.debug(String.format("More than one Task Configurer available.  Using"
+				+ " first in list: %s TaskConfigurer",
+				configurer.getClass().getName()));
 		return this.configurer;
 	}
 }

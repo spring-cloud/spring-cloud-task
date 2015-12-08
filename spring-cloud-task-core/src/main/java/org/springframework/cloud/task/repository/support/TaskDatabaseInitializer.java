@@ -18,6 +18,8 @@ package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -28,6 +30,8 @@ import org.springframework.jdbc.support.MetaDataAccessException;
  */
 
 public class TaskDatabaseInitializer {
+
+	private static final Log logger = LogFactory.getLog(TaskDatabaseInitializer.class);
 
 	private static final String DEFAULT_SCHEMA_LOCATION = "classpath:org/springframework/"
 			+ "cloud/task/schema-@@platform@@.sql";
@@ -54,6 +58,8 @@ public class TaskDatabaseInitializer {
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);
 			populator.addScript(resourceLoader.getResource(schemaLocation));
 			populator.setContinueOnError(false);
+			logger.debug(String.format("Initializing task schema for %s database",
+					platform));
 			DatabasePopulatorUtils.execute(populator, dataSource);
 		}
 	}

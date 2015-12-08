@@ -35,7 +35,7 @@ public class JdbcTaskRepositoryFactoryBean {
 
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
-	protected static final Log logger = LogFactory.getLog(JdbcTaskRepositoryFactoryBean.class);
+	private static final Log logger = LogFactory.getLog(JdbcTaskRepositoryFactoryBean.class);
 
 	private DataSource dataSource;
 
@@ -65,6 +65,7 @@ public class JdbcTaskRepositoryFactoryBean {
 	 */
 	public TaskRepository getObject(){
 		TaskRepository taskRepository = null;
+		logger.debug("Creating SimpleTaskRepository that will use a JdbcTaskExecutionDao");
 		taskRepository =  new SimpleTaskRepository(createJdbcTaskExecutionDao());
 		return taskRepository;
 	}

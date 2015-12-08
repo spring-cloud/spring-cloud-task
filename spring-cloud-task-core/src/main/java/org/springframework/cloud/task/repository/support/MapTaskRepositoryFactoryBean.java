@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 
@@ -28,9 +30,12 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
  */
 public class MapTaskRepositoryFactoryBean {
 
+	private static final Log logger = LogFactory.getLog(MapTaskRepositoryFactoryBean.class);
+
 	private TaskRepository taskRepository;
 
 	public MapTaskRepositoryFactoryBean(){
+		logger.debug("Creating SimpleTaskRepository that will use a MapTaskExecutionDao");
 		taskRepository = new SimpleTaskRepository(new MapTaskExecutionDao());
 	}
 

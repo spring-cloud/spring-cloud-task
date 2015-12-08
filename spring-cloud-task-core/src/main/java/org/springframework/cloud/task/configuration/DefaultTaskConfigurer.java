@@ -18,6 +18,8 @@ package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
@@ -39,6 +41,8 @@ import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
  * @author Glenn Renfro
  */
 public class DefaultTaskConfigurer implements TaskConfigurer {
+
+	private final static Logger logger = LoggerFactory.getLogger(DefaultTaskConfigurer.class);
 
 	private DataSource dataSource;
 
@@ -63,6 +67,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	private void initialize(){
+		logger.debug("Initializing TaskRepository");
 		if (dataSource == null) {
 			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
 					new MapTaskRepositoryFactoryBean();
