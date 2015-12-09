@@ -34,7 +34,7 @@ public class NoOpTaskExplorerTests {
 
 	@Test
 	public void testGetTaskExecution() throws Exception {
-		assertNull(taskExplorer.getTaskExecution(3l));
+		assertNull(taskExplorer.getTaskExecution("abc"));
 	}
 
 	@Test

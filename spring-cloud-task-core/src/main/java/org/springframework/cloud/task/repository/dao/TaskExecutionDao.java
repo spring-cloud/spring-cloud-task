@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 
 /**
@@ -38,4 +41,46 @@ public interface TaskExecutionDao {
 	 * @param taskExecution the taskExecution to be updated.
 	 */
 	void updateTaskExecution(TaskExecution taskExecution);
+
+	/**
+	 * Retrieves a task execution from the task repository.
+	 *
+	 * @param executionId the uuid associated with the task execution.
+	 * @return a fully qualified TaskExecution instance.
+	 */
+	TaskExecution getTaskExecution(String executionId);
+
+	/**
+	 * Retrieves current number of task executions for a taskName.
+	 *
+	 * @param taskName the name of the task to search for in the repository.
+	 * @return current number of task executions.
+	 */
+	long getTaskExecutionCount(String taskName);
+
+	/**
+	 * Retrieves a set of task executions that are running for a taskName.
+	 *
+	 * @param taskName the name of the task to search for in the repository.
+	 * @return set of running task executions.
+	 */
+	 Set<TaskExecution> findRunningTaskExecutions(String taskName);
+
+	/**
+	 * Retrieves a subset of task executions by task name, start location and size.
+	 *
+	 * @param taskName the name of the task to search for in the repository.
+	 * @param start the position of the first entry to be returned from result set.
+	 * @param count the number of entries to return
+	 * @return a list that contains task executions from the query bound by the start
+	 * position and count specified by the user.
+	 */
+	List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count);
+
+	/**
+	 * Retrieves a sorted list of distinct task names for the task executions.
+	 *
+	 * @return a list of distinct task names from the task repository..
+	 */
+	public List<String> getTaskNames();
 }

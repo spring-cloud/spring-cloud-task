@@ -20,32 +20,31 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 
 /**
- * Automates the creation of a {@link SimpleTaskRepository} which will persist task
- * execution data into a database. Requires the user to describe what kind of database
- * they are using.
+ * Automates the creation of a {@link SimpleTaskExplorer} which will retrieve task
+ * execution data from a database.
  *
  * @author Glenn Renfro
  */
-public class JdbcTaskRepositoryFactoryBean {
+public class JdbcTaskExplorerFactoryBean {
 
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
-	private static final Log logger = LogFactory.getLog(JdbcTaskRepositoryFactoryBean.class);
+	private static final Log logger = LogFactory.getLog(JdbcTaskExplorerFactoryBean.class);
 
 	private DataSource dataSource;
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
-	public JdbcTaskRepositoryFactoryBean(){
+	public JdbcTaskExplorerFactoryBean(){
 
 	}
 
-	public JdbcTaskRepositoryFactoryBean(DataSource dataSource)  {
+	public JdbcTaskExplorerFactoryBean(DataSource dataSource)  {
 		if(dataSource != null) {
 			this.dataSource = dataSource;
 		}
@@ -60,15 +59,15 @@ public class JdbcTaskRepositoryFactoryBean {
 	}
 
 	/**
-	 * Returns the a simpleTaskRepository that utilizes a JdbcTaskExecutionDao
+	 * Returns the a simpleTaskExplorer that utilizes a JdbcTaskExecutionDao
 	 * @return instance of task repository.
 	 */
-	public TaskRepository getObject(){
-		TaskRepository taskRepository = null;
-		logger.debug(String.format("Creating SimpleTaskRepository that will use a %s",
+	public TaskExplorer getObject(){
+		TaskExplorer taskExplorer = null;
+		logger.debug(String.format("Creating SimpleTaskExplorer that will use a %s",
 				JdbcTaskExecutionDao.class.getName()));
-		taskRepository =  new SimpleTaskRepository(createJdbcTaskExecutionDao());
-		return taskRepository;
+		taskExplorer =  new SimpleTaskExplorer(createJdbcTaskExecutionDao());
+		return taskExplorer;
 	}
 
 	private TaskExecutionDao createJdbcTaskExecutionDao()  {
@@ -76,4 +75,5 @@ public class JdbcTaskRepositoryFactoryBean {
 		dao.setTablePrefix(tablePrefix);
 		return dao;
 	}
+
 }

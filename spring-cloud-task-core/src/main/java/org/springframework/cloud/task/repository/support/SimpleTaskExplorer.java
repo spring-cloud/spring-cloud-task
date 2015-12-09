@@ -13,40 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.repository.support;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.util.Assert;
 
 /**
- * Provides a no-op TaskExplorer for development purposes.
+ * TaskExplorer for that gathers task information from a task repository.
  *
- * @author Michael Minella
+ * @author Glenn Renfro
  */
-public class NoOpTaskExplorer implements TaskExplorer {
+public class SimpleTaskExplorer implements TaskExplorer{
 
+	private TaskExecutionDao taskExecutionDao;
+
+	public SimpleTaskExplorer(TaskExecutionDao taskExecutionDao){
+		Assert.notNull(taskExecutionDao, "taskExecutionDao must not be null");
+		this.taskExecutionDao = taskExecutionDao;
+	}
+
+	@Override
 	public TaskExecution getTaskExecution(String executionId) {
-		return null;
+		return taskExecutionDao.getTaskExecution(executionId);
 	}
 
+	@Override
 	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
-		return new HashSet<TaskExecution>(0);
+		return taskExecutionDao.findRunningTaskExecutions(taskName);
 	}
 
+	@Override
 	public List<String> getTaskNames() {
-		return new ArrayList<String>(0);
+		return taskExecutionDao.getTaskNames();
 	}
 
+	@Override
 	public long getTaskExecutionCount(String taskName) {
-		return 0;
+		return taskExecutionDao.getTaskExecutionCount(taskName);
 	}
 
+	@Override
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
-		return new ArrayList<TaskExecution>(0);
+		return taskExecutionDao.getTaskExecutionsByName(taskName, start, count);
 	}
 }

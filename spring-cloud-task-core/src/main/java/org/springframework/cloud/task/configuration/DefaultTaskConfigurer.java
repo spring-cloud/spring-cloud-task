@@ -24,7 +24,9 @@ import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.repository.support.JdbcTaskExplorerFactoryBean;
 import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
+import org.springframework.cloud.task.repository.support.MapTaskExplorerFactoryBean;
 import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 
@@ -48,6 +50,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private TaskRepository taskRepository;
 
+	private TaskExplorer taskExplorer;
+
 	public DefaultTaskConfigurer(){
 		initialize();
 	}
@@ -62,8 +66,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	public TaskExplorer getTaskExplorer() {
-		throw new UnsupportedOperationException("method not implemented");
-		//TODO if datasource != null use TaskRepositoryFactoryBean from above like initialize method in DefaultBatchConfigurer
+		return taskExplorer;
 	}
 
 	private void initialize(){
@@ -72,11 +75,18 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
 					new MapTaskRepositoryFactoryBean();
 			taskRepository = mapTaskRepositoryFactoryBean.getObject();
+			MapTaskExplorerFactoryBean mapTaskExplorerFactoryBean =
+					new MapTaskExplorerFactoryBean();
+			taskExplorer = mapTaskExplorerFactoryBean.getObject();
+
 		}
 		else {
 			JdbcTaskRepositoryFactoryBean jdbcTaskRepositoryFactoryBean =
 					new JdbcTaskRepositoryFactoryBean(dataSource);
 			taskRepository = jdbcTaskRepositoryFactoryBean.getObject();
+			JdbcTaskExplorerFactoryBean jdbcTaskExplorerFactoryBean =
+					new JdbcTaskExplorerFactoryBean(dataSource);
+			taskExplorer = jdbcTaskExplorerFactoryBean.getObject();
 		}
 	}
 
