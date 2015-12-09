@@ -67,10 +67,9 @@ public class TaskDatabaseInitializerTests {
 				.queryForList("select * from TASK_EXECUTION").size());
 	}
 
-//	@Test
+	@Test
 	public void testNoDatabase() throws Exception {
 		SimpleTaskRepository repository = new SimpleTaskRepository(new MapTaskExecutionDao());
-		this.context.refresh();
 		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
 		assertEquals(0, dao.getTaskExecutions().size());

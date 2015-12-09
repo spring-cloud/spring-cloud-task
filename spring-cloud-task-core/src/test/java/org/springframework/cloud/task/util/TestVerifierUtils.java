@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +45,8 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @author Glenn Renfro
  */
 public class TestVerifierUtils {
+
+	public static final int PARAM_SIZE = 5;
 
 	/**
 	 * Creates a mock {@link Appender} to be added to the root logger.
@@ -92,6 +95,29 @@ public class TestVerifierUtils {
 		return new TaskExecution(executionId, exitCode, taskName,
 				startTime, endTime, statusCode,
 				exitMessage, new ArrayList<String>());
+	}
+
+	/**
+	 * Creates a fully populated TaskExecution for testing.
+	 *
+	 * @return
+	 */
+	public static TaskExecution createSampleTaskExecution() {
+		Random randomGenerator = new Random();
+		int exitCode = randomGenerator.nextInt();
+		Date startTime = new Date();
+		Date endTime = new Date();
+		String executionId = UUID.randomUUID().toString();
+		String taskName = UUID.randomUUID().toString();
+		String exitMessage = UUID.randomUUID().toString();
+		String statusCode = UUID.randomUUID().toString().substring(0, 9);
+		List<String> params = new ArrayList<>(PARAM_SIZE);
+		for (int i = 0 ; i < PARAM_SIZE ; i++){
+			params.add(UUID.randomUUID().toString());
+		}
+		return new TaskExecution(executionId, exitCode, taskName,
+				startTime, endTime, statusCode,
+				exitMessage, params);
 	}
 
 	/**

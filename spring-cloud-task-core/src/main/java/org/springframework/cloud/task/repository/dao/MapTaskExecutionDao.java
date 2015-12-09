@@ -16,8 +16,13 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,7 +51,67 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		taskExecutions.put(taskExecution.getExecutionId(), taskExecution);
 	}
 
-	public Map<String, TaskExecution> getTaskExecutions(){
+	@Override
+	public TaskExecution getTaskExecution(String executionId) {
+		return taskExecutions.get(executionId);
+	}
+
+	@Override
+	public long getTaskExecutionCount(String taskName) {
+		int count = 0;
+		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+			if (entry.getValue().getTaskName().equals(taskName)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
+		Set<TaskExecution> result = new HashSet<>();
+		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+			if (entry.getValue().getTaskName().equals(taskName) &&
+					entry.getValue().getEndTime() == null) {
+				result.add(entry.getValue());
+			}
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
+	@Override
+	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
+		List<TaskExecution> result = new ArrayList<>();
+		Set<TaskExecution> filteredSet = new HashSet<>();
+		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+			if (entry.getValue().getTaskName().equals(taskName)) {
+				filteredSet.add(entry.getValue());
+			}
+		}
+		int rowNum = 0;
+		Iterator<TaskExecution> rs = filteredSet.iterator();
+		while (rowNum < start && rs.hasNext()) {
+			rs.next();
+			rowNum++;
+		}
+		while (rowNum < start + count && rs.hasNext()) {
+			result.add(rs.next());
+			rowNum++;
+		}
+
+		return Collections.unmodifiableList(result);
+	}
+
+	@Override
+	public List<String> getTaskNames() {
+		Set<String> result = new HashSet<>();
+		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+			result.add(entry.getValue().getTaskName());
+		}
+		return Collections.unmodifiableList(new ArrayList(result));
+	}
+
+	public Map<String, TaskExecution> getTaskExecutions() {
 		return Collections.unmodifiableMap(taskExecutions);
 	}
 }

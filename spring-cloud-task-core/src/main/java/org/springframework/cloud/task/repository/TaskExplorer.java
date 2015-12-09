@@ -32,7 +32,7 @@ public interface TaskExplorer {
 	 * @param executionId the task execution id
 	 * @return the {@link TaskExecution} with this id, or null if not found
 	 */
-	public TaskExecution getTaskExecution(Long executionId);
+	public TaskExecution getTaskExecution(String executionId);
 
 
 	/**
