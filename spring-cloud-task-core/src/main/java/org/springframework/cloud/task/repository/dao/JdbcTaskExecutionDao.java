@@ -187,8 +187,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public List<TaskExecution> getTaskExecutionsByName(String taskName, final int start,
-													   final int count) {
+	public List<TaskExecution> getTaskExecutionsByName(String taskName, final int start, final int count) {
 		ResultSetExtractor<List<TaskExecution>> extractor =
 				new ResultSetExtractor<List<TaskExecution>>() {
 
@@ -228,7 +227,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					}
 				});
 	}
-
 
 	private String getQuery(String base) {
 		return StringUtils.replace(base, "%PREFIX%", tablePrefix);
@@ -297,7 +295,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			taskExecution.setStatusCode(rs.getString("STATUS_CODE"));
 			taskExecution.setTaskName(rs.getString("TASK_NAME"));
 			taskExecution.setParameters(getTaskParameters(id));
-
 			return taskExecution;
 		}
 	}
