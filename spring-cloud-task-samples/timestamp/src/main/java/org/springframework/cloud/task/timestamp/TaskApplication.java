@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package demo;
+package org.springframework.cloud.task.timestamp;
 
 
 import java.text.DateFormat;

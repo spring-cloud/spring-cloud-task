@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package demo;
+package org.springframework.cloud.task.timestamp;
 
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +28,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.OutputCapture;
 
 /**
+ * Verifies that the Task Application outputs the correct task log entries.
+ *
  * @author Glenn Renfro
  */
 public class TaskApplicationTests {
@@ -37,27 +39,30 @@ public class TaskApplicationTests {
 
 	@Test
 	public void testTimeStampApp() throws Exception {
+		final String TEST_DATE_DOTS = ".......";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId='";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution{executionId='";
-		String[] args = { };
+		String[] args = { "--format=yyyy" + TEST_DATE_DOTS };
 
 		assertEquals(0, SpringApplication.exit(SpringApplication
 				.run(TaskApplication.class, args)));
 
 		String output = this.outputCapture.toString();
+		assertTrue("Unable to find the timestamp: " + output,
+				output.contains(TEST_DATE_DOTS));
 		assertTrue("Test results do not show create task message: " + output,
 				output.contains(CREATE_TASK_MESSAGE));
 		assertTrue("Test results do not show success message: " + output,
 				output.contains(UPDATE_TASK_MESSAGE));
 
-		String taskTitle = "demo.SampleTask";
+		String taskTitle = "Demo Timestamp Task";
 		Pattern pattern = Pattern.compile(taskTitle);
 		Matcher matcher = pattern.matcher(output);
 		int count = 0;
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 3, count);
+		assertEquals("The number of task titles did not match expected: ", 2, count);
 	}
 
 }

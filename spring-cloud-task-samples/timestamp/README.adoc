@@ -1,6 +1,6 @@
 = Timestamp Job
 
-This is Spring Cloud Task boot application that logs a timestamp .
+This is a Spring Cloud Task application that logs a timestamp.
 
 == Requirements:
 

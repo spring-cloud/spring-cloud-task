@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package demo;
+package org.springframework.cloud.task.timestamp;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.Assert;
 
 /**
- * Bootstrap Spring Boot application.
- *
  * @author Glenn Renfro
  */
-@SpringBootApplication
-public class TaskApplication {
-	
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(TaskApplication.class);
+@ConfigurationProperties
+public class TimestampTaskProperties {
+
+	/**
+	 * The timestamp format, "yyyy-MM-dd HH:mm:ss.SSS" by default.
+	 */
+	private String format = "yyyy-MM-dd HH:mm:ss.SSS";
+
+	public String getFormat() {
+		Assert.hasText(format, "format must not be empty nor null");
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 }

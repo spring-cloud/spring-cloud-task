@@ -21,7 +21,6 @@
 
 	<modules>
 		<module>timestamp</module>
-		<module>helloworld</module>
 	</modules>
 
 	<build>
