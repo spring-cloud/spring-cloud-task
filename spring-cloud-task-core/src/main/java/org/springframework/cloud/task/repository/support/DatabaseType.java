@@ -37,6 +37,7 @@ public enum DatabaseType {
 
 	HSQL("HSQL Database Engine"),
 	ORACLE("Oracle"),
+	MYSQL("MySQL"),
 	POSTGRES("PostgreSQL");
 
 	private static final Map<String, DatabaseType> dbNameMap;

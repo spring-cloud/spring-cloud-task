@@ -53,11 +53,14 @@ public class TaskDatabaseInitializer {
 			if ("oracle".equals(platform)) {
 				platform = "oracle10g";
 			}
+			if ("mysql".equals(platform)) {
+				platform = "mysql";
+			}
 			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 			String schemaLocation = schema;
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);
 			populator.addScript(resourceLoader.getResource(schemaLocation));
-			populator.setContinueOnError(false);
+			populator.setContinueOnError(true);
 			logger.debug(String.format("Initializing task schema for %s database",
 					platform));
 			DatabasePopulatorUtils.execute(populator, dataSource);
