@@ -118,6 +118,23 @@ public class SimpleTaskExplorerTests {
 	}
 
 	@Test
+	public void taskExecutionNotFound() {
+		final int TEST_COUNT = 5;
+		Map<String, TaskExecution> expectedResults = new HashMap<>();
+		for (int i = 0; i < TEST_COUNT; i++) {
+			TaskExecution expectedTaskExecution = createAndSaveTaskExecution();
+			expectedResults.put(expectedTaskExecution.getExecutionId(),
+					expectedTaskExecution);
+		}
+
+		TaskExecution actualTaskExecution =
+				taskExplorer.getTaskExecution("NO_EXECUTION_PRESENT");
+			assertNull(String.format(
+					"expected null for actualTaskExecution %s", testType),
+					actualTaskExecution);
+	}
+
+	@Test
 	public void getTaskCountByTaskName() {
 		final int TEST_COUNT = 5;
 		Map<String, TaskExecution> expectedResults = new HashMap<>();
