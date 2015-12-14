@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
@@ -30,7 +31,7 @@ import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
  *
  * @author Glenn Renfro
  */
-public class JdbcTaskExplorerFactoryBean {
+public class JdbcTaskExplorerFactoryBean implements FactoryBean<TaskExplorer>{
 
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
@@ -68,6 +69,16 @@ public class JdbcTaskExplorerFactoryBean {
 				JdbcTaskExecutionDao.class.getName()));
 		taskExplorer =  new SimpleTaskExplorer(createJdbcTaskExecutionDao());
 		return taskExplorer;
+	}
+
+	@Override
+	public Class<?> getObjectType() {
+		return TaskExplorer.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		return true;
 	}
 
 	private TaskExecutionDao createJdbcTaskExecutionDao()  {

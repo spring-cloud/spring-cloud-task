@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,11 +28,9 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
@@ -83,7 +80,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
 			+ "from %PREFIX%EXECUTION where TASK_NAME = ? "
-			+ "order by TASK_EXECUTION_ID";
+			+ "order by TASK_EXECUTION_ID "
+			+ "LIMIT ? OFFSET ?";
 
 	final String FIND_TASK_NAMES = "SELECT distinct TASK_NAME from %PREFIX%EXECUTION order by TASK_NAME";
 
@@ -172,60 +170,22 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
 		final Set<TaskExecution> result = new HashSet<TaskExecution>();
-		RowCallbackHandler handler = new RowCallbackHandler() {
-			@Override
-			public void processRow(ResultSet rs) throws SQLException {
-				TaskExecutionRowMapper mapper = new TaskExecutionRowMapper();
-				result.add(mapper.mapRow(rs, 0));
-			}
-		};
-		jdbcTemplate.query(getQuery(FIND_RUNNING_TASK_EXECUTIONS),
-				new Object[] { taskName }, handler);
-
+		List resultList = jdbcTemplate.query(getQuery(FIND_RUNNING_TASK_EXECUTIONS),
+				new Object[]{ taskName }, new TaskExecutionRowMapper());
+		result.addAll(resultList);
 		return result;
 
 	}
 
 	@Override
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, final int start, final int count) {
-		ResultSetExtractor<List<TaskExecution>> extractor =
-				new ResultSetExtractor<List<TaskExecution>>() {
-
-			private List<TaskExecution> list = new ArrayList<TaskExecution>();
-
-			@Override
-			public List<TaskExecution> extractData(ResultSet rs) throws SQLException,
-					DataAccessException {
-				int rowNum = 0;
-				while (rowNum < start && rs.next()) {
-					rowNum++;
-				}
-				while (rowNum < start + count && rs.next()) {
-					RowMapper<TaskExecution> rowMapper = new TaskExecutionRowMapper();
-					list.add(rowMapper.mapRow(rs, rowNum));
-					rowNum++;
-				}
-				return list;
-			}
-
-		};
-
-		List<TaskExecution> result = jdbcTemplate.query(getQuery(FIND_TASK_EXECUTIONS),
-				new Object[] { taskName }, extractor);
-
-		return result;
+		return jdbcTemplate.query(getQuery(FIND_TASK_EXECUTIONS),
+				new Object[]{ taskName, count, start + 1 }, new TaskExecutionRowMapper());
 	}
 
 	@Override
 	public List<String> getTaskNames() {
-		return jdbcTemplate.query(getQuery(FIND_TASK_NAMES),
-				new RowMapper<String>() {
-					@Override
-					public String mapRow(ResultSet rs, int rowNum)
-							throws SQLException {
-						return rs.getString(1);
-					}
-				});
+		return jdbcTemplate.queryForList(getQuery(FIND_TASK_NAMES), String.class);
 	}
 
 	private String getQuery(String base) {
@@ -269,13 +229,11 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		jdbcTemplate.query(getQuery(FIND_PARAMS_FROM_ID), new Object[] { executionId },
 				handler);
-		return Collections.unmodifiableList(params);
+		return params;
 
 	}
 	/**
 	 * Re-usable mapper for {@link TaskExecution} instances.
-	 *
-	 * @author Dave Syer
 	 *
 	 */
 	private final class TaskExecutionRowMapper implements RowMapper<TaskExecution> {
@@ -285,9 +243,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		@Override
 		public TaskExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
-			String  id = rs.getString(1);
+			String  id = rs.getString("TASK_EXECUTION_ID");
 			TaskExecution taskExecution=new TaskExecution();
-			taskExecution.setExecutionId(rs.getString(1));
+			taskExecution.setExecutionId(id);
 			taskExecution.setStartTime(rs.getTimestamp("START_TIME"));
 			taskExecution.setEndTime(rs.getTimestamp("END_TIME"));
 			taskExecution.setExitCode(rs.getInt("EXIT_CODE"));

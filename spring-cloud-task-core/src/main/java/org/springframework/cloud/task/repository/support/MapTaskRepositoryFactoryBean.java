@@ -18,6 +18,7 @@ package org.springframework.cloud.task.repository.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 
@@ -28,7 +29,7 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
  *
  * @author Glenn Renfro
  */
-public class MapTaskRepositoryFactoryBean {
+public class MapTaskRepositoryFactoryBean implements FactoryBean<TaskRepository>{
 
 	private static final Log logger = LogFactory.getLog(MapTaskRepositoryFactoryBean.class);
 
@@ -46,5 +47,15 @@ public class MapTaskRepositoryFactoryBean {
 	 */
 	public TaskRepository getObject(){
 		return taskRepository;
+	}
+
+	@Override
+	public Class<?> getObjectType() {
+		return TaskRepository.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		return true;
 	}
 }
