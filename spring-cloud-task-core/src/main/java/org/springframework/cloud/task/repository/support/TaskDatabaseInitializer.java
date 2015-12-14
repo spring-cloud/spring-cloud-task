@@ -29,7 +29,7 @@ import org.springframework.jdbc.support.MetaDataAccessException;
  * @author Glenn Renfro
  */
 
-public class TaskDatabaseInitializer {
+public final class TaskDatabaseInitializer {
 
 	private static final Log logger = LogFactory.getLog(TaskDatabaseInitializer.class);
 
@@ -40,6 +40,10 @@ public class TaskDatabaseInitializer {
 	 * Path to the SQL file to use to initialize the database schema.
 	 */
 	private static String schema = DEFAULT_SCHEMA_LOCATION;
+
+	private TaskDatabaseInitializer(){
+
+	}
 
 	public static void initializeDatabase(DataSource dataSource, ResourceLoader resourceLoader) {
 		if (dataSource != null) {

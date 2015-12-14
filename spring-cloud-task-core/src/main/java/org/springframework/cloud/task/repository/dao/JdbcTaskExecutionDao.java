@@ -70,7 +70,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(),
 				taskExecution.getStatusCode() };
-		int addCount = jdbcTemplate.update(
+		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR,
@@ -91,7 +91,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(), taskExecution.getStatusCode(),
 				taskExecution.getExecutionId() };
-		int count = jdbcTemplate.update(
+		jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.INTEGER,
@@ -131,11 +131,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * TASK_EXECUTION_PARAMS table.
 	 */
 	private void insertParameter(String executionId, String param) {
-
-		Object[] args = new Object[0];
 		int[] argTypes = new int[]{ Types.VARCHAR, Types.VARCHAR };
-
-		args = new Object[]{ executionId, param };
+		Object[] args = new Object[]{ executionId, param };
 		jdbcTemplate.update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
 	}
 
