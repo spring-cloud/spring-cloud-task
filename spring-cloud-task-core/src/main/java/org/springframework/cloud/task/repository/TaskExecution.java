@@ -83,11 +83,11 @@ public class TaskExecution {
 		this.executionId = executionId;
 		this.exitCode = exitCode;
 		this.taskName = taskName;
-		this.startTime = startTime;
-		this.endTime = endTime;
 		this.statusCode = statusCode;
 		this.exitMessage = exitMessage;
 		this.parameters = parameters;
+		setStartTime(startTime);
+		setEndTime(endTime);
 	}
 
 	public String getExecutionId() {
@@ -115,19 +115,19 @@ public class TaskExecution {
 	}
 
 	public Date getStartTime() {
-		return startTime;
+		return (startTime != null) ? (Date)startTime.clone() : null;
 	}
 
 	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+		this.startTime = (startTime != null) ? (Date)startTime.clone() : null;
 	}
 
 	public Date getEndTime() {
-		return endTime;
+		return (endTime != null) ? (Date)endTime.clone() : null;
 	}
 
 	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
+		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 	}
 
 	public String getStatusCode() {
