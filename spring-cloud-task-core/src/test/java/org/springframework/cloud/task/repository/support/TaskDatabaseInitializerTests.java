@@ -27,12 +27,12 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.annotation.EnableTask;
-import org.springframework.cloud.task.configuration.TaskConfigurer;
-import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -88,7 +88,7 @@ public class TaskDatabaseInitializerTests {
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleDataSourcesContext() throws Exception {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register( TestConfiguration.class,
+		this.context.register( SimpleTaskConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		DataSource dataSource = mock(DataSource.class);
@@ -96,19 +96,6 @@ public class TaskDatabaseInitializerTests {
 		this.context.refresh();
 	}
 
-	@EnableTask
-	protected static class TestConfiguration {
-	}
-
-	@EnableTask
-	protected static class TestCustomConfiguration implements TaskConfigurer {
-		@Override
-		public TaskRepository getTaskRepository() {
-			return new SimpleTaskRepository(new MapTaskExecutionDao());
-		}
-	}
-
 	@Configuration
-	protected static class EmptyConfiguration {
-	}
+	public static class EmptyConfiguration {}
 }

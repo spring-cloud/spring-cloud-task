@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.annotation;
+package org.springframework.cloud.task.configuration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,16 +24,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
-import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.annotation.Import;
 
 /**
  * <p>
- * Enable Spring Task features and provide a base configuration for setting up
- * {@link Task} objects in an &#064;Configuration class.
+ * Enable Spring Task features.
  *
  * <pre class="code">
  * &#064;Configuration

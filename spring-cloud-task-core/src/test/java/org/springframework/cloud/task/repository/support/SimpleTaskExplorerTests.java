@@ -40,16 +40,18 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.annotation.EnableTask;
+import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
-import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author Glenn Renfro
@@ -59,11 +61,17 @@ public class SimpleTaskExplorerTests {
 
 	private AnnotationConfigApplicationContext context;
 
+	@Autowired(required = false)
 	private DataSource dataSource;
 
+	@Autowired
 	private TaskExecutionDao dao;
 
+	@Autowired
 	private TaskExplorer taskExplorer;
+
+	@Autowired
+	private ResourceLoader resourceLoader;
 
 	private DaoType testType;
 
@@ -84,9 +92,11 @@ public class SimpleTaskExplorerTests {
 
 		if(testType == DaoType.jdbc){
 			initializeJdbcExplorerTest();
-		}else{
+		}
+		else{
 			initializeMapExplorerTest();
 		}
+
 		taskExplorer = new SimpleTaskExplorer(dao);
 	}
 
@@ -242,23 +252,27 @@ public class SimpleTaskExplorerTests {
 		return taskExecution;
 	}
 
-	@EnableTask
-	protected static class TestConfiguration {
-	}
-
 	private void initializeJdbcExplorerTest(){
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.register(TestConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
-		dataSource = this.context.getBean(DataSource.class);
-		dao = new JdbcTaskExecutionDao(dataSource);
+
+		context.getAutowireCapableBeanFactory().autowireBeanProperties(this,
+				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
 
-	private void initializeMapExplorerTest(){
-		dao = new MapTaskExecutionDao();
+	private void initializeMapExplorerTest() {
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.register(TestConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+		this.context.refresh();
+
+		context.getAutowireCapableBeanFactory().autowireBeanProperties(this,
+				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
+
 
 	private enum DaoType{jdbc, map}
 }

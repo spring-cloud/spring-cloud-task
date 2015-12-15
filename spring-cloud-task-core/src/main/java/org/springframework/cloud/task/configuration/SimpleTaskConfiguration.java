@@ -23,15 +23,17 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.TaskDatabaseInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -41,12 +43,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  * @author Glenn Renfro
  */
-@EnableTransactionManagement
 @Configuration
+@EnableTransactionManagement
 public class SimpleTaskConfiguration {
 
 	protected static final Log logger = LogFactory.getLog(SimpleTaskConfiguration.class);
-
 
 	@Autowired
 	private ApplicationContext context;
@@ -66,15 +67,21 @@ public class SimpleTaskConfiguration {
 
 	private TaskConfigurer configurer;
 
-	@Bean
-	@Scope("prototype")
-	public TaskHandler taskHandler() {
-		return new TaskHandler();
-	}
+	private PlatformTransactionManager transactionManager;
 
 	@Bean
 	public TaskRepository taskRepository(){
 		return taskRepository;
+	}
+
+	@Bean
+	public TaskLifecycleListener taskLifecycleListener() {
+		return new TaskLifecycleListener(taskRepository());
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		return this.transactionManager;
 	}
 
 	/**
@@ -93,6 +100,7 @@ public class SimpleTaskConfiguration {
 		logger.debug(String.format("Using %s TaskConfigurer",
 				configurer.getClass().getName()));
 		taskRepository = configurer.getTaskRepository();
+		transactionManager = configurer.getTransactionManager();
 		initialized = true;
 	}
 

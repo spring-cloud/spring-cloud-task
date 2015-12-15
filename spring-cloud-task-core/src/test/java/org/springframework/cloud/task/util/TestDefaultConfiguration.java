@@ -16,8 +16,7 @@
 
 package org.springframework.cloud.task.util;
 
-import org.aspectj.lang.JoinPoint;
-import org.springframework.cloud.task.configuration.TaskHandler;
+		import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
@@ -38,14 +37,7 @@ public class TestDefaultConfiguration {
 	}
 
 	@Bean
-	public TaskHandler taskHandler(){
-		return new TaskHandler();
+	public TaskLifecycleListener taskHandler(){
+		return new TaskLifecycleListener(taskRepository());
 	}
-
-	@Bean
-	public JoinPoint joinPoint(){
-		return new TestJoinPoint();
-	}
-
-
 }

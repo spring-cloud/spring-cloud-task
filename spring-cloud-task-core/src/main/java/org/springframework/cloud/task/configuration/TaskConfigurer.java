@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.task.configuration;
 
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Provides a strategy interface for providing configuration
@@ -33,4 +35,7 @@ public interface TaskConfigurer {
 	 */
 	public TaskRepository getTaskRepository();
 
+	public PlatformTransactionManager getTransactionManager();
+
+	public TaskExplorer getTaskExplorer();
 }
