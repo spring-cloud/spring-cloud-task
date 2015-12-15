@@ -25,16 +25,15 @@ $ mvn -s settings.xml clean install
 public class MyApp {
 
 	@Bean
-	public MyTask myTask() {
-		return new MyTask();
+	public MyTaskApplication myTask() {
+		return new MyTaskApplication();
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(MyApp.class);
 	}
 
-	@Task("HelloWorldTask")
-	public static class MyTask implements CommandLineRunner {
+	public static class MyTaskApplication implements CommandLineRunner {
 
 		@Override
 		public void run(String... strings) throws Exception {

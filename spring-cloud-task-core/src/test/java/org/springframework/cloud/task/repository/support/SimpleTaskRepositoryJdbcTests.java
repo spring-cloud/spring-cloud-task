@@ -21,9 +21,10 @@ import javax.sql.DataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.annotation.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
@@ -47,7 +48,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Before
 	public void setup() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register(TestConfiguration.class,
+		this.context.register(SimpleTaskConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
@@ -92,10 +93,5 @@ public class SimpleTaskRepositoryJdbcTests {
 				dataSource, expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
-
-	@EnableTask
-	protected static class TestConfiguration {
-	}
-
 }
 

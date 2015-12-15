@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
@@ -29,6 +31,8 @@ import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFacto
 import org.springframework.cloud.task.repository.support.MapTaskExplorerFactoryBean;
 import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Default implementation of the TaskConfigurer interface.  If no {@link TaskConfigurer}
@@ -52,6 +56,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private TaskExplorer taskExplorer;
 
+	private PlatformTransactionManager transactionManager;
+
 	public DefaultTaskConfigurer(){
 		initialize();
 	}
@@ -61,12 +67,19 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		initialize();
 	}
 
+	@Override
 	public TaskRepository getTaskRepository() {
 		return taskRepository;
 	}
 
+	@Override
 	public TaskExplorer getTaskExplorer() {
 		return taskExplorer;
+	}
+
+	@Override
+	public PlatformTransactionManager getTransactionManager() {
+		return this.transactionManager;
 	}
 
 	private void initialize(){
@@ -78,6 +91,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 			MapTaskExplorerFactoryBean mapTaskExplorerFactoryBean =
 					new MapTaskExplorerFactoryBean();
 			taskExplorer = mapTaskExplorerFactoryBean.getObject();
+			transactionManager = new ResourcelessTransactionManager();
 
 		}
 		else {
@@ -87,6 +101,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 			JdbcTaskExplorerFactoryBean jdbcTaskExplorerFactoryBean =
 					new JdbcTaskExplorerFactoryBean(dataSource);
 			taskExplorer = jdbcTaskExplorerFactoryBean.getObject();
+			transactionManager = new DataSourceTransactionManager(dataSource);
 		}
 	}
 
