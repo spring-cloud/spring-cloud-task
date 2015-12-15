@@ -82,54 +82,52 @@ public class SimpleTaskConfiguration {
 	 * sensible values as long as a unique DataSource is available.
 	 */
 	@PostConstruct
-	private void initialize()  {
+	protected void initialize()  {
 		if (initialized) {
 			return;
 		}
 		logger.debug("Getting Task Configurer");
-		TaskConfigurer configurer = getConfigurer(context.getBeansOfType(TaskConfigurer.class).values());
+		if (configurer == null) {
+			configurer = getDefaultConfigurer(context.getBeansOfType(TaskConfigurer.class).values());
+		}
+		logger.debug(String.format("Using %s TaskConfigurer",
+				configurer.getClass().getName()));
 		taskRepository = configurer.getTaskRepository();
 		initialized = true;
 	}
 
-	private TaskConfigurer getConfigurer(Collection<TaskConfigurer> configurers) {
-		if (this.configurer != null) {
-			logger.debug(String.format("Using %s TaskConfigurer",
-					configurer.getClass().getName()));
-			return this.configurer;
-		}
+	private TaskConfigurer getDefaultConfigurer(Collection<TaskConfigurer> configurers) {
+		boolean isDataSourceConfigured = (dataSources != null && !dataSources.isEmpty())
+				? true : false;
+		verifyEnvironment(configurers);
 		if (configurers == null || configurers.isEmpty()) {
-			if (dataSources == null || dataSources.isEmpty()) {
+			if (!isDataSourceConfigured) {
 				this.configurer = new DefaultTaskConfigurer();
-				logger.debug(String.format("Using %s TaskConfigurer, with no datasource",
-						configurer.getClass().getName()));
 				return this.configurer;
 			}
-			else if (dataSources != null && dataSources.size() == 1) {
+			else {
 				DataSource dataSource = dataSources.iterator().next();
 				if(taskInitializationEnable) {
 					logger.debug("Initializing Task Schema");
 					TaskDatabaseInitializer.initializeDatabase(dataSource, resourceLoader);
 				}
 				this.configurer = new DefaultTaskConfigurer(dataSource);
-				logger.debug(String.format("Using %s TaskConfigurer, with datasource",
-						configurer.getClass().getName()));
 				return this.configurer;
 			}
-			else {
-				throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
-						"one DataSource, found " + dataSources.size());
-			}
+		}
+		this.configurer = configurers.iterator().next();
+		return this.configurer;
+	}
+
+	private void verifyEnvironment(Collection configurers){
+		if (dataSources != null && dataSources.size() > 1) {
+			throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
+					"one DataSource, found " + dataSources.size());
 		}
 		if (configurers.size() > 1) {
 			throw new IllegalStateException(
 					"To use a custom TaskConfigurer the context must contain precisely one, found "
 							+ configurers.size());
 		}
-		this.configurer = configurers.iterator().next();
-		logger.debug(String.format("More than one Task Configurer available.  Using"
-				+ " first in list: %s TaskConfigurer",
-				configurer.getClass().getName()));
-		return this.configurer;
 	}
 }
