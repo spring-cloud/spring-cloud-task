@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Data Access Object for task executions.
@@ -54,9 +56,16 @@ public interface TaskExecutionDao {
 	 * Retrieves current number of task executions for a taskName.
 	 *
 	 * @param taskName the name of the task to search for in the repository.
+	 * @return current number of task executions for the taskName.
+	 */
+	long getTaskExecutionCountByTaskName(String taskName);
+
+	/**
+	 * Retrieves current number of task executions.
+	 *
 	 * @return current number of task executions.
 	 */
-	long getTaskExecutionCount(String taskName);
+	long getTaskExecutionCount();
 
 	/**
 	 * Retrieves a set of task executions that are running for a taskName.
@@ -83,4 +92,12 @@ public interface TaskExecutionDao {
 	 * @return a list of distinct task names from the task repository..
 	 */
 	public List<String> getTaskNames();
+
+	/**
+	 * Retrieves all the task executions within the pageable constraints.
+	 * @param pageable the constraints for the search
+	 * @return page containing the results from the search
+	 */
+
+	public Page<TaskExecution> findAll(Pageable pageable);
 }

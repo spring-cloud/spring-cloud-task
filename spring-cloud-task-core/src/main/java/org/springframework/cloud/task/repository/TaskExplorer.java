@@ -19,6 +19,9 @@ package org.springframework.cloud.task.repository;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 /**
  * Offers methods that allow users to query the task executions that are available.
  *
@@ -56,7 +59,14 @@ public interface TaskExplorer {
 	 * @param taskName the name of the task to be searched
 	 * @return the number of running tasks that have the taskname specified
 	 */
-	public long getTaskExecutionCount(String taskName);
+	public long getTaskExecutionCountByTaskName(String taskName);
+
+	/**
+	 * Retrieves current number of task executions.
+	 *
+	 * @return current number of task executions.
+	 */
+	long getTaskExecutionCount();
 
 	/**
 	 * Get a collection/page of executions
@@ -68,5 +78,13 @@ public interface TaskExplorer {
 	 */
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count);
 
+	/**
+	 * Retrieves all the task executions within the pageable constraints sorted by
+	 * start date descending, taskExecution id descending.
+	 *
+	 * @param pageable the constraints for the search
+	 * @return page containing the results from the search
+	 */
+	public Page<TaskExecution> findAll(Pageable pageable);
 
 }

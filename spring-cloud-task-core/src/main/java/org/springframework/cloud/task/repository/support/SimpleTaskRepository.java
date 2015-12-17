@@ -29,6 +29,11 @@ import org.springframework.util.Assert;
  */
 public class SimpleTaskRepository implements TaskRepository {
 
+	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
+	public static final int MAX_TASK_NAME_SIZE = 100;
+	public static final int MAX_STATUS_CODE_SIZE = 10;
+	public static final int MAX_EXECUTION_ID_SIZE = 100;
+
 	private final static Logger logger = LoggerFactory.getLogger(SimpleTaskRepository.class);
 
 	private TaskExecutionDao taskExecutionDao;
@@ -67,7 +72,27 @@ public class SimpleTaskRepository implements TaskRepository {
 	 */
 	private void validateTaskExecution(TaskExecution taskExecution) {
 		Assert.notNull(taskExecution, "taskExecution should not be null");
-		Assert.notNull(taskExecution.getExecutionId(), "taskExecutionId should not be null");
+		Assert.hasText(taskExecution.getExecutionId(), "taskExecutionId should not be null");
 		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
+
+		if (taskExecution.getTaskName() != null &&
+				taskExecution.getTaskName().length() > MAX_TASK_NAME_SIZE) {
+			throw new IllegalArgumentException("TaskName length exceeds "
+					+ MAX_TASK_NAME_SIZE + " characters");
+		}
+		if (taskExecution.getStatusCode() != null &&
+				taskExecution.getStatusCode().length() > MAX_STATUS_CODE_SIZE) {
+			throw new IllegalArgumentException("StatusCode length exceeds "
+					+ MAX_STATUS_CODE_SIZE + " characters");
+		}
+		if (taskExecution.getExecutionId().length() > MAX_EXECUTION_ID_SIZE) {
+			throw new IllegalArgumentException("ExecutionID length exceeds "
+					+ MAX_EXECUTION_ID_SIZE + " characters");
+		}
+		//Trim the exit message
+		if(taskExecution.getExitMessage() != null &&
+				taskExecution.getExitMessage().length() > MAX_EXIT_MESSAGE_SIZE){
+			taskExecution.setExitMessage(taskExecution.getExitMessage().substring(0, MAX_EXIT_MESSAGE_SIZE - 1));
+		}
 	}
 }
