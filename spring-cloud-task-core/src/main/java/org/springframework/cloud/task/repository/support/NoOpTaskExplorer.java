@@ -22,6 +22,9 @@ import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Provides a no-op TaskExplorer for development purposes.
@@ -42,11 +45,22 @@ public class NoOpTaskExplorer implements TaskExplorer {
 		return new ArrayList<String>(0);
 	}
 
-	public long getTaskExecutionCount(String taskName) {
+	public long getTaskExecutionCountByTaskName(String taskName) {
+		return 0;
+	}
+
+	@Override
+	public long getTaskExecutionCount() {
 		return 0;
 	}
 
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
 		return new ArrayList<TaskExecution>(0);
 	}
+
+	@Override
+	public Page<TaskExecution> findAll(Pageable pageable) {
+		return new PageImpl<TaskExecution>(new ArrayList<TaskExecution>(0), pageable, 0);
+	}
+
 }

@@ -16,12 +16,16 @@
 package org.springframework.cloud.task.repository.support;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
-
+import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public class NoOpTaskExplorerTests {
 
@@ -48,12 +52,24 @@ public class NoOpTaskExplorerTests {
 	}
 
 	@Test
-	public void testGetTaskExecutionCount() throws Exception {
-		assertEquals(taskExplorer.getTaskExecutionCount("foo"), 0);
+	public void testGetTaskExecutionCount() {
+		assertEquals(0, taskExplorer.getTaskExecutionCount());
+	}
+	@Test
+	public void testGetTaskExecutionCountByName() throws Exception {
+		assertEquals(taskExplorer.getTaskExecutionCountByTaskName("foo"), 0);
 	}
 
 	@Test
 	public void testGetTaskExecutionsByName() throws Exception {
 		assertEquals(taskExplorer.getTaskExecutionsByName("foo", 0, 100).size(), 0);
+	}
+
+	@Test
+	public void testfindAll(){
+		Pageable pageable = new PageRequest(0, 10);
+		Page<TaskExecution> page = taskExplorer.findAll(pageable);
+		assertNotNull(page);
+		assertEquals(0, page.getNumberOfElements());
 	}
 }

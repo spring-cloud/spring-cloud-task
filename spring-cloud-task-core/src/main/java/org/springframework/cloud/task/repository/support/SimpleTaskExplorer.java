@@ -22,6 +22,8 @@ import java.util.Set;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
 /**
@@ -54,12 +56,23 @@ public class SimpleTaskExplorer implements TaskExplorer{
 	}
 
 	@Override
-	public long getTaskExecutionCount(String taskName) {
-		return taskExecutionDao.getTaskExecutionCount(taskName);
+	public long getTaskExecutionCountByTaskName(String taskName) {
+		return taskExecutionDao.getTaskExecutionCountByTaskName(taskName);
+	}
+
+	@Override
+	public long getTaskExecutionCount() {
+		return taskExecutionDao.getTaskExecutionCount();
 	}
 
 	@Override
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
 		return taskExecutionDao.getTaskExecutionsByName(taskName, start, count);
 	}
+
+	@Override
+	public Page<TaskExecution> findAll(Pageable pageable) {
+		return taskExecutionDao.findAll(pageable);
+	}
+
 }

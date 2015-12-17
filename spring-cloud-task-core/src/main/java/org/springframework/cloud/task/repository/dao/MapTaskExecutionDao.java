@@ -27,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Stores Task Execution Information to a in-memory map.
@@ -57,7 +60,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public long getTaskExecutionCount(String taskName) {
+	public long getTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
 		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName)) {
@@ -65,6 +68,11 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			}
 		}
 		return count;
+	}
+
+	@Override
+	public long getTaskExecutionCount() {
+		return taskExecutions.size();
 	}
 
 	@Override
@@ -99,6 +107,19 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			result.add(entry.getValue().getTaskName());
 		}
 		return new ArrayList<String>(result);
+	}
+
+	@Override
+	public Page<TaskExecution> findAll(Pageable pageable) {
+		Set<TaskExecution> sortedSet = getTaskExecutionTreeSet();
+		sortedSet.addAll(taskExecutions.values());
+		List<TaskExecution> result = new ArrayList<>(sortedSet);
+		int toIndex = (pageable.getOffset() + pageable.getPageSize() > result.size()) ?
+				result.size() : pageable.getOffset() + pageable.getPageSize();
+		return new PageImpl<TaskExecution>(
+				result.subList(pageable.getOffset(), toIndex),
+				pageable,
+				getTaskExecutionCount());
 	}
 
 	public Map<String, TaskExecution> getTaskExecutions() {

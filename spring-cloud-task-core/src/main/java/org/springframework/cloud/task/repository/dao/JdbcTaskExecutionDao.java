@@ -29,6 +29,9 @@ import javax.sql.DataSource;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -68,6 +71,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "TASK_PARAM from %PREFIX%EXECUTION_PARAMS where TASK_EXECUTION_ID = ?";
 
 	private static final String TASK_EXECUTION_COUNT = "SELECT COUNT(*) FROM " +
+			"%PREFIX%EXECUTION ";
+
+	private static final String TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM " +
 			"%PREFIX%EXECUTION where TASK_NAME = ?";
 
 	private static final String FIND_RUNNING_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
@@ -77,6 +83,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "order by TASK_EXECUTION_ID";
 
 	private static final String FIND_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
+			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
+			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
+			+ "from %PREFIX%EXECUTION order by TASK_EXECUTION_ID "
+			+ "LIMIT ? OFFSET ?";
+
+	private static final String FIND_TASK_EXECUTIONS_BY_NAME = "SELECT TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
 			+ "from %PREFIX%EXECUTION where TASK_NAME = ? "
@@ -156,15 +168,25 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public long getTaskExecutionCount(String taskName) {
+	public long getTaskExecutionCountByTaskName(String taskName) {
 		try {
 		return jdbcTemplate.queryForObject(
-				getQuery(TASK_EXECUTION_COUNT), new Object[] { taskName }, Long.class);
+				getQuery(TASK_EXECUTION_COUNT_BY_NAME), new Object[] { taskName }, Long.class);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
 		}
+	}
 
+	@Override
+	public long getTaskExecutionCount() {
+		try {
+			return jdbcTemplate.queryForObject(
+					getQuery(TASK_EXECUTION_COUNT), new Object[] {  }, Long.class);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return 0;
+		}
 	}
 
 	@Override
@@ -179,13 +201,22 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, final int start, final int count) {
-		return jdbcTemplate.query(getQuery(FIND_TASK_EXECUTIONS),
-				new Object[]{ taskName, count, start + 1 }, new TaskExecutionRowMapper());
+		return jdbcTemplate.query(getQuery(FIND_TASK_EXECUTIONS_BY_NAME),
+				new Object[]{ taskName, count, start }, new TaskExecutionRowMapper());
 	}
 
 	@Override
 	public List<String> getTaskNames() {
 		return jdbcTemplate.queryForList(getQuery(FIND_TASK_NAMES), String.class);
+	}
+
+	@Override
+	public Page<TaskExecution> findAll(Pageable pageable) {
+		List<TaskExecution> resultList = jdbcTemplate.query(
+				getQuery(FIND_TASK_EXECUTIONS),
+				new Object[]{ pageable.getPageSize(), pageable.getOffset() },
+				new TaskExecutionRowMapper());
+		return new PageImpl<TaskExecution>(resultList, pageable, getTaskExecutionCount());
 	}
 
 	private String getQuery(String base) {
