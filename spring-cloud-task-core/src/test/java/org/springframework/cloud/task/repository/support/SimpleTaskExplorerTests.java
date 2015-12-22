@@ -51,7 +51,6 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -342,10 +341,6 @@ public class SimpleTaskExplorerTests {
 				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
 
-	private void initializeMapExplorerTest(){
-		dao = new MapTaskExecutionDao();
-	}
-
 	private Map<String, TaskExecution> createSampleDataSet(int count){
 		Map<String, TaskExecution> expectedResults = new HashMap<>();
 		for (int i = 0; i < count; i++) {
@@ -355,7 +350,7 @@ public class SimpleTaskExplorerTests {
 		}
 		return expectedResults;
 	}
-	
+
 	private List<String> getSortedOfTaskExecIds(Map<String, TaskExecution> taskExecutionMap){
 		List<String> sortedExecIds = new ArrayList<>(taskExecutionMap.size());
 		TreeSet sortedSet = getTreeSet();

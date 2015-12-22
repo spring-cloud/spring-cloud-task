@@ -23,11 +23,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
+import org.springframework.batch.item.database.Order;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.database.PagingQueryProvider;
+import org.springframework.cloud.task.repository.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,6 +51,12 @@ import org.springframework.util.StringUtils;
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
+
+	public static String SELECT_CLAUSE = "TASK_EXECUTION_ID, "
+			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
+			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE ";
+
+	public static String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
 			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
@@ -82,12 +93,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "from %PREFIX%EXECUTION where TASK_NAME = ? AND END_TIME IS NULL "
 			+ "order by TASK_EXECUTION_ID";
 
-	private static final String FIND_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
-			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
-			+ "from %PREFIX%EXECUTION order by START_TIME desc, TASK_EXECUTION_ID desc "
-			+ "LIMIT ? OFFSET ?";
-
 	private static final String FIND_TASK_EXECUTIONS_BY_NAME = "SELECT TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
@@ -103,9 +108,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private JdbcOperations jdbcTemplate;
 
+	private DataSource dataSource;
+
+	Map<String, Order> orderMap;
+
 	public JdbcTaskExecutionDao(DataSource dataSource) {
 		Assert.notNull(dataSource);
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.dataSource = dataSource;
+		orderMap = new TreeMap<>();
+		orderMap.put("START_TIME", Order.DESCENDING);
+		orderMap.put("TASK_EXECUTION_ID", Order.DESCENDING);
+
 	}
 
 	@Override
@@ -212,9 +226,24 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public Page<TaskExecution> findAll(Pageable pageable) {
+
+		SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
+		factoryBean.setSelectClause(SELECT_CLAUSE);
+		factoryBean.setFromClause(FROM_CLAUSE);
+		factoryBean.setSortKeys(orderMap);
+		factoryBean.setDataSource(dataSource);
+		PagingQueryProvider pagingQueryProvider = null;
+		try {
+			pagingQueryProvider = factoryBean.getObject();
+			pagingQueryProvider.init(dataSource);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+		String query = pagingQueryProvider.getPageQuery(pageable);
 		List<TaskExecution> resultList = jdbcTemplate.query(
-				getQuery(FIND_TASK_EXECUTIONS),
-				new Object[]{ pageable.getPageSize(), pageable.getOffset() },
+				getQuery(query),
+				new Object[]{  },
 				new TaskExecutionRowMapper());
 		return new PageImpl<TaskExecution>(resultList, pageable, getTaskExecutionCount());
 	}

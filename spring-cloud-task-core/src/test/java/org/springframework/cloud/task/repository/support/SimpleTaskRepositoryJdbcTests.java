@@ -93,5 +93,33 @@ public class SimpleTaskRepositoryJdbcTests {
 				dataSource, expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
+
+	@Test
+	public void testCreateTaskExecutionNoParamMaxExitMessageSize(){
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
+		taskRepository.createTaskExecution(expectedTaskExecution);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testCreateTaskExecutionNoParamMaxTaskName(){
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
+		taskRepository.createTaskExecution(expectedTaskExecution);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testCreateTaskExecutionNoParamMaxStatus(){
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		expectedTaskExecution.setStatusCode(new String(new char[SimpleTaskRepository.MAX_STATUS_CODE_SIZE+1]));
+		taskRepository.createTaskExecution(expectedTaskExecution);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testCreateTaskExecutionNoParamMaxExecutionId(){
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		expectedTaskExecution.setExecutionId(new String(new char[SimpleTaskRepository.MAX_EXECUTION_ID_SIZE+1]));
+		taskRepository.createTaskExecution(expectedTaskExecution);
+	}
 }
 

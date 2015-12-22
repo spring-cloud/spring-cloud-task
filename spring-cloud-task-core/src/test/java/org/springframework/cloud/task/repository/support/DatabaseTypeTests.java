@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
+import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
 import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
 import static org.springframework.cloud.task.repository.support.DatabaseType.fromProductName;
@@ -45,6 +46,7 @@ public class DatabaseTypeTests {
 		assertEquals(HSQL, fromProductName("HSQL Database Engine"));
 		assertEquals(ORACLE, fromProductName("Oracle"));
 		assertEquals(POSTGRES, fromProductName("PostgreSQL"));
+		assertEquals(MYSQL, fromProductName("MySQL"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -68,6 +70,12 @@ public class DatabaseTypeTests {
 	public void testFromMetaDataForPostgres() throws Exception {
 		DataSource ds = getMockDataSource("PostgreSQL");
 		assertEquals(POSTGRES, DatabaseType.fromMetaData(ds));
+	}
+
+	@Test
+	public void testFromMetaDataForMySQL() throws Exception {
+		DataSource ds = getMockDataSource("MySQL");
+		assertEquals(MYSQL, DatabaseType.fromMetaData(ds));
 	}
 
 	public  DataSource getMockDataSource(String databaseProductName) throws Exception {
