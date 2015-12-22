@@ -24,7 +24,7 @@ import static junit.framework.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -270,8 +271,7 @@ public class SimpleTaskExplorerTests {
 
 	private void verifyPageResults(Pageable pageable, int totalNumberOfExecs) {
 		Map<String, TaskExecution> expectedResults = createSampleDataSet(totalNumberOfExecs);
-		List<String> sortedExecIds = new ArrayList<>(expectedResults.keySet());
-		Collections.sort(sortedExecIds);
+		List<String> sortedExecIds = getSortedOfTaskExecIds(expectedResults);
 		Iterator<String> expectedTaskExecutionIter = sortedExecIds.iterator();
 		//Verify pageable totals
 		Page taskPage = taskExplorer.findAll(pageable);
@@ -342,7 +342,11 @@ public class SimpleTaskExplorerTests {
 				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
 
-	private Map<String, TaskExecution> createSampleDataSet(int count) {
+	private void initializeMapExplorerTest(){
+		dao = new MapTaskExecutionDao();
+	}
+
+	private Map<String, TaskExecution> createSampleDataSet(int count){
 		Map<String, TaskExecution> expectedResults = new HashMap<>();
 		for (int i = 0; i < count; i++) {
 			TaskExecution expectedTaskExecution = createAndSaveTaskExecution();
@@ -350,6 +354,30 @@ public class SimpleTaskExplorerTests {
 					expectedTaskExecution);
 		}
 		return expectedResults;
+	}
+	
+	private List<String> getSortedOfTaskExecIds(Map<String, TaskExecution> taskExecutionMap){
+		List<String> sortedExecIds = new ArrayList<>(taskExecutionMap.size());
+		TreeSet sortedSet = getTreeSet();
+		sortedSet.addAll(taskExecutionMap.values());
+		Iterator <TaskExecution> iterator = sortedSet.descendingIterator();
+		while(iterator.hasNext()){
+			sortedExecIds.add(iterator.next().getExecutionId());
+		}
+		return sortedExecIds;
+	}
+
+	private TreeSet getTreeSet(){
+		return new TreeSet<TaskExecution>(new Comparator<TaskExecution>() {
+			@Override
+			public int compare(TaskExecution e1, TaskExecution e2) {
+				int result = e1.getStartTime().compareTo(e2.getStartTime());
+				if (result == 0){
+					result = e1.getExecutionId().compareTo(e2.getExecutionId());
+				}
+				return result;
+			}
+		});
 	}
 
 	private enum DaoType{jdbc, map}

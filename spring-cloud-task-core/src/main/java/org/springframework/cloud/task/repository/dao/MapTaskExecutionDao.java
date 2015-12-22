@@ -111,9 +111,9 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public Page<TaskExecution> findAll(Pageable pageable) {
-		Set<TaskExecution> sortedSet = getTaskExecutionTreeSet();
+		TreeSet<TaskExecution> sortedSet = getTaskExecutionTreeSet();
 		sortedSet.addAll(taskExecutions.values());
-		List<TaskExecution> result = new ArrayList<>(sortedSet);
+		List<TaskExecution> result = new ArrayList<>(sortedSet.descendingSet());
 		int toIndex = (pageable.getOffset() + pageable.getPageSize() > result.size()) ?
 				result.size() : pageable.getOffset() + pageable.getPageSize();
 		return new PageImpl<TaskExecution>(
@@ -130,7 +130,11 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		return new TreeSet<TaskExecution>(new Comparator<TaskExecution>() {
 			@Override
 			public int compare(TaskExecution e1, TaskExecution e2) {
-				return e1.getExecutionId().compareTo(e2.getExecutionId());
+				int result = e1.getStartTime().compareTo(e2.getStartTime());
+				if (result == 0){
+					result = e1.getExecutionId().compareTo(e2.getExecutionId());
+				}
+				return result;
 			}
 		});
 	}

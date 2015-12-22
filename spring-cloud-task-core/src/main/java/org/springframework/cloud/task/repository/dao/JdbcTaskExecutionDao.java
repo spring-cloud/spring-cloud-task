@@ -85,7 +85,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String FIND_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
-			+ "from %PREFIX%EXECUTION order by TASK_EXECUTION_ID "
+			+ "from %PREFIX%EXECUTION order by START_TIME desc, TASK_EXECUTION_ID desc "
 			+ "LIMIT ? OFFSET ?";
 
 	private static final String FIND_TASK_EXECUTIONS_BY_NAME = "SELECT TASK_EXECUTION_ID, "

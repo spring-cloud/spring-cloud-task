@@ -79,7 +79,8 @@ public interface TaskExplorer {
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count);
 
 	/**
-	 * Retrieves all the task executions within the pageable constraints.
+	 * Retrieves all the task executions within the pageable constraints sorted by
+	 * start date descending, taskExecution id descending.
 	 *
 	 * @param pageable the constraints for the search
 	 * @return page containing the results from the search
