@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import ch.qos.logback.core.Appender;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +45,24 @@ public class TaskLifecycleListenerTests {
 	@Autowired
 	private TaskLifecycleListener listener;
 
+	private AnnotationConfigApplicationContext context;
+
+	@Before
+	public void setUp() {
+		context = new AnnotationConfigApplicationContext();
+		context.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
+	}
+
+	@After
+	public void tearDown() {
+		context.close();
+	}
+
 	@Test
 	public void testTaskCreate() {
-		AnnotationConfigApplicationContext createContext = new AnnotationConfigApplicationContext();
-		createContext.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
 		final Appender mockAppender = TestVerifierUtils.getMockAppender();
-		createContext.refresh();
-		this.listener = createContext.getBean(TaskLifecycleListener.class);
+		context.refresh();
+		this.listener = context.getBean(TaskLifecycleListener.class);
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Creating: TaskExecution{executionId='" +
 						listener.getTaskExecution().getExecutionId());
@@ -60,12 +73,10 @@ public class TaskLifecycleListenerTests {
 
 	@Test
 	public void testTaskUpdate() {
-		AnnotationConfigApplicationContext createContext = new AnnotationConfigApplicationContext();
-		createContext.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
-		createContext.refresh();
+		context.refresh();
 		final Appender mockAppender = TestVerifierUtils.getMockAppender();
-		this.listener = createContext.getBean(TaskLifecycleListener.class);
-		this.listener.onApplicationEvent(new ContextClosedEvent(createContext));
+		this.listener = context.getBean(TaskLifecycleListener.class);
+		this.listener.onApplicationEvent(new ContextClosedEvent(context));
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						listener.getTaskExecution().getExecutionId());
@@ -75,16 +86,14 @@ public class TaskLifecycleListenerTests {
 
 	@Test
 	public void testTaskFailedUpdate() {
-		AnnotationConfigApplicationContext createContext = new AnnotationConfigApplicationContext();
-		createContext.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
-		createContext.refresh();
+		context.refresh();
 		final Appender mockAppender = TestVerifierUtils.getMockAppender();
-		this.listener = createContext.getBean(TaskLifecycleListener.class);
-		listener.onApplicationEvent(new ApplicationFailedEvent(new SpringApplication(), new String[]{}, createContext, new RuntimeException("This was expected")));
+		this.listener = context.getBean(TaskLifecycleListener.class);
+		listener.onApplicationEvent(new ApplicationFailedEvent(new SpringApplication(), new String[]{}, context, new RuntimeException("This was expected")));
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution{executionId='" +
 						listener.getTaskExecution().getExecutionId());
-		assertEquals("Update should report that exit code is zero",
+		assertEquals("Update should report that exit code is one",
 				1, listener.getTaskExecution().getExitCode());
 		assertTrue("Stack trace missing from exit message", listener.getTaskExecution().getExitMessage().startsWith("java.lang.RuntimeException: This was expected"));
 	}

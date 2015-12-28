@@ -73,6 +73,14 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	/**
+	 * Utilizes {@link ApplicationEvent}s to determine the start, end, and failure of a
+	 * task.  Specifically:
+	 * <ul>
+	 *     <li>{@link ContextRefreshedEvent} - Start of a task</li>
+	 *     <li>{@link ContextClosedEvent} - Successful end of a task</li>
+	 *     <li>{@link ApplicationFailedEvent} - Failure of a task</li>
+	 * </ul>
+	 *
 	 * @param applicationEvent The application being listened for.
 	 */
 	@Override
@@ -100,7 +108,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			taskRepository.update(taskExecution);
 		}
 		else  {
-			logger.warn("An event to fail a task has been received for a task that has " +
+			logger.error("An event to fail a task has been received for a task that has " +
 					"not yet started.");
 		}
 	}
@@ -123,7 +131,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			taskRepository.update(taskExecution);
 		}
 		else {
-			logger.warn("An event to end a task has been received for a task that has " +
+			logger.error("An event to end a task has been received for a task that has " +
 					"not yet started.");
 		}
 	}
@@ -141,7 +149,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			this.taskRepository.createTaskExecution(this.taskExecution);
 		}
 		else {
-			logger.warn("Multiple start events have been received.  The first one was " +
+			logger.error("Multiple start events have been received.  The first one was " +
 					"recorded.");
 		}
 	}

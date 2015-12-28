@@ -22,13 +22,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.task.annotation.EnableTask;
-import org.springframework.cloud.task.annotation.Task;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -49,9 +49,8 @@ public class TaskApplication {
 	}
 
 	/**
-	 * A commandline runner that prints a timestamp and is annotated with @Task.
+	 * A commandline runner that prints a timestamp.
 	 */
-	@Task("Demo Timestamp Task")
 	public class TimestampTask implements CommandLineRunner {
 		private final org.slf4j.Logger logger = LoggerFactory.getLogger(TimestampTask.class);
 
