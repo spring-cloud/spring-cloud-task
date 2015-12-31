@@ -115,7 +115,7 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	}
 
 	/**
-	 * A Map&lt;String, Boolean&gt; of sort columns as the key and boolean for ascending/descending (ascending = true).
+	 * A Map&lt;String, Order&gt; of sort columns as the key and {@link Order} for ascending/descending.
 	 *
 	 * @return sortKey key to use to sort and limit page content
 	 */
