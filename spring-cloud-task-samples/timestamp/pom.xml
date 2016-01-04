@@ -59,6 +59,23 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<!--skip deploy (this is just a test module) -->
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
