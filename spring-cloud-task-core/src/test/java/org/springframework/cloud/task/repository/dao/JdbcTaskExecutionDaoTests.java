@@ -18,9 +18,9 @@ package org.springframework.cloud.task.repository.dao;
 
 import javax.sql.DataSource;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -28,7 +28,6 @@ import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,10 +46,17 @@ public class JdbcTaskExecutionDaoTests {
 	@Autowired
 	private DataSource dataSource;
 
+	private JdbcTaskExecutionDao dao;
+
+	@Before
+	public void setup(){
+		dao = new JdbcTaskExecutionDao(dataSource);
+		dao.setJobIncrementer(TestDBUtils.getIncrementer(dataSource));
+	}
+
 	@Test
 	@DirtiesContext
 	public void saveTaskExecution() {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 
@@ -58,20 +64,9 @@ public class JdbcTaskExecutionDaoTests {
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = DuplicateKeyException.class)
-	@DirtiesContext
-	public void duplicateSaveTaskExecution() {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		dao.saveTaskExecution(expectedTaskExecution);
-		dao.saveTaskExecution(expectedTaskExecution);
-	}
-
 	@Test
 	@DirtiesContext
 	public void updateTaskExecution() {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
-
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
 		dao.updateTaskExecution(expectedTaskExecution);

@@ -41,7 +41,7 @@ public class SimpleTaskExplorer implements TaskExplorer{
 	}
 
 	@Override
-	public TaskExecution getTaskExecution(String executionId) {
+	public TaskExecution getTaskExecution(long executionId) {
 		return taskExecutionDao.getTaskExecution(executionId);
 	}
 

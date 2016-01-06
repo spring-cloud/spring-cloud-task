@@ -40,4 +40,10 @@ public interface TaskRepository {
 	 */
 	@Transactional
 	public void createTaskExecution(TaskExecution taskExecution);
+
+	/**
+	 * Retrieves the next available execution id for a task execution.
+	 * @return long containing the executionId.
+	 */
+	public long getNextExecutionId();
 }

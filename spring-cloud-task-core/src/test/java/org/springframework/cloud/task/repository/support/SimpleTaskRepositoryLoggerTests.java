@@ -45,7 +45,7 @@ public class SimpleTaskRepositoryLoggerTests {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Creating: TaskExecution{executionId='" + expectedTaskExecution.getExecutionId());
+				"Creating: TaskExecution{executionId=" + expectedTaskExecution.getExecutionId());
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class SimpleTaskRepositoryLoggerTests {
 		TaskExecutionCreator.updateTaskExecution(taskRepository,
 				expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Updating: TaskExecution{executionId='"
+				"Updating: TaskExecution{executionId="
 						+ expectedTaskExecution.getExecutionId());
 	}
 

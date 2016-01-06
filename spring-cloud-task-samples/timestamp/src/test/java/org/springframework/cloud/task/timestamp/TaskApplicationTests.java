@@ -40,8 +40,8 @@ public class TaskApplicationTests {
 	@Test
 	public void testTimeStampApp() throws Exception {
 		final String TEST_DATE_DOTS = ".......";
-		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId='";
-		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution{executionId='";
+		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
+		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution{executionId=";
 		String[] args = { "--format=yyyy" + TEST_DATE_DOTS };
 
 		assertEquals(0, SpringApplication.exit(SpringApplication
