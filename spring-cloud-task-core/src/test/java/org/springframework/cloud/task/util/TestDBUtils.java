@@ -54,10 +54,9 @@ public class TestDBUtils {
 
 	/**
 	 * Retrieves the TaskExecution from the datasource.
-	 *
-	 * @param dataSource      The datasource from which to retrieve the taskExecution.
+	 * @param dataSource The datasource from which to retrieve the taskExecution.
 	 * @param taskExecutionId The id of the task to search.
-	 * @return taskExecution
+	 * @return taskExecution retrieved from the database.
 	 */
 	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource,
 													   long taskExecutionId) {

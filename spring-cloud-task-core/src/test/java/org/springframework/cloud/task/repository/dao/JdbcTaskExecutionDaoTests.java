@@ -51,7 +51,7 @@ public class JdbcTaskExecutionDaoTests {
 	@Before
 	public void setup(){
 		dao = new JdbcTaskExecutionDao(dataSource);
-		dao.setJobIncrementer(TestDBUtils.getIncrementer(dataSource));
+		dao.setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
 	}
 
 	@Test

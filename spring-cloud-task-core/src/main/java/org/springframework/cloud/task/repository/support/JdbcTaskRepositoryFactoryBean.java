@@ -97,7 +97,7 @@ public class JdbcTaskRepositoryFactoryBean implements FactoryBean<TaskRepository
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		dao.setJobIncrementer(incrementerFactory.getIncrementer(databaseType, tablePrefix + "SEQ"));
+		dao.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, tablePrefix + "SEQ"));
 		dao.setTablePrefix(tablePrefix);
 		return dao;
 	}

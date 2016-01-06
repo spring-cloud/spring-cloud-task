@@ -114,7 +114,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private Map<String, Order> orderMap;
 
-	private DataFieldMaxValueIncrementer jobIncrementer;
+	private DataFieldMaxValueIncrementer taskIncrementer;
 
 	public JdbcTaskExecutionDao(DataSource dataSource) {
 		Assert.notNull(dataSource);
@@ -254,12 +254,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		return new PageImpl<TaskExecution>(resultList, pageable, getTaskExecutionCount());
 	}
 
-	public void setJobIncrementer(DataFieldMaxValueIncrementer jobIncrementer) {
-		this.jobIncrementer = jobIncrementer;
+	public void setTaskIncrementer(DataFieldMaxValueIncrementer taskIncrementer) {
+		this.taskIncrementer = taskIncrementer;
 	}
 
 	public long getNextExecutionId(){
-		return jobIncrementer.nextLongValue();
+		return taskIncrementer.nextLongValue();
 	}
 
 	private String getQuery(String base) {

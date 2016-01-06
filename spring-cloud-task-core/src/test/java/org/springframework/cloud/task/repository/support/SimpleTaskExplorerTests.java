@@ -102,7 +102,7 @@ public class SimpleTaskExplorerTests {
 			initializeJdbcExplorerTest();
 			dao = new JdbcTaskExecutionDao(dataSource);
 			((JdbcTaskExecutionDao)dao).
-					setJobIncrementer(TestDBUtils.getIncrementer(dataSource));
+					setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
 		}
 		else {
 			initializeMapExplorerTest();
