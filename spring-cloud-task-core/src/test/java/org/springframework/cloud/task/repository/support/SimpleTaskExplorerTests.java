@@ -35,8 +35,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import javax.sql.DataSource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,6 +42,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
@@ -54,7 +53,6 @@ import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,17 +65,11 @@ public class SimpleTaskExplorerTests {
 
 	private AnnotationConfigApplicationContext context;
 
-	@Autowired(required = false)
-	private DataSource dataSource;
-
 	@Autowired
 	private TaskExecutionDao dao;
 
 	@Autowired
 	private TaskExplorer taskExplorer;
-
-	@Autowired
-	private ResourceLoader resourceLoader;
 
 	private DaoType testType;
 

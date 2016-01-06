@@ -33,9 +33,9 @@ public interface TaskConfigurer {
 	 *
 	 * @return A TaskRepository
 	 */
-	public TaskRepository getTaskRepository();
+	TaskRepository getTaskRepository();
 
-	public PlatformTransactionManager getTransactionManager();
+	PlatformTransactionManager getTransactionManager();
 
-	public TaskExplorer getTaskExplorer();
+	TaskExplorer getTaskExplorer();
 }

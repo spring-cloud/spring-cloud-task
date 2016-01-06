@@ -23,16 +23,15 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.BeansException;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.util.Assert;
 
 /**
  * Monitors the lifecycle of a task.  This listener will record both the start and end of
@@ -52,8 +51,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  *
  * @author Michael Minella
  */
-public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>,
-		ApplicationContextAware {
+public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>{
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
 
@@ -63,13 +61,18 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private boolean started = false;
 
-	private ApplicationContext applicationContext;
+	private TaskNameResolver taskNameResolver;
 
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
-	public TaskLifecycleListener(TaskRepository taskRepository) {
+	public TaskLifecycleListener(TaskRepository taskRepository,
+			TaskNameResolver taskNameResolver) {
+		Assert.notNull(taskRepository, "A taskRepository is required");
+		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
+
 		this.taskRepository = taskRepository;
+		this.taskNameResolver = taskNameResolver;
 	}
 
 	/**
@@ -143,7 +146,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			String executionId = UUID.randomUUID().toString();
 			this.taskExecution = new TaskExecution();
 
-			this.taskExecution.setTaskName(applicationContext.getId());
+			this.taskExecution.setTaskName(taskNameResolver.getTaskName());
 			this.taskExecution.setStartTime(new Date());
 			this.taskExecution.setExecutionId(executionId);
 			this.taskRepository.createTaskExecution(this.taskExecution);
@@ -160,11 +163,5 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 */
 	TaskExecution getTaskExecution() {
 		return this.taskExecution;
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
 	}
 }

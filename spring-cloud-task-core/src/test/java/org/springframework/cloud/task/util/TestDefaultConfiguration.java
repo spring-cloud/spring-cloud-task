@@ -16,9 +16,11 @@
 
 package org.springframework.cloud.task.util;
 
-		import org.springframework.cloud.task.listener.TaskLifecycleListener;
+import org.springframework.cloud.task.listener.TaskLifecycleListener;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +39,12 @@ public class TestDefaultConfiguration {
 	}
 
 	@Bean
+	public TaskNameResolver taskNameResolver() {
+		return new SimpleTaskNameResolver();
+	}
+
+	@Bean
 	public TaskLifecycleListener taskHandler(){
-		return new TaskLifecycleListener(taskRepository());
+		return new TaskLifecycleListener(taskRepository(), taskNameResolver());
 	}
 }
