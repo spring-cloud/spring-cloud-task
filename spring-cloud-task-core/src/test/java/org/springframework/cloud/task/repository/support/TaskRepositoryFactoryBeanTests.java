@@ -18,7 +18,6 @@ package org.springframework.cloud.task.repository.support;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import javax.sql.DataSource;
 
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.util.TestDBUtils;
 
 /**
  * Tests that the TaskRepositoryFactoryBeans produce the correct repositories.
@@ -36,8 +36,8 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 public class TaskRepositoryFactoryBeanTests {
 
 	@Test
-	public void testJdbcTaskRepositoryFactoryBean() {
-		DataSource dataSource = mock(DataSource.class);
+	public void testJdbcTaskRepositoryFactoryBean() throws Exception{
+		DataSource dataSource = TestDBUtils.getMockDataSource("HSQL Database Engine");
 		JdbcTaskRepositoryFactoryBean factory = new JdbcTaskRepositoryFactoryBean(dataSource);
 		TaskRepository repository = factory.getObject();
 		assertThat(repository, instanceOf(SimpleTaskRepository.class));

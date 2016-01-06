@@ -47,10 +47,10 @@ public interface TaskExecutionDao {
 	/**
 	 * Retrieves a task execution from the task repository.
 	 *
-	 * @param executionId the uuid associated with the task execution.
+	 * @param executionId the id associated with the task execution.
 	 * @return a fully qualified TaskExecution instance.
 	 */
-	TaskExecution getTaskExecution(String executionId);
+	TaskExecution getTaskExecution(long executionId);
 
 	/**
 	 * Retrieves current number of task executions for a taskName.
@@ -100,4 +100,10 @@ public interface TaskExecutionDao {
 	 */
 
 	public Page<TaskExecution> findAll(Pageable pageable);
+
+	/**
+	 * Retrieves the next available execution id for a task execution.
+	 * @return long containing the executionId.
+	 */
+	public long getNextExecutionId();
 }

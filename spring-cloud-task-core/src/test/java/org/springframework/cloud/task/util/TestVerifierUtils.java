@@ -82,19 +82,63 @@ public class TestVerifierUtils {
 	 *
 	 * @return
 	 */
-	public static TaskExecution createSampleTaskExecutionNoParam() {
+	public static TaskExecution createSampleTaskExecutionNoParam(long executionId) {
 		Random randomGenerator = new Random();
 		int exitCode = randomGenerator.nextInt();
 		Date startTime = new Date();
 		Date endTime = new Date();
-		String executionId = UUID.randomUUID().toString();
+		String externalTaskExecutionID = UUID.randomUUID().toString();
 		String taskName = UUID.randomUUID().toString();
 		String exitMessage = UUID.randomUUID().toString();
 		String statusCode = UUID.randomUUID().toString().substring(0, 9);
 
 		return new TaskExecution(executionId, exitCode, taskName,
 				startTime, endTime, statusCode,
-				exitMessage, new ArrayList<String>());
+				exitMessage, new ArrayList<String>(), externalTaskExecutionID);
+	}
+
+	/**
+	 * Creates a fully populated TaskExecution (except params) for testing.
+	 *
+	 * @return
+	 */
+	public static TaskExecution createSampleTaskExecutionNoParam() {
+		Random randomGenerator = new Random();
+		int exitCode = randomGenerator.nextInt();
+		Date startTime = new Date();
+		Date endTime = new Date();
+		long executionId = randomGenerator.nextLong();
+		String externalTaskExecutionID = UUID.randomUUID().toString();
+		String taskName = UUID.randomUUID().toString();
+		String exitMessage = UUID.randomUUID().toString();
+		String statusCode = UUID.randomUUID().toString().substring(0, 9);
+
+		return new TaskExecution(executionId, exitCode, taskName,
+				startTime, endTime, statusCode,
+				exitMessage, new ArrayList<String>(), externalTaskExecutionID);
+	}
+
+	/**
+	 * Creates a fully populated TaskExecution for testing.
+	 *
+	 * @return
+	 */
+	public static TaskExecution createSampleTaskExecution(long executionId) {
+		Random randomGenerator = new Random();
+		int exitCode = randomGenerator.nextInt();
+		Date startTime = new Date();
+		Date endTime = new Date();
+		String externalExecutionId = UUID.randomUUID().toString();
+		String taskName = UUID.randomUUID().toString();
+		String exitMessage = UUID.randomUUID().toString();
+		String statusCode = UUID.randomUUID().toString().substring(0, 9);
+		List<String> params = new ArrayList<>(PARAM_SIZE);
+		for (int i = 0 ; i < PARAM_SIZE ; i++){
+			params.add(UUID.randomUUID().toString());
+		}
+		return new TaskExecution(executionId, exitCode, taskName,
+				startTime, endTime, statusCode,
+				exitMessage, params, externalExecutionId);
 	}
 
 	/**
@@ -105,9 +149,10 @@ public class TestVerifierUtils {
 	public static TaskExecution createSampleTaskExecution() {
 		Random randomGenerator = new Random();
 		int exitCode = randomGenerator.nextInt();
+		long executionId = randomGenerator.nextLong();
 		Date startTime = new Date();
 		Date endTime = new Date();
-		String executionId = UUID.randomUUID().toString();
+		String externalExecutionId = UUID.randomUUID().toString();
 		String taskName = UUID.randomUUID().toString();
 		String exitMessage = UUID.randomUUID().toString();
 		String statusCode = UUID.randomUUID().toString().substring(0, 9);
@@ -117,7 +162,7 @@ public class TestVerifierUtils {
 		}
 		return new TaskExecution(executionId, exitCode, taskName,
 				startTime, endTime, statusCode,
-				exitMessage, params);
+				exitMessage, params, externalExecutionId);
 	}
 
 	/**
@@ -130,6 +175,9 @@ public class TestVerifierUtils {
 										   TaskExecution actualTaskExecution) {
 		assertEquals("taskExecutionId must be equal", expectedTaskExecution.getExecutionId(),
 				actualTaskExecution.getExecutionId());
+		assertEquals("taskExternalExecutionId must be equal",
+				expectedTaskExecution.getExternalExecutionID(),
+				actualTaskExecution.getExternalExecutionID());
 		assertEquals("startTime must be equal",
 				expectedTaskExecution.getStartTime(),
 				actualTaskExecution.getStartTime());

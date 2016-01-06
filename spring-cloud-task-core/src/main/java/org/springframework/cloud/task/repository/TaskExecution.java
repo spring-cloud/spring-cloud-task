@@ -32,7 +32,12 @@ public class TaskExecution {
 	/**
 	 * The unique id  associated with the task execution.
 	 */
-	private String executionId;
+	private long executionId;
+
+	/**
+	 * Id provided by an external system for the given task execution.
+	 */
+	private String externalExecutionID;
 
 	/**
 	 * The recorded exit code for the task.
@@ -73,14 +78,15 @@ public class TaskExecution {
 		parameters = new ArrayList<>();
 	}
 
-	public TaskExecution(String executionId, int exitCode, String taskName,
+	public TaskExecution(long executionId, int exitCode, String taskName,
 						 Date startTime, Date endTime, String statusCode,
-						 String exitMessage, List<String> parameters) {
+						 String exitMessage, List<String> parameters,
+						 String externalExecutionID) {
 
-		Assert.hasText(executionId, "executionId must not be null nor empty");
 		Assert.notNull(parameters, "parameters must not be null");
 		Assert.notNull(startTime, "startTime must not be null");
 		this.executionId = executionId;
+		this.externalExecutionID = externalExecutionID;
 		this.exitCode = exitCode;
 		this.taskName = taskName;
 		this.statusCode = statusCode;
@@ -90,12 +96,8 @@ public class TaskExecution {
 		setEndTime(endTime);
 	}
 
-	public String getExecutionId() {
+	public long getExecutionId() {
 		return executionId;
-	}
-
-	public void setExecutionId(String executionId) {
-		this.executionId = executionId;
 	}
 
 	public int getExitCode() {
@@ -154,10 +156,19 @@ public class TaskExecution {
 		this.parameters = parameters;
 	}
 
+	public String getExternalExecutionID() {
+		return externalExecutionID;
+	}
+
+	public void setExternalExecutionID(String externalExecutionID) {
+		this.externalExecutionID = externalExecutionID;
+	}
+
 	@Override
 	public String toString() {
 		return "TaskExecution{" +
-				"executionId='" + executionId + '\'' +
+				"executionId=" + executionId +
+				", externalExecutionID='" + externalExecutionID + '\'' +
 				", exitCode=" + exitCode +
 				", taskName='" + taskName + '\'' +
 				", startTime=" + startTime +

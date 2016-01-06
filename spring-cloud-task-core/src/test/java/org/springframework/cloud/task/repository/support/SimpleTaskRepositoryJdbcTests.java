@@ -116,9 +116,10 @@ public class SimpleTaskRepositoryJdbcTests {
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void testCreateTaskExecutionNoParamMaxExecutionId(){
+	public void testCreateTaskExecutionNoParamMaxExternalExecutionId(){
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		expectedTaskExecution.setExecutionId(new String(new char[SimpleTaskRepository.MAX_EXECUTION_ID_SIZE+1]));
+		expectedTaskExecution.setExternalExecutionID(
+				new String(new char[SimpleTaskRepository.MAX_EXTERNAL_EXECUTION_ID_SIZE+1]));
 		taskRepository.createTaskExecution(expectedTaskExecution);
 	}
 }

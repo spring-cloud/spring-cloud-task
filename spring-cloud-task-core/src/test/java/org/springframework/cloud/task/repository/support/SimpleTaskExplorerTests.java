@@ -33,7 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
+
+import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +51,9 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.Page;
@@ -70,6 +73,9 @@ public class SimpleTaskExplorerTests {
 
 	@Autowired
 	private TaskExplorer taskExplorer;
+
+	@Autowired(required = false)
+	private DataSource dataSource;
 
 	private DaoType testType;
 
@@ -91,6 +97,9 @@ public class SimpleTaskExplorerTests {
 
 		if (testType == DaoType.jdbc) {
 			initializeJdbcExplorerTest();
+			dao = new JdbcTaskExecutionDao(dataSource);
+			((JdbcTaskExecutionDao)dao).
+					setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
 		}
 		else {
 			initializeMapExplorerTest();
@@ -108,8 +117,8 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void getTaskExecution() {
-		Map<String, TaskExecution> expectedResults = createSampleDataSet(5);
-		for (String taskExecutionId : expectedResults.keySet()) {
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
+		for (Long taskExecutionId : expectedResults.keySet()) {
 			TaskExecution actualTaskExecution =
 					taskExplorer.getTaskExecution(taskExecutionId);
 			assertNotNull(String.format(
@@ -122,10 +131,10 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void taskExecutionNotFound() {
-		Map<String, TaskExecution> expectedResults = createSampleDataSet(5);
+		Map< Long, TaskExecution> expectedResults = createSampleDataSet(5);
 
 		TaskExecution actualTaskExecution =
-				taskExplorer.getTaskExecution("NO_EXECUTION_PRESENT");
+				taskExplorer.getTaskExecution(-5);
 		assertNull(String.format(
 				"expected null for actualTaskExecution %s", testType),
 				actualTaskExecution);
@@ -133,8 +142,8 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void getTaskCountByTaskName() {
-		Map<String, TaskExecution> expectedResults = createSampleDataSet(5);
-		for (Map.Entry<String, TaskExecution> entry : expectedResults.entrySet()) {
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
+		for (Map.Entry<Long, TaskExecution> entry : expectedResults.entrySet()) {
 			String taskName = entry.getValue().getTaskName();
 			assertEquals(String.format(
 					"task count for task name did not match expected result for testType %s",
@@ -145,7 +154,7 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void getTaskCount() {
-		Map<String, TaskExecution> expectedResults = createSampleDataSet(33);
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(33);
 		assertEquals(String.format(
 				"task count did not match expected result for test Type %s",
 				testType),
@@ -158,17 +167,15 @@ public class SimpleTaskExplorerTests {
 		final int COMPLETE_COUNT = 5;
 		final String TASK_NAME = "FOOBAR";
 
-		Map<String, TaskExecution> expectedResults = new HashMap<>();
+		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		//Store completed jobs
-		for (int i = 0; i < COMPLETE_COUNT; i++) {
-			createAndSaveTaskExecution();
+		int i = 0;
+		for (; i < COMPLETE_COUNT; i++) {
+			createAndSaveTaskExecution(i);
 		}
 
-		for (int i = 0; i < TEST_COUNT; i++) {
-			TaskExecution expectedTaskExecution = new TaskExecution();
-			expectedTaskExecution.setStartTime(new Date());
-			expectedTaskExecution.setExecutionId(UUID.randomUUID().toString());
-			expectedTaskExecution.setTaskName(TASK_NAME);
+		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
+			TaskExecution expectedTaskExecution = new TaskExecution(i, 0, TASK_NAME, new Date(), null, null, null, new ArrayList<String>(0), null);
 			dao.saveTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
@@ -194,10 +201,10 @@ public class SimpleTaskExplorerTests {
 		final int RESULT_SET_SIZE = 3;
 		final String TASK_NAME = "FOOBAR";
 
-		Map<String, TaskExecution> expectedResults = new HashMap<>();
+		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		//Store completed jobs
 		for (int i = 0; i < COMPLETE_COUNT; i++) {
-			createAndSaveTaskExecution();
+			createAndSaveTaskExecution(i);
 		}
 
 		for (int i = 0; i < TEST_COUNT; i++) {
@@ -226,7 +233,7 @@ public class SimpleTaskExplorerTests {
 		final int TEST_COUNT = 5;
 		Set<String> expectedResults = new HashSet<>();
 		for (int i = 0; i < TEST_COUNT; i++) {
-			TaskExecution expectedTaskExecution = createAndSaveTaskExecution();
+			TaskExecution expectedTaskExecution = createAndSaveTaskExecution(i);
 			expectedResults.add(expectedTaskExecution.getTaskName());
 		}
 		List<String> actualTaskNames = taskExplorer.getTaskNames();
@@ -261,9 +268,9 @@ public class SimpleTaskExplorerTests {
 	}
 
 	private void verifyPageResults(Pageable pageable, int totalNumberOfExecs) {
-		Map<String, TaskExecution> expectedResults = createSampleDataSet(totalNumberOfExecs);
-		List<String> sortedExecIds = getSortedOfTaskExecIds(expectedResults);
-		Iterator<String> expectedTaskExecutionIter = sortedExecIds.iterator();
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(totalNumberOfExecs);
+		List<Long> sortedExecIds = getSortedOfTaskExecIds(expectedResults);
+		Iterator<Long> expectedTaskExecutionIter = sortedExecIds.iterator();
 		//Verify pageable totals
 		Page taskPage = taskExplorer.findAll(pageable);
 		int pagesExpected = (int) Math.ceil(totalNumberOfExecs / ((double) pageable.getPageSize()));
@@ -291,7 +298,7 @@ public class SimpleTaskExplorerTests {
 							pageNumber), expectedPageSize, actualTaskExecutions.size());
 			for (TaskExecution actualExecution : actualTaskExecutions) {
 				assertEquals(String.format("Element on page %n did not match expected",
-						pageNumber), expectedTaskExecutionIter.next(),
+						pageNumber), (long)expectedTaskExecutionIter.next(),
 						actualExecution.getExecutionId());
 				TestVerifierUtils.verifyTaskExecution(
 						expectedResults.get(actualExecution.getExecutionId()),
@@ -306,8 +313,8 @@ public class SimpleTaskExplorerTests {
 		assertEquals("Elements processed did not equal expected,", totalNumberOfExecs, elementCount);
 	}
 
-	private TaskExecution createAndSaveTaskExecution() {
-		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution();
+	private TaskExecution createAndSaveTaskExecution(int i) {
+		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
 		dao.saveTaskExecution(taskExecution);
 		return taskExecution;
 	}
@@ -333,18 +340,18 @@ public class SimpleTaskExplorerTests {
 				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
 
-	private Map<String, TaskExecution> createSampleDataSet(int count){
-		Map<String, TaskExecution> expectedResults = new HashMap<>();
+	private Map<Long, TaskExecution> createSampleDataSet(int count){
+		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		for (int i = 0; i < count; i++) {
-			TaskExecution expectedTaskExecution = createAndSaveTaskExecution();
+			TaskExecution expectedTaskExecution = createAndSaveTaskExecution(i);
 			expectedResults.put(expectedTaskExecution.getExecutionId(),
 					expectedTaskExecution);
 		}
 		return expectedResults;
 	}
 
-	private List<String> getSortedOfTaskExecIds(Map<String, TaskExecution> taskExecutionMap){
-		List<String> sortedExecIds = new ArrayList<>(taskExecutionMap.size());
+	private List<Long> getSortedOfTaskExecIds(Map<Long, TaskExecution> taskExecutionMap){
+		List<Long> sortedExecIds = new ArrayList<>(taskExecutionMap.size());
 		TreeSet sortedSet = getTreeSet();
 		sortedSet.addAll(taskExecutionMap.values());
 		Iterator <TaskExecution> iterator = sortedSet.descendingIterator();
@@ -360,7 +367,7 @@ public class SimpleTaskExplorerTests {
 			public int compare(TaskExecution e1, TaskExecution e2) {
 				int result = e1.getStartTime().compareTo(e2.getStartTime());
 				if (result == 0){
-					result = e1.getExecutionId().compareTo(e2.getExecutionId());
+					result = Long.valueOf(e1.getExecutionId()).compareTo(e2.getExecutionId());
 				}
 				return result;
 			}

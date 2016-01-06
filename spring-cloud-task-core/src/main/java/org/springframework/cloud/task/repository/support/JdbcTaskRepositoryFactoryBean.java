@@ -20,10 +20,13 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
+import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.jdbc.support.MetaDataAccessException;
 
 /**
  * Automates the creation of a {@link SimpleTaskRepository} which will persist task
@@ -42,6 +45,8 @@ public class JdbcTaskRepositoryFactoryBean implements FactoryBean<TaskRepository
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
+	private DataFieldMaxValueIncrementerFactory incrementerFactory;
+
 	public JdbcTaskRepositoryFactoryBean(){
 
 	}
@@ -50,6 +55,7 @@ public class JdbcTaskRepositoryFactoryBean implements FactoryBean<TaskRepository
 		if(dataSource != null) {
 			this.dataSource = dataSource;
 		}
+		incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
 	}
 
 	/**
@@ -82,9 +88,18 @@ public class JdbcTaskRepositoryFactoryBean implements FactoryBean<TaskRepository
 		return true;
 	}
 
-	private TaskExecutionDao createJdbcTaskExecutionDao()  {
+	private TaskExecutionDao createJdbcTaskExecutionDao() {
 		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
+		String databaseType = null;
+		try {
+			databaseType = org.springframework.batch.support.DatabaseType.fromMetaData(dataSource).name();
+		}
+		catch (MetaDataAccessException e) {
+			throw new IllegalStateException(e);
+		}
+		dao.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, tablePrefix + "SEQ"));
 		dao.setTablePrefix(tablePrefix);
 		return dao;
 	}
+
 }
