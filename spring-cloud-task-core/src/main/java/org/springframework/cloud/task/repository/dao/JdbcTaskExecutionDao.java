@@ -41,6 +41,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -52,15 +53,16 @@ import org.springframework.util.StringUtils;
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 
-	public static String SELECT_CLAUSE = "TASK_EXECUTION_ID, "
+	public static String SELECT_CLAUSE = "TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE ";
 
 	public static String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE) values (?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "(TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, START_TIME, END_TIME, "
+			+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE)"
+			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_PARAMETER = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
@@ -70,12 +72,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
 			+ "START_TIME = ?, END_TIME = ?, TASK_NAME = ?, EXIT_CODE = ?, "
-			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ?, STATUS_CODE = ? "
-			+ "where TASK_EXECUTION_ID = ?";
+			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ?, STATUS_CODE = ?, "
+			+ "TASK_EXTERNAL_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
 			"START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
+			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
 			+ "from %PREFIX%EXECUTION where TASK_EXECUTION_ID = ?";
 
 	private static final String FIND_PARAMS_FROM_ID = "SELECT TASK_EXECUTION_ID, "
@@ -89,13 +91,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String FIND_RUNNING_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
+			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
 			+ "from %PREFIX%EXECUTION where TASK_NAME = ? AND END_TIME IS NULL "
 			+ "order by TASK_EXECUTION_ID";
 
 	private static final String FIND_TASK_EXECUTIONS_BY_NAME = "SELECT TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE "
+			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
 			+ "from %PREFIX%EXECUTION where TASK_NAME = ? "
 			+ "order by TASK_EXECUTION_ID "
 			+ "LIMIT ? OFFSET ?";
@@ -110,7 +112,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private DataSource dataSource;
 
-	Map<String, Order> orderMap;
+	private Map<String, Order> orderMap;
+
+	private DataFieldMaxValueIncrementer taskIncrementer;
 
 	public JdbcTaskExecutionDao(DataSource dataSource) {
 		Assert.notNull(dataSource);
@@ -119,12 +123,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		orderMap = new TreeMap<>();
 		orderMap.put("START_TIME", Order.DESCENDING);
 		orderMap.put("TASK_EXECUTION_ID", Order.DESCENDING);
-
 	}
 
 	@Override
 	public void saveTaskExecution(TaskExecution taskExecution) {
 		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
+				taskExecution.getExternalExecutionID(),
 				taskExecution.getStartTime(), taskExecution.getEndTime(),
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(),
@@ -132,8 +136,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				parameters,
-				new int[]{ Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR,
-						Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR });
+				new int[]{ Types.BIGINT, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP,
+						Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP,
+						Types.VARCHAR });
 		insertTaskParameters(taskExecution.getExecutionId(), taskExecution.getParameters());
 	}
 
@@ -149,12 +154,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		Object[] parameters = new Object[]{ taskExecution.getStartTime(), taskExecution.getEndTime(),
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
 				taskExecution.getExitMessage(), new Date(), taskExecution.getStatusCode(),
-				taskExecution.getExecutionId() };
+				taskExecution.getExternalExecutionID(), taskExecution.getExecutionId()};
 		jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.INTEGER,
-						Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR, Types.VARCHAR });
+						Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR, Types.VARCHAR,
+						Types.BIGINT});
 	}
 
 	/**
@@ -169,7 +175,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution getTaskExecution(String executionId) {
+	public TaskExecution getTaskExecution(long executionId) {
 		try {
 			TaskExecution taskExecution = jdbcTemplate.queryForObject(getQuery(GET_EXECUTION_BY_ID),
 					new TaskExecutionRowMapper(), executionId);
@@ -248,6 +254,14 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		return new PageImpl<TaskExecution>(resultList, pageable, getTaskExecutionCount());
 	}
 
+	public void setTaskIncrementer(DataFieldMaxValueIncrementer taskIncrementer) {
+		this.taskIncrementer = taskIncrementer;
+	}
+
+	public long getNextExecutionId(){
+		return taskIncrementer.nextLongValue();
+	}
+
 	private String getQuery(String base) {
 		return StringUtils.replace(base, "%PREFIX%", tablePrefix);
 	}
@@ -259,7 +273,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * @param executionId    The executionId to which the params are associated.
 	 * @param taskParameters The parameters to be stored.
 	 */
-	private void insertTaskParameters(String executionId, List<String> taskParameters) {
+	private void insertTaskParameters(long executionId, List<String> taskParameters) {
 		for (String param : taskParameters) {
 			insertParameter(executionId, param);
 		}
@@ -269,13 +283,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * Convenience method that inserts an individual records into the
 	 * TASK_EXECUTION_PARAMS table.
 	 */
-	private void insertParameter(String executionId, String param) {
+	private void insertParameter(long executionId, String param) {
 		int[] argTypes = new int[]{ Types.VARCHAR, Types.VARCHAR };
 		Object[] args = new Object[]{ executionId, param };
 		jdbcTemplate.update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
 	}
 
-	private List<String> getTaskParameters(String executionId){
+	private List<String> getTaskParameters(long executionId){
 		final List<String> params= new ArrayList<>();
 		RowCallbackHandler handler = new RowCallbackHandler() {
 			@Override
@@ -287,7 +301,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		jdbcTemplate.query(getQuery(FIND_PARAMS_FROM_ID), new Object[] { executionId },
 				handler);
 		return params;
-
 	}
 	/**
 	 * Re-usable mapper for {@link TaskExecution} instances.
@@ -300,7 +313,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		@Override
 		public TaskExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
-			String  id = rs.getString("TASK_EXECUTION_ID");
+			long  id = rs.getLong("TASK_EXECUTION_ID");
 			TaskExecution taskExecution=new TaskExecution();
 			taskExecution.setExecutionId(id);
 			taskExecution.setStartTime(rs.getTimestamp("START_TIME"));
@@ -309,6 +322,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			taskExecution.setExitMessage(rs.getString("EXIT_MESSAGE"));
 			taskExecution.setStatusCode(rs.getString("STATUS_CODE"));
 			taskExecution.setTaskName(rs.getString("TASK_NAME"));
+			taskExecution.setExternalExecutionID(rs.getString("TASK_EXTERNAL_EXECUTION_ID"));
 			taskExecution.setParameters(getTaskParameters(id));
 			return taskExecution;
 		}

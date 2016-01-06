@@ -65,7 +65,7 @@ public class TaskExecutionCreator {
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution updateTaskExecution(TaskRepository taskRepository,
-													String taskExecutionId) {
+													long taskExecutionId) {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		expectedTaskExecution.setExecutionId(taskExecutionId);
 		taskRepository.update(expectedTaskExecution);

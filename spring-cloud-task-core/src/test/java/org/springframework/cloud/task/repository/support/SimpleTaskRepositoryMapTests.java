@@ -73,8 +73,8 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	private TaskExecution getSingleTaskExecutionFromMapRepository(
-			TaskRepository repository, String taskExecutionId){
-		Map<String, TaskExecution> taskMap = ((MapTaskExecutionDao)
+			TaskRepository repository, long taskExecutionId){
+		Map<Long, TaskExecution> taskMap = ((MapTaskExecutionDao)
 				((SimpleTaskRepository)taskRepository).getTaskExecutionDao()).getTaskExecutions();
 		assertTrue("taskExecutionId must be in MapTaskExecutionRepository",
 				taskMap.containsKey(taskExecutionId));

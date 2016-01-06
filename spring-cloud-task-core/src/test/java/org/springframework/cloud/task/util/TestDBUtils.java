@@ -32,12 +32,17 @@ import java.util.TreeMap;
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.Order;
+import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
+import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.repository.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.cloud.task.repository.support.DatabaseType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 /**
  * Provides a suite of tools that allow tests the ability to retrieve results from a
@@ -49,13 +54,12 @@ public class TestDBUtils {
 
 	/**
 	 * Retrieves the TaskExecution from the datasource.
-	 *
-	 * @param dataSource      The datasource from which to retrieve the taskExecution.
+	 * @param dataSource The datasource from which to retrieve the taskExecution.
 	 * @param taskExecutionId The id of the task to search.
-	 * @return taskExecution
+	 * @return taskExecution retrieved from the database.
 	 */
 	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource,
-													   String taskExecutionId) {
+													   long taskExecutionId) {
 		String sql = "SELECT * FROM TASK_EXECUTION WHERE "
 				+ "TASK_EXECUTION_ID = '"
 				+ taskExecutionId + "'";
@@ -65,13 +69,14 @@ public class TestDBUtils {
 			@Override
 			public TaskExecution mapRow(ResultSet rs, int rownumber) throws SQLException {
 				TaskExecution taskExecution=new TaskExecution();
-				taskExecution.setExecutionId(rs.getString(1));
+				taskExecution.setExecutionId(rs.getLong("TASK_EXECUTION_ID"));
 				taskExecution.setStartTime(rs.getTimestamp("START_TIME"));
 				taskExecution.setEndTime(rs.getTimestamp("END_TIME"));
 				taskExecution.setExitCode(rs.getInt("EXIT_CODE"));
 				taskExecution.setExitMessage(rs.getString("EXIT_MESSAGE"));
 				taskExecution.setStatusCode(rs.getString("STATUS_CODE"));
 				taskExecution.setTaskName(rs.getString("TASK_NAME"));
+				taskExecution.setExternalExecutionID(rs.getString("TASK_EXTERNAL_EXECUTION_ID"));
 				return taskExecution;
 			}
 		});
@@ -124,6 +129,12 @@ public class TestDBUtils {
 		return pagingQueryProvider;
 	}
 
+	/**
+	 * Creates a mock DataSource for use in testing.
+	 * @param databaseProductName the name of the database type to mock.
+	 * @return a mock DataSource.
+	 * @throws Exception
+	 */
 	public static DataSource getMockDataSource(String databaseProductName) throws Exception {
 		DatabaseMetaData dmd = mock(DatabaseMetaData.class);
 		DataSource ds = mock(DataSource.class);
@@ -132,6 +143,25 @@ public class TestDBUtils {
 		when(con.getMetaData()).thenReturn(dmd);
 		when(dmd.getDatabaseProductName()).thenReturn(databaseProductName);
 		return ds;
+	}
+
+	/**
+	 * Creates a incrementer for the DataSource.
+	 * @param dataSource the datasource that the incrementer will use to record current id.
+	 * @return a DataFieldMaxValueIncrementer object.
+	 */
+	public static DataFieldMaxValueIncrementer getIncrementer(DataSource dataSource){
+		DataFieldMaxValueIncrementerFactory incrementerFactory =
+				new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
+		String databaseType = null;
+		try {
+			databaseType = DatabaseType.fromMetaData(dataSource).name();
+		}
+		catch (MetaDataAccessException e) {
+			throw new IllegalStateException(e);
+		}
+		return incrementerFactory.getIncrementer(databaseType,
+				"TASK_SEQ");
 	}
 
 	private static void populateParamsToDB(DataSource dataSource, TaskExecution taskExecution) {

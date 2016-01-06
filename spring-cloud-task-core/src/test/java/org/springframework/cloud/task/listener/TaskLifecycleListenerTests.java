@@ -64,7 +64,7 @@ public class TaskLifecycleListenerTests {
 		context.refresh();
 		this.listener = context.getBean(TaskLifecycleListener.class);
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Creating: TaskExecution{executionId='" +
+				"Creating: TaskExecution{executionId=" +
 						listener.getTaskExecution().getExecutionId());
 		assertEquals("Create should report that exit code is zero",
 				0, listener.getTaskExecution().getExitCode());
@@ -78,7 +78,7 @@ public class TaskLifecycleListenerTests {
 		this.listener = context.getBean(TaskLifecycleListener.class);
 		this.listener.onApplicationEvent(new ContextClosedEvent(context));
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Updating: TaskExecution{executionId='" +
+				"Updating: TaskExecution{executionId=" +
 						listener.getTaskExecution().getExecutionId());
 		assertEquals("Update should report that exit code is zero",
 				0, listener.getTaskExecution().getExitCode());
@@ -91,7 +91,7 @@ public class TaskLifecycleListenerTests {
 		this.listener = context.getBean(TaskLifecycleListener.class);
 		listener.onApplicationEvent(new ApplicationFailedEvent(new SpringApplication(), new String[]{}, context, new RuntimeException("This was expected")));
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Updating: TaskExecution{executionId='" +
+				"Updating: TaskExecution{executionId=" +
 						listener.getTaskExecution().getExecutionId());
 		assertEquals("Update should report that exit code is one",
 				1, listener.getTaskExecution().getExitCode());

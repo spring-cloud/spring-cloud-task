@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,9 @@ import org.springframework.data.domain.Pageable;
  */
 public class MapTaskExecutionDao implements TaskExecutionDao {
 
-	private ConcurrentMap<String, TaskExecution> taskExecutions;
+	private ConcurrentMap<Long, TaskExecution> taskExecutions;
+
+	private final AtomicLong currentId = new AtomicLong(0L);
 
 	public MapTaskExecutionDao() {
 		taskExecutions = new ConcurrentHashMap<>();
@@ -55,14 +58,14 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution getTaskExecution(String executionId) {
+	public TaskExecution getTaskExecution(long executionId) {
 		return taskExecutions.get(executionId);
 	}
 
 	@Override
 	public long getTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
-		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName)) {
 				count++;
 			}
@@ -78,7 +81,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
 		Set<TaskExecution> result = getTaskExecutionTreeSet();
-		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName) &&
 					entry.getValue().getEndTime() == null) {
 				result.add(entry.getValue());
@@ -91,7 +94,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
 		List<TaskExecution> result = new ArrayList<>();
 		Set<TaskExecution> filteredSet = getTaskExecutionTreeSet();
-		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName)) {
 				filteredSet.add(entry.getValue());
 			}
@@ -103,7 +106,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public List<String> getTaskNames() {
 		Set<String> result = new TreeSet<>();
-		for (Map.Entry<String, TaskExecution> entry : taskExecutions.entrySet()) {
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			result.add(entry.getValue().getTaskName());
 		}
 		return new ArrayList<String>(result);
@@ -122,8 +125,12 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 				getTaskExecutionCount());
 	}
 
-	public Map<String, TaskExecution> getTaskExecutions() {
+	public Map<Long, TaskExecution> getTaskExecutions() {
 		return Collections.unmodifiableMap(taskExecutions);
+	}
+
+	public long getNextExecutionId(){
+		return currentId.getAndIncrement();
 	}
 
 	private TreeSet<TaskExecution> getTaskExecutionTreeSet() {
@@ -132,11 +139,10 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			public int compare(TaskExecution e1, TaskExecution e2) {
 				int result = e1.getStartTime().compareTo(e2.getStartTime());
 				if (result == 0){
-					result = e1.getExecutionId().compareTo(e2.getExecutionId());
+					result = Long.valueOf(e1.getExecutionId()).compareTo(e2.getExecutionId());
 				}
 				return result;
 			}
 		});
 	}
-
 }

@@ -18,11 +18,9 @@ package org.springframework.cloud.task.listener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -139,13 +137,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void doTaskStart() {
 
 		if(!started) {
-
-			String executionId = UUID.randomUUID().toString();
 			this.taskExecution = new TaskExecution();
-
+			this.taskExecution.setExecutionId(this.taskRepository.getNextExecutionId());
 			this.taskExecution.setTaskName(applicationContext.getId());
 			this.taskExecution.setStartTime(new Date());
-			this.taskExecution.setExecutionId(executionId);
 			this.taskRepository.createTaskExecution(this.taskExecution);
 		}
 		else {
