@@ -17,7 +17,6 @@
 package org.springframework.cloud.task.repository.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
@@ -60,6 +59,15 @@ public interface TaskExecutionDao {
 	 */
 	long getTaskExecutionCountByTaskName(String taskName);
 
+
+	/**
+	 * Retrieves current number of task executions for a taskName and with an endTime of null.
+	 *
+	 * @param taskName the name of the task to search for in the repository.
+	 * @return current number of task executions for the taskName.
+	 */
+	long getRunningTaskExecutionCountByTaskName(String taskName);
+
 	/**
 	 * Retrieves current number of task executions.
 	 *
@@ -69,22 +77,20 @@ public interface TaskExecutionDao {
 
 	/**
 	 * Retrieves a set of task executions that are running for a taskName.
-	 *
 	 * @param taskName the name of the task to search for in the repository.
+	 * @param pageable the constraints for the search.
 	 * @return set of running task executions.
 	 */
-	 Set<TaskExecution> findRunningTaskExecutions(String taskName);
+	 Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable);
 
 	/**
 	 * Retrieves a subset of task executions by task name, start location and size.
-	 *
 	 * @param taskName the name of the task to search for in the repository.
-	 * @param start the position of the first entry to be returned from result set.
-	 * @param count the number of entries to return
+	 * @param pageable the constraints for the search.
 	 * @return a list that contains task executions from the query bound by the start
 	 * position and count specified by the user.
 	 */
-	List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count);
+	Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable);
 
 	/**
 	 * Retrieves a sorted list of distinct task names for the task executions.

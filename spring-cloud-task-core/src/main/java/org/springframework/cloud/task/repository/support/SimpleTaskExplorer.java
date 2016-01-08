@@ -17,7 +17,6 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -46,8 +45,8 @@ public class SimpleTaskExplorer implements TaskExplorer{
 	}
 
 	@Override
-	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
-		return taskExecutionDao.findRunningTaskExecutions(taskName);
+	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
+		return taskExecutionDao.findRunningTaskExecutions(taskName, pageable);
 	}
 
 	@Override
@@ -66,8 +65,8 @@ public class SimpleTaskExplorer implements TaskExplorer{
 	}
 
 	@Override
-	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
-		return taskExecutionDao.getTaskExecutionsByName(taskName, start, count);
+	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
+		return taskExecutionDao.findTaskExecutionsByName(taskName, pageable);
 	}
 
 	@Override

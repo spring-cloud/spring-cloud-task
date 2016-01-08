@@ -21,10 +21,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.sql.DataSource;
@@ -53,11 +51,16 @@ import org.springframework.util.StringUtils;
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 
-	public static String SELECT_CLAUSE = "TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, "
+	public static final String SELECT_CLAUSE = "TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
 			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE ";
 
-	public static String FROM_CLAUSE = "%PREFIX%EXECUTION";
+	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
+
+	public static final String RUNNING_TASK_WHERE_CLAUSE =
+			"where TASK_NAME = ? AND END_TIME IS NULL ";
+
+	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = ? ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
 			+ "(TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, START_TIME, END_TIME, "
@@ -89,18 +92,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM " +
 			"%PREFIX%EXECUTION where TASK_NAME = ?";
 
-	private static final String FIND_RUNNING_TASK_EXECUTIONS = "SELECT TASK_EXECUTION_ID, "
-			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
-			+ "from %PREFIX%EXECUTION where TASK_NAME = ? AND END_TIME IS NULL "
-			+ "order by TASK_EXECUTION_ID";
-
-	private static final String FIND_TASK_EXECUTIONS_BY_NAME = "SELECT TASK_EXECUTION_ID, "
-			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
-			+ "from %PREFIX%EXECUTION where TASK_NAME = ? "
-			+ "order by TASK_EXECUTION_ID "
-			+ "LIMIT ? OFFSET ?";
+	private static final String RUNNING_TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM " +
+			"%PREFIX%EXECUTION where TASK_NAME = ? AND END_TIME IS NULL ";
 
 	final String FIND_TASK_NAMES = "SELECT distinct TASK_NAME from %PREFIX%EXECUTION order by TASK_NAME";
 
@@ -199,6 +192,17 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
+	public long getRunningTaskExecutionCountByTaskName(String taskName) {
+		try {
+			return jdbcTemplate.queryForObject(
+					getQuery(RUNNING_TASK_EXECUTION_COUNT_BY_NAME), new Object[] { taskName }, Long.class);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return 0;
+		}
+	}
+
+	@Override
 	public long getTaskExecutionCount() {
 		try {
 			return jdbcTemplate.queryForObject(
@@ -210,19 +214,17 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
-		final Set<TaskExecution> result = new HashSet<TaskExecution>();
-		List resultList = jdbcTemplate.query(getQuery(FIND_RUNNING_TASK_EXECUTIONS),
-				new Object[]{ taskName }, new TaskExecutionRowMapper());
-		result.addAll(resultList);
-		return result;
-
+	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
+		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE,
+				RUNNING_TASK_WHERE_CLAUSE, new Object[]{ taskName },
+				getRunningTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
-	public List<TaskExecution> getTaskExecutionsByName(String taskName, final int start, final int count) {
-		return jdbcTemplate.query(getQuery(FIND_TASK_EXECUTIONS_BY_NAME),
-				new Object[]{ taskName, count, start }, new TaskExecutionRowMapper());
+	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
+		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE,
+				TASK_NAME_WHERE_CLAUSE, new Object[]{ taskName },
+				getTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
@@ -232,10 +234,30 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public Page<TaskExecution> findAll(Pageable pageable) {
+		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE, null,
+				new Object[]{  }, getTaskExecutionCount());
+	}
 
+	public void setTaskIncrementer(DataFieldMaxValueIncrementer taskIncrementer) {
+		this.taskIncrementer = taskIncrementer;
+	}
+
+	public long getNextExecutionId(){
+		return taskIncrementer.nextLongValue();
+	}
+
+	private Page<TaskExecution> queryForPageableResults(Pageable pageable,
+														String selectClause,
+														String fromClause,
+														String whereClause,
+														Object[] queryParam,
+														long totalCount){
 		SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
-		factoryBean.setSelectClause(SELECT_CLAUSE);
-		factoryBean.setFromClause(FROM_CLAUSE);
+		factoryBean.setSelectClause(selectClause);
+		factoryBean.setFromClause(fromClause);
+		if(StringUtils.hasText(whereClause)){
+			factoryBean.setWhereClause(whereClause);
+		}
 		factoryBean.setSortKeys(orderMap);
 		factoryBean.setDataSource(dataSource);
 		PagingQueryProvider pagingQueryProvider = null;
@@ -249,17 +271,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		String query = pagingQueryProvider.getPageQuery(pageable);
 		List<TaskExecution> resultList = jdbcTemplate.query(
 				getQuery(query),
-				new Object[]{  },
+				queryParam,
 				new TaskExecutionRowMapper());
-		return new PageImpl<TaskExecution>(resultList, pageable, getTaskExecutionCount());
-	}
-
-	public void setTaskIncrementer(DataFieldMaxValueIncrementer taskIncrementer) {
-		this.taskIncrementer = taskIncrementer;
-	}
-
-	public long getNextExecutionId(){
-		return taskIncrementer.nextLongValue();
+		return new PageImpl<TaskExecution>(resultList, pageable, totalCount);
 	}
 
 	private String getQuery(String base) {

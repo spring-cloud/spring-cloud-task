@@ -179,10 +179,12 @@ public class SimpleTaskExplorerTests {
 			dao.saveTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
-		Set<TaskExecution> actualResults = taskExplorer.findRunningTaskExecutions(TASK_NAME);
+		Pageable pageable = new PageRequest(0, 10);
+
+		Page<TaskExecution> actualResults = taskExplorer.findRunningTaskExecutions(TASK_NAME, pageable);
 		assertEquals(String.format(
 				"Running task count for task name did not match expected result for testType %s",
-				testType), TEST_COUNT, actualResults.size());
+				testType), TEST_COUNT, actualResults.getNumberOfElements());
 
 		for (TaskExecution result : actualResults) {
 			assertTrue(String.format(
@@ -198,7 +200,6 @@ public class SimpleTaskExplorerTests {
 	public void findTasksByName() {
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
-		final int RESULT_SET_SIZE = 3;
 		final String TASK_NAME = "FOOBAR";
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
@@ -213,10 +214,12 @@ public class SimpleTaskExplorerTests {
 			dao.saveTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
-		List<TaskExecution> resultSet = taskExplorer.getTaskExecutionsByName(TASK_NAME, 1, RESULT_SET_SIZE);
+
+		Pageable pageable = new PageRequest(0, 10);
+		Page<TaskExecution> resultSet = taskExplorer.findTaskExecutionsByName(TASK_NAME, pageable);
 		assertEquals(String.format(
 				"Running task count for task name did not match expected result for testType %s",
-				testType), RESULT_SET_SIZE, resultSet.size());
+				testType), TEST_COUNT, resultSet.getNumberOfElements());
 
 		for (TaskExecution result : resultSet) {
 			assertTrue(String.format("result returned from %s repo %s not expected",

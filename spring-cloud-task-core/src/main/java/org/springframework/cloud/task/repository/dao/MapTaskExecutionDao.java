@@ -74,12 +74,24 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
+	public long getRunningTaskExecutionCountByTaskName(String taskName) {
+		int count = 0;
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
+			if (entry.getValue().getTaskName().equals(taskName) &&
+					entry.getValue().getEndTime() == null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
 	public long getTaskExecutionCount() {
 		return taskExecutions.size();
 	}
 
 	@Override
-	public Set<TaskExecution> findRunningTaskExecutions(String taskName) {
+	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
 		Set<TaskExecution> result = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName) &&
@@ -87,20 +99,20 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 				result.add(entry.getValue());
 			}
 		}
-		return result;
+		return getPageFromList(new ArrayList<>(result), pageable,
+				getRunningTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
-	public List<TaskExecution> getTaskExecutionsByName(String taskName, int start, int count) {
-		List<TaskExecution> result = new ArrayList<>();
+	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
 		Set<TaskExecution> filteredSet = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName)) {
 				filteredSet.add(entry.getValue());
 			}
 		}
-		result.addAll(filteredSet);
-		return result.subList(start, start + count);
+		return getPageFromList(new ArrayList<TaskExecution>(filteredSet), pageable,
+				getTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
@@ -117,12 +129,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		TreeSet<TaskExecution> sortedSet = getTaskExecutionTreeSet();
 		sortedSet.addAll(taskExecutions.values());
 		List<TaskExecution> result = new ArrayList<>(sortedSet.descendingSet());
-		int toIndex = (pageable.getOffset() + pageable.getPageSize() > result.size()) ?
-				result.size() : pageable.getOffset() + pageable.getPageSize();
-		return new PageImpl<TaskExecution>(
-				result.subList(pageable.getOffset(), toIndex),
-				pageable,
-				getTaskExecutionCount());
+		return getPageFromList(result, pageable, getTaskExecutionCount());
 	}
 
 	public Map<Long, TaskExecution> getTaskExecutions() {
@@ -144,5 +151,13 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 				return result;
 			}
 		});
+	}
+
+	private Page getPageFromList(List<TaskExecution> executionList, Pageable pageable, long maxSize){
+		int toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList.size()) ?
+				executionList.size() : pageable.getOffset() + pageable.getPageSize();
+		return new PageImpl<TaskExecution>(
+				executionList.subList(pageable.getOffset(), toIndex),
+				pageable, maxSize);
 	}
 }
