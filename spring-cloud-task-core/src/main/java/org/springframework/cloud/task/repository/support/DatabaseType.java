@@ -36,6 +36,7 @@ import org.springframework.util.StringUtils;
 public enum DatabaseType {
 
 	HSQL("HSQL Database Engine"),
+	H2("H2"),
 	ORACLE("Oracle"),
 	MYSQL("MySQL"),
 	POSTGRES("PostgreSQL");

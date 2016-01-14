@@ -18,6 +18,7 @@ package org.springframework.cloud.task.repository.database.support;
 
 
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
+import static org.springframework.cloud.task.repository.support.DatabaseType.H2;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
 import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
@@ -61,6 +62,7 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 
 	{
 		providers.put(HSQL, new HsqlPagingQueryProvider());
+		providers.put(H2, new H2PagingQueryProvider());
 		providers.put(MYSQL, new MySqlPagingQueryProvider());
 		providers.put(POSTGRES, new PostgresPagingQueryProvider());
 		providers.put(ORACLE, new OraclePagingQueryProvider());
