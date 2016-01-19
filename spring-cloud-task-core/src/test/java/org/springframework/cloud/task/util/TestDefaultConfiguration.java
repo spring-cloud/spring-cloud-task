@@ -16,10 +16,14 @@
 
 package org.springframework.cloud.task.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
+import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +37,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TestDefaultConfiguration {
 
+	private MapTaskExecutionDao dao;
+
+	@Autowired(required = false)
+	private ApplicationArguments applicationArguments;
+
+	public TestDefaultConfiguration() {
+		this.dao = new MapTaskExecutionDao();
+	}
+
 	@Bean
 	public TaskRepository taskRepository(){
-		return new SimpleTaskRepository(new MapTaskExecutionDao());
+		return new SimpleTaskRepository(this.dao);
 	}
 
 	@Bean
@@ -45,6 +58,11 @@ public class TestDefaultConfiguration {
 
 	@Bean
 	public TaskLifecycleListener taskHandler(){
-		return new TaskLifecycleListener(taskRepository(), taskNameResolver());
+		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), applicationArguments);
+	}
+
+	@Bean
+	public TaskExplorer taskExplorer() {
+		return new SimpleTaskExplorer(this.dao);
 	}
 }
