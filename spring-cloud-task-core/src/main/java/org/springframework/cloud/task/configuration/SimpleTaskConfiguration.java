@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -60,6 +61,9 @@ public class SimpleTaskConfiguration {
 	@Autowired
 	private ResourceLoader resourceLoader;
 
+	@Autowired(required = false)
+	private ApplicationArguments applicationArguments;
+
 	@Value("${spring.class.initialize.enable:true}")
 	private boolean taskInitializationEnable;
 
@@ -78,7 +82,7 @@ public class SimpleTaskConfiguration {
 
 	@Bean
 	public TaskLifecycleListener taskLifecycleListener() {
-		return new TaskLifecycleListener(taskRepository(), taskNameResolver());
+		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), this.applicationArguments);
 	}
 
 	@Bean
