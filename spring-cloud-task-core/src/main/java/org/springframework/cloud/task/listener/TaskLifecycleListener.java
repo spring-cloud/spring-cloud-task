@@ -18,11 +18,14 @@ package org.springframework.cloud.task.listener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -63,16 +66,20 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskNameResolver taskNameResolver;
 
+	private ApplicationArguments applicationArguments;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
-			TaskNameResolver taskNameResolver) {
+			TaskNameResolver taskNameResolver,
+			ApplicationArguments applicationArguments) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
+		this.applicationArguments = applicationArguments;
 	}
 
 	/**
@@ -142,9 +149,15 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void doTaskStart() {
 
 		if(!started) {
+			List<String> args = new ArrayList<>(0);
+
+			if(this.applicationArguments != null) {
+				args = Arrays.asList(this.applicationArguments.getSourceArgs());
+			}
+
 			this.taskExecution = new TaskExecution(this.taskRepository.getNextExecutionId(),
 					0, this.taskNameResolver.getTaskName(), new Date(), null, null, null,
-					new ArrayList<String>(0), null);
+					args, null);
 
 			this.taskRepository.createTaskExecution(this.taskExecution);
 		}
