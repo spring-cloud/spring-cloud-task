@@ -298,7 +298,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * TASK_EXECUTION_PARAMS table.
 	 */
 	private void insertParameter(long executionId, String param) {
-		int[] argTypes = new int[]{ Types.VARCHAR, Types.VARCHAR };
+		int[] argTypes = new int[]{ Types.BIGINT, Types.VARCHAR };
 		Object[] args = new Object[]{ executionId, param };
 		jdbcTemplate.update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
 	}
