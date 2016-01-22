@@ -1,0 +1,276 @@
+
+[[getting-started]]
+= Getting started
+
+[[partintro]]
+--
+If you're just getting started with Spring Cloud Task, this is the section
+for you! Here we answer the basic "`what?`", "`how?`" and "`why?`" questions. You'll
+find a gentle introduction to Spring Cloud Task.  We'll then build our first Spring Cloud
+Task application, discussing some core principles as we go.
+--
+
+[[getting-started-introducing-spring-cloud-task]]
+== Introducing Spring Cloud Task
+
+Spring Cloud Task makes it easy to create short lived microservices.  We provide
+capabilities that allow short lived JVM processes to be executed on demand in a production
+environment.
+
+[[getting-started-system-requirements]]
+== System Requirements
+
+You need Java installed (Java 7 or better, we recommend Java 8) and to build you need to have Maven installed as well.
+
+=== Database Requirements
+
+Spring Cloud Task uses a relational database to store the results of an executed task.
+While you can begin developing a task without a database (the status of the task is logged
+ as part of the task repository's updates), for production environments, you'll want to
+utilize a supported database.  Below is a list of the ones currently supported:
+
+- H2
+- HSQLDB
+- MySql
+- Oracle
+- Postgres
+
+[[getting-started-developing-first-task]]
+== Developing your first Spring Cloud Task application
+
+A good place to start is with a simple "Hello World!" application so we'll create the
+Spring Cloud Task equivalent to highlight the features of the framework.  We'll use Apache
+Maven as a build tool for this project since most IDEs have good support for it.
+
+NOTE: The spring.io web site contains many “Getting Started” guides that use Spring Boot.
+If you’re looking to solve a specific problem; check there first.  You can shortcut the
+steps below by going to start.spring.io and creating a new project. This will
+automatically generate a new project structure so that you can start coding right the way.
+Check the documentation for more details.
+
+Before we begin, open a terminal to check that you have valid versions of Java and Maven
+installed.
+
+[source]
+$ java -version
+java version "1.8.0_31"
+Java(TM) SE Runtime Environment (build 1.8.0_31-b13)
+Java HotSpot(TM) 64-Bit Server VM (build 25.31-b07, mixed mode)
+
+[source]
+$ mvn -v
+Apache Maven 3.2.3 (33f8c3e1027c3ddde99d3cdebad2656a31e8fdf4; 2014-08-11T15:58:10-05:00)
+Maven home: /usr/local/Cellar/maven/3.2.3/libexec
+Java version: 1.8.0_31, vendor: Oracle Corporation
+
+NOTE: This sample needs to be created in its own folder.  Subsequent instructions assume
+you have created a suitable folder and that it is your "current directory".
+
+[[getting-started-creating-the-pom]]
+=== Creating the POM
+
+We need to start by creating a Maven `pom.xml` file.  The `pom.xml` is the recipe that
+will be used to build your project.  Open your favorite text editor and add the following:
+
+[code,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.example</groupId>
+	<artifactId>myproject</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.3.2.RELEASE</version>
+	</parent>
+
+	<properties>
+		<start-class>com.example.SampleTask</start-class>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+----
+
+This should give you a working build.  You can test it out by running `mvn package` (you
+can ignore the "jar will be empty - no content was marked for inclusion!" warning for
+now).
+
+NOTE: At this point you could import the project into an IDE (most modern Java IDE's
+include built-in support for Maven).  For simplicity we will continue to use a plain text
+editor for this example.
+
+[[getting-started-adding-classpath-dependencies]]
+=== Adding classpath dependencies
+
+A Spring Cloud Task is made up of a Spring Boot application that is expected to end.  In
+our POM above, we created the shell of a Spring Boot application from a dependency
+perspective by setting our parent to use the `spring-boot-starter-parent`.
+
+Spring Boot provides a number of additional "Starter POMs".  Some of which are appropriate
+for use within tasks (`spring-boot-starter-batch`, `spring-boot-starter-jdbc`, etc) and
+some may not be ('spring-boot-starter-web` is probably not going to be used in a task).
+The indicator of if a starter makes sense or not comes down to if the resulting
+application will end (batch based applications typically end, the
+`spring-boot-starter-web` dependency bootstraps a servlet container which probably wont').
+
+For this example, we'll only need to add a single additional dependency, the one for
+Spring Cloud Task itself:
+
+[source,xml]
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-task-core</artifactId>
+			<version>1.0.0.BUILD-SNAPSHOT</version>
+		</dependency>
+
+[[getting-started-writing-the-code]]
+=== Writing the code
+
+To finish our application, we need to create a single Java file.  Maven will compile the
+sources from `src/main/java` by default so you need to create that folder structure.  Then
+add a file named `src/main/java/com/example/SampleTask.java`:
+
+[source,java]
+----
+package com.example;
+
+import org.springframework.boot.*;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+@EnableTask
+public class SampleTask {
+
+	@Bean
+	public CommandLineRunner commandLineRunner() {
+		return new HelloWorldCommandLineRunner();
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SampleTask.class, args);
+	}
+
+	public static class HelloWorldCommandLineRunner implements CommandLineRunner {
+
+		@Override
+		public void run(String... strings) throws Exception {
+			System.out.println("Hello World!");
+		}
+	}
+}
+----
+
+While it may not look like much, quite a bit is going on.  To read more about the Spring
+Boot specifics, take a look at their reference documentation here:
+http://docs.spring.io/spring-boot/docs/current/reference/html/[http://docs.spring.io/spring-boot/docs/current/reference/html/]
+
+[[getting-started-at-task]]
+==== The @EnableTask annotation
+
+The first non boot annotation in our example is the `@EnableTask` annotation.  This class
+level annotation tells Spring Cloud Task to bootstrap it's functionality.  This occurs by
+importing an additional configuration class, `SimpleTaskConfiguration` by default.  This
+additional configuration registers the `TaskRepository` and the infrastructure for its
+use.
+
+Out of the box, the `TaskRepository` will use an in memory database to record the results
+of a task.  Obviously this isn't a practical solution for a production environment since
+the database is shut down once the task ends.  However, for a quick getting started
+experience we use this as a default as well as echoing to the logs what is being updated
+in that repository.  Later in this documentation we'll cover how to customize the
+configuration of the pieces provided by Spring Cloud Task.
+
+When our sample application is run, Spring Boot will launch our
+`HelloWorldCommandLineRunner` outputting our "Hello World!" message to standard out.  The
+`TaskLifecyceListener` will record the start of the task and the end of the task in the
+repository.
+
+[[getting-started-main-method]]
+==== The main method
+
+The main method serves as the entry point to any java application.  Our main method
+delegates to Spring Boot's `SpringApplication` class.  You can read more about it in the
+Spring Boot documentation.
+
+[[getting-started-clr]]
+==== The CommandLineRunner
+
+In Spring, there are many ways to bootstrap an application's logic.  Spring Boot provides
+a convenient method of doing so in an organized manor via their `*Runner` interfaces
+(`CommandLineRunner` or `ApplicationRunner`).  A well behaved task will bootstrap any
+logic via one of these two runners.
+
+The lifecycle of a task is considered from before the `*Runner`s are executed to once they
+are all complete.  Spring Boot allows an application to use multiple `*Runner`s and Spring
+Cloud Task doesn't attempt to impede on this convetion.
+
+NOTE: Any processing bootstrapped from mechanisms other than a `CommandLineRunner` or
+`ApplicationRunner` (using `InitializingBean#afterPropertiesSet` for example) will not be
+ recorded by Spring Cloud Task.
+
+[[getting-started-running-the-example]]
+=== Running the example
+
+At this point, your application should work.  Since this application is Spring Boot based,
+ we can run it from the command line via the command `$ mvn spring-boot:run` from the root
+ of our applicaiton:
+
+[source]
+----
+$ mvn clean spring-boot:run
+....... . . .
+....... . . . (Maven log output here)
+....... . . .
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.3.2.RELEASE)
+
+2016-01-25 11:08:10.183  INFO 12943 --- [           main] com.example.SampleTask                   : Starting SampleTask on Michaels-MacBook-Pro-2.local with PID 12943 (/Users/mminella/Documents/IntelliJWorkspace/spring-cloud-task-example/target/classes started by mminella in /Users/mminella/Documents/IntelliJWorkspace/spring-cloud-task-example)
+2016-01-25 11:08:10.185  INFO 12943 --- [           main] com.example.SampleTask                   : No active profile set, falling back to default profiles: default
+2016-01-25 11:08:10.226  INFO 12943 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
+2016-01-25 11:08:11.051  INFO 12943 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2016-01-25 11:08:11.065  INFO 12943 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=null, statusCode='null', exitMessage='null', parameters=[]}
+Hello World!
+2016-01-25 11:08:11.071  INFO 12943 --- [           main] com.example.SampleTask                   : Started SampleTask in 1.095 seconds (JVM running for 3.826)
+2016-01-25 11:08:11.220  INFO 12943 --- [       Thread-1] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
+2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=Mon Jan 25 11:08:11 CST 2016, statusCode='null', exitMessage='null', parameters=[]}
+2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+----
+
+If you notice, there are three lines of interest in the above output:
+
+* `SimpleTaskRepository` logged out the creation of the entry in the `TaskRepository`.
+* The execution of our `CommandLineRunner`, demonstrated by the "Helo World!" output.
+* `SimpleTaskREpository` logging the completion of the task in the `TaskRepository`.
+

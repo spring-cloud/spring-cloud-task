@@ -1,0 +1,170 @@
+
+[[features]]
+= Features
+
+[[partintro]]
+--
+This section goes into more detail about Spring Cloud Task.  How to use it, how to
+configure it, as well as the appropriate extension points are all covered in this section.
+--
+
+[[features-lifecycle]]
+== The lifecycle of a Spring Cloud Task
+
+In most cases, the modern cloud environment is designed around the execution of processes
+that are not expected to end.  If they do, they are typically restarted.  While most
+platforms do have some method to execute a process that isn't restarted when it ends, the
+ results of that execution are typically not maintained in a consumable way.  Spring Cloud
+ Task brings the ability to execute short lived processes in an environment and record the
+ results.  This allows for a microservices architecture around short lived processes as
+ well as longer running services.
+
+While this functionality is useful in a cloud environment, the same issues can arise in a
+traditional deployment model as well.  When executing Spring Boot applications via a
+scheduler like cron, it can be useful to be able to monitor the results of the application
+after it's completion.
+
+A Spring Cloud Task the approach that a Spring Boot application can have a start and an
+end and still be successful.  Batch applications are just one example of where short lived
+processes can be helpful.  Spring Cloud Task records lifecycle events of a given task.
+
+The lifecycle consists of a single task execution.  This is a physical execution of a
+Spring Boot application configured to be a task (annotated with the `@EnableTask`
+annotation).
+
+At the beginning of a task, an entry in the `TaskRepository` is created recording the
+start event.  This event is triggered via the `ContextRefreshEvent` being triggered by
+Spring Framework.
+
+NOTE: As Spring Cloud Task is expected to consist of a single application context.  If
+multiple application contexts are used (parent/child relationships for example), the first
+`ContextRefreshEvent` that is published by Spring will be recorded as the start of the
+task.
+
+NOTE: The recording of a task will only occur upon the successful bootstrapping of an
+`ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
+not be recorded.
+
+Upon completion of all of the `*Runner`s from Spring Boot or the failure of an
+`ApplicationContext` (indicated via a `ApplicationFailedEvent`), the task execution is
+updated in the repository with the results.
+
+[[features-task-execution-details]]
+=== The TaskExecution
+
+The information stored in the `TaskRepository` is modeled in the `TaskExecution` class and
+consists of the following information:
+
+|===
+|Field |Description
+
+|`executionid`
+|The unique id for the task's execution.
+
+|`exitCode`
+|The exit code generated from an `ExitCodeExceptionMapper` implementation.  If there is no
+exit code generated, it's assumed to be 0.
+
+|`taskName`
+|The name for the task as determined by the configured `TaskNameResolver`.
+
+|`starTime`
+|The time the task was started as indicated by the `ContextRefreshEvent`.
+
+|`endTime`
+|The time the task was completed as indicated by the `ContextClosedEvent`.
+
+|`exitMessage`
+|Any information available at the time of exit.  If an exception is the cause of the end
+of the task (as indicated via an `ApplicationFailedEvent`), the stack trace for that
+exception will be stored here.
+
+|`parameters`
+|A `List` of the string parameters as they were passed into the executable boot
+application.
+|===
+
+[[features-lifecycle-exit-codes]]
+=== Mapping Exit Codes
+
+When a task completes, it will want to return an exit code to the OS.  If we take a look
+at our original example, we can see that we are not controlling that aspect of our
+application. So if an exception is thrown, the JVM will return a code that may or may not
+be of any use to you in the debugging of that.
+
+As such, Spring Boot provides an interface, `ExitCodeExceptionMapper` that allows you to
+map uncaught exceptions to exit codes.  This allows you to be able to indicate at that
+level what went wrong.  Also, by mapping exit codes in this manor, Spring Cloud Task will
+record the exit code returned.
+
+[[features-configuration]]
+== Configuration
+
+Spring Cloud Task provides an out of the box configuration as defined in the
+ `DefaultTaskConfigurer` and `SimpleTaskConfiguration`.  This section will walk through
+the defaults as well as how to customize Spring Cloud Task for your needs
+
+[[features-data-source]]
+=== DataSource
+
+Spring Cloud Task utilizes a datasource for storing the results of task executions.  By
+default, we provide an in memory instance of H2 to provide a simple method of
+bootstrapping development.  However, in a production environment, you'll want to configure
+your own `DataSource`.
+
+If your application utilizes only a single `DataSource` and that will serve as both your
+business schema as well as the task repository, all you need to do is provide any
+`DataSource` (via Spring Boot's configuration conventions is the easiest way).  This will
+be automatically used by Spring Cloud Task for the repository.
+
+If your application utilizes more than one `DataSource`, you'll need to configure the
+task repository with the appropriate `DataSource`.  This customization can be done via an
+implementation of the `TaskConfigurer`.
+
+[[features-task-configurer]]
+=== TaskConfigurer
+
+The `TaskConfigurer` is a strategy interface allowing for users to customize the way
+components of Spring Cloud Task are configured.  By default, we provide the
+`DefaultTaskConfigurer` that provides logical defaults (`Map` based in memory components
+useful for development if no `DataSource` is provided and JDBC based components if there
+is a `DataSource` available.
+
+The `TaskConfigurer` allows the configuration of three main components:
+
+|===
+|Component |Description |Default
+
+|`TaskRepository`
+|The implementation of the `TaskRepository` to be used.
+|`SimpleTaskRepository`
+
+|`TaskExplorer`
+|The implementation of the `TaskExplorer` (a component for read only access to the task
+repository) to be used.
+|`SimpleTaskExplorer`
+
+|`PlatformTransactionManager`
+|A transaction manager to be used when executing updates for tasks.
+|`DataSourceTransactionManager` if a `DataSource` is used,
+`ResourcelessTransactionManager` if it is not.
+|===
+
+[[features-task-name]]
+=== Task Name
+
+In most cases, the name of the task will be the application name as configured via Spring
+Boot.  However, there are some cases, where you may want to map the run of a task to a
+different name.  Spring Data Flow is an example of this (where you want the task to be run
+with the name of the task definition).  Because of this, we offer the ability to customize
+how the task is named via the `TaskNameResolver` interface.
+
+By default, Spring Cloud Task provides the `SimpleTaskNameResolver` which will use the
+following options (in order of precedence):
+
+. A Spring Boot property (configured any of the ways Spring Boot allows)
+`spring.cloud.task.name`.
+. The application name as resolved using Spring Boot's rules (obtained via
+`ApplicationContext#getId`).
+
+
