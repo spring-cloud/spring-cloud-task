@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -68,6 +69,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ApplicationArguments applicationArguments;
 
+	private ApplicationFailedEvent applicationFailedEvent;
+
+	private ExitCodeEvent exitCodeEvent;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
@@ -99,27 +104,14 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			doTaskStart();
 			started = true;
 		}
+		else if(applicationEvent instanceof ApplicationFailedEvent) {
+			this.applicationFailedEvent = (ApplicationFailedEvent) applicationEvent;
+		}
+		else if(applicationEvent instanceof ExitCodeEvent){
+			this.exitCodeEvent = (ExitCodeEvent) applicationEvent;
+		}
 		else if(applicationEvent instanceof ContextClosedEvent) {
 			doTaskEnd();
-		}
-		else if(applicationEvent instanceof ApplicationFailedEvent) {
-			doTaskFailed(((ApplicationFailedEvent) applicationEvent).getException());
-		}
-	}
-
-	private void doTaskFailed(Throwable exception) {
-
-		if(started) {
-			this.taskExecution.setEndTime(new Date());
-			//TODO: get exit code from new event thrown by Boot.
-			this.taskExecution.setExitCode(1);
-			this.taskExecution.setExitMessage(stackTraceToString(exception));
-
-			taskRepository.update(taskExecution);
-		}
-		else  {
-			logger.error("An event to fail a task has been received for a task that has " +
-					"not yet started.");
 		}
 	}
 
@@ -135,8 +127,20 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void doTaskEnd() {
 		if(started) {
 			this.taskExecution.setEndTime(new Date());
-			//TODO: get exit code from new event thrown by Boot.
-			this.taskExecution.setExitCode(0);
+
+			if(this.exitCodeEvent != null) {
+				this.taskExecution.setExitCode(exitCodeEvent.getExitCode());
+			}
+			else if(this.applicationFailedEvent != null){
+				this.taskExecution.setExitCode(1);
+			}
+			else{
+				this.taskExecution.setExitCode(0);
+			}
+
+			if(this.applicationFailedEvent != null) {
+				this.taskExecution.setExitMessage(stackTraceToString(this.applicationFailedEvent.getException()));
+			}
 
 			taskRepository.update(taskExecution);
 		}
@@ -165,13 +169,5 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			logger.error("Multiple start events have been received.  The first one was " +
 					"recorded.");
 		}
-	}
-
-	/**
-	 * Used for testing purposes
-	 * @return the current {@link TaskExecution}
-	 */
-	TaskExecution getTaskExecution() {
-		return this.taskExecution;
 	}
 }
