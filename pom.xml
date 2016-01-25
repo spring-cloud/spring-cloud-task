@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-task-parent</artifactId>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Spring Cloud Task Build</name>
+	<description>Spring Cloud Task Build</description>
+	<url>https://cloud.spring.io/spring-cloud-task/</url>
+	<organization>
+		<name>Pivotal Software, Inc.</name>
+		<url>https://www.spring.io</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/spring-cloud/spring-cloud-task</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>mminella</id>
+			<name>Michael Minella</name>
+			<email>mminella at pivotal.io</email>
+			<organization>Pivotal Software, Inc.</organization>
+			<organizationUrl>https://www.spring.io</organizationUrl>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>cppwfs</id>
+			<name>Glenn Renfro</name>
+			<email>grenfro at pivotal.io</email>
+			<organization>Pivotal Software, Inc.</organization>
+			<organizationUrl>https://www.spring.io</organizationUrl>
+		</developer>
+	</developers>
+	<prerequisites>
+		<maven>3.2.1</maven>
+	</prerequisites>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -15,18 +58,12 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-task-parent</artifactId>
-	<packaging>pom</packaging>
-	<name>spring-cloud-task-parent</name>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
-	<description>Spring Cloud Task Parent</description>
 
 	<modules>
 		<module>spring-cloud-task-core</module>
 		<module>spring-cloud-task-samples</module>
+		<module>spring-cloud-task-docs</module>
 	</modules>
 
 	<properties>
