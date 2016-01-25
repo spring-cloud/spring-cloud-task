@@ -142,8 +142,6 @@ public class TaskLifecycleListenerTests {
 			assertNull(taskExecution.getEndTime());
 		}
 
-		assertNull(taskExecution.getExternalExecutionID());
-		assertNull(taskExecution.getStatusCode());
 		assertEquals("testTask", taskExecution.getTaskName());
 	}
 

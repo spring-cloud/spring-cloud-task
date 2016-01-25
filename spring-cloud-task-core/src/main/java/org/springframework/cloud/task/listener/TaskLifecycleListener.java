@@ -160,8 +160,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			}
 
 			this.taskExecution = new TaskExecution(this.taskRepository.getNextExecutionId(),
-					0, this.taskNameResolver.getTaskName(), new Date(), null, null, null,
-					args, null);
+					0, this.taskNameResolver.getTaskName(), new Date(), null, null,
+					args);
 
 			this.taskRepository.createTaskExecution(this.taskExecution);
 		}
