@@ -73,10 +73,8 @@ public class TestDBUtils {
 						rs.getString("TASK_NAME"),
 						rs.getTimestamp("START_TIME"),
 						rs.getTimestamp("END_TIME"),
-						rs.getString("STATUS_CODE"),
 						rs.getString("EXIT_MESSAGE"),
-						new ArrayList<String>(0),
-						rs.getString("TASK_EXTERNAL_EXECUTION_ID"));
+						new ArrayList<String>(0));
 				return taskExecution;
 			}
 		});

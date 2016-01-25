@@ -51,9 +51,9 @@ import org.springframework.util.StringUtils;
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 
-	public static final String SELECT_CLAUSE = "TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, "
+	public static final String SELECT_CLAUSE = "TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE ";
+			+ "EXIT_MESSAGE, LAST_UPDATED ";
 
 	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
@@ -63,9 +63,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = ? ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, TASK_EXTERNAL_EXECUTION_ID, START_TIME, END_TIME, "
-			+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE)"
-			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, "
+			+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED)"
+			+ "values (?, ?, ?, ?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_PARAMETER = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
@@ -75,12 +75,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
 			+ "START_TIME = ?, END_TIME = ?, TASK_NAME = ?, EXIT_CODE = ?, "
-			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ?, STATUS_CODE = ?, "
-			+ "TASK_EXTERNAL_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
+			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ? "
+			+ "where TASK_EXECUTION_ID = ?";
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
 			"START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED, STATUS_CODE, TASK_EXTERNAL_EXECUTION_ID "
+			+ "EXIT_MESSAGE, LAST_UPDATED "
 			+ "from %PREFIX%EXECUTION where TASK_EXECUTION_ID = ?";
 
 	private static final String FIND_PARAMS_FROM_ID = "SELECT TASK_EXECUTION_ID, "
@@ -121,17 +121,14 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public void saveTaskExecution(TaskExecution taskExecution) {
 		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
-				taskExecution.getExternalExecutionID(),
 				taskExecution.getStartTime(), taskExecution.getEndTime(),
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
-				taskExecution.getExitMessage(), new Date(),
-				taskExecution.getStatusCode() };
+				taskExecution.getExitMessage(), new Date()};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				parameters,
-				new int[]{ Types.BIGINT, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP,
-						Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP,
-						Types.VARCHAR });
+				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.TIMESTAMP,
+						Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP });
 		insertTaskParameters(taskExecution.getExecutionId(), taskExecution.getParameters());
 	}
 
@@ -146,14 +143,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		Object[] parameters = new Object[]{ taskExecution.getStartTime(), taskExecution.getEndTime(),
 				taskExecution.getTaskName(), taskExecution.getExitCode(),
-				taskExecution.getExitMessage(), new Date(), taskExecution.getStatusCode(),
-				taskExecution.getExternalExecutionID(), taskExecution.getExecutionId()};
+				taskExecution.getExitMessage(), new Date(), taskExecution.getExecutionId()};
 		jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
 				new int[]{ Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.INTEGER,
-						Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR, Types.VARCHAR,
-						Types.BIGINT});
+						Types.VARCHAR, Types.TIMESTAMP, Types.BIGINT});
 	}
 
 	/**
@@ -333,10 +328,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getString("TASK_NAME"),
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
-					rs.getString("STATUS_CODE"),
 					rs.getString("EXIT_MESSAGE"),
-					getTaskParameters(id),
-					rs.getString("TASK_EXTERNAL_EXECUTION_ID"));
+					getTaskParameters(id));
 			return taskExecution;
 		}
 	}

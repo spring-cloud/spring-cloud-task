@@ -175,7 +175,7 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
-			TaskExecution expectedTaskExecution = new TaskExecution(i, 0, TASK_NAME, new Date(), null, null, null, new ArrayList<String>(0), null);
+			TaskExecution expectedTaskExecution = new TaskExecution(i, 0, TASK_NAME, new Date(), null, null, new ArrayList<String>(0));
 			dao.saveTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}

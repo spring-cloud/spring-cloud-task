@@ -107,20 +107,5 @@ public class SimpleTaskRepositoryJdbcTests {
 		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
 		taskRepository.createTaskExecution(expectedTaskExecution);
 	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void testCreateTaskExecutionNoParamMaxStatus(){
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		expectedTaskExecution.setStatusCode(new String(new char[SimpleTaskRepository.MAX_STATUS_CODE_SIZE+1]));
-		taskRepository.createTaskExecution(expectedTaskExecution);
-	}
-
-	@Test(expected=IllegalArgumentException.class)
-	public void testCreateTaskExecutionNoParamMaxExternalExecutionId(){
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		expectedTaskExecution.setExternalExecutionID(
-				new String(new char[SimpleTaskRepository.MAX_EXTERNAL_EXECUTION_ID_SIZE+1]));
-		taskRepository.createTaskExecution(expectedTaskExecution);
-	}
 }
 
