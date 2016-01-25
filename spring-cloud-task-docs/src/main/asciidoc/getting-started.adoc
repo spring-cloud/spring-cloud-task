@@ -198,9 +198,9 @@ importing an additional configuration class, `SimpleTaskConfiguration` by defaul
 additional configuration registers the `TaskRepository` and the infrastructure for its
 use.
 
-Out of the box, the `TaskRepository` will use an in memory database to record the results
+Out of the box, the `TaskRepository` will use an in memory `Map` to record the results
 of a task.  Obviously this isn't a practical solution for a production environment since
-the database is shut down once the task ends.  However, for a quick getting started
+the `Map` goes away once the task ends.  However, for a quick getting started
 experience we use this as a default as well as echoing to the logs what is being updated
 in that repository.  Later in this documentation we'll cover how to customize the
 configuration of the pieces provided by Spring Cloud Task.
@@ -225,9 +225,9 @@ a convenient method of doing so in an organized manor via their `*Runner` interf
 (`CommandLineRunner` or `ApplicationRunner`).  A well behaved task will bootstrap any
 logic via one of these two runners.
 
-The lifecycle of a task is considered from before the `*Runner`s are executed to once they
-are all complete.  Spring Boot allows an application to use multiple `*Runner`s and Spring
-Cloud Task doesn't attempt to impede on this convetion.
+The lifecycle of a task is considered from before the `*Runner#run` methods are executed
+to once they are all complete.  Spring Boot allows an application to use multiple
+`*Runner` implementation and Spring Cloud Task doesn't attempt to impede on this convention.
 
 NOTE: Any processing bootstrapped from mechanisms other than a `CommandLineRunner` or
 `ApplicationRunner` (using `InitializingBean#afterPropertiesSet` for example) will not be

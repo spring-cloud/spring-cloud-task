@@ -38,7 +38,7 @@ If you're just getting started with Spring Cloud Task, or 'Spring' in general,
   <<getting-started.adoc#getting-started-introducing-spring-cloud-task, Overview>> |
   <<getting-started.adoc#getting-started-system-requirements, Requirements>>
 * *Tutorial:*
-  <<getting-started.adoc#getting-started-first-application, First application>>
+  <<getting-started.adoc#getting-started-developing-first-task, First application>>
 * *Running your example:*
-  <<getting-started.adoc#getting-started-first-application-run, Running your application>>
+  <<getting-started.adoc#getting-started-running-the-example, Running your application>>
 

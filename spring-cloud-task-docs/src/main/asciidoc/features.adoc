@@ -24,7 +24,7 @@ traditional deployment model as well.  When executing Spring Boot applications v
 scheduler like cron, it can be useful to be able to monitor the results of the application
 after it's completion.
 
-A Spring Cloud Task the approach that a Spring Boot application can have a start and an
+A Spring Cloud Task takes the approach that a Spring Boot application can have a start and an
 end and still be successful.  Batch applications are just one example of where short lived
 processes can be helpful.  Spring Cloud Task records lifecycle events of a given task.
 
@@ -45,7 +45,7 @@ NOTE: The recording of a task will only occur upon the successful bootstrapping 
 `ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
 not be recorded.
 
-Upon completion of all of the `*Runner`s from Spring Boot or the failure of an
+Upon completion of all of the `*Runner#run` calls from Spring Boot or the failure of an
 `ApplicationContext` (indicated via a `ApplicationFailedEvent`), the task execution is
 updated in the repository with the results.
 
@@ -63,7 +63,8 @@ consists of the following information:
 
 |`exitCode`
 |The exit code generated from an `ExitCodeExceptionMapper` implementation.  If there is no
-exit code generated, it's assumed to be 0.
+exit code generated, but an `ApplicationFailedEvent` is thrown, 1 is set.  Otherwise, it's
+assumed to be 0.
 
 |`taskName`
 |The name for the task as determined by the configured `TaskNameResolver`.
@@ -133,7 +134,7 @@ is a `DataSource` available.
 The `TaskConfigurer` allows the configuration of three main components:
 
 |===
-|Component |Description |Default
+|Component |Description |Default (provided by `DefaultTaskConfigurer`)
 
 |`TaskRepository`
 |The implementation of the `TaskRepository` to be used.

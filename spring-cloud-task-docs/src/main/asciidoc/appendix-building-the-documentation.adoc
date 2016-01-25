@@ -1,0 +1,6 @@
+
+[[appendix-building-the-documentation]]
+== Building this documentation
+
+This project uses Maven to generate this documentation.  To generate it for yourself,
+execute the command: `$ mvn clean package -P full`.
