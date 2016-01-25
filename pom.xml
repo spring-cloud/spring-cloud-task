@@ -61,6 +61,7 @@
 
 
 	<modules>
+		<module>spring-cloud-task-dependencies</module>
 		<module>spring-cloud-task-core</module>
 		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-docs</module>
