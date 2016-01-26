@@ -68,7 +68,7 @@ under the License.
 					<fo:table-row>
 						<fo:table-cell text-align="center">
 							<fo:block>
-								<fo:external-graphic src="images/logo.png" width="240px"
+								<fo:external-graphic src="./spring-cloud-task-docs/src/main/docbook/images/logo.png" width="240px"
 									height="auto" content-width="scale-to-fit"
 									content-height="scale-to-fit"
 									content-type="content-type:image/png" text-align="center"
