@@ -7,6 +7,8 @@
 
 	<artifactId>spring-cloud-task-samples</artifactId>
 	<packaging>pom</packaging>
+	<name>Spring Cloud Task Samples</name>
+
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>

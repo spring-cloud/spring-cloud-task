@@ -10,10 +10,9 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-task-core</artifactId>
 	<packaging>jar</packaging>
-	<name>spring-cloud-task-core</name>
+	<name>Spring Cloud Task Core</name>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<description>Spring Cloud Task</description>
 

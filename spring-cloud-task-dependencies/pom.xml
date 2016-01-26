@@ -6,7 +6,7 @@
 	<artifactId>spring-cloud-task-dependencies</artifactId>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>spring-cloud-task-dependencies</name>
+	<name>Spring Cloud Task Dependencies</name>
 	<description>Spring Cloud Task Dependencies</description>
 
 	<dependencyManagement>
