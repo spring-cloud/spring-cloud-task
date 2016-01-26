@@ -105,6 +105,12 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
+					<execution>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
