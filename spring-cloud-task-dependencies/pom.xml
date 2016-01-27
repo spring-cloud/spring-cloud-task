@@ -8,6 +8,13 @@
 	<name>Spring Cloud Task Dependencies</name>
 	<description>Spring Cloud Task Dependencies</description>
 
+	<parent>
+		<artifactId>spring-cloud-dependencies-parent</artifactId>
+		<groupId>org.springframework.cloud</groupId>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
+        <relativePath/>
+	</parent>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
