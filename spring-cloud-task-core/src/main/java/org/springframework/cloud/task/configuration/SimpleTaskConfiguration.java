@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,26 +25,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
-import org.springframework.cloud.task.repository.support.TaskDatabaseInitializer;
+import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Base {@code Configuration} class providing common structure for enabling and using
- * Spring Task. Customization is
- * available by implementing the {@link TaskConfigurer} interface.
+ * Spring Task. Customization is available by implementing the {@link TaskConfigurer}
+ * interface.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
 @Configuration
 @EnableTransactionManagement
@@ -58,14 +57,8 @@ public class SimpleTaskConfiguration {
 	@Autowired(required = false)
 	private Collection<DataSource> dataSources;
 
-	@Autowired
-	private ResourceLoader resourceLoader;
-
 	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
-
-	@Value("${spring.class.initialize.enable:true}")
-	private boolean taskInitializationEnable;
 
 	private boolean initialized = false;
 
@@ -95,6 +88,17 @@ public class SimpleTaskConfiguration {
 		return new SimpleTaskNameResolver();
 	}
 
+	@Bean
+	public TaskRepositoryInitializer taskRepositoryInitializer() {
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
+
+		if(this.dataSources != null && this.dataSources.size() == 1) {
+			taskRepositoryInitializer.setDataSource(this.dataSources.iterator().next());
+		}
+
+		return taskRepositoryInitializer;
+	}
+
 	/**
 	 * Sets up the basic components by extracting them from the {@link TaskConfigurer}, defaulting to some
 	 * sensible values as long as a unique DataSource is available.
@@ -116,7 +120,7 @@ public class SimpleTaskConfiguration {
 	}
 
 	private TaskConfigurer getDefaultConfigurer(Collection<TaskConfigurer> configurers) {
-		boolean isDataSourceConfigured = (dataSources != null && !dataSources.isEmpty());
+		boolean isDataSourceConfigured = (dataSources != null && dataSources.size() == 1);
 		verifyEnvironment(configurers);
 		if (configurers == null || configurers.isEmpty()) {
 			if (!isDataSourceConfigured) {
@@ -124,12 +128,7 @@ public class SimpleTaskConfiguration {
 				return this.configurer;
 			}
 			else {
-				DataSource dataSource = dataSources.iterator().next();
-				if(taskInitializationEnable) {
-					logger.debug("Initializing Task Schema");
-					TaskDatabaseInitializer.initializeDatabase(dataSource, resourceLoader);
-				}
-				this.configurer = new DefaultTaskConfigurer(dataSource);
+				this.configurer = new DefaultTaskConfigurer(this.dataSources.iterator().next());
 				return this.configurer;
 			}
 		}

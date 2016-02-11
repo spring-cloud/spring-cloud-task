@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
-import org.springframework.cloud.task.repository.support.TaskDatabaseInitializer;
+import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -47,6 +47,16 @@ public class TestConfiguration {
 	private ResourceLoader resourceLoader;
 
 	@Bean
+	public TaskRepositoryInitializer taskRepositoryInitializer() throws Exception {
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
+		taskRepositoryInitializer.setDataSource(this.dataSource);
+		taskRepositoryInitializer.setResourceLoader(this.resourceLoader);
+		taskRepositoryInitializer.afterPropertiesSet();
+
+		return taskRepositoryInitializer;
+	}
+
+	@Bean
 	public TaskRepository taskRepository(TaskExecutionDao taskExecutionDao){
 		return new SimpleTaskRepository(taskExecutionDao);
 	}
@@ -57,8 +67,6 @@ public class TestConfiguration {
 			return new ResourcelessTransactionManager();
 		}
 		else {
-			TaskDatabaseInitializer.initializeDatabase(dataSource, this.resourceLoader);
-
 			return new DataSourceTransactionManager(dataSource);
 		}
 	}

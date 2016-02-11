@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
@@ -30,42 +30,30 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Tests for the SimpleTaskRepository that uses JDBC as a datastore.
  *
  * @author Glenn Renfro.
+ * @author Michael Minella
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {EmbeddedDataSourceConfiguration.class,
+		SimpleTaskConfiguration.class,
+		PropertyPlaceholderAutoConfiguration.class})
 public class SimpleTaskRepositoryJdbcTests {
 
+	@Autowired
 	private TaskRepository taskRepository;
 
+	@Autowired
 	private DataSource dataSource;
 
-	private AnnotationConfigApplicationContext context;
-
-	@Before
-	public void setup() {
-		this.context = new AnnotationConfigApplicationContext();
-		this.context.register(SimpleTaskConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
-		this.context.refresh();
-		dataSource = this.context.getBean(DataSource.class);
-		JdbcTaskRepositoryFactoryBean factoryBean =
-				new JdbcTaskRepositoryFactoryBean(dataSource);
-		taskRepository = factoryBean.getObject();
-	}
-
-	@After
-	public void close() {
-		if (this.context != null) {
-			this.context.close();
-		}
-	}
-
 	@Test
+	@DirtiesContext
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
@@ -75,6 +63,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
@@ -84,6 +73,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testUpdateTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
@@ -95,6 +85,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxExitMessageSize(){
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
@@ -102,6 +93,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	}
 
 	@Test(expected=IllegalArgumentException.class)
+	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxTaskName(){
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
