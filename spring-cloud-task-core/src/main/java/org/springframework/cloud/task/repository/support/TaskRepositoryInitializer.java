@@ -99,6 +99,9 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 			if ("mysql".equals(platform)) {
 				platform = "mysql";
 			}
+			if ("sqlserver".equals(platform)){
+				platform = "sqlserver";
+			}
 			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 			String schemaLocation = schema;
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);

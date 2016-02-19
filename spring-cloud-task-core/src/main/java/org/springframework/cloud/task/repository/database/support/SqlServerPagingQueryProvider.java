@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,10 @@ import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Oracle implementation of a {@link PagingQueryProvider} using database specific features.
- *
+ * Sql Server implementation of a {@link PagingQueryProvider} using database specific features.
  * @author Glenn Renfro
  */
-public class OraclePagingQueryProvider extends AbstractSqlPagingQueryProvider {
+public class SqlServerPagingQueryProvider extends AbstractSqlPagingQueryProvider{
 
 	@Override
 	public String getPageQuery(Pageable pageable) {
@@ -38,12 +37,14 @@ public class OraclePagingQueryProvider extends AbstractSqlPagingQueryProvider {
 			String rowNumClause) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ").append(selectClause).append(" FROM (SELECT ").append(selectClause)
-				.append(", ").append("ROWNUM as TMP_ROW_NUM");
-		sql.append(" FROM (SELECT ").append(selectClause).append(" FROM ").append(this.getFromClause());
+				.append(", ").append("ROW_NUMBER() OVER (ORDER BY ")
+				.append(SqlPagingQueryUtils.buildSortClause(this))
+				.append(") AS TMP_ROW_NUM ")
+				.append(" FROM ").append(getFromClause());
 		SqlPagingQueryUtils.buildWhereClause(this, remainingPageQuery, sql);
+		sql.append(") TASK_EXECUTION_PAGE ");
+		sql.append(" WHERE ").append(rowNumClause);
 		sql.append(" ORDER BY ").append(SqlPagingQueryUtils.buildSortClause(this));
-		sql.append(")) WHERE ").append(rowNumClause);
-
 		return sql.toString();
 	}
 }
