@@ -34,6 +34,7 @@ utilize a supported database.  Below is a list of the ones currently supported:
 - MySql
 - Oracle
 - Postgres
+- SqlServer
 
 [[getting-started-developing-first-task]]
 == Developing your first Spring Cloud Task application
