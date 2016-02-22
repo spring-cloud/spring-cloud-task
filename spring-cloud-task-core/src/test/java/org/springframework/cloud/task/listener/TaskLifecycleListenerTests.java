@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.listener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -75,14 +76,14 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testTaskCreate() {
 		context.refresh();
-		verifyTaskExecution(0, false, 0, null);
+		verifyTaskExecution(0, false, null, null);
 	}
 
 	@Test
 	public void testTaskCreateWithArgs() {
 		context.register(ArgsConfiguration.class);
 		context.refresh();
-		verifyTaskExecution(2, false, 0, null);
+		verifyTaskExecution(2, false, null, null);
 	}
 
 	@Test
@@ -113,7 +114,7 @@ public class TaskLifecycleListenerTests {
 		return writer.toString();
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update, int exitCode, Throwable exception) {
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception) {
 		this.taskExplorer = context.getBean(TaskExplorer.class);
 
 		Sort sort = new Sort("id");
@@ -137,9 +138,11 @@ public class TaskLifecycleListenerTests {
 
 		if(update) {
 			assertTrue(taskExecution.getEndTime().getTime() >= taskExecution.getStartTime().getTime());
+			assertNotNull(taskExecution.getExitCode());
 		}
 		else {
 			assertNull(taskExecution.getEndTime());
+			assertNull(taskExecution.getExitCode());
 		}
 
 		assertEquals("testTask", taskExecution.getTaskName());
