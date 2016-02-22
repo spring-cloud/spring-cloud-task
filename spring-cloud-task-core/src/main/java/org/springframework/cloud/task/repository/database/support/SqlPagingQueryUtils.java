@@ -65,28 +65,14 @@ public class SqlPagingQueryUtils {
 		return sql.toString();
 	}
 
-	public static String generateRowNumSqlQueryWithNesting(AbstractSqlPagingQueryProvider provider,
-														   String selectClause, boolean remainingPageQuery, String rowNumClause) {
-		return generateRowNumSqlQueryWithNesting(provider, selectClause, selectClause, remainingPageQuery, rowNumClause);
-	}
-
-	public static String generateRowNumSqlQueryWithNesting(AbstractSqlPagingQueryProvider provider,
-														   String innerSelectClause, String outerSelectClause, boolean remainingPageQuery, String rowNumClause) {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(outerSelectClause).append(" FROM (SELECT ").append(outerSelectClause)
-				.append(", ").append("ROWNUM as TMP_ROW_NUM");
-		sql.append(" FROM (SELECT ").append(innerSelectClause).append(" FROM ").append(provider.getFromClause());
-		buildWhereClause(provider, remainingPageQuery, sql);
-		sql.append(" ORDER BY ").append(buildSortClause(provider));
-		sql.append(")) WHERE ").append(rowNumClause);
-
-		return sql.toString();
-
-	}
-
-	private static void buildWhereClause(AbstractSqlPagingQueryProvider provider, boolean remainingPageQuery,
-										 StringBuilder sql) {
+	/**
+	 * Generates WHERE clause for queries that require sub selects.
+	 *
+	 * @param provider the paging query provider that will provide the base where clause
+	 * @return a String for the where clause.
+	 */
+	public static void buildWhereClause( AbstractSqlPagingQueryProvider provider,
+						boolean remainingPageQuery, StringBuilder sql) {
 		if (remainingPageQuery) {
 			sql.append(" WHERE ");
 			if (provider.getWhereClause() != null) {
@@ -94,7 +80,6 @@ public class SqlPagingQueryUtils {
 				sql.append(provider.getWhereClause());
 				sql.append(") AND ");
 			}
-
 		}
 		else {
 			sql.append(provider.getWhereClause() == null ? "" : " WHERE " + provider.getWhereClause());
@@ -139,5 +124,4 @@ public class SqlPagingQueryUtils {
 
 		return builder.toString();
 	}
-
 }

@@ -22,6 +22,7 @@ import static org.springframework.cloud.task.repository.support.DatabaseType.H2;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
 import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
+import static org.springframework.cloud.task.repository.support.DatabaseType.SQLSERVER;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +67,7 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 		providers.put(MYSQL, new MySqlPagingQueryProvider());
 		providers.put(POSTGRES, new PostgresPagingQueryProvider());
 		providers.put(ORACLE, new OraclePagingQueryProvider());
+		providers.put(SQLSERVER, new SqlServerPagingQueryProvider());
 	}
 
 	/**
