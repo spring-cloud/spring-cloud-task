@@ -37,7 +37,7 @@ public class TaskExecution {
 	/**
 	 * The recorded exit code for the task.
 	 */
-	private int exitCode;
+	private Integer exitCode;
 
 	/**
 	 * User defined name for the task.
@@ -68,7 +68,7 @@ public class TaskExecution {
 		parameters = new ArrayList<>();
 	}
 
-	public TaskExecution(long executionId, int exitCode, String taskName,
+	public TaskExecution(long executionId, Integer exitCode, String taskName,
 						 Date startTime, Date endTime,
 						 String exitMessage, List<String> parameters) {
 
@@ -87,11 +87,11 @@ public class TaskExecution {
 		return executionId;
 	}
 
-	public int getExitCode() {
+	public Integer getExitCode() {
 		return exitCode;
 	}
 
-	public void setExitCode(int exitCode) {
+	public void setExitCode(Integer exitCode) {
 		this.exitCode = exitCode;
 	}
 
