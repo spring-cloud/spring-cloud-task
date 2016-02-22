@@ -324,7 +324,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		public TaskExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			long  id = rs.getLong("TASK_EXECUTION_ID");
 			TaskExecution taskExecution=new TaskExecution(id,
-					rs.getInt("EXIT_CODE"),
+					(Integer) rs.getObject("EXIT_CODE"),
 					rs.getString("TASK_NAME"),
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
