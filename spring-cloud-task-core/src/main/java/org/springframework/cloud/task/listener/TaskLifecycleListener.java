@@ -19,12 +19,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -56,6 +58,9 @@ import org.springframework.util.Assert;
  * @author Michael Minella
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>{
+
+	@Autowired(required = false)
+	Collection<TaskExecutionListener> taskExecutionListeners;
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
 
@@ -142,6 +147,11 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				this.taskExecution.setExitMessage(stackTraceToString(this.applicationFailedEvent.getException()));
 			}
 
+			if(this.taskExecution.getExitCode() != 0){
+				taskExecution.setExitMessage(invokeOnTaskError(taskExecution,
+						this.applicationFailedEvent.getException()).getExitMessage());
+			}
+			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
 			taskRepository.update(taskExecution);
 		}
 		else {
@@ -169,5 +179,47 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			logger.error("Multiple start events have been received.  The first one was " +
 					"recorded.");
 		}
+		taskExecution.setExitMessage(invokeOnTaskStartup(taskExecution).getExitMessage());
+	}
+
+	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskStartup(listenerTaskExecution);
+			}
+		}
+		return listenerTaskExecution;
+	}
+
+	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskEnd(listenerTaskExecution);
+			}
+		}
+		return listenerTaskExecution;
+	}
+
+	private TaskExecution invokeOnTaskError(TaskExecution taskExecution, Throwable throwable){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskFailed(listenerTaskExecution, throwable);
+			}
+		}
+		return listenerTaskExecution;
+	}
+
+	private TaskExecution getTaskExecutionCopy(TaskExecution taskExecution){
+		Date startTime = new Date(taskExecution.getStartTime().getTime());
+		Date endTime = (taskExecution.getEndTime() == null) ?
+				null : new Date(taskExecution.getEndTime().getTime());
+
+		return new TaskExecution(taskExecution.getExecutionId(),
+				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
+				endTime,taskExecution.getExitMessage(),
+				Collections.unmodifiableList(taskExecution.getParameters()));
 	}
 }
