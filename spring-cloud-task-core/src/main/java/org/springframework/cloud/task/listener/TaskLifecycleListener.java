@@ -30,11 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
@@ -62,6 +64,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Autowired(required = false)
 	Collection<TaskExecutionListener> taskExecutionListeners;
 
+	@Autowired
+	private ConfigurableApplicationContext context;
+
 	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
 
 	private final TaskRepository taskRepository;
@@ -77,6 +82,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private ApplicationFailedEvent applicationFailedEvent;
 
 	private ExitCodeEvent exitCodeEvent;
+
+	private TaskListenerExecutor executionListenerSelector;
 
 	/**
 	 * @param taskRepository The repository to record executions in.
@@ -106,6 +113,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
 		if(applicationEvent instanceof ContextRefreshedEvent) {
+			executionListenerSelector = new TaskListenerExecutor(context);
 			doTaskStart();
 			started = true;
 		}
@@ -189,6 +197,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskStartup(listenerTaskExecution);
 			}
 		}
+		executionListenerSelector.executeBeforeTask(listenerTaskExecution);
 		return listenerTaskExecution;
 	}
 
@@ -199,6 +208,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskEnd(listenerTaskExecution);
 			}
 		}
+		executionListenerSelector.executeAfterTask(listenerTaskExecution);
 		return listenerTaskExecution;
 	}
 
@@ -209,6 +219,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskFailed(listenerTaskExecution, throwable);
 			}
 		}
+		executionListenerSelector.executeFailedTask(listenerTaskExecution, throwable);
 		return listenerTaskExecution;
 	}
 

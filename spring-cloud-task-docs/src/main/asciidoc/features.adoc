@@ -185,3 +185,30 @@ notified for the following events:
 marking the final state of the task.
 . `onTaskFailed` - prior to the `onTaskEnd` method being invoked when an unhandled
  exception is thrown by the task.
+
+Spring Cloud Task also allows a user add TaskExecution Listeners to methods within a bean
+by using the following method annotations:
+
+. `@BeforeTask` - prior to the storing the TaskExecution into the TaskRepository
+. `@AfterTask` - prior to the updating of the TaskExecution entry in the TaskRepository
+marking the final state of the task.
+. `@FailedTask` - prior to the `@AfterTask` method being invoked when an unhandled
+ exception is thrown by the task.
+
+```
+ public class MyBean {
+
+	@BeforeTask
+	public void methodA(TaskExecution taskExecution) {
+	}
+
+	@AfterTask
+	public void methodB(TaskExecution taskExecution) {
+	}
+
+	@FailedTask
+	public void methodC(TaskExecution taskExecution, Throwable throwable) {
+	}
+}
+```
+
