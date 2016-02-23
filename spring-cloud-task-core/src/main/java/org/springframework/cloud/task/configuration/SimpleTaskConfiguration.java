@@ -27,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactory;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -72,6 +74,14 @@ public class SimpleTaskConfiguration {
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), this.applicationArguments);
 	}
 
+	@Bean
+	public TaskListenerExecutor taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
+	{
+		TaskListenerExecutorFactory taskListenerExecutorFactory =
+				new TaskListenerExecutorFactory(context);
+		return taskListenerExecutorFactory.getObject();
+	}
+	
 	@Bean
 	public PlatformTransactionManager transactionManager() {
 		return this.configurer.getTransactionManager();

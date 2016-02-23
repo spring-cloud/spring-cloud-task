@@ -46,5 +46,4 @@ public interface TaskExecutionListener {
 	 * @param throwable the uncaught exception that was thrown during task execution.
 	 */
 	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
-
 }
