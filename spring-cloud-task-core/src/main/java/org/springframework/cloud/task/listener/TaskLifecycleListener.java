@@ -19,12 +19,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -56,6 +57,9 @@ import org.springframework.util.Assert;
  * @author Michael Minella
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>{
+
+	@Autowired(required = false)
+	Collection<TaskExecutionListener> taskExecutionListeners;
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
 
@@ -142,6 +146,11 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				this.taskExecution.setExitMessage(stackTraceToString(this.applicationFailedEvent.getException()));
 			}
 
+			if(this.taskExecution.getExitCode() != 0){
+				invokeOnTaskError(taskExecution);
+			}
+			invokeOnTaskEnd(taskExecution);
+
 			taskRepository.update(taskExecution);
 		}
 		else {
@@ -168,6 +177,31 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		else {
 			logger.error("Multiple start events have been received.  The first one was " +
 					"recorded.");
+		}
+		invokeOnTaskStartup(taskExecution);
+	}
+
+	private void invokeOnTaskStartup(TaskExecution taskExecution){
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskStartup(taskExecution);
+			}
+		}
+	}
+
+	private void invokeOnTaskEnd(TaskExecution taskExecution){
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskEnd(taskExecution);
+			}
+		}
+	}
+
+	private void invokeOnTaskError(TaskExecution taskExecution){
+		if (taskExecutionListeners != null) {
+			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
+				taskExecutionListener.onTaskFailed(taskExecution);
+			}
 		}
 	}
 }

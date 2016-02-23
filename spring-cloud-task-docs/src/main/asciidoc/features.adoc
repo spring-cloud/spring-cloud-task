@@ -172,4 +172,16 @@ following options (in order of precedence):
 . The application name as resolved using Spring Boot's rules (obtained via
 `ApplicationContext#getId`).
 
+[[features-task-execution-listener]]
+=== Task Execution Listener
 
+Allows a user to register listeners for specific events that occur during the task
+lifecycle.  This is done by creating a class that implements the TaskExecutionListener
+interface.  The class that implements the TaskExecutionListener interface will be
+notified for the following events:
+
+. `onTaskStartup` - prior to the storing the TaskExecution into the TaskRepository
+. `onTaskEnd` - prior to the updating of the TaskExecution entry in the TaskRepository
+marking the final state of the task.
+. `onTaskFailed` - prior to the `onTaskEnd` method being invoked when an unhandled
+ exception is thrown by the task.
