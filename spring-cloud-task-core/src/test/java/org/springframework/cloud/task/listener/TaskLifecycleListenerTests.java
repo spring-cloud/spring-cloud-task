@@ -21,9 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,15 +101,6 @@ public class TaskLifecycleListenerTests {
 		context.publishEvent(new ContextClosedEvent(context));
 
 		verifyTaskExecution(0, true, 1, exception);
-	}
-
-	private static String stackTraceToString(Throwable exception) {
-		StringWriter writer = new StringWriter();
-		PrintWriter printWriter = new PrintWriter(writer);
-
-		exception.printStackTrace(printWriter);
-
-		return writer.toString();
 	}
 
 	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception) {
@@ -195,7 +184,7 @@ public class TaskLifecycleListenerTests {
 
 		@Override
 		public List<String> getOptionValues(String s) {
-			return Arrays.asList(this.args.get(s));
+			return Collections.singletonList(this.args.get(s));
 		}
 
 		@Override

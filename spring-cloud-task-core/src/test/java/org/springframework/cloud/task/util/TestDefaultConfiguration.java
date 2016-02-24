@@ -16,16 +16,18 @@
 
 package org.springframework.cloud.task.util;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,20 +37,27 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-public class TestDefaultConfiguration {
+public class TestDefaultConfiguration implements InitializingBean {
 
-	private MapTaskExecutionDao dao;
+	private TaskExecutionDaoFactoryBean factoryBean;
 
 	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
 
+	@Autowired
+	private ConfigurableApplicationContext context;
+
 	public TestDefaultConfiguration() {
-		this.dao = new MapTaskExecutionDao();
 	}
 
 	@Bean
 	public TaskRepository taskRepository(){
-		return new SimpleTaskRepository(this.dao);
+		return new SimpleTaskRepository(this.factoryBean);
+	}
+
+	@Bean
+	public TaskExplorer taskExplorer() throws Exception {
+		return new SimpleTaskExplorer(this.factoryBean);
 	}
 
 	@Bean
@@ -61,8 +70,8 @@ public class TestDefaultConfiguration {
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), applicationArguments);
 	}
 
-	@Bean
-	public TaskExplorer taskExplorer() {
-		return new SimpleTaskExplorer(this.dao);
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.factoryBean = new TaskExecutionDaoFactoryBean(this.context);
 	}
 }
