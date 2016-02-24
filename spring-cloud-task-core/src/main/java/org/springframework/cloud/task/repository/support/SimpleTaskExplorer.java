@@ -34,9 +34,9 @@ public class SimpleTaskExplorer implements TaskExplorer{
 
 	private TaskExecutionDao taskExecutionDao;
 
-	public SimpleTaskExplorer(TaskExecutionDao taskExecutionDao){
-		Assert.notNull(taskExecutionDao, "taskExecutionDao must not be null");
-		this.taskExecutionDao = taskExecutionDao;
+	public SimpleTaskExplorer(TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean) throws Exception {
+		Assert.notNull(taskExecutionDaoFactoryBean, "taskExecutionDaoFactoryBean must not be null");
+		this.taskExecutionDao = taskExecutionDaoFactoryBean.getObject();
 	}
 
 	@Override
