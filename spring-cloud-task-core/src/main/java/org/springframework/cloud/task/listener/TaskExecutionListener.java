@@ -43,7 +43,8 @@ public interface TaskExecutionListener {
 	 * will occur before the {@link TaskExecution} has been updated in the {@link TaskRepository}
 	 * and before the onTaskEnd is called.
 	 * @param taskExecution instance containing the information about the current task.
+	 * @param throwable the uncaught exception that was thrown during task execution.
 	 */
-	public void onTaskFailed(TaskExecution taskExecution);
+	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
 
 }

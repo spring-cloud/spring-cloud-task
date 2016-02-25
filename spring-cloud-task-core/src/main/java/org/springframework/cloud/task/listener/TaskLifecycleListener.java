@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -147,7 +148,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			}
 
 			if(this.taskExecution.getExitCode() != 0){
-				invokeOnTaskError(taskExecution);
+				invokeOnTaskError(taskExecution, this.applicationFailedEvent.getException());
 			}
 			invokeOnTaskEnd(taskExecution);
 
@@ -184,7 +185,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void invokeOnTaskStartup(TaskExecution taskExecution){
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskStartup(taskExecution);
+				taskExecutionListener.onTaskStartup(getTaskExecutionCopy(taskExecution));
 			}
 		}
 	}
@@ -192,16 +193,28 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void invokeOnTaskEnd(TaskExecution taskExecution){
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskEnd(taskExecution);
+				taskExecutionListener.onTaskEnd(getTaskExecutionCopy(taskExecution));
 			}
 		}
 	}
 
-	private void invokeOnTaskError(TaskExecution taskExecution){
+	private void invokeOnTaskError(TaskExecution taskExecution, Throwable throwable){
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskFailed(taskExecution);
+				taskExecutionListener.onTaskFailed(getTaskExecutionCopy(taskExecution),
+						throwable);
 			}
 		}
+	}
+
+	private TaskExecution getTaskExecutionCopy(TaskExecution taskExecution){
+		Date startTime = new Date(taskExecution.getStartTime().getTime());
+		Date endTime = (taskExecution.getEndTime() == null) ?
+				null : new Date(taskExecution.getEndTime().getTime());
+
+		return new TaskExecution(taskExecution.getExecutionId(),
+				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
+				endTime,taskExecution.getExitMessage(),
+				Collections.unmodifiableList(taskExecution.getParameters()));
 	}
 }

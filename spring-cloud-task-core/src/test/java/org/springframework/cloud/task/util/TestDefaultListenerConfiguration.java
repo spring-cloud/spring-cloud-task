@@ -41,6 +41,7 @@ public class TestDefaultListenerConfiguration {
 		private boolean isTaskEnd;
 		private boolean isTaskFailed;
 		private TaskExecution taskExecution;
+		private Throwable throwable;
 
 		@Override
 		public void onTaskStartup(TaskExecution taskExecution) {
@@ -55,9 +56,10 @@ public class TestDefaultListenerConfiguration {
 		}
 
 		@Override
-		public void onTaskFailed(TaskExecution taskExecution) {
+		public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
 			isTaskFailed = true;
 			this.taskExecution = taskExecution;
+			this.throwable = throwable;
 		}
 
 		public boolean isTaskStartup() {
@@ -74,6 +76,10 @@ public class TestDefaultListenerConfiguration {
 
 		public TaskExecution getTaskExecution() {
 			return this.taskExecution;
+		}
+
+		public Throwable getThrowable(){
+			return throwable;
 		}
 	}
 }

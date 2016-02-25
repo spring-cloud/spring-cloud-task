@@ -19,6 +19,7 @@ package org.springframework.cloud.task.listener;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +45,8 @@ import org.springframework.context.event.ContextClosedEvent;
 public class TaskExecutionListenerTests {
 	private AnnotationConfigApplicationContext context;
 
+	private static final String EXCEPTION_MESSAGE = "This was expected";
+
 	@Before
 	public void setUp() {
 		context = new AnnotationConfigApplicationContext();
@@ -63,7 +66,7 @@ public class TaskExecutionListenerTests {
 		context.refresh();
 		TestDefaultListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(TestDefaultListenerConfiguration.TestTaskExecutionListener.class);
-		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
+		TaskExecution taskExecution = new TaskExecution(0, null, "wombat",
 				new Date(), new Date(), null, new ArrayList<String>());
 		verifyListenerResults(true, false, false, taskExecution,taskExecutionListener);
 	}
@@ -82,7 +85,7 @@ public class TaskExecutionListenerTests {
 
 	@Test
 	public void testTaskFail() {
-		RuntimeException exception = new RuntimeException("This was expected");
+		RuntimeException exception = new RuntimeException(EXCEPTION_MESSAGE);
 		context.refresh();
 		context.publishEvent(new ApplicationFailedEvent(new SpringApplication(), new String[0], context, exception));
 		context.publishEvent(new ContextClosedEvent(context));
@@ -101,10 +104,13 @@ public class TaskExecutionListenerTests {
 		assertEquals(isTaskEnd,actualListener.isTaskEnd());
 		assertEquals(isTaskFailed,actualListener.isTaskFailed());
 		if(isTaskFailed){
-			assertNotNull(actualListener.getTaskExecution().getExitMessage());
+			assertTrue(actualListener.getTaskExecution().getExitMessage().contains(EXCEPTION_MESSAGE));
+			assertNotNull(actualListener.getThrowable());
+			assertTrue(actualListener.getThrowable() instanceof RuntimeException);
 		}
 		else{
 			assertNull(actualListener.getTaskExecution().getExitMessage());
+			assertNull(actualListener.getThrowable());
 		}
 		assertEquals(taskExecution.getExecutionId(), actualListener.getTaskExecution().getExecutionId());
 		assertEquals(taskExecution.getExitCode(), actualListener.getTaskExecution().getExitCode());
