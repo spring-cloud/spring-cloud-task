@@ -69,7 +69,8 @@ public class TaskDatabaseInitializerTests {
 
 	@Test
 	public void testNoDatabase() throws Exception {
-		SimpleTaskRepository repository = new SimpleTaskRepository(new MapTaskExecutionDao());
+		this.context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
+		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(this.context));
 		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
 		assertEquals(0, dao.getTaskExecutions().size());

@@ -18,6 +18,8 @@ package org.springframework.cloud.task.repository.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
@@ -36,12 +38,20 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	private TaskExecutionDao taskExecutionDao;
 
-	public SimpleTaskRepository(TaskExecutionDao taskExecutionDao){
-		this.taskExecutionDao = taskExecutionDao;
+	private FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean;
+
+	private boolean initialized = false;
+
+	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean){
+		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
+
+		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
 	@Override
 	public void update(TaskExecution taskExecution) {
+		initialize();
+
 		validateTaskExecution(taskExecution);
 		taskExecutionDao.updateTaskExecution(taskExecution);
 		logger.info("Updating: " + taskExecution.toString());
@@ -49,6 +59,7 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	@Override
 	public void createTaskExecution(TaskExecution taskExecution) {
+		initialize();
 		validateTaskExecution(taskExecution);
 		taskExecutionDao.saveTaskExecution(taskExecution);
 		logger.info("Creating: " + taskExecution.toString());
@@ -56,6 +67,7 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	@Override
 	public long getNextExecutionId() {
+		initialize();
 		return taskExecutionDao.getNextExecutionId();
 	}
 
@@ -64,7 +76,20 @@ public class SimpleTaskRepository implements TaskRepository {
 	 * @return the taskExecutionDao
 	 */
 	public TaskExecutionDao getTaskExecutionDao() {
+		initialize();
 		return taskExecutionDao;
+	}
+
+	private void initialize() {
+		if(!initialized) {
+			try {
+				this.taskExecutionDao = this.taskExecutionDaoFactoryBean.getObject();
+				this.initialized = true;
+			}
+			catch (Exception e) {
+				throw new IllegalStateException("Unable to create the TaskExecutionDao", e);
+			}
+		}
 	}
 
 	/**

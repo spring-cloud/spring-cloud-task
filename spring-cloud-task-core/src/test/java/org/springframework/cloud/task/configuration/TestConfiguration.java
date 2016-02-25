@@ -18,15 +18,15 @@ package org.springframework.cloud.task.configuration;
 import javax.sql.DataSource;
 
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
-import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
-import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -38,13 +38,18 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 
 @Configuration
-public class TestConfiguration {
+public class TestConfiguration implements InitializingBean {
 
 	@Autowired(required = false)
 	private DataSource dataSource;
 
 	@Autowired(required = false)
 	private ResourceLoader resourceLoader;
+
+	@Autowired
+	private ConfigurableApplicationContext applicationContext;
+
+	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
 	@Bean
 	public TaskRepositoryInitializer taskRepositoryInitializer() throws Exception {
@@ -57,8 +62,13 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public TaskRepository taskRepository(TaskExecutionDao taskExecutionDao){
-		return new SimpleTaskRepository(taskExecutionDao);
+	public TaskExplorer taskExplorer() throws Exception {
+		return new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
+	}
+
+	@Bean
+	public TaskRepository taskRepository(){
+		return new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
 	}
 
 	@Bean
@@ -71,18 +81,8 @@ public class TestConfiguration {
 		}
 	}
 
-	@Bean
-	public TaskExplorer taskExplorer(TaskExecutionDao taskExecutionDao) {
-		return new SimpleTaskExplorer(taskExecutionDao);
-	}
-
-	@Bean
-	public TaskExecutionDao taskExecutionDao() {
-		if(dataSource != null) {
-			return new JdbcTaskExecutionDao(dataSource);
-		}
-		else {
-			return new MapTaskExecutionDao();
-		}
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.applicationContext);
 	}
 }

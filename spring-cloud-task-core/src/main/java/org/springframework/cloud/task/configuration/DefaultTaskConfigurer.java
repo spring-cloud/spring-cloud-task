@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,15 @@ package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
-import org.springframework.cloud.task.repository.support.JdbcTaskExplorerFactoryBean;
-import org.springframework.cloud.task.repository.support.JdbcTaskRepositoryFactoryBean;
-import org.springframework.cloud.task.repository.support.MapTaskExplorerFactoryBean;
-import org.springframework.cloud.task.repository.support.MapTaskRepositoryFactoryBean;
+import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -45,12 +41,9 @@ import org.springframework.transaction.PlatformTransactionManager;
  * </ul>
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
 public class DefaultTaskConfigurer implements TaskConfigurer {
-
-	private final static Logger logger = LoggerFactory.getLogger(DefaultTaskConfigurer.class);
-
-	private DataSource dataSource;
 
 	private TaskRepository taskRepository;
 
@@ -58,51 +51,60 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private PlatformTransactionManager transactionManager;
 
-	public DefaultTaskConfigurer(){
-		initialize();
-	}
+	private ConfigurableApplicationContext context;
 
-	public DefaultTaskConfigurer(DataSource dataSource) {
-		this.dataSource = dataSource;
-		initialize();
+	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
+
+	public DefaultTaskConfigurer(ConfigurableApplicationContext context) {
+		this.context = context;
 	}
 
 	@Override
 	public TaskRepository getTaskRepository() {
-		return taskRepository;
+		if(this.taskRepository == null) {
+			if(this.taskExecutionDaoFactoryBean == null) {
+				this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
+			}
+
+			this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
+		}
+
+		return this.taskRepository;
 	}
 
 	@Override
 	public TaskExplorer getTaskExplorer() {
+		if(this.taskExplorer == null) {
+			if(this.taskExecutionDaoFactoryBean == null) {
+				this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
+			}
+
+			try {
+				this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
+			}
+			catch (Exception e) {
+				throw new IllegalStateException("Unable to create a TaskExplorer", e);
+			}
+		}
+
 		return taskExplorer;
 	}
 
 	@Override
 	public PlatformTransactionManager getTransactionManager() {
+		if(this.transactionManager == null) {
+			if(isDataSoureAvailable()) {
+				this.transactionManager = new DataSourceTransactionManager(this.context.getBean(DataSource.class));
+			}
+			else {
+				this.transactionManager = new ResourcelessTransactionManager();
+			}
+		}
+
 		return this.transactionManager;
 	}
 
-	private void initialize(){
-		logger.debug("Initializing TaskRepository");
-		if (dataSource == null) {
-			MapTaskRepositoryFactoryBean mapTaskRepositoryFactoryBean =
-					new MapTaskRepositoryFactoryBean();
-			taskRepository = mapTaskRepositoryFactoryBean.getObject();
-			MapTaskExplorerFactoryBean mapTaskExplorerFactoryBean =
-					new MapTaskExplorerFactoryBean();
-			taskExplorer = mapTaskExplorerFactoryBean.getObject();
-			transactionManager = new ResourcelessTransactionManager();
-
-		}
-		else {
-			JdbcTaskRepositoryFactoryBean jdbcTaskRepositoryFactoryBean =
-					new JdbcTaskRepositoryFactoryBean(dataSource);
-			taskRepository = jdbcTaskRepositoryFactoryBean.getObject();
-			JdbcTaskExplorerFactoryBean jdbcTaskExplorerFactoryBean =
-					new JdbcTaskExplorerFactoryBean(dataSource);
-			taskExplorer = jdbcTaskExplorerFactoryBean.getObject();
-			transactionManager = new DataSourceTransactionManager(dataSource);
-		}
+	private boolean isDataSoureAvailable() {
+		return this.context.getBeanNamesForType(DataSource.class).length == 1;
 	}
-
 }

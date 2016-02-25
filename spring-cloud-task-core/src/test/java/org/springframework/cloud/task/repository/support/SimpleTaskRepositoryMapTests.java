@@ -27,6 +27,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestVerifierUtils;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Tests for the SimpleTaskRepository that uses Map as a datastore.
@@ -38,9 +41,8 @@ public class SimpleTaskRepositoryMapTests {
 
 	@Before
 	public void setUp() {
-		MapTaskRepositoryFactoryBean factoryBean =
-				new MapTaskRepositoryFactoryBean();
-		taskRepository = factoryBean.getObject();
+		ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
+		this.taskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(context));
 	}
 
 	@Test
@@ -80,4 +82,7 @@ public class SimpleTaskRepositoryMapTests {
 				taskMap.containsKey(taskExecutionId));
 		return taskMap.get(taskExecutionId);
 	}
+
+	@Configuration
+	public static class EmptyConfiguration{}
 }

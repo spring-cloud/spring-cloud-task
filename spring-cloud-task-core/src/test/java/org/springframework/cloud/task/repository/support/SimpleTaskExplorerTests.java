@@ -16,10 +16,10 @@
 
 package org.springframework.cloud.task.repository.support;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,11 +49,10 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
-import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
-import org.springframework.cloud.task.util.TestDBUtils;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -69,13 +66,10 @@ public class SimpleTaskExplorerTests {
 	private AnnotationConfigApplicationContext context;
 
 	@Autowired
-	private TaskExecutionDao dao;
-
-	@Autowired
 	private TaskExplorer taskExplorer;
 
-	@Autowired(required = false)
-	private DataSource dataSource;
+	@Autowired
+	private TaskRepository taskRepository;
 
 	private DaoType testType;
 
@@ -95,17 +89,12 @@ public class SimpleTaskExplorerTests {
 	@Before
 	public void testDefaultContext() throws Exception {
 
-		if (testType == DaoType.jdbc) {
+		if (this.testType == DaoType.jdbc) {
 			initializeJdbcExplorerTest();
-			dao = new JdbcTaskExecutionDao(dataSource);
-			((JdbcTaskExecutionDao)dao).
-					setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
 		}
 		else {
 			initializeMapExplorerTest();
 		}
-
-		taskExplorer = new SimpleTaskExplorer(dao);
 	}
 
 	@After
@@ -176,7 +165,7 @@ public class SimpleTaskExplorerTests {
 
 		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
 			TaskExecution expectedTaskExecution = new TaskExecution(i, 0, TASK_NAME, new Date(), null, null, new ArrayList<String>(0));
-			dao.saveTaskExecution(expectedTaskExecution);
+			this.taskRepository.createTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 		Pageable pageable = new PageRequest(0, 10);
@@ -211,7 +200,7 @@ public class SimpleTaskExplorerTests {
 		for (int i = 0; i < TEST_COUNT; i++) {
 			TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 			expectedTaskExecution.setTaskName(TASK_NAME);
-			dao.saveTaskExecution(expectedTaskExecution);
+			this.taskRepository.createTaskExecution(expectedTaskExecution);
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 
@@ -318,7 +307,7 @@ public class SimpleTaskExplorerTests {
 
 	private TaskExecution createAndSaveTaskExecution(int i) {
 		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
-		dao.saveTaskExecution(taskExecution);
+		this.taskRepository.createTaskExecution(taskExecution);
 		return taskExecution;
 	}
 
@@ -378,4 +367,10 @@ public class SimpleTaskExplorerTests {
 	}
 
 	private enum DaoType{jdbc, map}
+
+	@Configuration
+	public static class DataSourceConfiguration{}
+
+	@Configuration
+	public static class EmptyConfiguration{}
 }
