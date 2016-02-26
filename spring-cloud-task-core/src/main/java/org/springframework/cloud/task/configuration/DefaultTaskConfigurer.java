@@ -57,43 +57,26 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	public DefaultTaskConfigurer(ConfigurableApplicationContext context) {
 		this.context = context;
+
+		this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
+		this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
+		this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
 	}
 
 	@Override
 	public TaskRepository getTaskRepository() {
-		if(this.taskRepository == null) {
-			if(this.taskExecutionDaoFactoryBean == null) {
-				this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
-			}
-
-			this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
-		}
-
 		return this.taskRepository;
 	}
 
 	@Override
 	public TaskExplorer getTaskExplorer() {
-		if(this.taskExplorer == null) {
-			if(this.taskExecutionDaoFactoryBean == null) {
-				this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
-			}
-
-			try {
-				this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
-			}
-			catch (Exception e) {
-				throw new IllegalStateException("Unable to create a TaskExplorer", e);
-			}
-		}
-
-		return taskExplorer;
+		return this.taskExplorer;
 	}
 
 	@Override
 	public PlatformTransactionManager getTransactionManager() {
 		if(this.transactionManager == null) {
-			if(isDataSoureAvailable()) {
+			if(isDataSourceAvailable()) {
 				this.transactionManager = new DataSourceTransactionManager(this.context.getBean(DataSource.class));
 			}
 			else {
@@ -104,7 +87,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		return this.transactionManager;
 	}
 
-	private boolean isDataSoureAvailable() {
+	private boolean isDataSourceAvailable() {
 		return this.context.getBeanNamesForType(DataSource.class).length == 1;
 	}
 }

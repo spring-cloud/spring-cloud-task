@@ -34,9 +34,15 @@ public class SimpleTaskExplorer implements TaskExplorer{
 
 	private TaskExecutionDao taskExecutionDao;
 
-	public SimpleTaskExplorer(TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean) throws Exception {
+	public SimpleTaskExplorer(TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean) {
 		Assert.notNull(taskExecutionDaoFactoryBean, "taskExecutionDaoFactoryBean must not be null");
-		this.taskExecutionDao = taskExecutionDaoFactoryBean.getObject();
+
+		try {
+			this.taskExecutionDao = taskExecutionDaoFactoryBean.getObject();
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("Unable to create a TaskExecutionDao", e);
+		}
 	}
 
 	@Override
