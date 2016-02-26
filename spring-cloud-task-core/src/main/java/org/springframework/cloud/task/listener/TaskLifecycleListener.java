@@ -148,10 +148,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			}
 
 			if(this.taskExecution.getExitCode() != 0){
-				invokeOnTaskError(taskExecution, this.applicationFailedEvent.getException());
+				taskExecution.setExitMessage(invokeOnTaskError(taskExecution,
+						this.applicationFailedEvent.getException()).getExitMessage());
 			}
-			invokeOnTaskEnd(taskExecution);
-
+			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
 			taskRepository.update(taskExecution);
 		}
 		else {
@@ -179,32 +179,37 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			logger.error("Multiple start events have been received.  The first one was " +
 					"recorded.");
 		}
-		invokeOnTaskStartup(taskExecution);
+		taskExecution.setExitMessage(invokeOnTaskStartup(taskExecution).getExitMessage());
 	}
 
-	private void invokeOnTaskStartup(TaskExecution taskExecution){
+	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskStartup(getTaskExecutionCopy(taskExecution));
+				taskExecutionListener.onTaskStartup(listenerTaskExecution);
 			}
 		}
+		return listenerTaskExecution;
 	}
 
-	private void invokeOnTaskEnd(TaskExecution taskExecution){
+	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskEnd(getTaskExecutionCopy(taskExecution));
+				taskExecutionListener.onTaskEnd(listenerTaskExecution);
 			}
 		}
+		return listenerTaskExecution;
 	}
 
-	private void invokeOnTaskError(TaskExecution taskExecution, Throwable throwable){
+	private TaskExecution invokeOnTaskError(TaskExecution taskExecution, Throwable throwable){
+		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskFailed(getTaskExecutionCopy(taskExecution),
-						throwable);
+				taskExecutionListener.onTaskFailed(listenerTaskExecution, throwable);
 			}
 		}
+		return listenerTaskExecution;
 	}
 
 	private TaskExecution getTaskExecutionCopy(TaskExecution taskExecution){

@@ -37,6 +37,10 @@ public class TestDefaultListenerConfiguration {
 
 	public class TestTaskExecutionListener implements TaskExecutionListener {
 
+		public static final String START_MESSAGE = "FOO";
+		public static final String ERROR_MESSAGE = "BAR";
+		public static final String END_MESSAGE = "BAZ";
+
 		private boolean isTaskStartup;
 		private boolean isTaskEnd;
 		private boolean isTaskFailed;
@@ -47,12 +51,14 @@ public class TestDefaultListenerConfiguration {
 		public void onTaskStartup(TaskExecution taskExecution) {
 			isTaskStartup = true;
 			this.taskExecution = taskExecution;
+			this.taskExecution.setExitMessage(START_MESSAGE);
 		}
 
 		@Override
 		public void onTaskEnd(TaskExecution taskExecution) {
 			isTaskEnd = true;
 			this.taskExecution = taskExecution;
+			this.taskExecution.setExitMessage(END_MESSAGE);
 		}
 
 		@Override
@@ -60,6 +66,7 @@ public class TestDefaultListenerConfiguration {
 			isTaskFailed = true;
 			this.taskExecution = taskExecution;
 			this.throwable = throwable;
+			this.taskExecution.setExitMessage(ERROR_MESSAGE);
 		}
 
 		public boolean isTaskStartup() {
@@ -81,5 +88,6 @@ public class TestDefaultListenerConfiguration {
 		public Throwable getThrowable(){
 			return throwable;
 		}
+
 	}
 }

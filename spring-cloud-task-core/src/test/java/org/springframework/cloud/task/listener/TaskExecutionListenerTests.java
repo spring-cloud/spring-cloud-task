@@ -104,14 +104,19 @@ public class TaskExecutionListenerTests {
 		assertEquals(isTaskEnd,actualListener.isTaskEnd());
 		assertEquals(isTaskFailed,actualListener.isTaskFailed());
 		if(isTaskFailed){
-			assertTrue(actualListener.getTaskExecution().getExitMessage().contains(EXCEPTION_MESSAGE));
+			assertEquals(TestDefaultListenerConfiguration.TestTaskExecutionListener.END_MESSAGE, actualListener.getTaskExecution().getExitMessage());
 			assertNotNull(actualListener.getThrowable());
 			assertTrue(actualListener.getThrowable() instanceof RuntimeException);
 		}
-		else{
-			assertNull(actualListener.getTaskExecution().getExitMessage());
+		else if(isTaskEnd){
+			assertEquals(TestDefaultListenerConfiguration.TestTaskExecutionListener.END_MESSAGE, actualListener.getTaskExecution().getExitMessage());
 			assertNull(actualListener.getThrowable());
 		}
+		else {
+			assertEquals(TestDefaultListenerConfiguration.TestTaskExecutionListener.START_MESSAGE, actualListener.getTaskExecution().getExitMessage());
+			assertNull(actualListener.getThrowable());
+		}
+
 		assertEquals(taskExecution.getExecutionId(), actualListener.getTaskExecution().getExecutionId());
 		assertEquals(taskExecution.getExitCode(), actualListener.getTaskExecution().getExitCode());
 	}
