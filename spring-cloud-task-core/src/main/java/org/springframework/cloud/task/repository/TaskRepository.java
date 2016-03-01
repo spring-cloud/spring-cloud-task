@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.task.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,23 +30,28 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TaskRepository {
 
 	/**
-	 * Notifies the repository that a taskExecution needs to be updated.
+	 * Notifies the repository that a taskExecution has completed.
 	 *
-	 * @param taskExecution taskExecution to be updated
+	 * @param executionId to the task execution to be updated.
+	 * @param exitCode to be stored for this task.
+	 * @param endTime designated when the task completed.
+	 * @param exitMessage to be stored for the task.
+	 * @return the updated {@link TaskExecution}
 	 */
-	public void update(TaskExecution taskExecution);
+	@Transactional
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
+			 String exitMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.
 	 *
-	 * @param taskExecution taskExecution to be recorded
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param parameters list of key/value pairs that configure the task.
+	 * @return the initial {@link TaskExecution}
 	 */
 	@Transactional
-	public void createTaskExecution(TaskExecution taskExecution);
+	TaskExecution createTaskExecution(String taskName,
+			Date startTime,List<String> parameters);
 
-	/**
-	 * Retrieves the next available execution id for a task execution.
-	 * @return long containing the executionId.
-	 */
-	public long getNextExecutionId();
 }

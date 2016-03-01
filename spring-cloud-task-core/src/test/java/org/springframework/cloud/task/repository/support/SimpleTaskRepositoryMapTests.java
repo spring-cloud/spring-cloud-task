@@ -16,12 +16,12 @@
 
 package org.springframework.cloud.task.repository.support;
 
-import static org.springframework.test.util.AssertionErrors.assertTrue;
-
+import java.util.Date;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
@@ -30,6 +30,8 @@ import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
+
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * Tests for the SimpleTaskRepository that uses Map as a datastore.
@@ -64,14 +66,13 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
-	public void testUpdateTaskExecution() {
+	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TaskExecutionCreator.updateTaskExecution(taskRepository,
-				expectedTaskExecution.getExecutionId());
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(taskRepository,
-						expectedTaskExecution.getExecutionId()));
+		expectedTaskExecution.setEndTime(new Date());
+
+		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
 	private TaskExecution getSingleTaskExecutionFromMapRepository(
@@ -81,6 +82,14 @@ public class SimpleTaskRepositoryMapTests {
 		assertTrue("taskExecutionId must be in MapTaskExecutionRepository",
 				taskMap.containsKey(taskExecutionId));
 		return taskMap.get(taskExecutionId);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testCreateTaskExecutionNullEndTime(){
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExitCode(-1);
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 	}
 
 	@Configuration

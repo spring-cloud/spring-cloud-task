@@ -73,14 +73,14 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testTaskCreate() {
 		context.refresh();
-		verifyTaskExecution(0, false, null, null);
+		verifyTaskExecution(0, false, 0, null);
 	}
 
 	@Test
 	public void testTaskCreateWithArgs() {
 		context.register(ArgsConfiguration.class);
 		context.refresh();
-		verifyTaskExecution(2, false, null, null);
+		verifyTaskExecution(2, false, 0, null);
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class TaskLifecycleListenerTests {
 		}
 		else {
 			assertNull(taskExecution.getEndTime());
-			assertNull(taskExecution.getExitCode());
+			assertTrue(taskExecution.getExitCode() == 0);
 		}
 
 		assertEquals("testTask", taskExecution.getTaskName());

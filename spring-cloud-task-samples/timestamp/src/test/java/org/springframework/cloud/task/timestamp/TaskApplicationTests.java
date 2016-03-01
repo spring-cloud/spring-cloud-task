@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.timestamp;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class TaskApplicationTests {
 	public void testTimeStampApp() throws Exception {
 		final String TEST_DATE_DOTS = ".......";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
-		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution{executionId=";
+		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
 		String[] args = { "--format=yyyy" + TEST_DATE_DOTS };
 
 		assertEquals(0, SpringApplication.exit(SpringApplication
@@ -62,7 +62,7 @@ public class TaskApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 2, count);
+		assertEquals("The number of task titles did not match expected: ", 3, count);
 	}
 
 }

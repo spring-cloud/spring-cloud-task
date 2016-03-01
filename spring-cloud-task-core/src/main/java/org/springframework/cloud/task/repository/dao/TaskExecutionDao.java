@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -32,16 +33,23 @@ public interface TaskExecutionDao {
 	/**
 	 * Save a new {@link TaskExecution}.
 	 *
-	 * @param taskExecution the taskExecution to be stored.
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param parameters list of key/value pairs that configure the task.
+	 * @return A fully qualified {@linkTaskExecution} instance.
 	 */
-	void saveTaskExecution(TaskExecution taskExecution);
+	TaskExecution createTaskExecution( String taskName,
+						   Date startTime, List<String> parameters);
 
 	/**
 	 * Update and existing {@link TaskExecution}.
 	 *
-	 * @param taskExecution the taskExecution to be updated.
+	 * @param executionId the id of  the taskExecution to be updated.
+	 * @param exitCode the status of the task upon completion.
+	 * @param endTime the time the task completed.
+	 * @param exitMessage the message assigned to the task upon completion.
 	 */
-	void updateTaskExecution(TaskExecution taskExecution);
+	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 
 	/**
 	 * Retrieves a task execution from the task repository.
@@ -107,9 +115,4 @@ public interface TaskExecutionDao {
 
 	public Page<TaskExecution> findAll(Pageable pageable);
 
-	/**
-	 * Retrieves the next available execution id for a task execution.
-	 * @return long containing the executionId.
-	 */
-	public long getNextExecutionId();
 }
