@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +51,19 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public void update(TaskExecution taskExecution) {
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
+									  String exitMessage) {
 		initialize();
 
-		validateTaskExecution(taskExecution);
-		taskExecutionDao.updateTaskExecution(taskExecution);
-		logger.info("Updating: " + taskExecution.toString());
+		validateExitInformation(executionId, exitCode, endTime);
+		exitMessage = trimExitMessage(exitMessage);
+		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage);
+		logger.info("Updating: TaskExecution with executionId="+executionId
+				+ " with the following {"
+				+ "exitCode=" + exitCode
+				+ ", endTime=" + endTime
+				+ ", exitMessage='" + exitMessage + '\''
+				+ '}');
 	}
 
 	@Override
@@ -107,9 +116,21 @@ public class SimpleTaskRepository implements TaskRepository {
 					+ MAX_TASK_NAME_SIZE + " characters");
 		}
 		//Trim the exit message
-		if(taskExecution.getExitMessage() != null &&
-				taskExecution.getExitMessage().length() > MAX_EXIT_MESSAGE_SIZE){
-			taskExecution.setExitMessage(taskExecution.getExitMessage().substring(0, MAX_EXIT_MESSAGE_SIZE - 1));
+		taskExecution.setExitMessage(trimExitMessage(taskExecution.getExitMessage()));
+	}
+
+	private void validateExitInformation(long executionId, Integer exitCode,  Date endTime){
+		Assert.notNull(exitCode, "exitCode should not be null");
+		Assert.isTrue(exitCode >= 0, "exit code must be greater than or equal to zero");
+		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");
+	}
+
+	private String trimExitMessage(String exitMessage){
+		String result = exitMessage;
+		if(exitMessage != null &&
+				exitMessage.length() > MAX_EXIT_MESSAGE_SIZE) {
+			result = exitMessage.substring(0, MAX_EXIT_MESSAGE_SIZE - 1);
 		}
+		return result;
 	}
 }

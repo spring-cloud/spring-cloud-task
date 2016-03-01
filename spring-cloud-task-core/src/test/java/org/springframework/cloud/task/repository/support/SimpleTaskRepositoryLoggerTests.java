@@ -49,14 +49,13 @@ public class SimpleTaskRepositoryLoggerTests {
 	}
 
 	@Test
-	public void testTaskUpdate() {
+	public void testTaskComplete() {
 		final Appender mockAppender = TestVerifierUtils.getMockAppender();
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
-		TaskExecutionCreator.updateTaskExecution(taskRepository,
-				expectedTaskExecution.getExecutionId());
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
-				"Updating: TaskExecution{executionId="
+				"Updating: TaskExecution with executionId="
 						+ expectedTaskExecution.getExecutionId());
 	}
 

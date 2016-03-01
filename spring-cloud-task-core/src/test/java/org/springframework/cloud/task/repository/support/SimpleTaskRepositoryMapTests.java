@@ -64,11 +64,10 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
-	public void testUpdateTaskExecution() {
+	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TaskExecutionCreator.updateTaskExecution(taskRepository,
-				expectedTaskExecution.getExecutionId());
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(taskRepository,
 						expectedTaskExecution.getExecutionId()));

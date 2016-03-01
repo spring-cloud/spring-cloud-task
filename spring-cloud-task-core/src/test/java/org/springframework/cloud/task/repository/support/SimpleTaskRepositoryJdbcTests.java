@@ -74,11 +74,10 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Test
 	@DirtiesContext
-	public void testUpdateTaskExecution() {
+	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
-		expectedTaskExecution = TaskExecutionCreator.updateTaskExecution(taskRepository,
-				expectedTaskExecution.getExecutionId());
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
 				dataSource, expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);

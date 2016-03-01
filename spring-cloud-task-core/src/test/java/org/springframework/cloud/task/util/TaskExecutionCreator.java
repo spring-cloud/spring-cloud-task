@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,10 +65,13 @@ public class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be updated.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution updateTaskExecution(TaskRepository taskRepository,
-													long taskExecutionId) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam(taskExecutionId);
-		taskRepository.update(expectedTaskExecution);
-		return expectedTaskExecution;
+	public static void completeExecution(TaskRepository taskRepository,
+			TaskExecution expectedTaskExecution) {
+		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(77);
+		expectedTaskExecution.setExitMessage(UUID.randomUUID().toString());
+		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+				expectedTaskExecution.getExitMessage());
 	}
 }

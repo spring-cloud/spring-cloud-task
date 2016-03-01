@@ -152,7 +152,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 						this.applicationFailedEvent.getException()).getExitMessage());
 			}
 			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
-			taskRepository.update(taskExecution);
+			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
+					taskExecution.getEndTime(), taskExecution.getExitMessage());
 		}
 		else {
 			logger.error("An event to end a task has been received for a task that has " +

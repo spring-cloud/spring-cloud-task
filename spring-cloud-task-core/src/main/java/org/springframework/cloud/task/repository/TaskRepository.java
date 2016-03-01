@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository;
 
+import java.util.Date;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,11 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TaskRepository {
 
 	/**
-	 * Notifies the repository that a taskExecution needs to be updated.
+	 * Notifies the repository that a taskExecution has completed.
 	 *
-	 * @param taskExecution taskExecution to be updated
+	 * @param executionId to the task execution to be updated
+	 * @param exitCode to be stored for this task.
+	 * @param endTime designated when the task completed.
+	 * @param exitMessage to be stored for the task.
 	 */
-	public void update(TaskExecution taskExecution);
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
+			 String exitMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.

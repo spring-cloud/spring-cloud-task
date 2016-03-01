@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -39,9 +40,12 @@ public interface TaskExecutionDao {
 	/**
 	 * Update and existing {@link TaskExecution}.
 	 *
-	 * @param taskExecution the taskExecution to be updated.
+	 * @param executionId the id of  the taskExecution to be updated.
+	 * @param exitCode the status of the task upon completion.
+	 * @param endTime the time the task completed.
+	 * @param exitMessage the message assigned to the task upon completion.
 	 */
-	void updateTaskExecution(TaskExecution taskExecution);
+	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 
 	/**
 	 * Retrieves a task execution from the task repository.

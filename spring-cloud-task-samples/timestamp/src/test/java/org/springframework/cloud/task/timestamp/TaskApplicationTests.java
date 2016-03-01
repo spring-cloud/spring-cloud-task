@@ -41,7 +41,7 @@ public class TaskApplicationTests {
 	public void testTimeStampApp() throws Exception {
 		final String TEST_DATE_DOTS = ".......";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
-		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution{executionId=";
+		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
 		String[] args = { "--format=yyyy" + TEST_DATE_DOTS };
 
 		assertEquals(0, SpringApplication.exit(SpringApplication
@@ -62,7 +62,7 @@ public class TaskApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 2, count);
+		assertEquals("The number of task titles did not match expected: ", 1, count);
 	}
 
 }

@@ -19,6 +19,7 @@ package org.springframework.cloud.task.repository.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,8 +54,11 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void updateTaskExecution(TaskExecution taskExecution) {
-		taskExecutions.put(taskExecution.getExecutionId(), taskExecution);
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+		TaskExecution taskExecution= taskExecutions.get(executionId);
+		taskExecution.setEndTime(endTime);
+		taskExecution.setExitCode(exitCode);
+		taskExecution.setExitMessage(exitMessage);
 	}
 
 	@Override

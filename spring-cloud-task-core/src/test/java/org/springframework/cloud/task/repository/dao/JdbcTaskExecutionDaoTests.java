@@ -66,20 +66,24 @@ public class JdbcTaskExecutionDaoTests {
 
 	@Test
 	@DirtiesContext
-	public void updateTaskExecution() {
+	public void completeTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		dao.saveTaskExecution(expectedTaskExecution);
-		dao.updateTaskExecution(expectedTaskExecution);
+		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+				expectedTaskExecution.getExitMessage());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	@DirtiesContext
-	public void updateTaskExecutionWithNoCreate() {
+	public void completeTaskExecutionWithNoCreate() {
 		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
 
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		dao.updateTaskExecution(expectedTaskExecution);
+		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+				expectedTaskExecution.getExitMessage());
 	}
 }
