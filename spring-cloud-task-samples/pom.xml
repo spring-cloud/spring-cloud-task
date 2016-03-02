@@ -24,6 +24,8 @@
 	<modules>
 		<module>timestamp</module>
 		<module>batch-job</module>
+		<module>tasksink</module>
+		<module>taskprocessor</module>
 	</modules>
 
 	<build>

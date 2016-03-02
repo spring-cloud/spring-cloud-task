@@ -209,3 +209,39 @@ marking the final state of the task.
 }
 ```
 
+=== Launching a task from a Spring cloud stream
+
+Allows a user to launch tasks from a stream.  This is done by creating a sink that
+listens for a message that contains a `TaskLaunchRequest` as a part of its payload.
+For example using Spring Cloud Dataflow a stream can be created that has a processor
+that takes in data from a http source and creates a `GenericMessage` that contains the
+`TaskLaunchRequest` and sends the message to its output channel. The task sink would then
+would receive the message from its input channnel and then launch the task.
+This stream would look something like:
+
+```
+stream create foo --definition "http --server.port=9000|taskProcessor|taskSink" --deploy
+```
+To create a taskSink a user needs to only create a spring boot app that includes the
+following annotation `EnableTaskLauncher`.  The code would look something like this:
+
+```
+@SpringBootApplication
+@EnableTaskLauncher
+public class TaskSinkApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(TaskSinkApplication.class, args);
+	}
+}
+```
+
+A sample TaskSink and TaskProcessor has been made available to you in the samples module
+of the Spring Cloud Task project.  To install these samples into your local maven
+repository execute a maven build from the `spring-cloud-task-samples` directory with the
+property `skipInstall` set to false.  For example:
+`mvn clean install -DskipInstall=false`.  To register them with
+Spring Cloud Dataflow, execute the following commands from Spring Cloud Dataflow shell:
+```
+module register --name taskSink --type sink --coordinates io.spring:tasksink:1.0.0.BUILD-SNAPSHOT
+module register --name taskProcessor --type processor --coordinates io.spring:taskprocessor:1.0.0.BUILD-SNAPSHOT
+```
