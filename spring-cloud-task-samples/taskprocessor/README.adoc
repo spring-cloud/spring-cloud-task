@@ -1,0 +1,44 @@
+= TaskProcessor
+
+Is a stream processor that will accept messages with a string payload and create a
+`TaskLaunchRequest` that it will send to the next app in the stream.  The payload of the
+message that is sent will be added to the properties of the `TaskLaunchRequest` under
+the `payload` key.
+
+By default the processor will add the timestamp-task sample coordinates if no task is
+specified.
+
+NOTE: if using defaults make sure to install the timestamp-task into your local maven repo
+by executing the following build in the timestamp-task module:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install -DskipInstall=false
+----
+
+== The parameters offered by the TaskProcessor are as follows:
+* *group* establishes the group for the task maven coordinates.   Default is `io.spring`.
+* *artifact* establishes the artifact for the task maven coordinates.  Default is `timestamp-task`.
+* *classifiers* establishes the classifier for the task maven coordinates.  Default is null.
+* *extension* establishes the extension for the task maven coordinates.  Default is jar.
+* *data-source-url* sets the spring_datasource_url for the task.  Default is null.
+* *data-source-driver-class-name* establishes the spring_datasource_driverClassName for the task.  Default is null.
+* *data-source-user-name* establishes the spring_datasource_username for the task.  Default is null.
+* *data-source-password* establishes the spring_datasource_password for the task.  Default is null.
+
+A sample processor stream definition using all parameters:
+
+```
+stream create foo --definition "http --server.port=9000|taskProcessor --group=io.spring --artifact=mytask --data-source-url=jdbc:mysql://localhost:3306/practice --data-source-driver-class-name=com.mysql.jdbc.Driver --data-source-user-name=root --data-source-password=password --classifiers=exec|taskSink" --deploy
+```
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install -DskipInstall=false
+----

@@ -70,6 +70,7 @@
 		<module>spring-cloud-task-core</module>
 		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-docs</module>
+		<module>spring-cloud-task-stream</module>
 	</modules>
 
 	<properties>

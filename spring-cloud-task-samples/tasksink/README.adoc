@@ -1,0 +1,15 @@
+= TaskSink
+
+Is a stream sink that will accept messages with the payload of `TaskLaunchRequest` and
+launch the task that was specified in the request.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install -DskipInstall=false
+----
