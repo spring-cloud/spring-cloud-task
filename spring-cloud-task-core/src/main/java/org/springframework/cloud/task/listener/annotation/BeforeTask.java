@@ -22,14 +22,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.cloud.task.listener.TaskExecutionListener;
+import org.springframework.cloud.task.repository.TaskExecution;
+
 /**
  * <p>
- * Enable a method to be invoked after repository has been updated but before task has started.
+ * {@link TaskExecutionListener#onTaskStartup(TaskExecution)}
+ * </p>
  *
  * <pre class="code">
  * public class MyListener {
 
- * &#064;BeforeTask
+ * 	&#064;BeforeTask
  * 	public void  doSomething(TaskExecution taskExecution) {
  * 	}
  * }

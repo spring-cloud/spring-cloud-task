@@ -197,7 +197,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskStartup(listenerTaskExecution);
 			}
 		}
-		executionListenerSelector.executeBeforeTask(listenerTaskExecution);
 		return listenerTaskExecution;
 	}
 
@@ -208,7 +207,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskEnd(listenerTaskExecution);
 			}
 		}
-		executionListenerSelector.executeAfterTask(listenerTaskExecution);
 		return listenerTaskExecution;
 	}
 
@@ -219,7 +217,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecutionListener.onTaskFailed(listenerTaskExecution, throwable);
 			}
 		}
-		executionListenerSelector.executeFailedTask(listenerTaskExecution, throwable);
 		return listenerTaskExecution;
 	}
 

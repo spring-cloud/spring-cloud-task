@@ -44,7 +44,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  *
  * @author Glenn Renfro
  */
-public class TaskListenerExecutor {
+public class TaskListenerExecutor implements TaskExecutionListener{
 
 	private ConfigurableApplicationContext context;
 
@@ -52,7 +52,7 @@ public class TaskListenerExecutor {
 
 
 	private final Set<Class<?>> nonAnnotatedClasses =
-			Collections.newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>(64));
+			Collections.newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>());
 
 	private Map<Method, BeforeTask> beforeTaskMethods;
 	private Map<Method, Object> beforeTaskInstances;
@@ -78,7 +78,8 @@ public class TaskListenerExecutor {
 	 * Executes all the methods that have been annotated with  &#064;BeforeTask.
 	 * @param taskExecution associated with the event.
 	 */
-	public void executeBeforeTask(TaskExecution taskExecution) {
+	@Override
+	public void onTaskStartup(TaskExecution taskExecution) {
 		executeTaskListener(taskExecution, beforeTaskMethods.keySet(), beforeTaskInstances);
 	}
 
@@ -86,7 +87,8 @@ public class TaskListenerExecutor {
 	 * Executes all the methods that have been annotated with  &#064;AfterTask.
 	 * @param taskExecution associated with the event.
 	 */
-	public void executeAfterTask(TaskExecution taskExecution) {
+	@Override
+	public void onTaskEnd(TaskExecution taskExecution) {
 		executeTaskListener(taskExecution, afterTaskMethods.keySet(), afterTaskInstances);
 	}
 
@@ -95,7 +97,8 @@ public class TaskListenerExecutor {
 	 * @param throwable that was not caught for the task execution.
 	 * @param taskExecution associated with the event.
 	 */
-	public void executeFailedTask(TaskExecution taskExecution, Throwable throwable) {
+	@Override
+	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
 		executeTaskListenerWithThrowable(taskExecution, throwable,
 				failedTaskMethods.keySet(),failedTaskInstances);
 	}

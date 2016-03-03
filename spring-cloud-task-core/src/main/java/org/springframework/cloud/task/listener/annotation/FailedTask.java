@@ -22,14 +22,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.cloud.task.listener.TaskExecutionListener;
+import org.springframework.cloud.task.repository.TaskExecution;
+
 /**
  * <p>
- * Enable a method to be invoked when a uncaught exception has been thrown.
+ * {@link TaskExecutionListener#onTaskFailed(TaskExecution, Throwable)}
+ * </p>
  *
  * <pre class="code">
  * public class MyListener {
 
- * &#064;FailedTask
+ * 	&#064;FailedTask
  * 	public void  doSomething(TaskExecution taskExecution, Throwable throwable) {
  * 	}
  * }
