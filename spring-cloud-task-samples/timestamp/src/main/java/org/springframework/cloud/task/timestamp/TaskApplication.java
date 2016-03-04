@@ -40,6 +40,8 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties({ TimestampTaskProperties.class })
 public class TaskApplication {
 
+	private static final Log logger = LogFactory.getLog(TaskApplication.class);
+
 	@Bean
 	public TimestampTask timeStampTask() {
 		return new TimestampTask();
@@ -53,7 +55,6 @@ public class TaskApplication {
 	 * A commandline runner that prints a timestamp.
 	 */
 	public class TimestampTask implements CommandLineRunner {
-		private final Log logger = LogFactory.getLog(TimestampTask.class);
 
 		@Autowired
 		private TimestampTaskProperties config;

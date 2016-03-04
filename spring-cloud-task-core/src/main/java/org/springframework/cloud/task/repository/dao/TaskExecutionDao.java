@@ -18,6 +18,7 @@ package org.springframework.cloud.task.repository.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,7 @@ public interface TaskExecutionDao {
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param parameters list of key/value pairs that configure the task.
-	 * @return A fully qualified {@linkTaskExecution} instance.
+	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
 	TaskExecution createTaskExecution( String taskName,
 						   Date startTime, List<String> parameters);
@@ -105,7 +106,7 @@ public interface TaskExecutionDao {
 	 *
 	 * @return a list of distinct task names from the task repository..
 	 */
-	public List<String> getTaskNames();
+	List<String> getTaskNames();
 
 	/**
 	 * Retrieves all the task executions within the pageable constraints.
@@ -113,6 +114,27 @@ public interface TaskExecutionDao {
 	 * @return page containing the results from the search
 	 */
 
-	public Page<TaskExecution> findAll(Pageable pageable);
+	Page<TaskExecution> findAll(Pageable pageable);
 
+	/**
+	 * Retrieves the next available execution id for a task execution.
+	 * @return long containing the executionId.
+	 */
+	long getNextExecutionId();
+
+	/**
+	 * Returns the id of the TaskExecution that the requested Spring Batch job execution
+	 * was executed within the context of.  Returns null if non were found.
+	 *
+	 * @param jobExecutionId the id of the JobExecution
+	 * @return the id of the {@link TaskExecution}
+	 */
+	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
+
+	/**
+	 * Returns the job execution ids associated with a task execution id.
+	 * @param taskExecutionId id of the {@link TaskExecution}
+	 * @return a <code>Set</code> of the ids of the job executions executed within the task.
+	 */
+	Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId);
 }

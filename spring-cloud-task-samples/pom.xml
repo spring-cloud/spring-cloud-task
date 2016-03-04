@@ -23,6 +23,7 @@
 
 	<modules>
 		<module>timestamp</module>
+		<module>batch-job</module>
 	</modules>
 
 	<build>

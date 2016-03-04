@@ -20,10 +20,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.sql.DataSource;
 
@@ -31,12 +34,14 @@ import org.springframework.batch.item.database.Order;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.repository.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
@@ -95,7 +100,10 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String FIND_TASK_NAMES = "SELECT distinct TASK_NAME from %PREFIX%EXECUTION order by TASK_NAME";
 
-	private static final String DEFAULT_TABLE_PREFIX = "TASK_";
+	private static final String FIND_TASK_EXECUTION_BY_JOB_EXECUTION_ID = "SELECT TASK_EXECUTION_ID FROM %PREFIX%TASK_BATCH WHERE JOB_EXECUTION_ID = ?";
+	private static final String FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID = "SELECT JOB_EXECUTION_ID FROM %PREFIX%TASK_BATCH WHERE TASK_EXECUTION_ID = ?";
+
+	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
@@ -239,6 +247,43 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	public long getNextExecutionId(){
 		return taskIncrementer.nextLongValue();
+	}
+
+	@Override
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+		try {
+			return jdbcTemplate.queryForObject(
+					getQuery(FIND_TASK_EXECUTION_BY_JOB_EXECUTION_ID),
+					new Object[] { jobExecutionId },
+					Long.class);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
+		try {
+			return jdbcTemplate.query(
+					getQuery(FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID),
+					new Object[] {taskExecutionId},
+					new ResultSetExtractor<Set<Long>>() {
+						@Override
+						public Set<Long> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+							Set<Long> jobExecutionIds = new TreeSet<>();
+
+							while(resultSet.next()) {
+								jobExecutionIds.add(resultSet.getLong("JOB_EXECUTION_ID"));
+							}
+
+							return jobExecutionIds;
+						}
+					});
+		}
+		catch (DataAccessException e) {
+			return Collections.emptySet();
+		}
 	}
 
 	private Page<TaskExecution> queryForPageableResults(Pageable pageable,

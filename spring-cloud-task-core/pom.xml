@@ -13,7 +13,6 @@
 	<artifactId>spring-cloud-task-core</artifactId>
 	<packaging>jar</packaging>
 	<name>Spring Cloud Task Core</name>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<description>Spring Cloud Task</description>
 
 	<dependencies>

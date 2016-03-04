@@ -42,10 +42,13 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	private ConcurrentMap<Long, TaskExecution> taskExecutions;
 
+	private ConcurrentMap<Long, Set<Long>> batchJobAssociations;
+
 	private final AtomicLong currentId = new AtomicLong(0L);
 
 	public MapTaskExecutionDao() {
 		taskExecutions = new ConcurrentHashMap<>();
+		batchJobAssociations = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public TaskExecution getTaskExecution(long executionId) {
-		return taskExecutions.get(executionId);
+			return taskExecutions.get(executionId);
 	}
 
 	@Override
@@ -147,6 +150,38 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	public long getNextExecutionId(){
 		return currentId.getAndIncrement();
+	}
+
+	@Override
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+		Long taskId = null;
+
+		found:
+
+		for (Map.Entry<Long, Set<Long>> association : batchJobAssociations.entrySet()) {
+			for (Long curJobExecutionId : association.getValue()) {
+				if(curJobExecutionId.equals(jobExecutionId)) {
+					taskId = association.getKey();
+					break found;
+				}
+			}
+		}
+
+		return taskId;
+	}
+
+	@Override
+	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
+		if(batchJobAssociations.containsKey(taskExecutionId)) {
+			return Collections.unmodifiableSet(batchJobAssociations.get(taskExecutionId));
+		}
+		else {
+			return new TreeSet<>();
+		}
+	}
+
+	public ConcurrentMap<Long, Set<Long>> getBatchJobAssociations() {
+		return batchJobAssociations;
 	}
 
 	private TreeSet<TaskExecution> getTaskExecutionTreeSet() {
