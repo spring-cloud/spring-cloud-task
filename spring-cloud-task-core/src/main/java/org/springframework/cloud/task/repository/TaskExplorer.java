@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Pageable;
  * Offers methods that allow users to query the task executions that are available.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
 public interface TaskExplorer {
 
@@ -34,7 +36,7 @@ public interface TaskExplorer {
 	 * @param executionId the task execution id
 	 * @return the {@link TaskExecution} with this id, or null if not found
 	 */
-	public TaskExecution getTaskExecution(long executionId);
+	TaskExecution getTaskExecution(long executionId);
 
 
 	/**
@@ -44,14 +46,14 @@ public interface TaskExplorer {
 	 * @param pageable the constraints for the search
 	 * @return the set of running executions for tasks with the specified name
 	 */
-	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable);
+	Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable);
 
 	/**
 	 * Retrieve a list of available task names.
 	 *
 	 * @return the set of task names that have been executed
 	 */
-	public List<String> getTaskNames();
+	List<String> getTaskNames();
 
 	/**
 	 * Get number of executions for a taskName.
@@ -59,7 +61,7 @@ public interface TaskExplorer {
 	 * @param taskName the name of the task to be searched
 	 * @return the number of running tasks that have the taskname specified
 	 */
-	public long getTaskExecutionCountByTaskName(String taskName);
+	long getTaskExecutionCountByTaskName(String taskName);
 
 	/**
 	 * Retrieves current number of task executions.
@@ -75,7 +77,7 @@ public interface TaskExplorer {
 	 * @param pageable the constraints for the search
 	 * @return list of task executions
 	 */
-	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable);
+	Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable);
 
 	/**
 	 * Retrieves all the task executions within the pageable constraints sorted by
@@ -84,6 +86,21 @@ public interface TaskExplorer {
 	 * @param pageable the constraints for the search
 	 * @return page containing the results from the search
 	 */
-	public Page<TaskExecution> findAll(Pageable pageable);
+	Page<TaskExecution> findAll(Pageable pageable);
 
+	/**
+	 * Returns the id of the TaskExecution that the requested Spring Batch job execution
+	 * was executed within the context of.  Returns null if non were found.
+	 *
+	 * @param jobExecutionId the id of the {@link org.springframework.batch.core.JobExecution}
+	 * @return the id of the {@link TaskExecution}
+	 */
+	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
+
+	/**
+	 * Returns the
+	 * @param taskExecutionId id of the {@link TaskExecution}
+	 * @return a <code>Set</code> of the ids of the job executions executed within the task.
+	 */
+	Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId);
 }
