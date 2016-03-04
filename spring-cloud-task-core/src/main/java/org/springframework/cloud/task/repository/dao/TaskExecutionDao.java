@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
@@ -97,7 +98,7 @@ public interface TaskExecutionDao {
 	 *
 	 * @return a list of distinct task names from the task repository..
 	 */
-	public List<String> getTaskNames();
+	List<String> getTaskNames();
 
 	/**
 	 * Retrieves all the task executions within the pageable constraints.
@@ -105,11 +106,27 @@ public interface TaskExecutionDao {
 	 * @return page containing the results from the search
 	 */
 
-	public Page<TaskExecution> findAll(Pageable pageable);
+	Page<TaskExecution> findAll(Pageable pageable);
 
 	/**
 	 * Retrieves the next available execution id for a task execution.
 	 * @return long containing the executionId.
 	 */
-	public long getNextExecutionId();
+	long getNextExecutionId();
+
+	/**
+	 * Returns the id of the TaskExecution that the requested Spring Batch job execution
+	 * was executed within the context of.  Returns null if non were found.
+	 *
+	 * @param jobExecutionId the id of the {@link org.springframework.batch.core.JobExecution}
+	 * @return the id of the {@link TaskExecution}
+	 */
+	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
+
+	/**
+	 * Returns the
+	 * @param taskExecutionId id of the {@link TaskExecution}
+	 * @return a <code>Set</code> of the ids of the job executions executed within the task.
+	 */
+	Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId);
 }

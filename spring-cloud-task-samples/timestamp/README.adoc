@@ -1,4 +1,4 @@
-= Timestamp Job
+= Timestamp Task
 
 This is a Spring Cloud Task application that logs a timestamp.
 

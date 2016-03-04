@@ -1,0 +1,26 @@
+= Spring Batch Job Task
+
+This is a Spring Cloud Task application that executes two simple Spring Batch Jobs.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Classes:
+
+* BatchJobApplication - the Spring Boot Main Application
+* JobConfiguration - the configuration for the Spring Batch jobs
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/batch-job-1.0.0.BUILD-SNAPSHOT.jar
+----
