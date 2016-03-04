@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,11 +68,15 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public void createTaskExecution(TaskExecution taskExecution) {
+	public TaskExecution createTaskExecution(long executionId, String taskName,
+			Date startTime,List<String> parameters) {
 		initialize();
-		validateTaskExecution(taskExecution);
-		taskExecutionDao.saveTaskExecution(taskExecution);
+		validateCreateInformation(startTime, taskName);
+		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
+				startTime, null, null, parameters);
+		taskExecutionDao.createTaskExecution(executionId, taskName, startTime, parameters);
 		logger.info("Creating: " + taskExecution.toString());
+		return taskExecution;
 	}
 
 	@Override
@@ -102,21 +107,16 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	/**
-	 * Validate TaskExecution. At a minimum a startTime.
-	 *
-	 * @param taskExecution the taskExecution to be evaluagted.
+	 * Validate startTime and taskName are valid.
 	 */
-	private void validateTaskExecution(TaskExecution taskExecution) {
-		Assert.notNull(taskExecution, "taskExecution should not be null");
-		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
+	private void validateCreateInformation(Date startTime, String taskName) {
+		Assert.notNull(startTime, "TaskExecution start time cannot be null.");
 
-		if (taskExecution.getTaskName() != null &&
-				taskExecution.getTaskName().length() > MAX_TASK_NAME_SIZE) {
+		if (taskName != null &&
+				taskName.length() > MAX_TASK_NAME_SIZE) {
 			throw new IllegalArgumentException("TaskName length exceeds "
 					+ MAX_TASK_NAME_SIZE + " characters");
 		}
-		//Trim the exit message
-		taskExecution.setExitMessage(trimExitMessage(taskExecution.getExitMessage()));
 	}
 
 	private void validateExitInformation(long executionId, Integer exitCode,  Date endTime){

@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,7 +42,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
@@ -164,8 +164,8 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
-			TaskExecution expectedTaskExecution = new TaskExecution(i, 0, TASK_NAME, new Date(), null, null, new ArrayList<String>(0));
-			this.taskRepository.createTaskExecution(expectedTaskExecution);
+			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(i,
+					TASK_NAME, new Date(), new ArrayList<String>());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 		Pageable pageable = new PageRequest(0, 10);
@@ -190,6 +190,7 @@ public class SimpleTaskExplorerTests {
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
 		final String TASK_NAME = "FOOBAR";
+		Random randomGenerator = new Random();
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		//Store completed jobs
@@ -198,9 +199,8 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (int i = 0; i < TEST_COUNT; i++) {
-			TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-			expectedTaskExecution.setTaskName(TASK_NAME);
-			this.taskRepository.createTaskExecution(expectedTaskExecution);
+			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(
+					randomGenerator.nextLong(), TASK_NAME, new Date(), new ArrayList<String>());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 
@@ -307,7 +307,9 @@ public class SimpleTaskExplorerTests {
 
 	private TaskExecution createAndSaveTaskExecution(int i) {
 		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
-		this.taskRepository.createTaskExecution(taskExecution);
+		this.taskRepository.createTaskExecution(taskExecution.getExecutionId(),
+				taskExecution.getTaskName(), taskExecution.getStartTime(),
+				taskExecution.getParameters());
 		return taskExecution;
 	}
 

@@ -63,9 +63,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = ? ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, "
-			+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED)"
-			+ "values (?, ?, ?, ?, ?, ?, ?)";
+			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED)"
+			+ "values (?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_PARAMETER = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
@@ -118,22 +117,20 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void saveTaskExecution(TaskExecution taskExecution) {
-		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
-				taskExecution.getStartTime(), taskExecution.getEndTime(),
-				taskExecution.getTaskName(), taskExecution.getExitCode(),
-				taskExecution.getExitMessage(), new Date()};
+	public void createTaskExecution(long executionId, String taskName,
+			Date startTime, List<String> parameters)  {
+		Object[] queryParameters = new Object[]{ executionId,
+				startTime, taskName, new Date()};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
-				parameters,
-				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.TIMESTAMP,
-						Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP });
-		insertTaskParameters(taskExecution.getExecutionId(), taskExecution.getParameters());
+				queryParameters,
+				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP });
+		insertTaskParameters(executionId, parameters);
 	}
 
 	@Override
 	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime,
-									  String exitMessage) {
+			String exitMessage) {
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,

@@ -35,7 +35,9 @@ public class MapTaskExecutionDaoTests {
 	public void saveTaskExecution(){
 		MapTaskExecutionDao dao = new MapTaskExecutionDao();
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		dao.saveTaskExecution(expectedTaskExecution);
+		dao.createTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getParameters());
 		Map<Long, TaskExecution> taskExecutionMap = dao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
@@ -46,7 +48,9 @@ public class MapTaskExecutionDaoTests {
 	public void completeTaskExecution(){
 		MapTaskExecutionDao dao = new MapTaskExecutionDao();
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		dao.saveTaskExecution(expectedTaskExecution);
+		dao.createTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getParameters());
 		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());

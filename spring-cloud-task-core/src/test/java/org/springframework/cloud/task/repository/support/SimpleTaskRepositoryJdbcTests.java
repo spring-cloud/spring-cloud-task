@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.Date;
+
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -86,9 +88,11 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxExitMessageSize(){
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
-		taskRepository.createTaskExecution(expectedTaskExecution);
+		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), new Date(),
+				expectedTaskExecution.getExitMessage());
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -96,7 +100,9 @@ public class SimpleTaskRepositoryJdbcTests {
 	public void testCreateTaskExecutionNoParamMaxTaskName(){
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
 		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
-		taskRepository.createTaskExecution(expectedTaskExecution);
+		taskRepository.createTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getParameters());
 	}
 }
 

@@ -170,11 +170,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
 			}
 
-			this.taskExecution = new TaskExecution(this.taskRepository.getNextExecutionId(),
-					null, this.taskNameResolver.getTaskName(), new Date(), null, null,
-					args);
-
-			this.taskRepository.createTaskExecution(this.taskExecution);
+			this.taskExecution = this.taskRepository.createTaskExecution(this.taskRepository.getNextExecutionId(),
+					this.taskNameResolver.getTaskName(), new Date(), args);
 		}
 		else {
 			logger.error("Multiple start events have been received.  The first one was " +

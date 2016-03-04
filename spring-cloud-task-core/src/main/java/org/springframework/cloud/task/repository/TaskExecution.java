@@ -88,7 +88,7 @@ public class TaskExecution {
 	}
 
 	public Integer getExitCode() {
-		return exitCode;
+		return (exitCode == null) ? 0 : exitCode;
 	}
 
 	public void setExitCode(Integer exitCode) {

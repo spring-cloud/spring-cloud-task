@@ -33,9 +33,13 @@ public interface TaskExecutionDao {
 	/**
 	 * Save a new {@link TaskExecution}.
 	 *
-	 * @param taskExecution the taskExecution to be stored.
+	 * @param executionId the unique id for this task execution.
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param parameters list of key/value pairs that configure the task.
 	 */
-	void saveTaskExecution(TaskExecution taskExecution);
+	void createTaskExecution(long executionId, String taskName,
+						   Date startTime, List<String> parameters);
 
 	/**
 	 * Update and existing {@link TaskExecution}.
