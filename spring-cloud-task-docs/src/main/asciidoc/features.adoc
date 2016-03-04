@@ -186,7 +186,7 @@ marking the final state of the task.
 . `onTaskFailed` - prior to the `onTaskEnd` method being invoked when an unhandled
  exception is thrown by the task.
 
-Spring Cloud Task also allows a user add TaskExecution Listeners to methods within a bean
+Spring Cloud Task also allows a user add `TaskExecution` Listeners to methods within a bean
 by using the following method annotations:
 
 . `@BeforeTask` - prior to the storing the TaskExecution into the TaskRepository

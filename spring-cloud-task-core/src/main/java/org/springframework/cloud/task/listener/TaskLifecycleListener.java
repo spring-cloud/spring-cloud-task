@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -83,8 +82,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
-	private TaskListenerExecutor executionListenerSelector;
-
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
@@ -113,7 +110,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
 		if(applicationEvent instanceof ContextRefreshedEvent) {
-			executionListenerSelector = new TaskListenerExecutor(context);
 			doTaskStart();
 			started = true;
 		}
