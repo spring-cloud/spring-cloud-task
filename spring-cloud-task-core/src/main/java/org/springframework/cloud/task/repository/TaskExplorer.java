@@ -90,7 +90,7 @@ public interface TaskExplorer {
 
 	/**
 	 * Returns the id of the TaskExecution that the requested Spring Batch job execution
-	 * was executed within the context of.  Returns null if non were found.
+	 * was executed within the context of.  Returns null if none were found.
 	 *
 	 * @param jobExecutionId the id of the {@link org.springframework.batch.core.JobExecution}
 	 * @return the id of the {@link TaskExecution}
@@ -98,7 +98,9 @@ public interface TaskExplorer {
 	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
 
 	/**
-	 * Returns the
+	 * Returns a Set of JobExecution ids for the jobs that were executed within the scope
+	 * of the requested task.
+	 *
 	 * @param taskExecutionId id of the {@link TaskExecution}
 	 * @return a <code>Set</code> of the ids of the job executions executed within the task.
 	 */

@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.cloud.task.batch.listener.TaskBatchDao;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.util.Assert;
 
 /**
  * Map implementation of the {@link TaskBatchDao}.  <note>This is intended for testing
@@ -39,6 +40,9 @@ public class MapTaskBatchDao implements TaskBatchDao {
 
 	@Override
 	public void saveRelationship(TaskExecution taskExecution, JobExecution jobExecution) {
+		Assert.notNull(taskExecution, "A taskExecution is required");
+		Assert.notNull(jobExecution, "A jobExecution is required");
+
 		if(this.relationships.containsKey(taskExecution.getExecutionId())) {
 			this.relationships.get(taskExecution.getExecutionId()).add(jobExecution.getId());
 		}

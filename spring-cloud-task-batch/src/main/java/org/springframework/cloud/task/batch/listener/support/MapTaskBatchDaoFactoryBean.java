@@ -35,23 +35,25 @@ public class MapTaskBatchDaoFactoryBean implements FactoryBean<MapTaskBatchDao> 
 
 	@Override
 	public MapTaskBatchDao getObject() throws Exception {
-		Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class, "taskExecutionDao");
-		taskExecutionDaoField.setAccessible(true);
+		if(this.dao == null) {
+			Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class, "taskExecutionDao");
+			taskExecutionDaoField.setAccessible(true);
 
-		MapTaskExecutionDao taskExecutionDao;
+			MapTaskExecutionDao taskExecutionDao;
 
-		if(AopUtils.isJdkDynamicProxy(taskExplorer)) {
-			SimpleTaskExplorer dereferencedTaskRepository = (SimpleTaskExplorer) ((Advised) taskExplorer).getTargetSource().getTarget();
+			if(AopUtils.isJdkDynamicProxy(taskExplorer)) {
+				SimpleTaskExplorer dereferencedTaskRepository = (SimpleTaskExplorer) ((Advised) taskExplorer).getTargetSource().getTarget();
 
-			taskExecutionDao =
-					(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, dereferencedTaskRepository);
+				taskExecutionDao =
+						(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, dereferencedTaskRepository);
+			}
+			else {
+				taskExecutionDao =
+						(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, taskExplorer);
+			}
+
+			this.dao = new MapTaskBatchDao(taskExecutionDao.getBatchJobAssociations());
 		}
-		else {
-			taskExecutionDao =
-					(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, taskExplorer);
-		}
-
-		this.dao = new MapTaskBatchDao(taskExecutionDao.getBatchJobAssociations());
 
 		return this.dao;
 	}

@@ -42,7 +42,7 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	private JdbcOperations jdbcTemplate;
 
 	/**
-	 * @param dataSource dataSource where the task batch table resides.
+	 * @param dataSource {@link DataSource} where the task batch table resides.
 	 */
 	public JdbcTaskBatchDao(DataSource dataSource) {
 		Assert.notNull(dataSource, "A dataSource is required");
@@ -52,6 +52,8 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 
 	@Override
 	public void saveRelationship(TaskExecution taskExecution, JobExecution jobExecution) {
+		Assert.notNull(taskExecution, "A taskExecution is required");
+		Assert.notNull(jobExecution, "A jobExecution is required");
 		jdbcTemplate.update(getQuery(INSERT_STATEMENT), taskExecution.getExecutionId(), jobExecution.getId());
 	}
 
@@ -61,6 +63,7 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	 * @param tablePrefix defaults to {@link JdbcTaskExecutionDao#DEFAULT_TABLE_PREFIX}.
 	 */
 	public void setTablePrefix(String tablePrefix) {
+		Assert.notNull(tablePrefix, "Null is not allowed as a tablePrfix (use an empty string if you don't want a prefix at all).");
 		this.tablePrefix = tablePrefix;
 	}
 

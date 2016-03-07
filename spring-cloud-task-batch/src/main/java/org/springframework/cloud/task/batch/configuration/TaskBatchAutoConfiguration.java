@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.configuration;
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -28,11 +29,13 @@ import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.JdbcTaskBatchDao;
 import org.springframework.cloud.task.batch.listener.support.MapTaskBatchDaoFactoryBean;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -68,12 +71,14 @@ public class TaskBatchAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
+		@DependsOn("taskExplorer")
 		public TaskBatchExecutionListener batchTaskExecutionListener(SimpleTaskExplorer taskExplorer) throws Exception {
 			return new TaskBatchExecutionListener(taskBatchDao(taskExplorer));
 		}
 
 		@Bean
 		@ConditionalOnMissingBean
+		@DependsOn("taskExplorer")
 		public TaskBatchDao taskBatchDao(SimpleTaskExplorer taskExplorer) throws Exception {
 			MapTaskBatchDaoFactoryBean mapTaskBatchDaoFactoryBean = new MapTaskBatchDaoFactoryBean();
 

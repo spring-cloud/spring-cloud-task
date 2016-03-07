@@ -45,7 +45,7 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 		if(bean instanceof AbstractJob) {
 			if(length != 1) {
 				throw new IllegalStateException("The application context is required to " +
-						"have exactly 1 instance of the TaskBatchExecutionListner but has " +
+						"have exactly 1 instance of the TaskBatchExecutionListener but has " +
 						length);
 			}
 
