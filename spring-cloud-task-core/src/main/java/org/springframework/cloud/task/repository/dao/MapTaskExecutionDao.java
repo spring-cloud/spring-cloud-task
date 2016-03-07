@@ -41,10 +41,13 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	private ConcurrentMap<Long, TaskExecution> taskExecutions;
 
+	private ConcurrentMap<Long, Set<Long>> batchJobAssociations;
+
 	private final AtomicLong currentId = new AtomicLong(0L);
 
 	public MapTaskExecutionDao() {
 		taskExecutions = new ConcurrentHashMap<>();
+		batchJobAssociations = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -59,7 +62,12 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public TaskExecution getTaskExecution(long executionId) {
-		return taskExecutions.get(executionId);
+		if(taskExecutions.containsKey(executionId)) {
+			return taskExecutions.get(executionId);
+		}
+		else {
+			return null;
+		}
 	}
 
 	@Override
@@ -121,7 +129,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			result.add(entry.getValue().getTaskName());
 		}
-		return new ArrayList<String>(result);
+		return new ArrayList<>(result);
 	}
 
 	@Override
@@ -140,8 +148,40 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		return currentId.getAndIncrement();
 	}
 
+	@Override
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+		Long taskId = null;
+
+		found:
+
+		for (Map.Entry<Long, Set<Long>> association : batchJobAssociations.entrySet()) {
+			for (Long curJobExecutionId : association.getValue()) {
+				if(curJobExecutionId.equals(jobExecutionId)) {
+					taskId = association.getKey();
+					break found;
+				}
+			}
+		}
+
+		return taskId;
+	}
+
+	@Override
+	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
+		if(batchJobAssociations.containsKey(taskExecutionId)) {
+			return Collections.unmodifiableSet(batchJobAssociations.get(taskExecutionId));
+		}
+		else {
+			return new TreeSet<>();
+		}
+	}
+
+	public ConcurrentMap<Long, Set<Long>> getBatchJobAssociations() {
+		return batchJobAssociations;
+	}
+
 	private TreeSet<TaskExecution> getTaskExecutionTreeSet() {
-		return new TreeSet<TaskExecution>(new Comparator<TaskExecution>() {
+		return new TreeSet<>(new Comparator<TaskExecution>() {
 			@Override
 			public int compare(TaskExecution e1, TaskExecution e2) {
 				int result = e1.getStartTime().compareTo(e2.getStartTime());
@@ -156,7 +196,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	private Page getPageFromList(List<TaskExecution> executionList, Pageable pageable, long maxSize){
 		int toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList.size()) ?
 				executionList.size() : pageable.getOffset() + pageable.getPageSize();
-		return new PageImpl<TaskExecution>(
+		return new PageImpl<>(
 				executionList.subList(pageable.getOffset(), toIndex),
 				pageable, maxSize);
 	}

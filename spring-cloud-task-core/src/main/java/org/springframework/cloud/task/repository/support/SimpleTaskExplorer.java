@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -29,8 +30,9 @@ import org.springframework.util.Assert;
  * TaskExplorer for that gathers task information from a task repository.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
-public class SimpleTaskExplorer implements TaskExplorer{
+public class SimpleTaskExplorer implements TaskExplorer {
 
 	private TaskExecutionDao taskExecutionDao;
 
@@ -78,6 +80,16 @@ public class SimpleTaskExplorer implements TaskExplorer{
 	@Override
 	public Page<TaskExecution> findAll(Pageable pageable) {
 		return taskExecutionDao.findAll(pageable);
+	}
+
+	@Override
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+		return taskExecutionDao.getTaskExecutionIdByJobExecutionId(jobExecutionId);
+	}
+
+	@Override
+	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
+		return taskExecutionDao.getJobExecutionIdsByTaskExecutionId(taskExecutionId);
 	}
 
 }
