@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.listener.annotation;
+package org.springframework.cloud.task.listener;
 
 /**
- * Is thrown when failure occurs while trying to invoke a method that has been annotated
- * by a task execution listener.
+ * Is thrown when executing a task.
  *
  * @author Glenn Renfro.
  */
-public class TaskAnnotationException extends RuntimeException {
+public class TaskExecutionException extends TaskException {
 
-	public TaskAnnotationException(String message){
+	public TaskExecutionException(String message){
 		super(message);
 	}
 
-	public TaskAnnotationException(String message, Throwable throwable){
+	public TaskExecutionException(String message, Throwable throwable){
 		super(message, throwable);
 	}
 }

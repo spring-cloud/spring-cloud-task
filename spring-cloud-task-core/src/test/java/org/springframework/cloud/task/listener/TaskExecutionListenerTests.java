@@ -33,6 +33,7 @@ import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
 import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactory;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
 import org.springframework.cloud.task.util.TestListener;
@@ -202,9 +203,10 @@ public class TaskExecutionListenerTests {
 		}
 
 		@Bean
-		public TaskListenerExecutor taskListenerExecutor(ConfigurableApplicationContext context)
+		public TaskListenerExecutor taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
 		{
-			return new TaskListenerExecutor(context);
+			TaskListenerExecutorFactory taskListenerExecutorFactory = new TaskListenerExecutorFactory(context);
+			return taskListenerExecutorFactory.getObject();
 		}
 
 		public static class AnnotatedTaskListener extends TestListener {
