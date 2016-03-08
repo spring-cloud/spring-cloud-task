@@ -58,8 +58,7 @@ public class JdbcTaskExecutionDaoTests {
 	@DirtiesContext
 	public void saveTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		dao.createTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
 				expectedTaskExecution.getParameters());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
@@ -70,9 +69,8 @@ public class JdbcTaskExecutionDaoTests {
 	@DirtiesContext
 	public void completeTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoParam();
-		dao.createTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getParameters());
+		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
 		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());

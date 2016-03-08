@@ -52,9 +52,4 @@ public interface TaskRepository {
 	public TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> parameters);
 
-	/**
-	 * Retrieves the next available execution id for a task execution.
-	 * @return long containing the executionId.
-	 */
-	public long getNextExecutionId();
 }

@@ -71,19 +71,11 @@ public class SimpleTaskRepository implements TaskRepository {
 	public TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> parameters) {
 		initialize();
-		long executionId = this.getNextExecutionId();
 		validateCreateInformation(startTime, taskName);
-		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
-				startTime, null, null, parameters);
-		taskExecutionDao.createTaskExecution(executionId, taskName, startTime, parameters);
+		TaskExecution taskExecution =
+				taskExecutionDao.createTaskExecution(taskName, startTime, parameters);
 		logger.info("Creating: " + taskExecution.toString());
 		return taskExecution;
-	}
-
-	@Override
-	public long getNextExecutionId() {
-		initialize();
-		return taskExecutionDao.getNextExecutionId();
 	}
 
 	/**

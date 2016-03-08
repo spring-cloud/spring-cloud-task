@@ -33,12 +33,12 @@ public interface TaskExecutionDao {
 	/**
 	 * Save a new {@link TaskExecution}.
 	 *
-	 * @param executionId the unique id for this task execution.
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param parameters list of key/value pairs that configure the task.
+	 * @return A fully qualified {@linkTaskExecution} instance.
 	 */
-	void createTaskExecution(long executionId, String taskName,
+	TaskExecution createTaskExecution( String taskName,
 						   Date startTime, List<String> parameters);
 
 	/**
@@ -115,9 +115,4 @@ public interface TaskExecutionDao {
 
 	public Page<TaskExecution> findAll(Pageable pageable);
 
-	/**
-	 * Retrieves the next available execution id for a task execution.
-	 * @return long containing the executionId.
-	 */
-	public long getNextExecutionId();
 }
