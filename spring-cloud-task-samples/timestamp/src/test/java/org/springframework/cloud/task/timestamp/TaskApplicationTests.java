@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.timestamp;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,7 +62,7 @@ public class TaskApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 1, count);
+		assertEquals("The number of task titles did not match expected: ", 3, count);
 	}
 
 }

@@ -18,6 +18,7 @@ package org.springframework.cloud.task.repository.support;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.junit.Before;
@@ -67,6 +68,7 @@ public class SimpleTaskRepositoryMapTests {
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setEndTime(new Date());
 		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(taskRepository,
@@ -80,6 +82,14 @@ public class SimpleTaskRepositoryMapTests {
 		assertTrue("taskExecutionId must be in MapTaskExecutionRepository",
 				taskMap.containsKey(taskExecutionId));
 		return taskMap.get(taskExecutionId);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testCreateTaskExecutionNullEndTime(){
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExitCode(-1);
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 	}
 
 	@Configuration

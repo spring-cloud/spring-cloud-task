@@ -44,13 +44,12 @@ public interface TaskRepository {
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.
 	 *
-	 * @param executionId the unique id for this task execution.
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param parameters list of key/value pairs that configure the task.
 	 */
 	@Transactional
-	public TaskExecution createTaskExecution(long executionId, String taskName,
+	public TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> parameters);
 
 	/**

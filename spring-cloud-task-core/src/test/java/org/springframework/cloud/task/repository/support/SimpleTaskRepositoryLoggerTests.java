@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.Date;
+
 import ch.qos.logback.core.Appender;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +55,7 @@ public class SimpleTaskRepositoryLoggerTests {
 		final Appender mockAppender = TestVerifierUtils.getMockAppender();
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setEndTime(new Date());
 		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyLogEntryExists(mockAppender,
 				"Updating: TaskExecution with executionId="

@@ -164,7 +164,7 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
-			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(i,
+			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(
 					TASK_NAME, new Date(), new ArrayList<String>());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
@@ -200,7 +200,7 @@ public class SimpleTaskExplorerTests {
 
 		for (int i = 0; i < TEST_COUNT; i++) {
 			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(
-					randomGenerator.nextLong(), TASK_NAME, new Date(), new ArrayList<String>());
+					TASK_NAME, new Date(), new ArrayList<String>());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 
@@ -307,9 +307,8 @@ public class SimpleTaskExplorerTests {
 
 	private TaskExecution createAndSaveTaskExecution(int i) {
 		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
-		this.taskRepository.createTaskExecution(taskExecution.getExecutionId(),
-				taskExecution.getTaskName(), taskExecution.getStartTime(),
-				taskExecution.getParameters());
+		taskExecution = this.taskRepository.createTaskExecution(taskExecution.getTaskName(),
+				taskExecution.getStartTime(), taskExecution.getParameters());
 		return taskExecution;
 	}
 

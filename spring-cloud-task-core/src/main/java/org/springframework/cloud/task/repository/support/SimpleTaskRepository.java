@@ -53,13 +53,13 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	@Override
 	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-									  String exitMessage) {
+			String exitMessage) {
 		initialize();
 
 		validateExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimExitMessage(exitMessage);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage);
-		logger.info("Updating: TaskExecution with executionId="+executionId
+		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
 				+ "exitCode=" + exitCode
 				+ ", endTime=" + endTime
@@ -68,9 +68,10 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(long executionId, String taskName,
+	public TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> parameters) {
 		initialize();
+		long executionId = this.getNextExecutionId();
 		validateCreateInformation(startTime, taskName);
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
 				startTime, null, null, parameters);

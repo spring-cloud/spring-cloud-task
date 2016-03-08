@@ -17,7 +17,6 @@
 package org.springframework.cloud.task.util;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,9 +38,8 @@ public class TaskExecutionCreator {
 	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		taskRepository.createTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getParameters());
+		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
 		return expectedTaskExecution;
 	}
 
@@ -57,9 +55,8 @@ public class TaskExecutionCreator {
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
 		expectedTaskExecution.setParameters(params);
-		taskRepository.createTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getParameters());
+		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
 		return expectedTaskExecution;
 	}
 
@@ -71,9 +68,6 @@ public class TaskExecutionCreator {
 	 */
 	public static void completeExecution(TaskRepository taskRepository,
 			TaskExecution expectedTaskExecution) {
-		expectedTaskExecution.setEndTime(new Date());
-		expectedTaskExecution.setExitCode(77);
-		expectedTaskExecution.setExitMessage(UUID.randomUUID().toString());
 		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());

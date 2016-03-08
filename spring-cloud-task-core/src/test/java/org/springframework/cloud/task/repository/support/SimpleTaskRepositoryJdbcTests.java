@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -79,6 +80,10 @@ public class SimpleTaskRepositoryJdbcTests {
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(77);
+		expectedTaskExecution.setExitMessage(UUID.randomUUID().toString());
+
 		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
 				dataSource, expectedTaskExecution.getExecutionId());
@@ -90,6 +95,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	public void testCreateTaskExecutionNoParamMaxExitMessageSize(){
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
+		expectedTaskExecution.setEndTime(new Date());
 		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), new Date(),
 				expectedTaskExecution.getExitMessage());
@@ -98,11 +104,32 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test(expected=IllegalArgumentException.class)
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxTaskName(){
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
-		taskRepository.createTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getParameters());
+		taskRepository.createTaskExecution(
+				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]),
+				new Date(), null);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testCreateTaskExecutionNegativeException(){
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(-1);
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
+		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
+				dataSource, expectedTaskExecution.getExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+
+	@Test(expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testCreateTaskExecutionNullEndTime(){
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExitCode(-1);
+		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 	}
 }
 
