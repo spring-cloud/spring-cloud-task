@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -63,7 +63,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListeners;
 
-	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
+	private final static Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
 	private final TaskRepository taskRepository;
 

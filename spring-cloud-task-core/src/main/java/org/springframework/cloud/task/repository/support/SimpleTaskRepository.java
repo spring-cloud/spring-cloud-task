@@ -19,8 +19,8 @@ package org.springframework.cloud.task.repository.support;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -37,7 +37,7 @@ public class SimpleTaskRepository implements TaskRepository {
 	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
 	public static final int MAX_TASK_NAME_SIZE = 100;
 
-	private final static Logger logger = LoggerFactory.getLogger(SimpleTaskRepository.class);
+	private final static Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
 	private TaskExecutionDao taskExecutionDao;
 

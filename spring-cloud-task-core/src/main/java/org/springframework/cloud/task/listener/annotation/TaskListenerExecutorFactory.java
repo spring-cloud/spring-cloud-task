@@ -24,8 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.aop.scope.ScopedObject;
 import org.springframework.aop.scope.ScopedProxyUtils;
@@ -41,7 +42,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  */
 public class TaskListenerExecutorFactory implements FactoryBean<TaskListenerExecutor> {
 
-	private final static Logger logger = LoggerFactory.getLogger(TaskListenerExecutor.class);
+	private final static Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
 	private final Set<Class<?>> nonAnnotatedClasses =
 			Collections.newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>());
