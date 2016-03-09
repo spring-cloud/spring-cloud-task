@@ -95,7 +95,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String RUNNING_TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM " +
 			"%PREFIX%EXECUTION where TASK_NAME = ? AND END_TIME IS NULL ";
 
-	final String FIND_TASK_NAMES = "SELECT distinct TASK_NAME from %PREFIX%EXECUTION order by TASK_NAME";
+	private static final String FIND_TASK_NAMES = "SELECT distinct TASK_NAME from %PREFIX%EXECUTION order by TASK_NAME";
 
 	private static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
@@ -255,7 +255,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		}
 		factoryBean.setSortKeys(orderMap);
 		factoryBean.setDataSource(dataSource);
-		PagingQueryProvider pagingQueryProvider = null;
+		PagingQueryProvider pagingQueryProvider;
 		try {
 			pagingQueryProvider = factoryBean.getObject();
 			pagingQueryProvider.init(dataSource);
@@ -268,7 +268,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				getQuery(query),
 				queryParam,
 				new TaskExecutionRowMapper());
-		return new PageImpl<TaskExecution>(resultList, pageable, totalCount);
+		return new PageImpl<>(resultList, pageable, totalCount);
 	}
 
 	private String getQuery(String base) {
@@ -323,14 +323,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		@Override
 		public TaskExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			long  id = rs.getLong("TASK_EXECUTION_ID");
-			TaskExecution taskExecution=new TaskExecution(id,
+			return new TaskExecution(id,
 					(Integer) rs.getObject("EXIT_CODE"),
 					rs.getString("TASK_NAME"),
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
 					rs.getString("EXIT_MESSAGE"),
 					getTaskParameters(id));
-			return taskExecution;
 		}
 	}
 

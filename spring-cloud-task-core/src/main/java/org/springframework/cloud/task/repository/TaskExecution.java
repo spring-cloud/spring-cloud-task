@@ -79,8 +79,8 @@ public class TaskExecution {
 		this.taskName = taskName;
 		this.exitMessage = exitMessage;
 		this.parameters = parameters;
-		setStartTime(startTime);
-		setEndTime(endTime);
+		this.startTime = (Date)startTime.clone();
+		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 	}
 
 	public long getExecutionId() {

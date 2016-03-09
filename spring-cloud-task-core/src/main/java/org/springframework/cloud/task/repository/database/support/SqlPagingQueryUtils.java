@@ -28,6 +28,8 @@ import org.springframework.batch.item.database.Order;
  */
 public class SqlPagingQueryUtils {
 
+	private SqlPagingQueryUtils(){}
+
 	/**
 	 * Generate SQL query string using a LIMIT clause
 	 *
@@ -42,7 +44,7 @@ public class SqlPagingQueryUtils {
 		sql.append(" FROM ").append(provider.getFromClause());
 		sql.append(provider.getWhereClause() == null ? "" : " WHERE " + provider.getWhereClause());
 		sql.append(" ORDER BY ").append(buildSortClause(provider));
-		sql.append(" " + limitClause);
+		sql.append(" ").append(limitClause);
 
 		return sql.toString();
 	}
