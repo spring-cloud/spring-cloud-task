@@ -36,6 +36,7 @@ import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
@@ -62,6 +63,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListeners;
+
+	@Autowired
+	private ConfigurableApplicationContext context;
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLifecycleListener.class);
 
