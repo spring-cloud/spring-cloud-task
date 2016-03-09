@@ -38,7 +38,8 @@ public class TaskExecutionCreator {
 	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
-		taskRepository.createTaskExecution(expectedTaskExecution);
+		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
 		return expectedTaskExecution;
 	}
 
@@ -54,7 +55,8 @@ public class TaskExecutionCreator {
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
 		expectedTaskExecution.setParameters(params);
-		taskRepository.createTaskExecution(expectedTaskExecution);
+		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
 		return expectedTaskExecution;
 	}
 
@@ -64,10 +66,10 @@ public class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be updated.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution updateTaskExecution(TaskRepository taskRepository,
-													long taskExecutionId) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam(taskExecutionId);
-		taskRepository.update(expectedTaskExecution);
-		return expectedTaskExecution;
+	public static void completeExecution(TaskRepository taskRepository,
+			TaskExecution expectedTaskExecution) {
+		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+				expectedTaskExecution.getExitMessage());
 	}
 }

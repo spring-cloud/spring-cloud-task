@@ -63,9 +63,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = ? ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, START_TIME, END_TIME, "
-			+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED)"
-			+ "values (?, ?, ?, ?, ?, ?, ?)";
+			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED)"
+			+ "values (?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_PARAMETER = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
@@ -74,8 +73,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
 
 	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
-			+ "START_TIME = ?, END_TIME = ?, TASK_NAME = ?, EXIT_CODE = ?, "
-			+ "EXIT_MESSAGE = ?, LAST_UPDATED = ? "
+			+ "END_TIME = ?, EXIT_CODE = ?, EXIT_MESSAGE = ?, LAST_UPDATED = ? "
 			+ "where TASK_EXECUTION_ID = ?";
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
@@ -119,36 +117,38 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void saveTaskExecution(TaskExecution taskExecution) {
-		Object[] parameters = new Object[]{ taskExecution.getExecutionId(),
-				taskExecution.getStartTime(), taskExecution.getEndTime(),
-				taskExecution.getTaskName(), taskExecution.getExitCode(),
-				taskExecution.getExitMessage(), new Date()};
+	public TaskExecution createTaskExecution(String taskName,
+			Date startTime, List<String> parameters)  {
+		long taskExecutionId = getNextExecutionId();
+		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
+				startTime, null, null, parameters);
+
+		Object[] queryParameters = new Object[]{ taskExecutionId, startTime, taskName, new Date()};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
-				parameters,
-				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.TIMESTAMP,
-						Types.VARCHAR, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP });
-		insertTaskParameters(taskExecution.getExecutionId(), taskExecution.getParameters());
+				queryParameters,
+				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP });
+		insertTaskParameters(taskExecutionId, parameters);
+		return taskExecution;
 	}
 
 	@Override
-	public void updateTaskExecution(TaskExecution taskExecution) {
+	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime,
+			String exitMessage) {
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
-				new Object[]{ taskExecution.getExecutionId() }) != 1) {
-			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecution.getExecutionId() + " not found.");
+				new Object[]{ taskExecutionId}) != 1) {
+			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
 		}
 
-		Object[] parameters = new Object[]{ taskExecution.getStartTime(), taskExecution.getEndTime(),
-				taskExecution.getTaskName(), taskExecution.getExitCode(),
-				taskExecution.getExitMessage(), new Date(), taskExecution.getExecutionId()};
+		Object[] parameters = new Object[]{ endTime, exitCode, exitMessage, new Date(),
+				taskExecutionId};
 		jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
-				new int[]{ Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.INTEGER,
-						Types.VARCHAR, Types.TIMESTAMP, Types.BIGINT});
+				new int[]{ Types.TIMESTAMP, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP,
+						Types.BIGINT});
 	}
 
 	/**

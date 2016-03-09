@@ -153,7 +153,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 						this.applicationFailedEvent.getException()).getExitMessage());
 			}
 			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
-			taskRepository.update(taskExecution);
+			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
+					taskExecution.getEndTime(), taskExecution.getExitMessage());
 		}
 		else {
 			logger.error("An event to end a task has been received for a task that has " +
@@ -170,11 +171,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
 			}
 
-			this.taskExecution = new TaskExecution(this.taskRepository.getNextExecutionId(),
-					null, this.taskNameResolver.getTaskName(), new Date(), null, null,
-					args);
-
-			this.taskRepository.createTaskExecution(this.taskExecution);
+			this.taskExecution = this.taskRepository.createTaskExecution(
+					this.taskNameResolver.getTaskName(), new Date(), args);
 		}
 		else {
 			logger.error("Multiple start events have been received.  The first one was " +

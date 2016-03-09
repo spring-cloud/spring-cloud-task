@@ -82,16 +82,14 @@ public class TestVerifierUtils {
 	 *
 	 * @return
 	 */
-	public static TaskExecution createSampleTaskExecutionNoParam(long executionId) {
+	public static TaskExecution createSampleTaskExecutionNoParam() {
 		Random randomGenerator = new Random();
-		int exitCode = randomGenerator.nextInt();
 		Date startTime = new Date();
-		Date endTime = new Date();
+		long executionId = randomGenerator.nextLong();
 		String taskName = UUID.randomUUID().toString();
-		String exitMessage = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, exitCode, taskName,
-				startTime, endTime, exitMessage, new ArrayList<String>());
+		return new TaskExecution(executionId, 0, taskName,
+				startTime, null, null, new ArrayList<String>());
 	}
 
 	/**
@@ -99,7 +97,7 @@ public class TestVerifierUtils {
 	 *
 	 * @return
 	 */
-	public static TaskExecution createSampleTaskExecutionNoParam() {
+	public static TaskExecution endSampleTaskExecutionNoParam() {
 		Random randomGenerator = new Random();
 		int exitCode = randomGenerator.nextInt();
 		Date startTime = new Date();
@@ -119,38 +117,14 @@ public class TestVerifierUtils {
 	 */
 	public static TaskExecution createSampleTaskExecution(long executionId) {
 		Random randomGenerator = new Random();
-		int exitCode = randomGenerator.nextInt();
 		Date startTime = new Date();
-		Date endTime = new Date();
 		String taskName = UUID.randomUUID().toString();
-		String exitMessage = UUID.randomUUID().toString();
 		List<String> params = new ArrayList<>(PARAM_SIZE);
 		for (int i = 0 ; i < PARAM_SIZE ; i++){
 			params.add(UUID.randomUUID().toString());
 		}
-		return new TaskExecution(executionId, exitCode, taskName,
-				startTime, endTime, exitMessage, params);
-	}
-
-	/**
-	 * Creates a fully populated TaskExecution for testing.
-	 *
-	 * @return
-	 */
-	public static TaskExecution createSampleTaskExecution() {
-		Random randomGenerator = new Random();
-		int exitCode = randomGenerator.nextInt();
-		long executionId = randomGenerator.nextLong();
-		Date startTime = new Date();
-		Date endTime = new Date();
-		String taskName = UUID.randomUUID().toString();
-		String exitMessage = UUID.randomUUID().toString();
-		List<String> params = new ArrayList<>(PARAM_SIZE);
-		for (int i = 0 ; i < PARAM_SIZE ; i++){
-			params.add(UUID.randomUUID().toString());
-		}
-		return new TaskExecution(executionId, exitCode, taskName,
-				startTime, endTime, exitMessage, params);
+		return new TaskExecution(executionId, null, taskName,
+				startTime, null, null, params);
 	}
 
 	/**
