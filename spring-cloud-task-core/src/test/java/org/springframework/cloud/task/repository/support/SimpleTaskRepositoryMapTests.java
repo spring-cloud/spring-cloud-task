@@ -27,9 +27,6 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestVerifierUtils;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -43,8 +40,7 @@ public class SimpleTaskRepositoryMapTests {
 
 	@Before
 	public void setUp() {
-		ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
-		this.taskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(context));
+		this.taskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
 	}
 
 	@Test
@@ -52,8 +48,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(taskRepository,
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -61,8 +56,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(taskRepository,
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -75,8 +69,7 @@ public class SimpleTaskRepositoryMapTests {
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
-	private TaskExecution getSingleTaskExecutionFromMapRepository(
-			TaskRepository repository, long taskExecutionId){
+	private TaskExecution getSingleTaskExecutionFromMapRepository(long taskExecutionId){
 		Map<Long, TaskExecution> taskMap = ((MapTaskExecutionDao)
 				((SimpleTaskRepository)taskRepository).getTaskExecutionDao()).getTaskExecutions();
 		assertTrue("taskExecutionId must be in MapTaskExecutionRepository",
@@ -91,7 +84,4 @@ public class SimpleTaskRepositoryMapTests {
 		expectedTaskExecution.setExitCode(-1);
 		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 	}
-
-	@Configuration
-	public static class EmptyConfiguration{}
 }

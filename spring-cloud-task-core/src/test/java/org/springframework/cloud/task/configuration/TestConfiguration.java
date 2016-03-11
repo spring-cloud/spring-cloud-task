@@ -26,7 +26,6 @@ import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -45,9 +44,6 @@ public class TestConfiguration implements InitializingBean {
 
 	@Autowired(required = false)
 	private ResourceLoader resourceLoader;
-
-	@Autowired
-	private ConfigurableApplicationContext applicationContext;
 
 	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
@@ -83,6 +79,11 @@ public class TestConfiguration implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.applicationContext);
+		if(this.dataSource != null) {
+			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource);
+		}
+		else {
+			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
+		}
 	}
 }

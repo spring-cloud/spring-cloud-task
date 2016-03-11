@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
  */
 
 package org.springframework.cloud.task.repository.support;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import javax.sql.DataSource;
 
@@ -37,6 +32,11 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Verifies that task initialization occurs properly.
@@ -70,7 +70,7 @@ public class TaskDatabaseInitializerTests {
 	@Test
 	public void testNoDatabase() throws Exception {
 		this.context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
-		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(this.context));
+		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
 		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
 		assertEquals(0, dao.getTaskExecutions().size());

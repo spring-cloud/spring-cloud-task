@@ -33,6 +33,7 @@ import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.cloud.task.listener.TaskExecutionListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -40,7 +41,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 /**
  * @author Glenn Renfro
  */
-public class TaskListenerExecutorFactory implements FactoryBean<TaskListenerExecutor> {
+public class TaskListenerExecutorFactoryBean implements FactoryBean<TaskExecutionListener> {
 
 	private final static Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
@@ -55,7 +56,7 @@ public class TaskListenerExecutorFactory implements FactoryBean<TaskListenerExec
 
 	private Map<Method, Object> failedTaskInstances;
 
-	public TaskListenerExecutorFactory(ConfigurableApplicationContext context){
+	public TaskListenerExecutorFactoryBean(ConfigurableApplicationContext context){
 		this.context = context;
 	}
 
@@ -161,5 +162,4 @@ public class TaskListenerExecutorFactory implements FactoryBean<TaskListenerExec
 					});
 		}
 	}
-
 }

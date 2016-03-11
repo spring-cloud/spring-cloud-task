@@ -23,10 +23,8 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * A {@link FactoryBean} implementation that creates the appropriate
@@ -38,7 +36,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
-	private ConfigurableApplicationContext context;
+	private DataSource dataSource;
 
 	private TaskExecutionDao dao = null;
 
@@ -54,37 +52,21 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	}
 
 	/**
-	 * ApplicationContext provided will be used to obtain the appropriate
-	 * {@link DataSource}.
+	 * {@link DataSource} to be used.
 	 *
-	 * @param context context for this application
+	 * @param dataSource {@link DataSource} to be used.
 	 */
-	public TaskExecutionDaoFactoryBean(ConfigurableApplicationContext context) {
-		Assert.notNull(context, "An ApplicationContext is required");
+	public TaskExecutionDaoFactoryBean(DataSource dataSource) {
+		Assert.notNull(dataSource, "A DataSource is required");
 
-		this.context = context;
+		this.dataSource = dataSource;
 	}
 
 	@Override
 	public TaskExecutionDao getObject() throws Exception {
 		if(this.dao == null) {
-			if(this.context != null) {
-				if (StringUtils.hasText(this.dataSourceName)) {
-					if(!this.context.containsBean(this.dataSourceName)) {
-						throw new IllegalArgumentException("The configured dataSourceName is not available in the current context");
-					}
-
-					DataSource dataSource = (DataSource) this.context.getBean(this.dataSourceName);
-					buildTaskExecutionDao(dataSource);
-				}
-				else if (this.context.getBeanNamesForType(DataSource.class).length == 1) {
-					DataSource dataSource = this.context.getBean(DataSource.class);
-					buildTaskExecutionDao(dataSource);
-
-				}
-				else {
-					this.dao = new MapTaskExecutionDao();
-				}
+			if (this.dataSource != null) {
+				buildTaskExecutionDao(this.dataSource);
 			}
 			else {
 				this.dao = new MapTaskExecutionDao();

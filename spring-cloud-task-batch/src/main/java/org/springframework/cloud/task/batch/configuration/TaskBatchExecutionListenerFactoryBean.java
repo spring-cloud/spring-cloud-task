@@ -27,10 +27,7 @@ import org.springframework.cloud.task.batch.listener.support.MapTaskBatchDao;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * {@link FactoryBean} for a {@link TaskBatchExecutionListener}.  Provides a jdbc based
@@ -41,19 +38,15 @@ import org.springframework.util.StringUtils;
  */
 public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBatchExecutionListener> {
 
-	private ConfigurableApplicationContext context;
-
 	private TaskBatchExecutionListener listener;
 
-	private String dataSourceName;
+	private DataSource dataSource;
 
-	/**
-	 * @param context the current application context
-	 */
-	public TaskBatchExecutionListenerFactoryBean(ConfigurableApplicationContext context) {
-		Assert.notNull(context, "A ConfigurableApplicationContext is required");
+	private TaskExplorer taskExplorer;
 
-		this.context = context;
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer) {
+		this.dataSource = dataSource;
+		this.taskExplorer = taskExplorer;
 	}
 
 	@Override
@@ -61,24 +54,11 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 		if(listener != null){
 			return listener;
 		}
-		if(this.context.getBeanNamesForType(DataSource.class).length == 0) {
+		if(this.dataSource == null) {
 			this.listener = new TaskBatchExecutionListener(getMapTaskBatchDao());
 		}
 		else {
-			DataSource dataSource;
-
-			if(StringUtils.hasText(this.dataSourceName)) {
-				dataSource = (DataSource) this.context.getBean(this.dataSourceName);
-			}
-			else {
-				if(this.context.getBeanNamesForType(DataSource.class).length == 1) {
-					dataSource = this.context.getBean(DataSource.class);
-				}
-				else {
-					throw new IllegalStateException("Unable to determine what DataSource to use");
-				}
-			}
-			this.listener = new TaskBatchExecutionListener(new JdbcTaskBatchDao(dataSource));
+			this.listener = new TaskBatchExecutionListener(new JdbcTaskBatchDao(this.dataSource));
 		}
 
 		return listener;
@@ -94,27 +74,21 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 		return true;
 	}
 
-	public void setDataSourceName(String dataSourceName) {
-		this.dataSourceName = dataSourceName;
-	}
-
 	private MapTaskBatchDao getMapTaskBatchDao() throws Exception {
 		Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class, "taskExecutionDao");
 		taskExecutionDaoField.setAccessible(true);
 
 		MapTaskExecutionDao taskExecutionDao;
 
-		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
-
-		if(AopUtils.isJdkDynamicProxy(taskExplorer)) {
-			SimpleTaskExplorer dereferencedTaskRepository = (SimpleTaskExplorer) ((Advised) taskExplorer).getTargetSource().getTarget();
+		if(AopUtils.isJdkDynamicProxy(this.taskExplorer)) {
+			SimpleTaskExplorer dereferencedTaskRepository = (SimpleTaskExplorer) ((Advised) this.taskExplorer).getTargetSource().getTarget();
 
 			taskExecutionDao =
 					(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, dereferencedTaskRepository);
 		}
 		else {
 			taskExecutionDao =
-					(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, taskExplorer);
+					(MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, this.taskExplorer);
 		}
 
 		return new MapTaskBatchDao(taskExecutionDao.getBatchJobAssociations());
