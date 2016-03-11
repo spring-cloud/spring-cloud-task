@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.springframework.cloud.task.util;
+
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * Initializes the beans needed to test default task behavior.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
 @Configuration
 public class TestDefaultConfiguration implements InitializingBean {
@@ -72,6 +75,12 @@ public class TestDefaultConfiguration implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.factoryBean = new TaskExecutionDaoFactoryBean(this.context);
+		if(this.context.getBeanNamesForType(DataSource.class).length == 1){
+			DataSource dataSource = this.context.getBean(DataSource.class);
+			this.factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
+		}
+		else {
+			this.factoryBean = new TaskExecutionDaoFactoryBean();
+		}
 	}
 }

@@ -15,14 +15,19 @@
  */
 package org.springframework.cloud.task.batch.configuration;
 
+import java.util.Collection;
+import javax.sql.DataSource;
+
 import org.springframework.batch.core.Job;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Provides auto configuration for the {@link TaskBatchExecutionListener}.
@@ -39,9 +44,24 @@ public class TaskBatchAutoConfiguration {
 		return new TaskBatchExecutionListenerBeanPostProcessor();
 	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(ConfigurableApplicationContext context) {
-		return new TaskBatchExecutionListenerFactoryBean(context);
+	@Configuration
+	@ConditionalOnMissingBean(name = "taskBatchExecutionListener")
+	public static class TaskBatchExecutionListenerAutoconfiguration {
+
+		@Autowired(required = false)
+		private Collection<DataSource> dataSources;
+
+		@Bean
+		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
+			if(!CollectionUtils.isEmpty(dataSources) && dataSources.size() == 1) {
+				return new TaskBatchExecutionListenerFactoryBean(dataSources.iterator().next(), taskExplorer);
+			}
+			else if(CollectionUtils.isEmpty(dataSources)) {
+				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
+			}
+			else {
+				throw new IllegalStateException("Expected one datasource and found " + dataSources.size());
+			}
+		}
 	}
 }

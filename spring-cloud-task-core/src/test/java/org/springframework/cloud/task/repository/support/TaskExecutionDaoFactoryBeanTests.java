@@ -15,9 +15,6 @@
  */
 package org.springframework.cloud.task.repository.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -30,10 +27,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Michael Minella
@@ -64,20 +63,6 @@ public class TaskExecutionDaoFactoryBeanTests {
 		new TaskExecutionDaoFactoryBean(null);
 	}
 
-	@Test
-	public void testMapTaskExecutionDaoWithAppContext() throws Exception {
-		this.context = new GenericApplicationContext();
-		this.context.refresh();
-
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
-		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao instanceof MapTaskExecutionDao);
-
-		TaskExecutionDao taskExecutionDao2 = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao == taskExecutionDao2);
-	}
 
 	@Test
 	public void testMapTaskExecutionDaoWithoutAppContext() throws Exception {
@@ -95,7 +80,9 @@ public class TaskExecutionDaoFactoryBeanTests {
 	public void testDefaultDataSourceConfiguration() throws Exception {
 		this.context = new AnnotationConfigApplicationContext(DefaultDataSourceConfiguration.class);
 
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
+		DataSource dataSource = this.context.getBean(DataSource.class);
+
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
 		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
 
 		assertTrue(taskExecutionDao instanceof JdbcTaskExecutionDao);
@@ -105,66 +92,14 @@ public class TaskExecutionDaoFactoryBeanTests {
 		assertTrue(taskExecutionDao == taskExecutionDao2);
 	}
 
-	@Test
-	public void testNonDefaultNameDataSourceConfiguration() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(AlternativeDataSourceConfiguration.class);
-
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
-		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao instanceof JdbcTaskExecutionDao);
-
-		TaskExecutionDao taskExecutionDao2 = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao == taskExecutionDao2);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testMissingCustomDataSourceNameConfiguration() throws Exception {
-		ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(AlternativeDataSourceConfiguration.class);
-
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(context);
-		factoryBean.setDataSourceName("wrongName");
-		factoryBean.getObject();
-	}
-
-	@Test
-	public void testCustomDataSourceNameConfiguration() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(AlternativeDataSourceConfiguration.class);
-
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
-		factoryBean.setDataSourceName("notDataSource");
-		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao instanceof JdbcTaskExecutionDao);
-
-		TaskExecutionDao taskExecutionDao2 = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao == taskExecutionDao2);
-	}
-
-	@Test
-	public void testCustomDataSourceNameConfigurationWithMultipleDataSources() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(MultipleDataSourceConfiguration.class);
-
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
-		factoryBean.setDataSourceName("useThisDataSource");
-		JdbcTaskExecutionDao taskExecutionDao = (JdbcTaskExecutionDao) factoryBean.getObject();
-
-		Object usedDataSource = ReflectionTestUtils.getField(taskExecutionDao, "dataSource");
-
-		assertTrue(usedDataSource == this.context.getBean("useThisDataSource"));
-
-		TaskExecutionDao taskExecutionDao2 = factoryBean.getObject();
-
-		assertTrue(taskExecutionDao == taskExecutionDao2);
-	}
 
 	@Test
 	public void testSettingTablePrefix() throws Exception {
 		this.context = new AnnotationConfigApplicationContext(DefaultDataSourceConfiguration.class);
 
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(this.context);
+		DataSource dataSource = this.context.getBean(DataSource.class);
+
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
 		factoryBean.setTablePrefix("foo_");
 		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
 
@@ -179,36 +114,5 @@ public class TaskExecutionDaoFactoryBeanTests {
 			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2);
 			return builder.build();
 		}
-	}
-
-	@Configuration
-	public static class AlternativeDataSourceConfiguration {
-
-		@Bean
-		public DataSource notDataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2);
-			return builder.build();
-		}
-	}
-
-	@Configuration
-	public static class MultipleDataSourceConfiguration {
-
-		@Bean
-		public DataSource useThisDataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2)
-					.setName("useThisDataSource");
-			return builder.build();
-		}
-
-		@Bean
-		public DataSource dontUseThisDataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2)
-					.setName("dontUseThisDataSource");
-			return builder.build();
-		}
-
 	}
 }

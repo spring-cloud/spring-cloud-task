@@ -26,7 +26,6 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -51,14 +50,25 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private PlatformTransactionManager transactionManager;
 
-	private ConfigurableApplicationContext context;
-
 	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
-	public DefaultTaskConfigurer(ConfigurableApplicationContext context) {
-		this.context = context;
+	private DataSource dataSource;
 
-		this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.context);
+	/**
+	 * @param dataSource references the {@link DataSource} to be used as the Task
+	 * repository.  If none is provided, a Map will be used (not recommended for
+	 * production use.
+	 */
+	public DefaultTaskConfigurer(DataSource dataSource) {
+		this.dataSource = dataSource;
+
+		if(this.dataSource != null) {
+			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource);
+		}
+		else {
+			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
+		}
+
 		this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
 		this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
 	}
@@ -77,7 +87,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	public PlatformTransactionManager getTransactionManager() {
 		if(this.transactionManager == null) {
 			if(isDataSourceAvailable()) {
-				this.transactionManager = new DataSourceTransactionManager(this.context.getBean(DataSource.class));
+				this.transactionManager = new DataSourceTransactionManager(this.dataSource);
 			}
 			else {
 				this.transactionManager = new ResourcelessTransactionManager();
@@ -88,6 +98,6 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	private boolean isDataSourceAvailable() {
-		return this.context.getBeanNamesForType(DataSource.class).length == 1;
+		return this.dataSource != null;
 	}
 }

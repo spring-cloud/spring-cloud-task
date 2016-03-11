@@ -16,24 +16,19 @@
 
 package org.springframework.cloud.task.listener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.junit.After;
 import org.junit.Test;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactory;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
 import org.springframework.cloud.task.util.TestListener;
@@ -42,6 +37,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that the TaskExecutionListener invocations occur at the appropriate task
@@ -203,10 +203,9 @@ public class TaskExecutionListenerTests {
 		}
 
 		@Bean
-		public TaskListenerExecutor taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
+		public TaskListenerExecutorFactoryBean taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
 		{
-			TaskListenerExecutorFactory taskListenerExecutorFactory = new TaskListenerExecutorFactory(context);
-			return taskListenerExecutorFactory.getObject();
+			return new TaskListenerExecutorFactoryBean(context);
 		}
 
 		public static class AnnotatedTaskListener extends TestListener {

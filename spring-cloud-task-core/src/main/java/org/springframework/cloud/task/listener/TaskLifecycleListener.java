@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
@@ -58,7 +59,7 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  */
-public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>{
+public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle {
 
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListeners;
@@ -106,11 +107,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
-		if(applicationEvent instanceof ContextRefreshedEvent) {
-			doTaskStart();
-			started = true;
-		}
-		else if(applicationEvent instanceof ApplicationFailedEvent) {
+		if(applicationEvent instanceof ApplicationFailedEvent) {
 			this.applicationFailedEvent = (ApplicationFailedEvent) applicationEvent;
 		}
 		else if(applicationEvent instanceof ExitCodeEvent){
@@ -220,5 +217,38 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
 				endTime,taskExecution.getExitMessage(),
 				Collections.unmodifiableList(taskExecution.getParameters()));
+	}
+
+	@Override
+	public boolean isAutoStartup() {
+		return true;
+	}
+
+	@Override
+	public void stop(Runnable callback) {
+		Assert.notNull(callback, "A callback is required");
+
+		callback.run();
+	}
+
+	@Override
+	public void start() {
+		doTaskStart();
+		this.started = true;
+	}
+
+	@Override
+	public void stop() {
+
+	}
+
+	@Override
+	public boolean isRunning() {
+		return this.started;
+	}
+
+	@Override
+	public int getPhase() {
+		return 0;
 	}
 }
