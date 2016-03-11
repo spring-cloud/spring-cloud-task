@@ -13,3 +13,7 @@ launch the task that was specified in the request.
 ----
 $ ./mvnw clean install -DskipInstall=false
 ----
+
+== Dependencies:
+
+The task processor requires an instance of Redis to be running.

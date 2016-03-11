@@ -25,8 +25,8 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.integration.annotation.Transformer;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.util.StringUtils;
 
 /**
  * A processor that takes the maven repository coordinates and datasource configuration
@@ -39,25 +39,24 @@ import org.springframework.messaging.support.GenericMessage;
 public class TaskProcessor {
 
 	@Autowired
-	TaskProcessorProperties processorProperties;
+	private TaskProcessorProperties processorProperties;
 
 	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
-	public Object setupRequest(Message<?> message) {
+	public Object setupRequest(String message) {
 		Map<String, String> properties = new HashMap<String,String>();
-		properties.put("server.port", "0");
-		if(processorProperties.getDataSourceUrl() != null){
+		if(StringUtils.hasText(processorProperties.getDataSourceUrl())){
 			properties.put("spring_datasource_url",processorProperties.getDataSourceUrl());
 		}
-		if(processorProperties.getDataSourceDriverClassName() != null){
+		if(StringUtils.hasText(processorProperties.getDataSourceDriverClassName())){
 			properties.put("spring_datasource_driverClassName",processorProperties.getDataSourceDriverClassName());
 		}
-		if(processorProperties.getDataSourceUserName() != null){
+		if(StringUtils.hasText(processorProperties.getDataSourceUserName())){
 			properties.put("spring_datasource_username",processorProperties.getDataSourceUserName());
 		}
-		if(processorProperties.getDataSourcePassword() != null){
+		if(StringUtils.hasText(processorProperties.getDataSourcePassword())){
 			properties.put("spring_datasource_password",processorProperties.getDataSourcePassword());
 		}
-		properties.put("payload", (String)message.getPayload());
+		properties.put("payload", message);
 
 		TaskLaunchRequest request = new TaskLaunchRequest(processorProperties.getArtifact(),
 				processorProperties.getGroup(), processorProperties.getVersion(), processorProperties.getExtension(),

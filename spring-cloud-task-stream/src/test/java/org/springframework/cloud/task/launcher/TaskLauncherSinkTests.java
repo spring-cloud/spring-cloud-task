@@ -1,53 +1,55 @@
+/*
+ * Copyright 2016 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.cloud.task.launcher;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
 public class TaskLauncherSinkTests {
 
 	private final static String DEFAULT_STATUS = "test_status";
 
-	private AnnotationConfigApplicationContext context;
-
-	@Before
-	public void setUp() {
-		context = new AnnotationConfigApplicationContext();
-		context.setId("testTask");
-	}
-
-	@After
-	public void tearDown(){
-		if(context != null){
-			context.close();
-		}
-	}
+	@Autowired
+	private ApplicationContext context;
 
 	@Autowired
 	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
+
 	@Test
 	public void testSuccess() {
-		context.register(TaskLauncherSinkApplication.class, TaskConfiguration.class);
-		context.refresh();
-		this.sink = context.getBeansOfType(Sink.class).values().iterator().next();
-		assertNotNull(this.sink.input());
-
 		TaskConfiguration.TestTaskLauncher testTaskLauncher =
 				 context.getBean(TaskConfiguration.TestTaskLauncher.class);
 
@@ -63,11 +65,6 @@ public class TaskLauncherSinkTests {
 
 	@Test
 	public void testNoRun() {
-		context.register(TaskLauncherSinkApplication.class, TaskConfiguration.class);
-		context.refresh();
-		this.sink = context.getBean(Sink.class);
-		assertNotNull(this.sink.input());
-
 		TaskConfiguration.TestTaskLauncher testTaskLauncher =
 				 context.getBean(TaskConfiguration.TestTaskLauncher.class);
 

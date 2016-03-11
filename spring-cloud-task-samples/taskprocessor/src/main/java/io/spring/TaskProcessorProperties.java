@@ -49,6 +49,9 @@ public class TaskProcessorProperties {
 
 	private String dataSourceUserName;
 
+	private String dataSourcePassword;
+
+
 	public String getExtension() {
 		return extension;
 	}
@@ -96,8 +99,6 @@ public class TaskProcessorProperties {
 	public void setDataSourcePassword(String dataSourcePassword) {
 		this.dataSourcePassword = dataSourcePassword;
 	}
-
-	private String dataSourcePassword;
 
 	public void setGroup(String group) {
 		this.group = group;

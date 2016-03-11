@@ -21,14 +21,18 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
 /**
- * Request that contains the resource and property information required by the
+ * Request that contains the maven repository and property information required by the
  * TaskLauncherSink to launch the task.
  *
  * @author Glenn Renfro
  */
 public class TaskLaunchRequest implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private String artifact;
 	private String taskGroupId;
 	private String taskVersion;
@@ -36,37 +40,75 @@ public class TaskLaunchRequest implements Serializable{
 	private String taskClassifier;
 	private Map<String, String> properties;
 
+	/**
+	 * Constructor for the TaskLaunchRequest;
+	 * @param artifact is maven artifact coordinate for the task. Must not be empty nor null.
+	 * @param taskGroupId is maven groupId coordinate for the task. Must not be empty nor null.
+	 * @param taskVersion is maven version coordinate for the task. Must not be empty nor null.
+	 * @param taskExtension is maven extension coordinate for the task.
+	 * @param taskClassifier is maven classifier coordinate for the task.
+	 * @param properties is the environment variables for this task.
+	 */
 	public TaskLaunchRequest(String artifact, String taskGroupId, String taskVersion,
 							 String taskExtension, String taskClassifier,
 							 Map<String, String> properties) {
+		Assert.hasText(artifact, "artifact must not be empty nor null.");
+		Assert.hasText(taskGroupId, "taskGroupID must not be empty nor null.");
+		Assert.hasText(taskVersion, "taskVersion must not be empty nor null.");
+		Assert.hasText(taskExtension, "taskExtension must not be empty nor null.");
+
 		this.artifact = artifact;
 		this.taskGroupId = taskGroupId;
 		this.taskVersion = taskVersion;
 		this.taskExtension = taskExtension;
 		this.taskClassifier = taskClassifier;
-		this.properties = properties == null ? new HashMap<String,String>() :
-				properties;
+		this.properties = properties == null ? new HashMap() : properties;
 	}
 
+	/**
+	 * Retrieves the group maven coordinate for the task.
+ 	 * @return group maven coordinate for the task.
+	 */
 	public String getTaskGroupId() {
 		return taskGroupId;
 	}
 
+	/**
+	 * Retrieves the version maven coordinate for the task.
+	 * @return version maven coordinate for the task.
+	 */
 	public String getTaskVersion() {
 		return taskVersion;
 	}
 
+	/**
+	 * Retrieves the extension maven coordinate for the task.
+	 * @return extension maven coordinate for the task.
+	 */
 	public String getTaskExtension() {
 		return taskExtension;
 	}
 
+	/**
+	 * Retrieves the classifier maven coordinate for the task.
+	 * @return classifier maven coordinate for the task.
+	 */
 	public String getTaskClassifier() {
 		return taskClassifier;
 	}
 
+	/**
+	 * Retrieves the artifact maven coordinate for the task.
+	 * @return artifact maven coordinate for the task.
+	 */
 	public String getArtifact() {
 		return artifact;
 	}
+
+	/**
+	 * Retrieves the environment variables for the task.
+	 * @return map containing the environment variables for the task.
+	 */
 
 	public Map<String, String> getProperties() {
 		return properties;
@@ -74,13 +116,12 @@ public class TaskLaunchRequest implements Serializable{
 
 	@Override
 	public String toString() {
-		return "TaskLaunchRequest{" +
-				"taskName='" + artifact + '\'' +
-				", taskGroupId='" + taskGroupId + '\'' +
-				", taskVersion='" + taskVersion + '\'' +
-				", taskExtension='" + taskExtension + '\'' +
-				", taskClassifier='" + taskClassifier + '\'' +
-				'}';
+		String coordinates = taskGroupId + ":" + artifact + ":" + taskVersion ;
+		if(StringUtils.hasText(taskClassifier)){
+			coordinates = coordinates + ":" + taskClassifier;
+		}
+		coordinates = coordinates + ":" + taskExtension;
+		return coordinates;
 	}
 
 	@Override
@@ -113,4 +154,14 @@ public class TaskLaunchRequest implements Serializable{
 
 	}
 
+	@Override
+	public int hashCode() {
+		int result = artifact != null ? artifact.hashCode() : 0;
+		result = 31 * result + (taskGroupId != null ? taskGroupId.hashCode() : 0);
+		result = 31 * result + (taskVersion != null ? taskVersion.hashCode() : 0);
+		result = 31 * result + (taskExtension != null ? taskExtension.hashCode() : 0);
+		result = 31 * result + (taskClassifier != null ? taskClassifier.hashCode() : 0);
+		result = 31 * result + (properties != null ? properties.hashCode() : 0);
+		return result;
+	}
 }

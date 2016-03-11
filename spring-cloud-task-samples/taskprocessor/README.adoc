@@ -26,12 +26,6 @@ $ ./mvnw clean install -DskipInstall=false
 * *data-source-user-name* establishes the spring_datasource_username for the task.  Default is null.
 * *data-source-password* establishes the spring_datasource_password for the task.  Default is null.
 
-A sample processor stream definition using all parameters:
-
-```
-stream create foo --definition "http --server.port=9000|taskProcessor --group=io.spring --artifact=mytask --data-source-url=jdbc:mysql://localhost:3306/practice --data-source-driver-class-name=com.mysql.jdbc.Driver --data-source-user-name=root --data-source-password=password --classifiers=exec|taskSink" --deploy
-```
-
 == Requirements:
 
 * Java 7 or Above
@@ -42,3 +36,7 @@ stream create foo --definition "http --server.port=9000|taskProcessor --group=io
 ----
 $ ./mvnw clean install -DskipInstall=false
 ----
+
+== Dependencies:
+
+The task processor requires an instance of Redis to be running.
