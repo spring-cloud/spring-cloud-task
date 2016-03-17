@@ -56,11 +56,11 @@ public class TaskLauncherSink {
 		Assert.notNull(taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following resource " + taskLaunchRequest);
 		MavenResource resource = new MavenResource.Builder()
-				.setArtifactId(taskLaunchRequest.getArtifact())
-				.setGroupId(taskLaunchRequest.getTaskGroupId())
-				.setVersion(taskLaunchRequest.getTaskVersion())
-				.setExtension(taskLaunchRequest.getTaskExtension())
-				.setClassifier(taskLaunchRequest.getTaskClassifier())
+				.artifactId(taskLaunchRequest.getArtifact())
+				.groupId(taskLaunchRequest.getTaskGroupId())
+				.version(taskLaunchRequest.getTaskVersion())
+				.extension(taskLaunchRequest.getTaskExtension())
+				.classifier(taskLaunchRequest.getTaskClassifier())
 				.build();
 		AppDefinition definition = new AppDefinition(taskLaunchRequest.getArtifact(), taskLaunchRequest.getProperties());
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource);
