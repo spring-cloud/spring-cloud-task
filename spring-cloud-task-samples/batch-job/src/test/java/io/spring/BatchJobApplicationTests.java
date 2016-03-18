@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package demo;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+package io.spring;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.OutputCapture;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Verifies that the Task Application outputs the correct task log entries.
@@ -69,6 +70,7 @@ public class BatchJobApplicationTests {
 		String taskTitle = "Demo Batch Job Task";
 		Pattern pattern = Pattern.compile(taskTitle);
 		Matcher matcher = pattern.matcher(output);
+
 		int count = 0;
 		while (matcher.find()) {
 			count++;

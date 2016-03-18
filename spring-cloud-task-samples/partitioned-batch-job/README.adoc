@@ -1,0 +1,27 @@
+= Partitioned Job
+
+An example of the usage of the `DeployerPartitionHandler` and
+`DeployerStepExecutionHandler` to partition a Spring Batch job.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install
+----
+
+== Execute:
+
+[source,shell,indent=2]
+----
+$ java -jar -Dspring.profiles.active=master target/partitioned-batch-job-1.0.0.BUILD-SNAPSHOT.jar
+----
+
+== Dependencies:
+
+A datasource (not in memory) must be configured based on normal Spring Boot conventions
+(application.properties/application.yml/environment variables/etc).
