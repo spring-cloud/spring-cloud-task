@@ -42,6 +42,7 @@ Michael Minella, Glenn Renfro
 include::preface.adoc[]
 include::getting-started.adoc[]
 include::features.adoc[]
+include::batch.adoc[]
 include::appendix.adoc[]
 
 // ======================================================================================

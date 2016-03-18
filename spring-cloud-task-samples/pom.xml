@@ -26,6 +26,7 @@
 		<module>batch-job</module>
 		<module>tasksink</module>
 		<module>taskprocessor</module>
+		<module>partitioned-batch-job</module>
 	</modules>
 
 	<build>

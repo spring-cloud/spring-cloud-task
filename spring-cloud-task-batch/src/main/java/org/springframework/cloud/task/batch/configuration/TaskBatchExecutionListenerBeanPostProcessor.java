@@ -15,12 +15,16 @@
  */
 package org.springframework.cloud.task.batch.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.batch.core.job.AbstractJob;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 
 /**
  * Injects a configured {@link TaskBatchExecutionListener} into any batch jobs (beans
@@ -35,9 +39,17 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 	@Autowired
 	private ApplicationContext applicationContext;
 
+	private List<String> jobNames = new ArrayList<>();
+
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName)
 			throws BeansException {
+
+		if(jobNames.size() > 0) {
+			if(!jobNames.contains(beanName)) {
+				return bean;
+			}
+		}
 
 		int length = this.applicationContext
 				.getBeanNamesForType(TaskBatchExecutionListener.class).length;
@@ -60,5 +72,11 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 	public Object postProcessAfterInitialization(Object bean, String beanName)
 			throws BeansException {
 		return bean;
+	}
+
+	public void setJobNames(List<String> jobNames) {
+		Assert.notNull(jobNames, "A list is required");
+
+		this.jobNames = jobNames;
 	}
 }
