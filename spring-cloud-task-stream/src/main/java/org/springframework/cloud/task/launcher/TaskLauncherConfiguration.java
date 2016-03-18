@@ -18,6 +18,7 @@ package org.springframework.cloud.task.launcher;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +40,7 @@ public class TaskLauncherConfiguration {
 	protected static class LocalTaskDeployerConfiguration {
 		@Bean
 		public TaskLauncher taskLauncher() {
-			return new LocalTaskLauncher();
+			return new LocalTaskLauncher(new LocalDeployerProperties());
 		}
 	}
 
