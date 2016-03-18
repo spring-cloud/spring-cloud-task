@@ -59,7 +59,7 @@ public class SimpleTaskRepository implements TaskRepository {
 		validateExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimExitMessage(exitMessage);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage);
-		logger.info("Updating: TaskExecution with executionId="+executionId
+		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
 				+ "exitCode=" + exitCode
 				+ ", endTime=" + endTime
@@ -76,7 +76,7 @@ public class SimpleTaskRepository implements TaskRepository {
 		validateCreateInformation(startTime, taskName);
 		TaskExecution taskExecution =
 				taskExecutionDao.createTaskExecution(taskName, startTime, parameters);
-		logger.info("Creating: " + taskExecution.toString());
+		logger.debug("Creating: " + taskExecution.toString());
 		return taskExecution;
 	}
 

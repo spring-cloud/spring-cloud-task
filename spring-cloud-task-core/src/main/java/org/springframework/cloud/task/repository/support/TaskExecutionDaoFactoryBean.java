@@ -40,8 +40,6 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 
 	private TaskExecutionDao dao = null;
 
-	private String dataSourceName;
-
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
 	/**
@@ -84,17 +82,6 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	@Override
 	public boolean isSingleton() {
 		return true;
-	}
-
-	/**
-	 * Identifies the {@link DataSource} to be used if one is to be used.  By default, the
-	 * name is not specified and it is assumed that only one DataSource exists within the
-	 * context.
-	 *
-	 * @param dataSourceName bean id for the DataSource to be used.
-	 */
-	public void setDataSourceName(String dataSourceName) {
-		this.dataSourceName = dataSourceName;
 	}
 
 	/**

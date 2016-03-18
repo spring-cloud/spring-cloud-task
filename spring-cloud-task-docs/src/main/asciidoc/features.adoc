@@ -33,13 +33,10 @@ Spring Boot application configured to be a task (annotated with the `@EnableTask
 annotation).
 
 At the beginning of a task, an entry in the `TaskRepository` is created recording the
-start event.  This event is triggered via the `ContextRefreshEvent` being triggered by
-Spring Framework.
+start event.  This event is triggered via `SmartLifecycle#start` being triggered by
+Spring Framework.  This indicates to the system that all beans are ready for use and is
+before the execution of any of the `*Runner`s provided by Spring Boot.
 
-NOTE: As Spring Cloud Task is expected to consist of a single application context.  If
-multiple application contexts are used (parent/child relationships for example), the first
-`ContextRefreshEvent` that is published by Spring will be recorded as the start of the
-task.
 
 NOTE: The recording of a task will only occur upon the successful bootstrapping of an
 `ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
@@ -70,7 +67,7 @@ assumed to be 0.
 |The name for the task as determined by the configured `TaskNameResolver`.
 
 |`starTime`
-|The time the task was started as indicated by the `ContextRefreshEvent`.
+|The time the task was started as indicated by the `SmartLifecycle#start` call.
 
 |`endTime`
 |The time the task was completed as indicated by the `ContextClosedEvent`.
