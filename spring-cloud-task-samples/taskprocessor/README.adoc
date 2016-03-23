@@ -13,7 +13,7 @@ by executing the following build in the timestamp-task module:
 
 [source,shell,indent=2]
 ----
-$ ./mvnw clean install -DskipInstall=false
+$ ./mvnw clean install
 ----
 
 == The parameters offered by the TaskProcessor are as follows:
@@ -34,7 +34,7 @@ $ ./mvnw clean install -DskipInstall=false
 
 [source,shell,indent=2]
 ----
-$ ./mvnw clean install -DskipInstall=false
+$ ./mvnw clean install
 ----
 
 == Dependencies:

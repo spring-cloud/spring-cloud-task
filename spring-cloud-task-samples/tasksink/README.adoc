@@ -11,7 +11,7 @@ launch the task that was specified in the request.
 
 [source,shell,indent=2]
 ----
-$ ./mvnw clean install -DskipInstall=false
+$ ./mvnw clean install
 ----
 
 == Dependencies:
