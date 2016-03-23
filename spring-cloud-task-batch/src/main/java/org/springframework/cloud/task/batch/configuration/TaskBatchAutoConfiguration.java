@@ -23,6 +23,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Configuration
 @ConditionalOnBean({Job.class})
+@ConditionalOnProperty(name = "spring.cloud.task.batch.listener.enable", havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
 
 	@Bean
