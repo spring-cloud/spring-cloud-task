@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.spring</groupId>
+	<groupId>io.spring.cloud</groupId>
 	<artifactId>taskprocessor</artifactId>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -105,12 +105,6 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<configuration>
 						<skip>true</skip>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-install-plugin</artifactId>
-					<configuration>
-						<skip>${skipInstall}</skip>
 					</configuration>
 				</plugin>
 			</plugins>

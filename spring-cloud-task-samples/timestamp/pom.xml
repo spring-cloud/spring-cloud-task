@@ -5,7 +5,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.spring</groupId>
+	<groupId>io.spring.cloud</groupId>
 	<artifactId>timestamp-task</artifactId>
 	<packaging>jar</packaging>
 	<name>Timestamp Task</name>
@@ -92,12 +92,6 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<configuration>
 						<skip>true</skip>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-install-plugin</artifactId>
-					<configuration>
-						<skip>${skipInstall}</skip>
 					</configuration>
 				</plugin>
 			</plugins>
