@@ -45,7 +45,9 @@ import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.mock.env.MockEnvironment;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -76,11 +78,14 @@ public class DeployerPartitionHandlerTests {
 	@Mock
 	private JobRepository jobRepository;
 
+	private Environment environment;
+
 	@Captor ArgumentCaptor<AppDeploymentRequest> appDeploymentRequestArgumentCaptor;
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
+		this.environment = new MockEnvironment();
 	}
 
 	@Test
@@ -96,6 +101,7 @@ public class DeployerPartitionHandlerTests {
 	@Test
 	public void testNoPartitions() throws Exception {
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		StepExecution stepExecution = new StepExecution("step1", new JobExecution(1L));
 
@@ -117,6 +123,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName("partitionedJobTask");
@@ -166,6 +173,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName("partitionedJobTask");
@@ -210,6 +218,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -255,6 +264,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -309,6 +319,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
 		environmentParameters.put("foo", "bar");
@@ -351,6 +362,62 @@ public class DeployerPartitionHandlerTests {
 	}
 
 	@Test
+	public void testOverridingEnvironmentProperties() throws Exception {
+
+		((MockEnvironment) this.environment).setProperty("foo", "zoo");
+		((MockEnvironment) this.environment).setProperty("task", "batch");
+
+		StepExecution masterStepExecution = createMasterStepExecution();
+		JobExecution jobExecution = masterStepExecution.getJobExecution();
+
+		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
+
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
+
+		Map<String, String> environmentParameters = new HashMap<>(2);
+		environmentParameters.put("foo", "bar");
+		environmentParameters.put("baz", "qux");
+
+		handler.setEnvironmentProperties(environmentParameters);
+
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setTaskName("partitionedJobTask");
+
+		Set<StepExecution> stepExecutions = new HashSet<>();
+		stepExecutions.add(workerStepExecutionStart);
+		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
+
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.beforeTask(taskExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
+
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
+
+		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
+
+		assertEquals(this.resource, request.getResource());
+		assertEquals(3, request.getEnvironmentProperties().size());
+		assertEquals("bar", request.getEnvironmentProperties().get("foo"));
+		assertEquals("qux", request.getEnvironmentProperties().get("baz"));
+		assertEquals("batch", request.getEnvironmentProperties().get("task"));
+
+		AppDefinition appDefinition = request.getDefinition();
+
+		assertEquals("partitionedJobTask:partitionedJob:step1:partition1", appDefinition.getName());
+		assertEquals("1", appDefinition.getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
+		assertEquals("4", appDefinition.getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
+		assertEquals("step1", appDefinition.getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME));
+
+		assertEquals(1, results.size());
+		StepExecution resultStepExecution = results.iterator().next();
+		assertEquals(BatchStatus.COMPLETED, resultStepExecution.getStatus());
+		assertEquals("step1:partition1", resultStepExecution.getStepName());
+	}
+
+	@Test
 	public void testPollInterval() throws Exception {
 
 		StepExecution masterStepExecution = createMasterStepExecution();
@@ -363,6 +430,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
 		handler.setMaxWorkers(1);
@@ -408,6 +476,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
 		handler.setMaxWorkers(1);
@@ -442,6 +511,7 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
 
 		handler.setGridSize(2);
 

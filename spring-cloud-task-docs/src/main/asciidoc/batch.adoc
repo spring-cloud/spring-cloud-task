@@ -11,7 +11,7 @@ this section.
 --
 
 [[batch-association]]
-== Associating A Job Execution With The Task It Was Executed Within.
+== Associating A Job Execution To The Task In Which It Was Executed
 
 Spring Boot provides facilities for the execution of batch jobs easily within an über-jar.
 Spring Boot's support of this functionality allows for a developer to execute multiple
@@ -28,7 +28,7 @@ is available within the classpath.  The listener will be injected into all jobs.
 === Overriding the TaskBatchExecutionListener
 
 To prevent the listener from being injected into any batch jobs within the current context,
-you the autoconfiguration can be disabled via standard Spring Boot mechanisms.
+the autoconfiguration can be disabled via standard Spring Boot mechanisms.
 
 To only have the listener injected into particular jobs within the context, the
 `batchTaskExecutionListenerBeanPostProcessor` may be overridden and a list of job bean ids

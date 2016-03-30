@@ -16,9 +16,11 @@
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,10 +43,14 @@ import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * <p>A {@link PartitionHandler} implementation that delegates to a {@link TaskLauncher} for
@@ -62,7 +68,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Michael Minella
  */
-public class DeployerPartitionHandler implements PartitionHandler {
+public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware {
 
 	public static final String SPRING_CLOUD_TASK_JOB_EXECUTION_ID =
 			"spring.cloud.task.job-execution-id";
@@ -87,7 +93,7 @@ public class DeployerPartitionHandler implements PartitionHandler {
 
 	private Resource resource;
 
-	private Map<String, String> environmentProperties;
+	private Map<String, String> environmentProperties = new HashMap<>();
 
 	private String stepName;
 
@@ -97,6 +103,8 @@ public class DeployerPartitionHandler implements PartitionHandler {
 
 	private long timeout = -1;
 
+	private Environment environment;
+
 	public DeployerPartitionHandler(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer,
 			Resource resource,
@@ -104,7 +112,7 @@ public class DeployerPartitionHandler implements PartitionHandler {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
-		Assert.isTrue(StringUtils.hasText(stepName), "A step name is required");
+		Assert.hasText(stepName, "A step name is required");
 
 		this.taskLauncher = taskLauncher;
 		this.jobExplorer = jobExplorer;
@@ -115,16 +123,17 @@ public class DeployerPartitionHandler implements PartitionHandler {
 	/**
 	 * The maximum number of workers to be executing at once.
 	 *
-	 * @param maxWorkers number of workers
+	 * @param maxWorkers number of workers.  Defaults to -1 (unlimited)
 	 */
 	public void setMaxWorkers(int maxWorkers) {
+		Assert.isTrue(maxWorkers != 0, "maxWorkers cannot be 0");
 		this.maxWorkers = maxWorkers;
 	}
 
 	/**
-	 * Aproximate size of the pool of worker JVMs available.  May be used by the
+	 * Approximate size of the pool of worker JVMs available.  May be used by the
 	 * {@link StepExecutionSplitter} to determine how many partitions to create (at the
-	 * discression of the {@link org.springframework.batch.core.partition.support.Partitioner}).
+	 * discretion of the {@link org.springframework.batch.core.partition.support.Partitioner}).
 	 *
 	 * @param gridSize size of grid.  Defaults to 1
 	 */
@@ -153,7 +162,7 @@ public class DeployerPartitionHandler implements PartitionHandler {
 	/**
 	 * Timeout for the master step.  This is a timeout for all workers to complete.
 	 *
-	 * @param timeout timeout.  Defautls to none (-1).
+	 * @param timeout timeout.  Defaults to none (-1).
 	 */
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
@@ -220,8 +229,12 @@ public class DeployerPartitionHandler implements PartitionHandler {
 						workerStepExecution.getStepName()),
 						parameters);
 
+		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
+		environmentProperties.putAll(getCurrentEnvironmentProperties());
+		environmentProperties.putAll(this.environmentProperties);
+
 		AppDeploymentRequest request =
-				new AppDeploymentRequest(definition, this.resource, this.environmentProperties);
+				new AppDeploymentRequest(definition, this.resource, environmentProperties);
 
 		taskLauncher.launch(request);
 	}
@@ -291,5 +304,29 @@ public class DeployerPartitionHandler implements PartitionHandler {
 		}
 
 		return parameterMap;
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+
+	private Map<String, String> getCurrentEnvironmentProperties() {
+		Map<String, String> currentEnvironment = new HashMap<>();
+
+		Set<String> keys = new HashSet<>();
+
+		for(Iterator it = ((AbstractEnvironment) this.environment).getPropertySources().iterator(); it.hasNext(); ) {
+			PropertySource propertySource = (PropertySource) it.next();
+			if (propertySource instanceof MapPropertySource) {
+				keys.addAll(Arrays.asList(((MapPropertySource) propertySource).getPropertyNames()));
+			}
+		}
+
+		for (String key : keys) {
+			currentEnvironment.put(key, this.environment.getProperty(key));
+		}
+
+		return currentEnvironment;
 	}
 }

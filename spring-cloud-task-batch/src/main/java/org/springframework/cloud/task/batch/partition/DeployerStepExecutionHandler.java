@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
  * directly to the associated {@link DeployerPartitionHandler} as it will obtain the step
  * results directly from the shared job repository.</p>
  *
- * <p>The {@link StepExecution} is rehydrated based on the environment variables provdied.
+ * <p>The {@link StepExecution} is rehydrated based on the environment variables provided.
  * Specifically, the following variables are required:</p>
  * <ul>
  *     <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_JOB_EXECUTION_ID}: The id of

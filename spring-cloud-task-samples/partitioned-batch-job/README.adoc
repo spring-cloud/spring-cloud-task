@@ -14,6 +14,13 @@ An example of the usage of the `DeployerPartitionHandler` and
 $ ./mvnw clean install
 ----
 
+== Execute:
+
+[source,shell,indent=2]
+----
+$ java -jar -Dspring.profiles.active=master target/partitioned-batch-job-1.0.0.BUILD-SNAPSHOT.jar
+----
+
 == Dependencies:
 
 A datasource (not in memory) must be configured based on normal Spring Boot conventions
