@@ -43,6 +43,7 @@ include::preface.adoc[]
 include::getting-started.adoc[]
 include::features.adoc[]
 include::batch.adoc[]
+include::stream.adoc[]
 include::appendix.adoc[]
 
 // ======================================================================================

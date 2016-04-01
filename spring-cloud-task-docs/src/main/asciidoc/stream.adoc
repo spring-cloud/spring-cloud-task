@@ -1,0 +1,105 @@
+[[stream-integration]]
+= Spring Cloud Stream Integration
+
+[[partintro]]
+--
+A task by itself can be useful, but it's the integration of a task into a larger ecosystem
+that allows it to be useful for more complex processing and orchestration.  This section
+covers the integration options for Spring Cloud Task and Spring Cloud Stream.
+--
+
+[[stream-integration-launching-sink]]
+== Launching a task from a Spring Cloud Stream
+
+Allows a user to launch tasks from a stream.  This is done by creating a sink that
+listens for a message that contains a `TaskLaunchRequest` as its payload.  The
+TaskLaunchRequest contains the maven coordinates to the Task that is to be executed.  It
+also has a Map that contains the environment variables that will be used by the Task.
+
+NOTE: If the payload is of a different type then the sink will throw an exception.
+
+For example  a stream can be created that has a processor that takes in data from a
+http source and creates a `GenericMessage` that contains the `TaskLaunchRequest` and sends
+the message to its output channel. The task sink would then receive the message from its
+input channnel and then launch the task.
+
+To create a taskSink a user needs to only create a spring boot app that includes the
+following annotation `EnableTaskLauncher`.  The code would look something like this:
+
+```
+@SpringBootApplication
+@EnableTaskLauncher
+public class TaskSinkApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(TaskSinkApplication.class, args);
+	}
+}
+```
+
+A sample Sink and Processor have been made available to you in the samples module
+of the Spring Cloud Task project.  To install these samples into your local maven
+repository execute a maven build from the `spring-cloud-task-samples` directory with the
+property `skipInstall` set to false.  For example:
+`mvn clean install -DskipInstall=false`.
+
+[[stream-integration-launching-sink-dataflow]]
+=== Spring Cloud Data Flow
+
+To create a stream in Spring Cloud Data Flow first we would want to register the Task Sink
+Application we created.  In the example below we are registering the Processor and Sink
+sample applications using the Spring Cloud Data Flow shell:
+
+```
+module register --name taskSink --type sink --coordinates io.spring:tasksink:1.0.0.BUILD-SNAPSHOT
+module register --name taskProcessor --type processor --coordinates io.spring:taskprocessor:1.0.0.BUILD-SNAPSHOT
+```
+
+To create a stream from the Spring Cloud Data Flow shell would look like this:
+
+```
+stream create foo --definition "http --server.port=9000|taskProcessor|taskSink" --deploy
+```
+
+[[stream-integration-events]]
+== Spring Cloud Task Events
+
+Spring Cloud Task provides the ability to emit events as a task executes via a Spring
+Cloud Stream channel.  This behavior works as a task listener is used to publish the
+`TaskExecution` on a channel named `task-events`.  This feature is autowired into any
+task that has Spring Cloud Stream on it's classpath along with a task defined.
+
+NOTE: To disable the event emitting listener, set the property
+`spring.cloud.task.events.enabled` to `false`.
+
+With the appropriate classpath defined, a simple task like this:
+
+```
+@SpringBootApplication
+@EnableTask
+public class TaskEventsApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(TaskEventsApplication.class, args);
+	}
+
+	@Configuration
+	public static class EventEmittingTaskConfiguration {
+
+		@Bean
+		public CommandLineRunner commandLineRunner() {
+			return new CommandLineRunner() {
+				@Override
+				public void run(String... args) throws Exception {
+					System.out.println("The CommandLineRunner was executed");
+				}
+			};
+		}
+	}
+}
+```
+
+will emit events on the task-events channel.
+
+NOTE: Configuration of the content type may be required via
+`--spring.cloud.stream.bindings.task-events.contentType=<CONTENT_TYPE>` if the processor
+or sink downstream does not have the spring-cloud-stream-core jar on it's classpath.
