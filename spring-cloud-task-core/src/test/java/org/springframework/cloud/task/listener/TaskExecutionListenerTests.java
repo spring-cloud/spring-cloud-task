@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
@@ -36,7 +37,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextClosedEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -56,7 +56,7 @@ public class TaskExecutionListenerTests {
 
 	@After
 	public void tearDown() {
-		if(context != null) {
+		if(context != null && context.isActive()) {
 			context.close();
 		}
 	}
@@ -84,7 +84,7 @@ public class TaskExecutionListenerTests {
 		setupContextForTaskExecutionListener();
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
-		context.publishEvent(new ContextClosedEvent(context));
+		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
 				new Date(), new Date(), null, new ArrayList<String>());
@@ -99,10 +99,11 @@ public class TaskExecutionListenerTests {
 	public void testTaskFail() {
 		RuntimeException exception = new RuntimeException(EXCEPTION_MESSAGE);
 		setupContextForTaskExecutionListener();
-		context.publishEvent(new ApplicationFailedEvent(new SpringApplication(), new String[0], context, exception));
-		context.publishEvent(new ContextClosedEvent(context));
+		SpringApplication application = new SpringApplication();
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
+		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
 				new Date(), null, new ArrayList<String>());
@@ -132,7 +133,7 @@ public class TaskExecutionListenerTests {
 		setupContextForAnnotatedListener();
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener =
 				context.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
-		context.publishEvent(new ContextClosedEvent(context));
+		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
 				new Date(), new Date(), null, new ArrayList<String>());
@@ -147,10 +148,11 @@ public class TaskExecutionListenerTests {
 	public void testAnnotationFail() {
 		RuntimeException exception = new RuntimeException(EXCEPTION_MESSAGE);
 		setupContextForAnnotatedListener();
-		context.publishEvent(new ApplicationFailedEvent(new SpringApplication(), new String[0], context, exception));
-		context.publishEvent(new ContextClosedEvent(context));
+		SpringApplication application = new SpringApplication();
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener =
 				context.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
+		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
 				new Date(), null, new ArrayList<String>());

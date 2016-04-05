@@ -16,11 +16,6 @@
 
 package org.springframework.cloud.task.listener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,20 +25,27 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that the TaskLifecycleListener Methods record the appropriate log header entries and
@@ -67,12 +69,15 @@ public class TaskLifecycleListenerTests {
 
 	@After
 	public void tearDown() {
-		context.close();
+		if(context != null && context.isActive()) {
+			context.close();
+		}
 	}
 
 	@Test
 	public void testTaskCreate() {
 		context.refresh();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
 		verifyTaskExecution(0, false, 0, null);
 	}
 
@@ -80,14 +85,16 @@ public class TaskLifecycleListenerTests {
 	public void testTaskCreateWithArgs() {
 		context.register(ArgsConfiguration.class);
 		context.refresh();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
 		verifyTaskExecution(2, false, 0, null);
 	}
 
 	@Test
 	public void testTaskUpdate() {
 		context.refresh();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
 
-		context.publishEvent(new ContextClosedEvent(context));
+		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		verifyTaskExecution(0, true, 0, null);
 	}
@@ -96,14 +103,28 @@ public class TaskLifecycleListenerTests {
 	public void testTaskFailedUpdate() {
 		context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
-		context.publishEvent(new ApplicationFailedEvent(new SpringApplication(), new String[0], context, exception));
-		context.publishEvent(new ContextClosedEvent(context));
+		SpringApplication application = new SpringApplication();
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
+		this.taskExplorer = context.getBean(TaskExplorer.class);
+		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		verifyTaskExecution(0, true, 1, exception);
 	}
 
+	@Test
+	public void testNoClosingOfContext() {
+		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Object[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
+				new String[] {"--spring.cloud.task.closecontext.enable=false"});
+
+		try {
+			assertTrue(applicationContext.isActive());
+		}
+		finally {
+			applicationContext.close();
+		}
+	}
+
 	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception) {
-		this.taskExplorer = context.getBean(TaskExplorer.class);
 
 		Sort sort = new Sort("id");
 

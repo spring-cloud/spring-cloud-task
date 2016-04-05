@@ -37,7 +37,6 @@ start event.  This event is triggered via `SmartLifecycle#start` being triggered
 Spring Framework.  This indicates to the system that all beans are ready for use and is
 before the execution of any of the `*Runner`s provided by Spring Boot.
 
-
 NOTE: The recording of a task will only occur upon the successful bootstrapping of an
 `ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
 not be recorded.
@@ -45,6 +44,10 @@ not be recorded.
 Upon completion of all of the `*Runner#run` calls from Spring Boot or the failure of an
 `ApplicationContext` (indicated via a `ApplicationFailedEvent`), the task execution is
 updated in the repository with the results.
+
+NOTE: At the completion of a task (all `*Runner#run` methods are called and the task
+repository has been updated) the `ApplicationContext` will be closed.  This behavior can
+be overriden by setting the property `spring.cloud.task.closecontext.enabled` to false.
 
 [[features-task-execution-details]]
 === The TaskExecution
@@ -70,7 +73,7 @@ assumed to be 0.
 |The time the task was started as indicated by the `SmartLifecycle#start` call.
 
 |`endTime`
-|The time the task was completed as indicated by the `ContextClosedEvent`.
+|The time the task was completed as indicated by the `ApplicationReadyEvent`.
 
 |`exitMessage`
 |Any information available at the time of exit.  If an exception is the cause of the end

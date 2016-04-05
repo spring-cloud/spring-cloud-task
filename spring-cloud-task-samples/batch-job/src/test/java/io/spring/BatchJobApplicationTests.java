@@ -44,9 +44,9 @@ public class BatchJobApplicationTests {
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
 		final String JOB_ASSOCIATION_MESSAGE = "The job execution id ";
+		final String EXIT_CODE_MESSAGE = "with the following {exitCode=0";
 
-		assertEquals(0, SpringApplication.exit(SpringApplication
-				.run(BatchJobApplication.class)));
+		SpringApplication.run(BatchJobApplication.class);
 
 		String output = this.outputCapture.toString();
 		assertTrue("Unable to find the timestamp: " + output,
@@ -55,6 +55,8 @@ public class BatchJobApplicationTests {
 				output.contains(CREATE_TASK_MESSAGE));
 		assertTrue("Test results do not show success message: " + output,
 				output.contains(UPDATE_TASK_MESSAGE));
+		assertTrue("Test results do not show success message: " + output,
+				output.contains(EXIT_CODE_MESSAGE));
 
 		int i = output.indexOf(JOB_ASSOCIATION_MESSAGE);
 

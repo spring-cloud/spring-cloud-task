@@ -28,16 +28,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
 
@@ -50,16 +52,20 @@ import org.springframework.util.Assert;
  * <ul>
  *     <li>{@link ContextRefreshedEvent} - Used to identify the start of a task.  A task
  *     is expected to contain a single application context.</li>
- *     <li>{@link ContextClosedEvent} - Used to identify the successful end of a task.</li>
+ *     <li>{@link ApplicationReadyEvent} - Used to identify the successful end of a task.</li>
  *     <li>{@link ApplicationFailedEvent} - Used to identify the failure of a task.</li>
  * </ul>
  *
- * <b>NOTE:</b> Multiple contexts (including parent/child relationships) will result in
- * only the first context refresh that contains this instance being recorded.
+ * <b>Note:</b> By default, the context will be closed at the completion of a task (once
+ * the task repository has been updated).  This behavior can be configured via the
+ * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
  *
  * @author Michael Minella
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle {
+
+	@Autowired
+	private ConfigurableApplicationContext context;
 
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListeners;
@@ -80,6 +86,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
+	@Value("${spring.cloud.task.closecontext.enable:true}")
+	private Boolean closeContext;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
@@ -99,7 +108,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 * task.  Specifically:
 	 * <ul>
 	 *     <li>{@link ContextRefreshedEvent} - Start of a task</li>
-	 *     <li>{@link ContextClosedEvent} - Successful end of a task</li>
+	 *     <li>{@link ApplicationReadyEvent} - Successful end of a task</li>
 	 *     <li>{@link ApplicationFailedEvent} - Failure of a task</li>
 	 * </ul>
 	 *
@@ -112,8 +121,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		}
 		else if(applicationEvent instanceof ExitCodeEvent){
 			this.exitCodeEvent = (ExitCodeEvent) applicationEvent;
+			doTaskEnd();
 		}
-		else if(applicationEvent instanceof ContextClosedEvent) {
+		else if(applicationEvent instanceof ApplicationReadyEvent) {
 			doTaskEnd();
 		}
 	}
@@ -152,6 +162,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
 			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
 					taskExecution.getEndTime(), taskExecution.getExitMessage());
+
+			if(this.closeContext) {
+				this.context.close();
+			}
 		}
 		else {
 			logger.error("An event to end a task has been received for a task that has " +

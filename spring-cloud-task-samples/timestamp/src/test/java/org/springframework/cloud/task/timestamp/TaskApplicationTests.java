@@ -16,16 +16,17 @@
 
 package org.springframework.cloud.task.timestamp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.OutputCapture;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that the Task Application outputs the correct task log entries.
@@ -42,10 +43,10 @@ public class TaskApplicationTests {
 		final String TEST_DATE_DOTS = ".......";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
+		final String EXIT_CODE_MESSAGE = "with the following {exitCode=0";
 		String[] args = { "--format=yyyy" + TEST_DATE_DOTS };
 
-		assertEquals(0, SpringApplication.exit(SpringApplication
-				.run(TaskApplication.class, args)));
+		SpringApplication.run(TaskApplication.class, args);
 
 		String output = this.outputCapture.toString();
 		assertTrue("Unable to find the timestamp: " + output,
@@ -54,6 +55,8 @@ public class TaskApplicationTests {
 				output.contains(CREATE_TASK_MESSAGE));
 		assertTrue("Test results do not show success message: " + output,
 				output.contains(UPDATE_TASK_MESSAGE));
+		assertTrue("Test results have incorrect exit code: " + output,
+				output.contains(EXIT_CODE_MESSAGE));
 
 		String taskTitle = "Demo Timestamp Task";
 		Pattern pattern = Pattern.compile(taskTitle);
@@ -62,7 +65,6 @@ public class TaskApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 3, count);
+		assertEquals("The number of task titles did not match expected: ", 1, count);
 	}
-
 }

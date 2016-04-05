@@ -61,6 +61,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class TaskBatchExecutionListenerTests {
 
+	public static final String[] ARGS = new String[] {"--spring.cloud.task.closecontext.enable=false"};
+
 	private ConfigurableApplicationContext applicationContext;
 
 	@After
@@ -76,7 +78,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[0]);
+				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -94,7 +96,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[0]);
+				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -112,7 +114,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[0]);
+				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -128,7 +130,7 @@ public class TaskBatchExecutionListenerTests {
 		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[0]);
+				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -145,7 +147,7 @@ public class TaskBatchExecutionListenerTests {
 		this.applicationContext = SpringApplication.run(new Object[] {MultipleJobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[0]);
+				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
