@@ -297,7 +297,7 @@ public class DeployerPartitionHandlerTests {
 		while (resultsIterator.hasNext()) {
 			StepExecution curResult = resultsIterator.next();
 
-			if(curResult.getStepName().equals("step1:partition2")) {
+			if (curResult.getStepName().equals("step1:partition2")) {
 				assertEquals(BatchStatus.FAILED, curResult.getStatus());
 			}
 			else {
@@ -451,7 +451,6 @@ public class DeployerPartitionHandlerTests {
 		Date startTime = new Date();
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 		Date endTime = new Date();
-
 		verify(this.taskLauncher, times(2)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		List<AppDeploymentRequest> allRequests = this.appDeploymentRequestArgumentCaptor.getAllValues();
@@ -460,7 +459,8 @@ public class DeployerPartitionHandlerTests {
 
 		validateStepExecutionResults(results);
 
-		assertTrue("Time difference was too small: " + (endTime.getTime() - startTime.getTime()), endTime.getTime() - startTime.getTime() > 20000);
+		assertTrue("Time difference was too small: " + (endTime.getTime() - startTime.getTime()),
+				endTime.getTime() - startTime.getTime() >= 20000);
 	}
 
 	@Test(expected = TimeoutException.class)
@@ -585,7 +585,7 @@ public class DeployerPartitionHandlerTests {
 			}
 		});
 
-		for(int i = 4; i < (numberOfPartitions + 4); i++) {
+		for (int i = 4; i < (numberOfPartitions + 4); i++) {
 			AppDeploymentRequest request = allRequests.get(i - 4);
 			assertEquals(this.resource, request.getResource());
 			assertEquals(0, request.getEnvironmentProperties().size());
