@@ -190,7 +190,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 		final Set<StepExecution> executed = new HashSet<>(candidates.size());
 
-		if(CollectionUtils.isEmpty(candidates)) {
+		if (CollectionUtils.isEmpty(candidates)) {
 			return null;
 		}
 
@@ -203,7 +203,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private void launchWorkers(Set<StepExecution> candidates, Set<StepExecution> executed) {
 		for (StepExecution execution : candidates) {
-			if(this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
+			if (this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
 				launchWorker(execution);
 				this.currentWorkers++;
 
@@ -271,7 +271,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 				executed.addAll(newExecuted);
 
-				if(result.size() == size) {
+				if (result.size() == size) {
 					return result;
 				}
 				else {
@@ -283,7 +283,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		Poller<Collection<StepExecution>> poller = new DirectPoller<>(this.pollInterval);
 		Future<Collection<StepExecution>> resultsFuture = poller.poll(callback);
 
-		if(timeout >= 0) {
+		if (timeout >= 0) {
 			return resultsFuture.get(timeout, TimeUnit.MILLISECONDS);
 		}
 		else {
@@ -316,7 +316,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 		Set<String> keys = new HashSet<>();
 
-		for(Iterator it = ((AbstractEnvironment) this.environment).getPropertySources().iterator(); it.hasNext(); ) {
+		for (Iterator it = ((AbstractEnvironment) this.environment).getPropertySources().iterator(); it.hasNext(); ) {
 			PropertySource propertySource = (PropertySource) it.next();
 			if (propertySource instanceof MapPropertySource) {
 				keys.addAll(Arrays.asList(((MapPropertySource) propertySource).getPropertyNames()));
