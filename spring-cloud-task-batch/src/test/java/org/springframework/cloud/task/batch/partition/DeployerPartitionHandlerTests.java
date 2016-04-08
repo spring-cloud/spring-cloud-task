@@ -15,6 +15,15 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,15 +57,6 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Michael Minella
