@@ -163,7 +163,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
 					taskExecution.getEndTime(), taskExecution.getExitMessage());
 
-			if(this.closeContext) {
+			if(this.closeContext && this.context.isActive()) {
 				this.context.close();
 			}
 		}
