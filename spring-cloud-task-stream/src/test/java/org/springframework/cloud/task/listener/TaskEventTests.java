@@ -35,12 +35,12 @@ public class TaskEventTests {
 	public void testDefaultConfiguration() {
 		ConfigurableApplicationContext applicationContext =
 				SpringApplication.run(new Object[] {TaskEventsConfiguration.class,
-						TaskEventAutoConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						TestSupportBinderAutoConfiguration.class},
-				new String[] {"--spring.cloud.task.closecontext.enable=false",
-				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=test"});
+								TaskEventAutoConfiguration.class,
+								PropertyPlaceholderAutoConfiguration.class,
+								TestSupportBinderAutoConfiguration.class},
+						new String[] {"--spring.cloud.task.closecontext.enable=false",
+								"--spring.main.web-environment=false",
+								"--spring.cloud.stream.defaultBinder=test"});
 
 		assertNotNull(applicationContext.getBean("taskEventListener"));
 		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
