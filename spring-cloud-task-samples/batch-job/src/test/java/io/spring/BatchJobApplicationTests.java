@@ -39,7 +39,7 @@ public class BatchJobApplicationTests {
 	public OutputCapture outputCapture = new OutputCapture();
 
 	@Test
-	public void testTimeStampApp() throws Exception {
+	public void testBatchJobApp() throws Exception {
 		final String JOB_RUN_MESSAGE = " was run";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";

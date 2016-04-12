@@ -28,6 +28,7 @@
 		<module>taskprocessor</module>
 		<module>partitioned-batch-job</module>
 		<module>task-events</module>
+		<module>batch-events</module>
 	</modules>
 
 	<build>
