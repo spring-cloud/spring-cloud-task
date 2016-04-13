@@ -56,7 +56,7 @@ public class TaskProcessorApplicationTests {
 			Map<String, String> properties = new HashMap();
 			properties.put("payload", DEFAULT_PAYLOAD);
 			TaskLaunchRequest expectedRequest = new TaskLaunchRequest("timestamp-task",
-					"io.spring", "1.0.0.BUILD-SNAPSHOT", "jar", null, properties);
+					"io.spring.cloud", "1.0.0.BUILD-SNAPSHOT", "jar", null, properties);
 			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
 		}
 
