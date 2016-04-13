@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public class TaskProcessorProperties {
 
-	private static final String DEFAULT_GROUP = "io.spring";
+	private static final String DEFAULT_GROUP = "io.spring.cloud";
 
 	private static final String DEFAULT_ARTIFACT = "timestamp-task";
 
