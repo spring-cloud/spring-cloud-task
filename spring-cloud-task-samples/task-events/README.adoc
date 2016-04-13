@@ -1,0 +1,33 @@
+= Task Events
+
+This is a task application that emits events on a channel named `task-events`
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install
+----
+
+== Execution:
+
+[source,shell,indent=2]
+----
+$ java -jar target/task-events-1.0.0.BUILD-SNAPSHOT.jar --spring.cloud.stream.bindings.task-events.contentType=application/json
+----
+
+You can listen for the events on the task-events channel with a Spring Cloud Stream Sink
+like the log sink using the following:
+
+[source,shell,indent=2]
+----
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-1.0.0.BUILD-SNAPSHOT-exec.jar --server.port=9090 --spring.cloud.stream.bindings.input.destination=task-events
+----
+
+== Dependencies:
+
+The task processor requires an instance of Redis to be running.
