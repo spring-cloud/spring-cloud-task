@@ -23,6 +23,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.integration.gateway.GatewayProxyFactoryBean;
 import org.springframework.messaging.MessageChannel;
 
@@ -34,6 +35,7 @@ import org.springframework.messaging.MessageChannel;
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
 @ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled", havingValue = "true", matchIfMissing = true)
+@PropertySource("classpath:/org/springframework/cloud/task/application.properties")
 public class TaskEventAutoConfiguration {
 
 	@Configuration
