@@ -16,7 +16,9 @@
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ChunkListener;
+import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
+import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.StepExecutionListener;
@@ -96,6 +98,28 @@ public class BatchEventAutoConfiguration {
 
 			return factoryBean;
 		}
+
+		@Bean
+		@Lazy
+		public GatewayProxyFactoryBean itemWriteEventsListener() {
+			GatewayProxyFactoryBean factoryBean =
+					new GatewayProxyFactoryBean(ItemWriteListener.class);
+
+			factoryBean.setDefaultRequestChannel(listenerChannels.itemWriteEvents());
+
+			return factoryBean;
+		}
+
+		@Bean
+		@Lazy
+		public GatewayProxyFactoryBean itemProcessEventsListener() {
+			GatewayProxyFactoryBean factoryBean =
+					new GatewayProxyFactoryBean(ItemProcessListener.class);
+
+			factoryBean.setDefaultRequestChannel(listenerChannels.itemProcessEvents());
+
+			return factoryBean;
+		}
 	}
 
 	public interface BatchEventsChannels {
@@ -104,6 +128,8 @@ public class BatchEventAutoConfiguration {
 		String STEP_EXECUTION_EVENTS = "step-execution-events";
 		String CHUNK_EXECUTION_EVENTS = "chunk-events";
 		String ITEM_READ_EVENTS = "item-read-events";
+		String ITEM_PROCESS_EVENTS = "item-process-events";
+		String ITEM_WRITE_EVENTS = "item-write-events";
 
 		@Output(JOB_EXECUTION_EVENTS)
 		MessageChannel jobExecutionEvents();
@@ -116,5 +142,11 @@ public class BatchEventAutoConfiguration {
 
 		@Output(ITEM_READ_EVENTS)
 		MessageChannel itemReadEvents();
+
+		@Output(ITEM_WRITE_EVENTS)
+		MessageChannel itemWriteEvents();
+
+		@Output(ITEM_PROCESS_EVENTS)
+		MessageChannel itemProcessEvents();
 	}
 }

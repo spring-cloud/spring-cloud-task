@@ -11,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -56,6 +57,12 @@ public class BatchEventsApplication {
 			return this.stepBuilderFactory.get("step2")
 					.<String, String>chunk(3)
 					.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
+					.processor(new ItemProcessor<String, String>() {
+						@Override
+						public String process(String item) throws Exception {
+							return String.valueOf(Integer.parseInt(item) * -1);
+						}
+					})
 					.writer(new ItemWriter<String>() {
 						@Override
 						public void write(List<? extends String> items) throws Exception {

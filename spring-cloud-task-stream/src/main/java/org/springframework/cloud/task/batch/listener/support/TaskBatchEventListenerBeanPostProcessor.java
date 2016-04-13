@@ -18,12 +18,15 @@ package org.springframework.cloud.task.batch.listener.support;
 import java.lang.reflect.Field;
 
 import org.springframework.batch.core.ChunkListener;
+import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
+import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.AbstractJob;
 import org.springframework.batch.core.step.AbstractStep;
 import org.springframework.batch.core.step.item.ChunkOrientedTasklet;
+import org.springframework.batch.core.step.item.SimpleChunkProcessor;
 import org.springframework.batch.core.step.item.SimpleChunkProvider;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
@@ -75,7 +78,14 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 					ReflectionUtils.makeAccessible(chunkProviderField);
 					SimpleChunkProvider chunkProvider = (SimpleChunkProvider) ReflectionUtils.getField(chunkProviderField, tasklet);
 
+					Field chunkProcessorField = ReflectionUtils.findField(ChunkOrientedTasklet.class, "chunkProcessor");
+
+					ReflectionUtils.makeAccessible(chunkProcessorField);
+					SimpleChunkProcessor chunkProcessor = (SimpleChunkProcessor) ReflectionUtils.getField(chunkProcessorField, tasklet);
+
 					chunkProvider.registerListener((ItemReadListener) this.applicationContext.getBean("itemReadEventsListener"));
+					chunkProcessor.registerListener((ItemProcessListener) this.applicationContext.getBean("itemProcessEventsListener"));
+					chunkProcessor.registerListener((ItemWriteListener) this.applicationContext.getBean("itemWriteEventsListener"));
 				}
 			}
 		}
