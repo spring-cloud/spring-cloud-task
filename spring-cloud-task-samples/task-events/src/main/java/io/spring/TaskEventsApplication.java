@@ -31,7 +31,7 @@ public class TaskEventsApplication {
 	}
 
 	@Configuration
-	public static class EventEmittingTaskConfiguration {
+	public static class TaskConfiguration {
 
 		@Bean
 		public CommandLineRunner commandLineRunner() {
