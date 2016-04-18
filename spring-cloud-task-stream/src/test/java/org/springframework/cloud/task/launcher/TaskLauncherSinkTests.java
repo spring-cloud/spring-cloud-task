@@ -19,6 +19,7 @@ package org.springframework.cloud.task.launcher;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,6 +28,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +40,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
 public class TaskLauncherSinkTests {
+
+	@ClassRule
+	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
 
 	private final static String DEFAULT_STATUS = "test_status";
 

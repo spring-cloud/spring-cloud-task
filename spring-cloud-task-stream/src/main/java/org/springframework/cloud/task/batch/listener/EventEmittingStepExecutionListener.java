@@ -18,31 +18,36 @@ package org.springframework.cloud.task.batch.listener;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.Assert;
 
 /**
+ * Setups up the StepExecutionListener to emit events to the spring cloud stream output channel.
+ *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class EventEmittingStepExecutionListener implements StepExecutionListener {
 
 	private MessageChannel output;
 
+	private MessagePublisher<StepExecution> messagePublisher;
+
 	public EventEmittingStepExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-
 		this.output = output;
+		this.messagePublisher = new MessagePublisher<>(output);
 	}
 
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-		this.output.send(MessageBuilder.withPayload(stepExecution).build());
+		this.messagePublisher.publish(stepExecution);
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		this.output.send(MessageBuilder.withPayload(stepExecution).build());
+		this.messagePublisher.publish(stepExecution);
 
 		return stepExecution.getExitStatus();
 	}

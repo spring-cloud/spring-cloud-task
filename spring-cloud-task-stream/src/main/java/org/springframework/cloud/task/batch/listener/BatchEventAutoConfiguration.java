@@ -21,6 +21,7 @@ import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -38,9 +39,10 @@ import org.springframework.messaging.MessageChannel;
 
 /**
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnBean(value = {Job.class, TaskLifecycleListener.class})
+@ConditionalOnBean(value = { Job.class, TaskLifecycleListener.class })
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BatchEventAutoConfiguration {
 
@@ -71,10 +73,7 @@ public class BatchEventAutoConfiguration {
 
 		@Bean
 		public StepExecutionListener stepExecutionEventsListener() {
-			EventEmittingStepExecutionListener listener =
-					new EventEmittingStepExecutionListener(listenerChannels.stepExecutionEvents());
-
-			return listener;
+			return new EventEmittingStepExecutionListener(listenerChannels.stepExecutionEvents());
 		}
 
 		@Bean
@@ -112,13 +111,14 @@ public class BatchEventAutoConfiguration {
 
 		@Bean
 		@Lazy
-		public GatewayProxyFactoryBean itemProcessEventsListener() {
-			GatewayProxyFactoryBean factoryBean =
-					new GatewayProxyFactoryBean(ItemProcessListener.class);
+		public ItemProcessListener itemProcessEventsListener() {
+			return new EventEmittingItemProcessListener(listenerChannels.itemProcessEvents());
+		}
 
-			factoryBean.setDefaultRequestChannel(listenerChannels.itemProcessEvents());
-
-			return factoryBean;
+		@Bean
+		@Lazy
+		public SkipListener skipEventsListener() {
+			return new EventEmittingSkipListener(listenerChannels.skipEvents());
 		}
 	}
 
@@ -130,6 +130,7 @@ public class BatchEventAutoConfiguration {
 		String ITEM_READ_EVENTS = "item-read-events";
 		String ITEM_PROCESS_EVENTS = "item-process-events";
 		String ITEM_WRITE_EVENTS = "item-write-events";
+		String SKIP_EVENTS = "skip-events";
 
 		@Output(JOB_EXECUTION_EVENTS)
 		MessageChannel jobExecutionEvents();
@@ -148,5 +149,9 @@ public class BatchEventAutoConfiguration {
 
 		@Output(ITEM_PROCESS_EVENTS)
 		MessageChannel itemProcessEvents();
+
+		@Output(SKIP_EVENTS)
+		MessageChannel skipEvents();
+
 	}
 }
