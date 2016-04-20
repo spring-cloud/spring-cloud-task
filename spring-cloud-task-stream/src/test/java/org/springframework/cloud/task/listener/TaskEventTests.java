@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,8 +37,10 @@ import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -49,8 +51,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringApplicationConfiguration({TaskEventTests.ListenerBinding.class})
 public class TaskEventTests {
 
-	@Rule
-	public RedisTestSupport redisTestSupport = new RedisTestSupport();
+	@ClassRule
+	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
 
 	// Count for two task execution events per task
 	static CountDownLatch latch = new CountDownLatch(2);
@@ -86,6 +88,11 @@ public class TaskEventTests {
 		public void receive(TaskExecution execution) {
 			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
 			latch.countDown();
+		}
+
+		@Bean
+		public RedisConnectionFactory redisConnectionFactory() {
+			return redisTestSupport.getResource();
 		}
 	}
 }
