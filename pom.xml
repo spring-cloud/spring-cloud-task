@@ -72,6 +72,7 @@
 		<module>spring-cloud-task-docs</module>
 		<module>spring-cloud-task-batch</module>
 		<module>spring-cloud-task-stream</module>
+		<module>spring-cloud-task-integration-tests</module>
 	</modules>
 
 	<properties>
