@@ -15,84 +15,39 @@
  */
 package org.springframework.cloud.task.listener;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.redis.config.RedisServiceAutoConfiguration;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Michael Minella
- * @author Ilayaperumal Gopinathan
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration({TaskEventTests.ListenerBinding.class})
 public class TaskEventTests {
 
-	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
-
-	// Count for two task execution events per task
-	static CountDownLatch latch = new CountDownLatch(2);
-
-	private static final String TASK_NAME = "taskEventTest";
-
 	@Test
-	public void testTaskEventListener() throws Exception {
-		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Object[] {TaskEventsConfiguration.class,
-				TaskEventAutoConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				RedisServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext.enable=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
-				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=redis",
-				"--spring.cloud.stream.bindings.task-events.destination=test"});
+	public void testDefaultConfiguration() {
+		ConfigurableApplicationContext applicationContext =
+				SpringApplication.run(new Object[] {TaskEventsConfiguration.class,
+								TaskEventAutoConfiguration.class,
+								PropertyPlaceholderAutoConfiguration.class,
+								TestSupportBinderAutoConfiguration.class},
+						new String[] {"--spring.cloud.task.closecontext.enable=false",
+								"--spring.main.web-environment=false",
+								"--spring.cloud.stream.defaultBinder=test"});
+
 		assertNotNull(applicationContext.getBean("taskEventListener"));
 		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
-		assertTrue(latch.await(1, TimeUnit.SECONDS));
 	}
 
 	@Configuration
 	@EnableTask
 	public static class TaskEventsConfiguration {
-	}
-
-	@EnableBinding(Sink.class)
-	@PropertySource("classpath:/org/springframework/cloud/task/listener/sink-channel.properties")
-	@EnableAutoConfiguration
-	public static class ListenerBinding {
-
-		@StreamListener(Sink.INPUT)
-		public void receive(TaskExecution execution) {
-			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
-			latch.countDown();
-		}
-
-		@Bean
-		public RedisConnectionFactory redisConnectionFactory() {
-			return redisTestSupport.getResource();
-		}
 	}
 }
