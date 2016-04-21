@@ -15,7 +15,7 @@
  */
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.ItemProcessListener;
@@ -37,12 +37,25 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
-import javax.batch.api.chunk.listener.SkipProcessListener;
-
 /**
  * Attaches the listeners to the job and its steps.
- *
+ * Based on the type of bean that is being processed will determine what listener is attached.
+ * <p>
+ *     <ul>
+ *         <li>If the bean is of type AbstactJob then the JobExecutionListener is registered with this bean.</li>
+ *         <li>If the bean is of type AbstactStep then the StepExecutionListener is registered with this bean.</li>
+ *         <li>If the bean is of type TaskletStep then the ChunkEventListener is registered with this bean.</li>
+ *         <li>If the tasklet for the TaskletStep is of type ChunkOrientedTasklet the following listeners will be registered. </li>
+ *         <ul>
+ *             <li>ItemReadListener with the ChunkProvider.</li>
+ *             <li>ItemProcessListener with the ChunkProcessor.</li>
+ *             <li>ItemWriteEventsListener with the ChunkProcessor.</li>
+ *             <li>SkipEventsListener with the ChunkProcessor.</li>
+ *         </ul>
+ *     </ul>
+ * </p>
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcessor {
 
@@ -53,7 +66,8 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
 		if (bean instanceof AbstractJob) {
-			JobExecutionListener jobExecutionEventsListener = (JobExecutionListener) this.applicationContext.getBean("jobExecutionEventsListener");
+			JobExecutionListener jobExecutionEventsListener =
+					(JobExecutionListener) this.applicationContext.getBean("jobExecutionEventsListener");
 
 			AbstractJob job = (AbstractJob) bean;
 
@@ -62,7 +76,8 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 		}
 
 		if (bean instanceof AbstractStep) {
-			StepExecutionListener stepExecutionListener = (StepExecutionListener) this.applicationContext.getBean("stepExecutionEventsListener");
+			StepExecutionListener stepExecutionListener =
+					(StepExecutionListener) this.applicationContext.getBean("stepExecutionEventsListener");
 
 			AbstractStep step = (AbstractStep) bean;
 
@@ -89,9 +104,9 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 					SimpleChunkProcessor chunkProcessor = (SimpleChunkProcessor) ReflectionUtils.getField(chunkProcessorField, tasklet);
 
 					chunkProvider.registerListener((ItemReadListener) this.applicationContext.getBean("itemReadEventsListener"));
+					chunkProvider.registerListener((SkipListener) this.applicationContext.getBean("skipEventsListener"));
 					chunkProcessor.registerListener((ItemProcessListener) this.applicationContext.getBean("itemProcessEventsListener"));
 					chunkProcessor.registerListener((ItemWriteListener) this.applicationContext.getBean("itemWriteEventsListener"));
-					chunkProcessor.registerListener((SkipListener) this.applicationContext.getBean("skipEventsListener"));
 				}
 			}
 		}

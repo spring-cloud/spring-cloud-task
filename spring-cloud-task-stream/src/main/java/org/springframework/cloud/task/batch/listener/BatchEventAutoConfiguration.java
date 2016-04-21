@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.task.EventEmittingItemReadEventsListener;
 import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListenerBeanPostProcessor;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ import org.springframework.integration.gateway.GatewayProxyFactoryBean;
 import org.springframework.messaging.MessageChannel;
 
 /**
+ * Configures the listeners and channels that are required to emit job messages.
  * @author Michael Minella
  * @author Glenn Renfro
  */
@@ -88,35 +90,21 @@ public class BatchEventAutoConfiguration {
 		}
 
 		@Bean
-		@Lazy
-		public GatewayProxyFactoryBean itemReadEventsListener() {
-			GatewayProxyFactoryBean factoryBean =
-					new GatewayProxyFactoryBean(ItemReadListener.class);
-
-			factoryBean.setDefaultRequestChannel(listenerChannels.itemReadEvents());
-
-			return factoryBean;
+		public ItemReadListener itemReadEventsListener() {
+			return new EventEmittingItemReadEventsListener(listenerChannels.itemReadEvents());
 		}
 
 		@Bean
-		@Lazy
-		public GatewayProxyFactoryBean itemWriteEventsListener() {
-			GatewayProxyFactoryBean factoryBean =
-					new GatewayProxyFactoryBean(ItemWriteListener.class);
-
-			factoryBean.setDefaultRequestChannel(listenerChannels.itemWriteEvents());
-
-			return factoryBean;
+		public ItemWriteListener itemWriteEventsListener() {
+			return new EventEmittingItemWriteEventsListener(listenerChannels.itemWriteEvents());
 		}
 
 		@Bean
-		@Lazy
 		public ItemProcessListener itemProcessEventsListener() {
 			return new EventEmittingItemProcessListener(listenerChannels.itemProcessEvents());
 		}
 
 		@Bean
-		@Lazy
 		public SkipListener skipEventsListener() {
 			return new EventEmittingSkipListener(listenerChannels.skipEvents());
 		}

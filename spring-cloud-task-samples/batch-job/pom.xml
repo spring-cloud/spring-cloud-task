@@ -9,7 +9,7 @@
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<description>Spring Cloud Task Batch Example</description>
 
-	<name>batch-job</name>
+	<name>Batch Job Sample Application</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

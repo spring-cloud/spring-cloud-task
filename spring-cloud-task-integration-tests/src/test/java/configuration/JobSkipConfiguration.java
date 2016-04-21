@@ -28,7 +28,6 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -41,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableBatchProcessing
 @EnableTask
-public class JobConfiguration {
+public class JobSkipConfiguration {
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 
@@ -68,8 +67,8 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step2() {
-		return stepBuilderFactory.get("step2").chunk(3)
-				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
+		return stepBuilderFactory.get("step2").chunk(3).faultTolerant().skip(IllegalStateException.class).skipLimit(100)
+				.reader(new SkipItemReader())
 				.processor(new ItemProcessor<Object, Object>() {
 					@Override
 					public String process(Object item) throws Exception {

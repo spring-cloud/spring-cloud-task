@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemProcessListener implements ItemProcessListener {
 
-	MessageChannel output;
+	private MessageChannel output;
 	private MessagePublisher<Object> messagePublisher;
 
 	public EventEmittingItemProcessListener(MessageChannel output) {
@@ -43,7 +43,6 @@ public class EventEmittingItemProcessListener implements ItemProcessListener {
 
 	@Override
 	public void afterProcess(Object item, Object result) {
-		String message = "";
 		if (result == null) {
 			messagePublisher.publish("1 item was filtered");
 		}

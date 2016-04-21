@@ -5,10 +5,10 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>batch-events</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>batch-events</name>
+	<name>Batch Events Sample Application</name>
 	<description>Sample of sending batch events via Spring Cloud Streams</description>
 
 	<parent>
