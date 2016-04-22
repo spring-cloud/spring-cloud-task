@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.listener;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
@@ -32,7 +33,7 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 
 	private MessageChannel output;
 
-	private MessagePublisher<StepExecution> messagePublisher;
+	private MessagePublisher<StepExecutionEvent> messagePublisher;
 
 	public EventEmittingStepExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
@@ -42,12 +43,12 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(stepExecution);
+		this.messagePublisher.publish(new StepExecutionEvent(stepExecution));
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(stepExecution);
+		this.messagePublisher.publish(new StepExecutionEvent(stepExecution));
 
 		return stepExecution.getExitStatus();
 	}

@@ -29,7 +29,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.task.EventEmittingItemReadEventsListener;
 import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListenerBeanPostProcessor;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +47,14 @@ import org.springframework.messaging.MessageChannel;
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BatchEventAutoConfiguration {
 
+	public final static String JOB_EXECUTION_EVENTS_LISTENER = "jobExecutionEventsListener";
+	public final static String CHUNK_EVENTS_LISTENER = "chunkEventsListener";
+	public final static String STEP_EXECUTION_EVENTS_LISTENER = "stepExecutionEventsListener";
+	public final static String ITEM_READ_EVENTS_LISTENER = "itemReadEventsListener";
+	public final static String ITEM_WRITE_EVENTS_LISTENER = "itemWriteEventsListener";
+	public final static String ITEM_PROCESS_EVENTS_LISTENER = "itemProcessEventsListener";
+	public final static String SKIP_EVENTS_LISTENER = "skipEventsListener";
+
 	@Bean
 	@ConditionalOnMissingBean
 	public TaskBatchEventListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
@@ -56,7 +63,7 @@ public class BatchEventAutoConfiguration {
 
 	@Configuration
 	@EnableBinding(BatchEventsChannels.class)
-	@ConditionalOnMissingBean(name = "jobExecutionEventsListener")
+	@ConditionalOnMissingBean(name = JOB_EXECUTION_EVENTS_LISTENER)
 	public static class JobExecutionListenerConfiguration {
 
 		@Autowired
@@ -64,13 +71,8 @@ public class BatchEventAutoConfiguration {
 
 		@Bean
 		@Lazy
-		public GatewayProxyFactoryBean jobExecutionEventsListener() {
-			GatewayProxyFactoryBean factoryBean =
-					new GatewayProxyFactoryBean(JobExecutionListener.class);
-
-			factoryBean.setDefaultRequestChannel(listenerChannels.jobExecutionEvents());
-
-			return factoryBean;
+		public JobExecutionListener jobExecutionEventsListener() {
+			return new EventEmittingJobExecutionListener(listenerChannels.jobExecutionEvents());
 		}
 
 		@Bean

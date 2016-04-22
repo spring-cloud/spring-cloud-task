@@ -75,14 +75,7 @@ public class JobSkipConfiguration {
 						return String.valueOf(Integer.parseInt((String) item) * -1);
 					}
 				})
-				.writer(new ItemWriter<Object>() {
-					@Override
-					public void write(List<? extends Object> items) throws Exception {
-						for (Object item : items) {
-							System.out.println(">> " + item);
-						}
-					}
-				}).build();
+				.writer( new SkipItemWriter() ).build();
 	}
 
 }

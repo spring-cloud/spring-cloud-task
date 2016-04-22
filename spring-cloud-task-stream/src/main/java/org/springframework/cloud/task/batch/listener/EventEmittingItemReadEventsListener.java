@@ -14,14 +14,11 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.task;
-
-import java.util.*;
+package org.springframework.cloud.task.batch.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ItemReadListener;
-import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;

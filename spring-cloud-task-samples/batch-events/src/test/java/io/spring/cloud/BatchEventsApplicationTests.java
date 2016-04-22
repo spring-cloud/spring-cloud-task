@@ -23,8 +23,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.StepExecution;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.OutputCapture;
@@ -32,6 +30,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.context.annotation.PropertySource;
 
 import static junit.framework.Assert.assertEquals;
@@ -63,7 +62,7 @@ public class BatchEventsApplicationTests {
 	public static class JobExecutionListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(JobExecution execution) {
+		public void receive(JobExecutionEvent execution) {
 			Assert.assertEquals(String.format("Job name should be job"), "job", execution.getJobInstance().getJobName());
 			jobExecutionLatch.countDown();
 		}

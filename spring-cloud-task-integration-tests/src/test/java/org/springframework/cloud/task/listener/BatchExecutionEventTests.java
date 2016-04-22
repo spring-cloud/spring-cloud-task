@@ -25,8 +25,6 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.StepExecution;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -38,6 +36,8 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
+import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
+import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 
@@ -57,6 +57,8 @@ public class BatchExecutionEventTests {
 
 	// Count for four step execution events per job
 	static CountDownLatch stepExecutionLatch = new CountDownLatch(4);
+	static int stepOneCount = 0;
+	static int stepTwoCount = 0;
 
 	// Count for twelve item process events per job
 	static CountDownLatch itemProcessLatch = new CountDownLatch(6);
@@ -70,8 +72,10 @@ public class BatchExecutionEventTests {
 	// Count for six write events per job
 	static CountDownLatch itemWriteEventsLatch = new CountDownLatch(2);
 
-	// Count for 2 skip events per job
-	static CountDownLatch skipEventsLatch = new CountDownLatch(2);
+	// Count for 3 skip events per job
+	static CountDownLatch skipEventsLatch = new CountDownLatch(3);
+	static int readSkipCount = 0;
+	static int writeSkipCount = 0;
 
 
 	private static final String TASK_NAME = "jobEventTest";
@@ -103,7 +107,7 @@ public class BatchExecutionEventTests {
 	}
 
 	@Test
-	public void testEventListener() throws Exception {
+	public void testJobEventListener() throws Exception {
 		testListener("--spring.cloud.stream.bindings.job-execution-events.destination=foobar",
 				jobExecutionLatch, BatchExecutionEventTests.ListenerBinding.class);
 
@@ -113,6 +117,9 @@ public class BatchExecutionEventTests {
 	public void testStepEventListener() throws Exception {
 		testListener("--spring.cloud.stream.bindings.step-execution-events.destination=step-execution-foobar",
 				stepExecutionLatch, BatchExecutionEventTests.StepListenerBinding.class);
+		assertEquals("the number of step1 events did not match", 2, stepOneCount);
+		assertEquals("the number of step2 events did not match", 2, stepTwoCount);
+
 	}
 
 	@Test
@@ -144,6 +151,8 @@ public class BatchExecutionEventTests {
 	public void testSkipEventListener() throws Exception {
 		testListenerSkip("--spring.cloud.stream.bindings.skip-events.destination=skip-event-foobar",
 				skipEventsLatch, BatchExecutionEventTests.SkipEventsListenerBinding.class);
+		assertEquals("read skip count did not match expected result", 2, readSkipCount);
+		assertEquals("write skip count did not match expected result", 1, writeSkipCount);
 	}
 
 	@EnableBinding(Sink.class)
@@ -152,7 +161,7 @@ public class BatchExecutionEventTests {
 	public static class ListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(JobExecution execution) {
+		public void receive(JobExecutionEvent execution) {
 			assertEquals(String.format("Job name should be job"), "job", execution.getJobInstance().getJobName());
 			jobExecutionLatch.countDown();
 		}
@@ -164,8 +173,14 @@ public class BatchExecutionEventTests {
 	public static class StepListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(StepExecution execution) {
-			assertEquals(String.format("Job name should be job"), "job", execution.getJobExecution().getJobInstance().getJobName());
+		public void receive(StepExecutionEvent execution) {
+			if(execution.getStepName().equals("step1")) {
+				stepOneCount++;
+			}
+			if(execution.getStepName().equals("step2")) {
+				stepTwoCount++;
+			}
+
 			stepExecutionLatch.countDown();
 		}
 	}
@@ -207,10 +222,16 @@ public class BatchExecutionEventTests {
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/skip-events-sink-channel.properties")
 	@EnableAutoConfiguration
 	public static class SkipEventsListenerBinding {
-
+		private static final String SKIPPING_READ_MESSAGE = "Skipped when reading.";
+		private static final String SKIPPING_WRITE_CONTENT = "-1";
 		@StreamListener(Sink.INPUT)
 		public void receive(Object exceptionMessage) {
-			assertEquals("Exception message is not correct","Skipped when reading.",exceptionMessage);
+			if(exceptionMessage.toString().equals(SKIPPING_READ_MESSAGE)){
+				readSkipCount++;
+			}
+			if(exceptionMessage.toString().equals(SKIPPING_WRITE_CONTENT)){
+				writeSkipCount++;
+			}
 			skipEventsLatch.countDown();
 		}
 	}

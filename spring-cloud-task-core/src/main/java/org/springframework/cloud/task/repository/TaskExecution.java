@@ -78,7 +78,7 @@ public class TaskExecution {
 		this.exitCode = exitCode;
 		this.taskName = taskName;
 		this.exitMessage = exitMessage;
-		this.parameters = parameters;
+		this.parameters = new ArrayList<>(parameters);
 		this.startTime = (Date)startTime.clone();
 		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 	}
@@ -132,7 +132,7 @@ public class TaskExecution {
 	}
 
 	public void setParameters(List<String> parameters) {
-		this.parameters = parameters;
+		this.parameters = new ArrayList<> (parameters);
 	}
 
 	@Override
