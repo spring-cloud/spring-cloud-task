@@ -15,11 +15,12 @@
  */
 package org.springframework.cloud.task.listener;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
-import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
+import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -28,19 +29,24 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Michael Minella
+ * @author Ilayaperumal Gopinathan
  */
 public class TaskEventTests {
+
+	@Rule
+	public RedisTestSupport redisTestSupport = new RedisTestSupport();
+
+	private static final String TASK_NAME = "taskEventTest";
 
 	@Test
 	public void testDefaultConfiguration() {
 		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Object[] {TaskEventsConfiguration.class,
+				SpringApplication.run(new Object[]{ TaskEventsConfiguration.class,
 								TaskEventAutoConfiguration.class,
-								PropertyPlaceholderAutoConfiguration.class,
-								TestSupportBinderAutoConfiguration.class},
-						new String[] {"--spring.cloud.task.closecontext.enable=false",
+								PropertyPlaceholderAutoConfiguration.class },
+						new String[]{ "--spring.cloud.task.closecontext.enable=false",
 								"--spring.main.web-environment=false",
-								"--spring.cloud.stream.defaultBinder=test"});
+								"--spring.cloud.stream.defaultBinder=test" });
 
 		assertNotNull(applicationContext.getBean("taskEventListener"));
 		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
@@ -50,4 +56,5 @@ public class TaskEventTests {
 	@EnableTask
 	public static class TaskEventsConfiguration {
 	}
+
 }
