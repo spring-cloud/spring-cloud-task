@@ -17,7 +17,7 @@ platforms do have some method to execute a process that isn't restarted when it 
  results of that execution are typically not maintained in a consumable way.  Spring Cloud
  Task brings the ability to execute short lived processes in an environment and record the
  results.  This allows for a microservices architecture around short lived processes as
- well as longer running services.
+ well as longer running services via the integration of tasks by messages.
 
 While this functionality is useful in a cloud environment, the same issues can arise in a
 traditional deployment model as well.  When executing Spring Boot applications via a
@@ -32,10 +32,12 @@ The lifecycle consists of a single task execution.  This is a physical execution
 Spring Boot application configured to be a task (annotated with the `@EnableTask`
 annotation).
 
-At the beginning of a task, an entry in the `TaskRepository` is created recording the
-start event.  This event is triggered via `SmartLifecycle#start` being triggered by
-Spring Framework.  This indicates to the system that all beans are ready for use and is
-before the execution of any of the `*Runner`s provided by Spring Boot.
+At the beginning of a task (before any `CommandLineRunner` or `ApplicationRunner`
+implementations have been executed, an entry in the `TaskRepository` is created recording
+the start event. This event is triggered via `SmartLifecycle#start` being triggered by
+Spring Framework. This indicates to the system that all beans are ready for use and is
+before the execution of any of the `CommandLineRunner` or `ApplicationRunner`
+implementations provided by Spring Boot.
 
 NOTE: The recording of a task will only occur upon the successful bootstrapping of an
 `ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
@@ -46,8 +48,9 @@ Upon completion of all of the `*Runner#run` calls from Spring Boot or the failur
 updated in the repository with the results.
 
 NOTE: At the completion of a task (all `*Runner#run` methods are called and the task
-repository has been updated) the `ApplicationContext` will be closed.  This behavior can
-be overriden by setting the property `spring.cloud.task.closecontext.enabled` to false.
+repository has been updated) the `ApplicationContext` will be closed by default.  This
+behavior can be overriden by setting the property `spring.cloud.task.closecontext.enabled`
+to false.
 
 [[features-task-execution-details]]
 === The TaskExecution
@@ -81,7 +84,7 @@ of the task (as indicated via an `ApplicationFailedEvent`), the stack trace for 
 exception will be stored here.
 
 |`parameters`
-|A `List` of the string parameters as they were passed into the executable boot
+|A `List` of the string command line arguments as they were passed into the executable boot
 application.
 |===
 
@@ -177,11 +180,11 @@ following options (in order of precedence):
 
 Allows a user to register listeners for specific events that occur during the task
 lifecycle.  This is done by creating a class that implements the TaskExecutionListener
-interface.  The class that implements the TaskExecutionListener interface will be
+interface.  The class that implements the `TaskExecutionListener` interface will be
 notified for the following events:
 
-. `onTaskStartup` - prior to the storing the TaskExecution into the TaskRepository
-. `onTaskEnd` - prior to the updating of the TaskExecution entry in the TaskRepository
+. `onTaskStartup` - prior to the storing the `TaskExecution` into the `TaskRepository`
+. `onTaskEnd` - prior to the updating of the `TaskExecution` entry in the `TaskRepository`
 marking the final state of the task.
 . `onTaskFailed` - prior to the `onTaskEnd` method being invoked when an unhandled
  exception is thrown by the task.
@@ -189,8 +192,8 @@ marking the final state of the task.
 Spring Cloud Task also allows a user add `TaskExecution` Listeners to methods within a bean
 by using the following method annotations:
 
-. `@BeforeTask` - prior to the storing the TaskExecution into the TaskRepository
-. `@AfterTask` - prior to the updating of the TaskExecution entry in the TaskRepository
+. `@BeforeTask` - prior to the storing the `TaskExecution` into the `TaskRepository`
+. `@AfterTask` - prior to the updating of the `TaskExecution` entry in the `TaskRepository`
 marking the final state of the task.
 . `@FailedTask` - prior to the `@AfterTask` method being invoked when an unhandled
  exception is thrown by the task.

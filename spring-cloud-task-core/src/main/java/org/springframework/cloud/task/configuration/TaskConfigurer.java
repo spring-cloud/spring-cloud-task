@@ -29,13 +29,24 @@ import org.springframework.transaction.PlatformTransactionManager;
 public interface TaskConfigurer {
 
 	/**
-	 * Create a Task Repository for the Task.
+	 * Create a {@link TaskRepository} for the Task.
 	 *
 	 * @return A TaskRepository
 	 */
 	TaskRepository getTaskRepository();
 
+	/**
+	 * Create a {@link PlatformTransactionManager} for use with the
+	 * <code>TaskRepository</code>.
+	 *
+	 * @return A <code>PlatformTransactionManager</code>
+	 */
 	PlatformTransactionManager getTransactionManager();
 
+	/**
+	 * Create a {@link TaskExplorer} for the task.
+	 *
+	 * @return a <code>TaskExplorer</code>
+	 */
 	TaskExplorer getTaskExplorer();
 }

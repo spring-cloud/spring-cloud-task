@@ -21,7 +21,7 @@ back to the other.
 
 This functionality is accomplished by using the `TaskBatchExecutionListener`.  By default,
 this listener is auto configured in any context that has both a Spring Batch Job configured
-(via having a bean of type Job defined in the context) and the spring-cloud-task-batch jar
+(via having a bean of type `Job` defined in the context) and the spring-cloud-task-batch jar
 is available within the classpath.  The listener will be injected into all jobs.
 
 [[batch-association-override]]
@@ -100,3 +100,10 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 	return handler;
 }
 ```
+
+[[batch-informational-messages]]
+== Batch Informational Messages
+
+Spring Cloud Task provides the ability for batch jobs to emit informational messages.  This
+is covered in detail in the section
+<<stream.adoc#stream-integration-batch-events, Spring Batch Events>>.

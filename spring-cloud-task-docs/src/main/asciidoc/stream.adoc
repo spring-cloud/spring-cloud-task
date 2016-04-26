@@ -99,10 +99,50 @@ public class TaskEventsApplication {
 }
 ```
 
-will emit events on the task-events channel.
+will emit the `TaskExecution` as an event on the `task-events` channel (both at the start
+and end of the task).
 
 NOTE: Configuration of the content type may be required via
 `--spring.cloud.stream.bindings.task-events.contentType=<CONTENT_TYPE>` if the processor
 or sink downstream does not have the spring-cloud-task-core jar on its classpath.
 
 NOTE: A binder implementation is also required to be on the classpath.
+
+[[stream-integration-batch-events]]
+== Spring Batch Events
+
+When executing a Spring Batch job via a task, Spring Cloud Task can be configured to emit
+informational messages based on the Spring Batch listeners available in Spring Batch.
+Specifically the following Spring Batch listeners are autoconfigured into each batch job and
+emit messages on the associated Spring Cloud Stream channels when run via Spring Cloud
+Task:
+
+* `JobExecutionListener` - `job-execution-events`
+* `StepExecutionListener` - `step-execution-events`
+* `ChunkListener` - `chunk-events`
+* `ItemReadListener` - `item-read-events`
+* `ItemProcessListener` - `item-process-events`
+* `ItemWriteListener` - `item-write-events`
+* `SkipListener` - `skip-events`
+
+The above listeners are autoconfigured into any `AbstractJob` when the appropriate
+beans exist in the context (a `Job` and a `TaskLifecycleListener`). Configuration to
+listen to these events is handled the same way binding to any other Spring
+Cloud Stream channel is done.  Our task (the one running the batch job) serves as a
+`Source`, with the listening applications serving as either a `Processor` or `Sink`.
+
+An example could be to have an application listening to the `job-execution-events` channel
+for the start and stop of a job.  To configure the listening application, you'd configure
+the input to be `job-execution-events` as follows
+
+```
+spring.cloud.stream.bindings.input.destination=job-execution-events
+```
+
+NOTE: A binder implementation is also required to be on the classpath.
+
+To disable the listener functionality, use the following configuration:
+
+```
+spring.cloud.task.batch.events.enabled=false
+```

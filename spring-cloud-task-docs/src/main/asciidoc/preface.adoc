@@ -23,7 +23,7 @@ print or electronically.
 Having trouble with Spring Cloud Task, We'd like to help!
 
 * Ask a question - we monitor http://stackoverflow.com[stackoverflow.com] for questions
-  tagged with http://stackoverflow.com/tags/spring-cloud[`spring-cloud`].
+  tagged with http://stackoverflow.com/tags/spring-cloud-task[`spring-cloud-task`].
 * Report bugs with Spring Cloud Task at https://github.com/spring-cloud/spring-cloud-task/issues.
 
 NOTE: All of Spring Cloud Task is open source, including the documentation! If you find problems
