@@ -15,7 +15,7 @@
  */
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.ItemProcessListener;

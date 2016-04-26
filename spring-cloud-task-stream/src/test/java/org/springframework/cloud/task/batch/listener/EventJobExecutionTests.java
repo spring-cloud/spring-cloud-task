@@ -16,10 +16,16 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
@@ -72,7 +78,7 @@ public class EventJobExecutionTests {
 		JobParameter[] PARAMETERS = { new JobParameter("FOO", true), new JobParameter(1L, true),
 				new JobParameter(1D, true), new JobParameter(testDate, false) };
 
-		Map jobParamMap = new LinkedHashMap<String, JobParameter>();
+		Map jobParamMap = new LinkedHashMap<>();
 		for (int paramCount = 0; paramCount < JOB_PARAM_KEYS.length; paramCount++) {
 			jobParamMap.put(JOB_PARAM_KEYS[paramCount], PARAMETERS[paramCount]);
 		}

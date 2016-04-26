@@ -23,20 +23,17 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
- * Setups up the StepExecutionListener to emit events to the spring cloud stream output channel.
+ * Provides {@link JobExecutionEvent} at both the start and end of the job's execution.
  *
  * @author Michael Minella
  * @author Glenn Renfro
  */
 public class EventEmittingJobExecutionListener implements JobExecutionListener {
 
-	private MessageChannel output;
-
 	private MessagePublisher<JobExecutionEvent> messagePublisher;
 
 	public EventEmittingJobExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
 		this.messagePublisher = new MessagePublisher<>(output);
 	}
 

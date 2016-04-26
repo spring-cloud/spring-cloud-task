@@ -16,11 +16,22 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Entity;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
 /**
@@ -34,23 +45,23 @@ public class JobExecutionEvent extends Entity {
 
 	private JobInstanceEvent jobInstance;
 
-	private volatile Collection<StepExecutionEvent> stepExecutions = new CopyOnWriteArraySet<StepExecutionEvent>();
+	private Collection<StepExecutionEvent> stepExecutions = new CopyOnWriteArraySet<StepExecutionEvent>();
 
-	private volatile BatchStatus status = BatchStatus.STARTING;
+	private BatchStatus status = BatchStatus.STARTING;
 
-	private volatile Date startTime = null;
+	private Date startTime = null;
 
-	private volatile Date createTime = new Date(System.currentTimeMillis());
+	private Date createTime = new Date(System.currentTimeMillis());
 
-	private volatile Date endTime = null;
+	private Date endTime = null;
 
-	private volatile Date lastUpdated = null;
+	private Date lastUpdated = null;
 
-	private volatile ExitStatus exitStatus = new ExitStatus("UNKNOWN", null);
+	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN", null));
 
-	private volatile ExecutionContext executionContext = new ExecutionContext();
+	private ExecutionContext executionContext = new ExecutionContext();
 
-	private transient volatile List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
+	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
 
 	private String jobConfigurationName;
 
@@ -74,8 +85,7 @@ public class JobExecutionEvent extends Entity {
 		this.createTime = original.getCreateTime();
 		this.endTime = original.getEndTime();
 		this.lastUpdated = original.getLastUpdated();
-		this.exitStatus = new ExitStatus(original.getExitStatus().getExitCode(),
-				original.getExitStatus().getExitDescription());
+		this.exitStatus = new ExitStatus(original.getExitStatus());
 		this.executionContext = original.getExecutionContext();
 		this.failureExceptions = original.getFailureExceptions();
 		this.jobConfigurationName = original.getJobConfigurationName();
@@ -88,7 +98,7 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	public Date getEndTime() {
-		return endTime;
+		return this.endTime;
 	}
 
 	public void setJobInstance(JobInstanceEvent jobInstance) {
@@ -108,7 +118,7 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	public BatchStatus getStatus() {
-		return status;
+		return this.status;
 	}
 
 	/**
@@ -155,14 +165,14 @@ public class JobExecutionEvent extends Entity {
 	 * @return the exitCode
 	 */
 	public ExitStatus getExitStatus() {
-		return exitStatus;
+		return this.exitStatus;
 	}
 
 	/**
 	 * @return the Job that is executing.
 	 */
 	public JobInstanceEvent getJobInstance() {
-		return jobInstance;
+		return this.jobInstance;
 	}
 
 	/**
@@ -171,38 +181,7 @@ public class JobExecutionEvent extends Entity {
 	 * @return the step executions that were registered
 	 */
 	public Collection<StepExecutionEvent> getStepExecutions() {
-		return Collections.unmodifiableList(new ArrayList<StepExecutionEvent>(stepExecutions));
-	}
-
-	/**
-	 * Test if this {@link JobExecution} indicates that it is running. It should
-	 * be noted that this does not necessarily mean that it has been persisted
-	 * as such yet.
-	 * @return true if the end time is null
-	 */
-	public boolean isRunning() {
-		return endTime == null;
-	}
-
-	/**
-	 * Test if this {@link JobExecution} indicates that it has been signalled to
-	 * stop.
-	 * @return true if the status is {@link BatchStatus#STOPPING}
-	 */
-	public boolean isStopping() {
-		return status == BatchStatus.STOPPING;
-	}
-
-	/**
-	 * Signal the {@link JobExecution} to stop. Iterates through the associated
-	 * {@link StepExecution}s, calling {@link StepExecution#setTerminateOnly()}.
-	 *
-	 */
-	public void stop() {
-		for (StepExecutionEvent stepExecution : stepExecutions) {
-			stepExecution.setTerminateOnly();
-		}
-		status = BatchStatus.STOPPING;
+		return Collections.unmodifiableList(new ArrayList<>(this.stepExecutions));
 	}
 
 	/**
@@ -221,14 +200,14 @@ public class JobExecutionEvent extends Entity {
 	 * @return the context
 	 */
 	public ExecutionContext getExecutionContext() {
-		return executionContext;
+		return this.executionContext;
 	}
 
 	/**
 	 * @return the time when this execution was created.
 	 */
 	public Date getCreateTime() {
-		return createTime;
+		return this.createTime;
 	}
 
 	/**
@@ -243,22 +222,13 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Package private method for re-constituting the step executions from
-	 * existing instances.
-	 * @param stepExecution
-	 */
-	void addStepExecution(StepExecutionEvent stepExecution) {
-		stepExecutions.add(stepExecution);
-	}
-
-	/**
 	 * Get the date representing the last time this JobExecution was updated in
 	 * the JobRepository.
 	 *
 	 * @return Date representing the last time this JobExecution was updated.
 	 */
 	public Date getLastUpdated() {
-		return lastUpdated;
+		return this.lastUpdated;
 	}
 
 	/**
@@ -271,7 +241,7 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	public List<Throwable> getFailureExceptions() {
-		return failureExceptions;
+		return this.failureExceptions;
 	}
 
 	/**
@@ -292,12 +262,12 @@ public class JobExecutionEvent extends Entity {
 	 */
 	public synchronized List<Throwable> getAllFailureExceptions() {
 
-		Set<Throwable> allExceptions = new HashSet<Throwable>(failureExceptions);
-		for (StepExecutionEvent stepExecution : stepExecutions) {
+		Set<Throwable> allExceptions = new HashSet<>(this.failureExceptions);
+		for (StepExecutionEvent stepExecution : this.stepExecutions) {
 			allExceptions.addAll(stepExecution.getFailureExceptions());
 		}
 
-		return new ArrayList<Throwable>(allExceptions);
+		return new ArrayList<>(allExceptions);
 	}
 
 	/**
@@ -306,7 +276,7 @@ public class JobExecutionEvent extends Entity {
 	 */
 	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
 		stream.defaultReadObject();
-		failureExceptions = new ArrayList<Throwable>();
+		this.failureExceptions = new ArrayList<>();
 	}
 
 	/*
@@ -320,17 +290,4 @@ public class JobExecutionEvent extends Entity {
 				+ String.format(", startTime=%s, endTime=%s, lastUpdated=%s, status=%s, exitStatus=%s, job=[%s], jobParameters=[%s]",
 				startTime, endTime, lastUpdated, status, exitStatus, jobInstance, jobParameters);
 	}
-
-	/**
-	 * Add some step executions.  For internal use only.
-	 * @param stepExecutions step executions to add to the current list
-	 */
-	public void addStepExecutions(List<StepExecutionEvent> stepExecutions) {
-		if (stepExecutions!=null) {
-			this.stepExecutions.removeAll(stepExecutions);
-			this.stepExecutions.addAll(stepExecutions);
-		}
-	}
-
-
 }

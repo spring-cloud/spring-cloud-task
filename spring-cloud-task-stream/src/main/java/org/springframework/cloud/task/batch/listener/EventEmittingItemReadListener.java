@@ -16,28 +16,33 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.ItemReadListener;
+import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
- *  Setups up the ItemReadEventsListener to emit events to the spring cloud stream output channel.
+ *  Provides informational messages around the {@link ItemReader} of a batch job.
+ *
+ *  The {@link ItemReadListener#beforeRead()} and
+ *  {@link ItemReadListener#afterRead(Object)} are both no-ops in this implementation.
+ *  {@link ItemReadListener#onReadError(Exception)} provides the exception
+ * via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
  */
-public class EventEmittingItemReadEventsListener implements ItemReadListener {
+public class EventEmittingItemReadListener implements ItemReadListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(EventEmittingItemReadEventsListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemReadListener.class);
 
-	private MessageChannel output;
-	private MessagePublisher<Object> messagePublisher;
+	private MessagePublisher<String> messagePublisher;
 
-	public EventEmittingItemReadEventsListener(MessageChannel output) {
+	public EventEmittingItemReadListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
 		this.messagePublisher = new MessagePublisher(output);
 	}
 
@@ -56,6 +61,7 @@ public class EventEmittingItemReadEventsListener implements ItemReadListener {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onReadError: " + ex.getMessage(), ex);
 		}
-		this.messagePublisher.publish(ex.getMessage());
+
+		messagePublisher.publishWithThrowableHeader("Exception while item was being read", ex.getMessage());
 	}
 }

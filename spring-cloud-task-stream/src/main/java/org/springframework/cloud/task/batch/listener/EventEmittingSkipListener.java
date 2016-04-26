@@ -16,33 +16,35 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.SkipListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.Assert;
 
 /**
  * Setups up the SkipProcessListener to emit events to the spring cloud stream output channel.
  *
+ * This listener emits the exception's message via the
+ * {@link BatchJobHeaders.BATCH_EXCEPTION} message header for each method.  For
+ * {@link SkipListener#onSkipInProcess(Object, Throwable)} and
+ * {@link SkipListener#onSkipInWrite(Object, Throwable)} the body of the message consists
+ * of the item that caused the error.
+ *
  * @author Glenn Renfro
  */
 public class EventEmittingSkipListener implements SkipListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(EventEmittingSkipListener.class);
-
-	private MessageChannel output;
+	private static final Log logger = LogFactory.getLog(EventEmittingSkipListener.class);
 
 	private MessagePublisher<Object> messagePublisher;
 
 	public EventEmittingSkipListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
-		this.messagePublisher = new MessagePublisher(output);
+		this.messagePublisher = new MessagePublisher<>(output);
 	}
 
 	@Override
@@ -51,7 +53,6 @@ public class EventEmittingSkipListener implements SkipListener {
 			logger.debug("Executing onSkipInRead: " + t.getMessage(), t);
 		}
 		messagePublisher.publishWithThrowableHeader("Skipped when reading.", t.getMessage());
-
 	}
 
 	@Override

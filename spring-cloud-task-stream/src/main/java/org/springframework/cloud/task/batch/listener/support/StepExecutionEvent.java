@@ -16,13 +16,15 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
-
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.util.Assert;
@@ -34,41 +36,41 @@ import org.springframework.util.Assert;
  */
 public class StepExecutionEvent extends Entity {
 
-	private volatile long jobExecutionId;
+	private long jobExecutionId;
 
-	private volatile String stepName;
+	private String stepName;
 
-	private volatile BatchStatus status = BatchStatus.STARTING;
+	private BatchStatus status = BatchStatus.STARTING;
 
-	private volatile int readCount = 0;
+	private int readCount = 0;
 
-	private volatile int writeCount = 0;
+	private int writeCount = 0;
 
-	private volatile int commitCount = 0;
+	private int commitCount = 0;
 
-	private volatile int rollbackCount = 0;
+	private int rollbackCount = 0;
 
-	private volatile int readSkipCount = 0;
+	private int readSkipCount = 0;
 
-	private volatile int processSkipCount = 0;
+	private int processSkipCount = 0;
 
-	private volatile int writeSkipCount = 0;
+	private int writeSkipCount = 0;
 
-	private volatile Date startTime = new Date(System.currentTimeMillis());
+	private Date startTime = new Date(System.currentTimeMillis());
 
-	private volatile Date endTime = null;
+	private Date endTime = null;
 
-	private volatile Date lastUpdated = null;
+	private Date lastUpdated = null;
 
-	private volatile ExecutionContext executionContext = new ExecutionContext();
+	private ExecutionContext executionContext = new ExecutionContext();
 
-	private volatile ExitStatus exitStatus = new ExitStatus("EXECUTING", null);
+	private ExitStatus exitStatus = new ExitStatus(org.springframework.batch.core.ExitStatus.EXECUTING);
 
-	private volatile boolean terminateOnly;
+	private boolean terminateOnly;
 
-	private volatile int filterCount;
+	private int filterCount;
 
-	private transient volatile List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
+	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
 
 
 	public StepExecutionEvent() {
@@ -89,8 +91,7 @@ public class StepExecutionEvent extends Entity {
 		this.stepName = stepExecution.getStepName();
 
 		this.status = stepExecution.getStatus();
-		this.exitStatus = new ExitStatus(stepExecution.getExitStatus().getExitCode(),
-				stepExecution.getExitStatus().getExitDescription());
+		this.exitStatus = new ExitStatus(stepExecution.getExitStatus());
 		this.executionContext = stepExecution.getExecutionContext();
 		for (Throwable throwable : stepExecution.getFailureExceptions()){
 			this.failureExceptions.add(throwable);
@@ -118,7 +119,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the attributes
 	 */
 	public ExecutionContext getExecutionContext() {
-		return executionContext;
+		return this.executionContext;
 	}
 
 	/**
@@ -136,7 +137,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current number of commits
 	 */
 	public int getCommitCount() {
-		return commitCount;
+		return this.commitCount;
 	}
 
 	/**
@@ -154,7 +155,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the time that this execution ended
 	 */
 	public Date getEndTime() {
-		return endTime;
+		return this.endTime;
 	}
 
 	/**
@@ -172,7 +173,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current number of items read for this execution
 	 */
 	public int getReadCount() {
-		return readCount;
+		return this.readCount;
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current number of items written for this execution
 	 */
 	public int getWriteCount() {
-		return writeCount;
+		return this.writeCount;
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current number of rollbacks for this execution
 	 */
 	public int getRollbackCount() {
-		return rollbackCount;
+		return this.rollbackCount;
 	}
 
 	/**
@@ -217,7 +218,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current number of items filtered out of this execution
 	 */
 	public int getFilterCount() {
-		return filterCount;
+		return this.filterCount;
 	}
 
 	/**
@@ -242,7 +243,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the time this execution started
 	 */
 	public Date getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 
 	/**
@@ -260,7 +261,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the current status of this step
 	 */
 	public BatchStatus getStatus() {
-		return status;
+		return this.status;
 	}
 
 	/**
@@ -272,17 +273,6 @@ public class StepExecutionEvent extends Entity {
 		this.status = status;
 	}
 
-	/**
-	 * Upgrade the status field if the provided value is greater than the
-	 * existing one. Clients using this method to set the status can be sure
-	 * that they don't overwrite a failed status with an successful one.
-	 *
-	 * @param status the new status value
-	 */
-	public void upgradeStatus(BatchStatus status) {
-		this.status = this.status.upgradeTo(status);
-	}
-
 	public void setStepName(String stepName) {
 		this.stepName = stepName;
 	}
@@ -290,7 +280,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the name of the step
 	 */
 	public String getStepName() {
-		return stepName;
+		return this.stepName;
 	}
 
 	/**
@@ -304,14 +294,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the exitCode
 	 */
 	public ExitStatus getExitStatus() {
-		return exitStatus;
-	}
-
-	/**
-	 * On unsuccessful execution after a chunk has rolled back.
-	 */
-	public synchronized void incrementRollbackCount() {
-		rollbackCount++;
+		return this.exitStatus;
 	}
 
 	/**
@@ -333,28 +316,28 @@ public class StepExecutionEvent extends Entity {
 	 * @return the total number of items skipped.
 	 */
 	public int getSkipCount() {
-		return readSkipCount + processSkipCount + writeSkipCount;
+		return this.readSkipCount + this.processSkipCount + this.writeSkipCount;
 	}
 
 	/**
 	 * Increment the number of commits
 	 */
 	public void incrementCommitCount() {
-		commitCount++;
+		this.commitCount++;
 	}
 
 	/**
 	 * @return the number of records skipped on read
 	 */
 	public int getReadSkipCount() {
-		return readSkipCount;
+		return this.readSkipCount;
 	}
 
 	/**
 	 * @return the number of records skipped on write
 	 */
 	public int getWriteSkipCount() {
-		return writeSkipCount;
+		return this.writeSkipCount;
 	}
 
 	/**
@@ -379,7 +362,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the number of records skipped during processing
 	 */
 	public int getProcessSkipCount() {
-		return processSkipCount;
+		return this.processSkipCount;
 	}
 
 	/**
@@ -395,7 +378,7 @@ public class StepExecutionEvent extends Entity {
 	 * @return the Date representing the last time this execution was persisted.
 	 */
 	public Date getLastUpdated() {
-		return lastUpdated;
+		return this.lastUpdated;
 	}
 
 	/**
@@ -408,15 +391,11 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	public List<Throwable> getFailureExceptions() {
-		return failureExceptions;
-	}
-
-	public void addFailureException(Throwable throwable) {
-		this.failureExceptions.add(throwable);
+		return this.failureExceptions;
 	}
 
 	public long getJobExecutionId() {
-		return jobExecutionId;
+		return this.jobExecutionId;
 	}
 
 	/*
@@ -434,7 +413,7 @@ public class StepExecutionEvent extends Entity {
 		}
 		StepExecution other = (StepExecution) obj;
 
-		return stepName.equals(other.getStepName()) && (jobExecutionId == other.getJobExecutionId())
+		return this.stepName.equals(other.getStepName()) && (this.jobExecutionId == other.getJobExecutionId())
 				&& getId().equals(other.getId());
 	}
 
@@ -444,7 +423,7 @@ public class StepExecutionEvent extends Entity {
 	 */
 	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
 		stream.defaultReadObject();
-		failureExceptions = new ArrayList<Throwable>();
+		this.failureExceptions = new ArrayList<>();
 	}
 
 	/*
@@ -456,21 +435,21 @@ public class StepExecutionEvent extends Entity {
 	public int hashCode() {
 		Object jobExecutionId = getJobExecutionId();
 		Long id = getId();
-		return super.hashCode() + 31 * (stepName != null ? stepName.hashCode() : 0) + 91
+		return super.hashCode() + 31 * (this.stepName != null ? this.stepName.hashCode() : 0) + 91
 				* (jobExecutionId != null ? jobExecutionId.hashCode() : 0) + 59 * (id != null ? id.hashCode() : 0);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(getSummary() + ", exitDescription=%s", exitStatus.getExitDescription());
+		return String.format(getSummary() + ", exitDescription=%s", this.exitStatus.getExitDescription());
 	}
 
 	public String getSummary() {
 		return super.toString()
 				+ String.format(
 				", name=%s, status=%s, exitStatus=%s, readCount=%d, filterCount=%d, writeCount=%d readSkipCount=%d, writeSkipCount=%d"
-						+ ", processSkipCount=%d, commitCount=%d, rollbackCount=%d", stepName, status,
-				exitStatus.getExitCode(), readCount, filterCount, writeCount, readSkipCount, writeSkipCount,
-				processSkipCount, commitCount, rollbackCount);
+						+ ", processSkipCount=%d, commitCount=%d, rollbackCount=%d", this.stepName, this.status,
+				this.exitStatus.getExitCode(), this.readCount, this.filterCount, this.writeCount, this.readSkipCount, this.writeSkipCount,
+				this.processSkipCount, this.commitCount, this.rollbackCount);
 	}
 }

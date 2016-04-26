@@ -24,20 +24,19 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
- * Setups up the StepExecutionListener to emit events to the spring cloud stream output channel.
+ * Provides a {@link StepExecutionEvent} at the start and end of each step indicating the
+ * step's status.  The {@link StepExecutionListener#afterStep(StepExecution)} returns the
+ * {@link ExitStatus} of the inputted {@link StepExecution}.
  *
  * @author Michael Minella
  * @author Glenn Renfro
  */
 public class EventEmittingStepExecutionListener implements StepExecutionListener {
 
-	private MessageChannel output;
-
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
 
 	public EventEmittingStepExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
 		this.messagePublisher = new MessagePublisher<>(output);
 	}
 

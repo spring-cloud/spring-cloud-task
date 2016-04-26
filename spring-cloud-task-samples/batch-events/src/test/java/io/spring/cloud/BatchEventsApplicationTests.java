@@ -16,7 +16,8 @@
 
 package io.spring.cloud;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -33,12 +34,7 @@ import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.context.annotation.PropertySource;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 public class BatchEventsApplicationTests {
-
-	private static final String ITEM_INDICATOR = ">> -";
 
 	@ClassRule
 	public static RedisTestSupport redisTestSupport = new RedisTestSupport();

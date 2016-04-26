@@ -16,11 +16,13 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.util.*;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.ItemWriteListener;
+import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
@@ -28,24 +30,26 @@ import org.springframework.util.Assert;
 /**
  *  Setups up the ItemWriteEventsListener to emit events to the spring cloud stream output channel.
  *
+ *  Each method provides an informational message.
+ *  {@link ItemWriteListener#onWriteError(Exception, List)} provides a message as well as
+ *  the exception's message via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
+ *
  * @author Glenn Renfro
  */
-public class EventEmittingItemWriteEventsListener implements ItemWriteListener{
+public class EventEmittingItemWriteListener implements ItemWriteListener{
 
-	private static final Logger logger = LoggerFactory.getLogger(EventEmittingItemWriteEventsListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemWriteListener.class);
 
-	private MessageChannel output;
-	private MessagePublisher<Object> messagePublisher;
+	private MessagePublisher<String> messagePublisher;
 
-	public EventEmittingItemWriteEventsListener(MessageChannel output) {
+	public EventEmittingItemWriteListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
-		this.messagePublisher = new MessagePublisher(output);
+		this.messagePublisher = new MessagePublisher<>(output);
 	}
 
 	@Override
 	public void beforeWrite(List items) {
-		messagePublisher.publish(items.size() + " items to be written.");
+		this.messagePublisher.publish(items.size() + " items to be written.");
 	}
 
 	@Override

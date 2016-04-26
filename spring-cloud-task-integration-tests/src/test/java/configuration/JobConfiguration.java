@@ -16,7 +16,8 @@
 
 package configuration;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -68,17 +69,17 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step2() {
-		return stepBuilderFactory.get("step2").chunk(3)
+		return stepBuilderFactory.get("step2").<String, String>chunk(3)
 				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
-				.processor(new ItemProcessor<Object, Object>() {
+				.processor(new ItemProcessor<String, String>() {
 					@Override
-					public String process(Object item) throws Exception {
+					public String process(String item) throws Exception {
 						return String.valueOf(Integer.parseInt((String) item) * -1);
 					}
 				})
-				.writer(new ItemWriter<Object>() {
+				.writer(new ItemWriter<String>() {
 					@Override
-					public void write(List<? extends Object> items) throws Exception {
+					public void write(List<? extends String> items) throws Exception {
 						for (Object item : items) {
 							System.out.println(">> " + item);
 						}

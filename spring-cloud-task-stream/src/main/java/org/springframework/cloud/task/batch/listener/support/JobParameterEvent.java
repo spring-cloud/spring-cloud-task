@@ -16,8 +16,9 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.util.*;
+import java.util.Date;
 
+import org.springframework.batch.core.JobParameter;
 
 /**
  * This is a JobParameter DTO created so that a {@link org.springframework.batch.core.JobParameter} can be serialized
@@ -32,92 +33,12 @@ public class JobParameterEvent {
 	private boolean identifying;
 
 	public JobParameterEvent() {
-
 	}
 
-	/**
-	 * Construct a new JobParameter as a String.
-	 */
-	public JobParameterEvent(String parameter, boolean identifying) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.STRING;
-		this.identifying = identifying;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Long.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Long parameter, boolean identifying) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.LONG;
-		this.identifying = identifying;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Date.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Date parameter, boolean identifying) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.DATE;
-		this.identifying = identifying;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Double.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Double parameter, boolean identifying) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.DOUBLE;
-		this.identifying = identifying;
-	}
-
-
-	/**
-	 * Construct a new JobParameter as a String.
-	 */
-	public JobParameterEvent(String parameter) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.STRING;
-		this.identifying = true;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Long.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Long parameter) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.LONG;
-		this.identifying = true;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Date.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Date parameter) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.DATE;
-		this.identifying = true;
-	}
-
-	/**
-	 * Construct a new JobParameter as a Double.
-	 *
-	 * @param parameter
-	 */
-	public JobParameterEvent(Double parameter) {
-		this.parameter = parameter;
-		parameterType = JobParameterEvent.ParameterType.DOUBLE;
-		this.identifying = true;
+	public JobParameterEvent(JobParameter jobParameter) {
+		this.parameter = jobParameter.getValue();
+		this.parameterType = ParameterType.convert(jobParameter.getType());
+		this.identifying = jobParameter.isIdentifying();
 	}
 
 	public boolean isIdentifying() {
@@ -146,7 +67,7 @@ public class JobParameterEvent {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof JobParameterEvent == false) {
+		if (!(obj instanceof JobParameterEvent)) {
 			return false;
 		}
 
@@ -173,7 +94,24 @@ public class JobParameterEvent {
 	 * Enumeration representing the type of a JobParameter.
 	 */
 	public enum ParameterType {
-
 		STRING, DATE, LONG, DOUBLE;
+
+		public static ParameterType convert(JobParameter.ParameterType type) {
+			if(JobParameter.ParameterType.DATE.equals(type)) {
+				return DATE;
+			}
+			else if(JobParameter.ParameterType.DOUBLE.equals(type)) {
+				return DOUBLE;
+			}
+			else if(JobParameter.ParameterType.LONG.equals(type)) {
+				return LONG;
+			}
+			else if(JobParameter.ParameterType.STRING.equals(type)) {
+				return STRING;
+			}
+			else {
+				throw new IllegalArgumentException("Unable to convert type");
+			}
+		}
 	}
 }

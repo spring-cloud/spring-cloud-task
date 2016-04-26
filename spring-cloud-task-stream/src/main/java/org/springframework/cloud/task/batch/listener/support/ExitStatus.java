@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
+import org.springframework.util.Assert;
+
 /**
  * ExitStatus DTO created so that {@link org.springframework.batch.core.ExitStatus} can be serialized into Json without
  * having to add mixins to an ObjectMapper
@@ -28,12 +30,13 @@ public class ExitStatus {
 	private String exitDescription;
 
 	public ExitStatus(){
-
 	}
 
-	public ExitStatus(String exitCode, String exitDescription) {
-		this.exitCode = exitCode;
-		this.exitDescription = exitDescription;
+	public ExitStatus(org.springframework.batch.core.ExitStatus exitStatus) {
+		Assert.notNull(exitStatus);
+
+		this.exitCode = exitStatus.getExitCode();
+		this.exitDescription = exitStatus.getExitDescription();
 	}
 
 	public String getExitCode() {

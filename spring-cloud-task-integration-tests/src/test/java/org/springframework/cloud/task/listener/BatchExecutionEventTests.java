@@ -17,7 +17,8 @@
 
 package org.springframework.cloud.task.listener;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import configuration.JobConfiguration;
 import configuration.JobSkipConfiguration;

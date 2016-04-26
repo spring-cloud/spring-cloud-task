@@ -16,25 +16,31 @@
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ItemProcessListener;
+import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
- * Setups up the ItemProcessListener to emit events to the spring cloud stream output channel.
+ * Provides informational messages around the {@link ItemProcessListener} of a batch job.
+ *
+ * The {@link ItemProcessListener#beforeProcess(Object)} of this listener is a no-op.
+ * {@link ItemProcessListener#afterProcess(Object, Object)} returns a message if an item
+ * was filtered ({@link ItemProcessor} returned null), if the result of the processor was
+ * equal to the input (via <code>.equals</code>), or if they were not equal.
+ * {@link ItemProcessListener#onProcessError(Object, Exception)} provides the exception
+ * via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
  *
  * @author Michael Minella
  * @author Glenn Renfro
  */
 public class EventEmittingItemProcessListener implements ItemProcessListener {
 
-	private MessageChannel output;
-	private MessagePublisher<Object> messagePublisher;
+	private MessagePublisher<String> messagePublisher;
 
 	public EventEmittingItemProcessListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
-		this.output = output;
-		this.messagePublisher = new MessagePublisher(output);
+		this.messagePublisher = new MessagePublisher<>(output);
 	}
 
 	@Override

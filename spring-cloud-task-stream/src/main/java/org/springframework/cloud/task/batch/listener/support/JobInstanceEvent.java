@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  */
 
-public class JobInstanceEvent extends Entity implements javax.batch.runtime.JobInstance {
+public class JobInstanceEvent extends Entity {
 
 	private String jobName;
 
@@ -43,17 +43,14 @@ public class JobInstanceEvent extends Entity implements javax.batch.runtime.JobI
 	/**
 	 * @return the job name. (Equivalent to getJob().getName())
 	 */
-	@Override
 	public String getJobName() {
 		return jobName;
 	}
 
-	@Override
 	public String toString() {
 		return super.toString() + ", Job=[" + jobName + "]";
 	}
 
-	@Override
 	public long getInstanceId() {
 		return super.getId();
 	}

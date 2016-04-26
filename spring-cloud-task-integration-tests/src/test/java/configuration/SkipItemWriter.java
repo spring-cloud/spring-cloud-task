@@ -16,13 +16,9 @@
 
 package configuration;
 
-import java.util.*;
+import java.util.List;
 
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 
 /**
  * @author Glenn Renfro
@@ -30,11 +26,9 @@ import org.springframework.batch.item.UnexpectedInputException;
 public class SkipItemWriter implements ItemWriter {
 
 	int failCount = 0;
-	boolean finished = false;
 
 	@Override
 	public void write(List items) throws Exception {
-		String result = "1";
 		if(failCount < 2) {
 			failCount++;
 			throw new IllegalStateException("Writer FOOBAR");

@@ -16,7 +16,10 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.batch.core.JobParameter;
 
@@ -30,23 +33,23 @@ public class JobParametersEvent {
 	private final Map<String,JobParameterEvent> parameters;
 
 	public JobParametersEvent() {
-		this.parameters = new LinkedHashMap<String, JobParameterEvent>();
+		this.parameters = new LinkedHashMap<>();
 	}
 
 	public JobParametersEvent(Map<String,JobParameter> jobParameters) {
-		this.parameters = new LinkedHashMap<String,JobParameterEvent>();
+		this.parameters = new LinkedHashMap<>();
 		for(Map.Entry<String, JobParameter> entry: jobParameters.entrySet()){
 			if(entry.getValue().getValue() instanceof String){
-				parameters.put(entry.getKey(), new JobParameterEvent(((String) entry.getValue().getValue()), entry.getValue().isIdentifying()));
+				parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if(entry.getValue().getValue() instanceof Long){
-				parameters.put(entry.getKey(), new JobParameterEvent(((Long) entry.getValue().getValue()), entry.getValue().isIdentifying()));
+				parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if(entry.getValue().getValue() instanceof Date){
-				parameters.put(entry.getKey(), new JobParameterEvent(((Date) entry.getValue().getValue()), entry.getValue().isIdentifying()));
+				parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if(entry.getValue().getValue() instanceof Double){
-				parameters.put(entry.getKey(), new JobParameterEvent(((Double) entry.getValue().getValue()), entry.getValue().isIdentifying()));
+				parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 		}
 	}

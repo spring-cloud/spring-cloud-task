@@ -38,7 +38,18 @@ import org.springframework.integration.gateway.GatewayProxyFactoryBean;
 import org.springframework.messaging.MessageChannel;
 
 /**
- * Configures the listeners and channels that are required to emit job messages.
+ * Autoconfigures Spring Batch listeners designed to emit events on the following channels:
+ *
+ * <ul>
+ *     <li>{@link EventEmittingJobExecutionListener} - job-execution-events</li>
+ *     <li>{@link EventEmittingStepExecutionListener} - step-execution-events</li>
+ *     <li>{@link ChunkListener} - chunk-events</li>
+ *     <li>{@link EventEmittingItemReadListener} - item-read-events</li>
+ *     <li>{@link EventEmittingItemProcessListener} - item-process-events</li>
+ *     <li>{@link EventEmittingItemWriteListener} - item-write-events</li>
+ *     <li>{@link EventEmittingSkipListener} - skip-events</li>
+ * </ul>
+ *
  * @author Michael Minella
  * @author Glenn Renfro
  */
@@ -93,12 +104,12 @@ public class BatchEventAutoConfiguration {
 
 		@Bean
 		public ItemReadListener itemReadEventsListener() {
-			return new EventEmittingItemReadEventsListener(listenerChannels.itemReadEvents());
+			return new EventEmittingItemReadListener(listenerChannels.itemReadEvents());
 		}
 
 		@Bean
 		public ItemWriteListener itemWriteEventsListener() {
-			return new EventEmittingItemWriteEventsListener(listenerChannels.itemWriteEvents());
+			return new EventEmittingItemWriteListener(listenerChannels.itemWriteEvents());
 		}
 
 		@Bean
