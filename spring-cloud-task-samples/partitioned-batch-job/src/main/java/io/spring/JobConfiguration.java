@@ -165,8 +165,8 @@ public class JobConfiguration {
 
 	@Bean
 	@Profile("master")
-	public Job job(PartitionHandler partitionHandler) throws Exception {
-		return jobBuilderFactory.get("job")
+	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
+		return jobBuilderFactory.get("partitionedJob")
 				.start(step1(partitionHandler))
 				.build();
 	}
