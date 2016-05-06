@@ -15,17 +15,66 @@
         <relativePath/>
 	</parent>
 
+	<properties>
+		<spring-cloud-task.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-task.version>
+		<spring-cloud-stream.version>1.0.0.RC3</spring-cloud-stream.version>
+		<spring-cloud-deployer-spi.version>1.0.0.M1</spring-cloud-deployer-spi.version>
+		<spring-cloud-deployer-local.version>1.0.0.M1</spring-cloud-deployer-local.version>
+		<spring-cloud-stream-binder-rabbit.version>1.0.0.RC3</spring-cloud-stream-binder-rabbit.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-core</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring-cloud-task.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-batch</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring-cloud-task.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-task-stream</artifactId>
+				<version>${spring-cloud-task.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream</artifactId>
+				<version>${spring-cloud-stream.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-test-support-internal</artifactId>
+				<version>${spring-cloud-stream.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-test-support</artifactId>
+				<version>${spring-cloud-stream.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-deployer-spi</artifactId>
+				<version>${spring-cloud-deployer-spi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-deployer-local</artifactId>
+				<version>${spring-cloud-deployer-local.version}</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-deployer-local</artifactId>
+				<version>${spring-cloud-deployer-spi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+				<version>${spring-cloud-stream-binder-rabbit.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
