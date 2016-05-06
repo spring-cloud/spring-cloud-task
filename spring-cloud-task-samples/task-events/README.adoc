@@ -30,4 +30,4 @@ $ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-1.0.0.BUILD-SNAPSHOT-exec.jar --serv
 
 == Dependencies:
 
-The task processor requires an instance of Redis to be running.
+The task processor requires an instance of RabbitMQ to be running.

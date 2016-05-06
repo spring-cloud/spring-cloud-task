@@ -28,7 +28,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 public class TaskLauncherSinkTests {
 
 	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	private final static String DEFAULT_STATUS = "test_status";
 

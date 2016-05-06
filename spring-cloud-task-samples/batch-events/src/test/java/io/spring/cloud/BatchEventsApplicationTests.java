@@ -30,14 +30,14 @@ import org.springframework.boot.test.OutputCapture;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.context.annotation.PropertySource;
 
 public class BatchEventsApplicationTests {
 
 	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@Rule
 	public OutputCapture outputCapture = new OutputCapture();
