@@ -32,9 +32,9 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.redis.config.RedisServiceAutoConfiguration;
+import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
@@ -51,7 +51,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class BatchExecutionEventTests {
 	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	// Count for two job execution events per job
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
@@ -94,7 +94,7 @@ public class BatchExecutionEventTests {
 	public void testContext() {
 		applicationContext = new SpringApplicationBuilder()
 				.sources(this.getConfigurations(BatchExecutionEventTests.ListenerBinding.class, JobConfiguration.class))
-				.build().run(new String[]{ "--spring.cloud.task.closecontext.enable=false" });
+				.build().run(getCommandLineParams("--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
 
 		assertNotNull(applicationContext.getBean("jobExecutionEventsListener"));
 		assertNotNull(applicationContext.getBean("stepExecutionEventsListener"));
@@ -258,7 +258,7 @@ public class BatchExecutionEventTests {
 				TaskBatchAutoConfiguration.class,
 				TaskEventAutoConfiguration.class,
 				BatchEventAutoConfiguration.class,
-				RedisServiceAutoConfiguration.class,
+				RabbitServiceAutoConfiguration.class,
 				sinkClazz };
 	}
 
@@ -266,7 +266,7 @@ public class BatchExecutionEventTests {
 		return new String[]{ "--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=redis",
+				"--spring.cloud.stream.defaultBinder=rabbit",
 				"--spring.cloud.stream.bindings.task-events.destination=test",
 				sinkChannelParam };
 	}

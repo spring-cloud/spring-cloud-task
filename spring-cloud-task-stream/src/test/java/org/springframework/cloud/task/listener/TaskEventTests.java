@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 public class TaskEventTests {
 
 	@Rule
-	public RedisTestSupport redisTestSupport = new RedisTestSupport();
+	public RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	private static final String TASK_NAME = "taskEventTest";
 

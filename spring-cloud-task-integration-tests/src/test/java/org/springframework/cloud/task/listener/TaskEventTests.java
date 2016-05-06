@@ -31,16 +31,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.redis.config.RedisServiceAutoConfiguration;
+import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -52,7 +50,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class TaskEventTests {
 
 	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	// Count for two task execution events per task
 	static CountDownLatch latch = new CountDownLatch(2);
@@ -64,10 +62,10 @@ public class TaskEventTests {
 		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Object[] {TaskEventsConfiguration.class,
 				TaskEventAutoConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
-				RedisServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext.enable=false",
+				RabbitServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=redis",
+				"--spring.cloud.stream.defaultBinder=rabbit",
 				"--spring.cloud.stream.bindings.task-events.destination=test"});
 		assertNotNull(applicationContext.getBean("taskEventListener"));
 		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
@@ -88,11 +86,6 @@ public class TaskEventTests {
 		public void receive(TaskExecution execution) {
 			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
 			latch.countDown();
-		}
-
-		@Bean
-		public RedisConnectionFactory redisConnectionFactory() {
-			return redisTestSupport.getResource();
 		}
 	}
 }

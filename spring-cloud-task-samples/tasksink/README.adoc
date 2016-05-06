@@ -16,4 +16,4 @@ $ ./mvnw clean install
 
 == Dependencies:
 
-The task processor requires an instance of Redis to be running.
+The task processor requires an instance of RabbitMQ to be running.
