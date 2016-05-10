@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.springframework.batch.core.JobExecution;
@@ -34,6 +35,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -60,6 +62,9 @@ public class EventJobExecutionTests {
 
 	private JobParameters jobParameters;
 	private JobInstance jobInstance;
+
+	@ClassRule
+	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
 
 	@Before
 	public void setup() {
