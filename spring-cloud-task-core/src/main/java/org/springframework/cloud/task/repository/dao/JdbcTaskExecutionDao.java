@@ -369,13 +369,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		public TaskExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			long  id = rs.getLong("TASK_EXECUTION_ID");
 			return new TaskExecution(id,
-					(Integer) rs.getObject("EXIT_CODE"),
+					getNullableExitCode(rs),
 					rs.getString("TASK_NAME"),
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
 					rs.getString("EXIT_MESSAGE"),
 					getTaskParameters(id));
 		}
+                
+                private Integer getNullableExitCode(ResultSet rs) throws SQLException {
+                    int exitCode = rs.getInt("EXIT_CODE");
+                    return !rs.wasNull() ? exitCode : null;
+                }
 	}
 
 }
