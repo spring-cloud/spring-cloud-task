@@ -460,7 +460,7 @@ public class DeployerPartitionHandlerTests {
 		validateStepExecutionResults(results);
 
 		assertTrue("Time difference was too small: " + (endTime.getTime() - startTime.getTime()),
-				endTime.getTime() - startTime.getTime() >= 20000);
+				endTime.getTime() - startTime.getTime() >= 19999);
 	}
 
 	@Test(expected = TimeoutException.class)
