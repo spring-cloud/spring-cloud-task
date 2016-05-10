@@ -118,6 +118,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
 		if(applicationEvent instanceof ApplicationFailedEvent) {
 			this.applicationFailedEvent = (ApplicationFailedEvent) applicationEvent;
+			doTaskEnd();
 		}
 		else if(applicationEvent instanceof ExitCodeEvent){
 			this.exitCodeEvent = (ExitCodeEvent) applicationEvent;

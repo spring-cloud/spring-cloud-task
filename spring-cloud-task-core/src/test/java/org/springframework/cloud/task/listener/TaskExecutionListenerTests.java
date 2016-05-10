@@ -100,9 +100,9 @@ public class TaskExecutionListenerTests {
 		RuntimeException exception = new RuntimeException(EXCEPTION_MESSAGE);
 		setupContextForTaskExecutionListener();
 		SpringApplication application = new SpringApplication();
-		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
@@ -149,9 +149,9 @@ public class TaskExecutionListenerTests {
 		RuntimeException exception = new RuntimeException(EXCEPTION_MESSAGE);
 		setupContextForAnnotatedListener();
 		SpringApplication application = new SpringApplication();
-		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener =
 				context.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),

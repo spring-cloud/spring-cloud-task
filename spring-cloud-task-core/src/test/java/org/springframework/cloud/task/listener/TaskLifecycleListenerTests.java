@@ -104,8 +104,8 @@ public class TaskLifecycleListenerTests {
 		context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
 		SpringApplication application = new SpringApplication();
-		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		this.taskExplorer = context.getBean(TaskExplorer.class);
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		verifyTaskExecution(0, true, 1, exception);
