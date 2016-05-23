@@ -58,9 +58,7 @@ public class TaskProcessor {
 		}
 		properties.put("payload", message);
 
-		TaskLaunchRequest request = new TaskLaunchRequest(processorProperties.getArtifact(),
-				processorProperties.getGroup(), processorProperties.getVersion(), processorProperties.getExtension(),
-				processorProperties.getClassifiers(), properties);
+		TaskLaunchRequest request = new TaskLaunchRequest(processorProperties.getUri(), null, properties);
 
 		return new GenericMessage<TaskLaunchRequest>(request);
 	}

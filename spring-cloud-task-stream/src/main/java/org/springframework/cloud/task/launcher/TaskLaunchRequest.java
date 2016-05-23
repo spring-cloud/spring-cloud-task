@@ -18,11 +18,13 @@ package org.springframework.cloud.task.launcher;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Request that contains the maven repository and property information required by the
@@ -33,76 +35,37 @@ import org.springframework.util.StringUtils;
 public class TaskLaunchRequest implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	private String artifact;
-	private String taskGroupId;
-	private String taskVersion;
-	private String taskExtension;
-	private String taskClassifier;
+	private String uri;
+	private List<String> commandlineArguments;
 	private Map<String, String> properties;
 
 	/**
 	 * Constructor for the TaskLaunchRequest;
-	 * @param artifact is maven artifact coordinate for the task. Must not be empty nor null.
-	 * @param taskGroupId is maven groupId coordinate for the task. Must not be empty nor null.
-	 * @param taskVersion is maven version coordinate for the task. Must not be empty nor null.
-	 * @param taskExtension is maven extension coordinate for the task.
-	 * @param taskClassifier is maven classifier coordinate for the task.
+	 * @param uri the URI to the task artifact to be launched.
+	 * @param commandlineArguments list of commandlineArguments to be used by the task
 	 * @param properties is the environment variables for this task.
 	 */
-	public TaskLaunchRequest(String artifact, String taskGroupId, String taskVersion,
-							 String taskExtension, String taskClassifier,
+	public TaskLaunchRequest(String uri, List<String> commandlineArguments,
 							 Map<String, String> properties) {
-		Assert.hasText(artifact, "artifact must not be empty nor null.");
-		Assert.hasText(taskGroupId, "taskGroupID must not be empty nor null.");
-		Assert.hasText(taskVersion, "taskVersion must not be empty nor null.");
-		Assert.hasText(taskExtension, "taskExtension must not be empty nor null.");
+		Assert.hasText(uri, "uri must not be empty nor null.");
 
-		this.artifact = artifact;
-		this.taskGroupId = taskGroupId;
-		this.taskVersion = taskVersion;
-		this.taskExtension = taskExtension;
-		this.taskClassifier = taskClassifier;
+		this.uri = uri;
+		this.commandlineArguments = (commandlineArguments == null) ? new ArrayList<String>() : commandlineArguments;
 		this.properties = properties == null ? new HashMap() : properties;
 	}
 
 	/**
-	 * Retrieves the group maven coordinate for the task.
- 	 * @return group maven coordinate for the task.
+	 * Returns the current uri to the artifact for this launch request.
 	 */
-	public String getTaskGroupId() {
-		return taskGroupId;
+	public String getUri() {
+		return uri;
 	}
 
 	/**
-	 * Retrieves the version maven coordinate for the task.
-	 * @return version maven coordinate for the task.
+	 * Returns an unmodifiable list of parameters that will be used for the task execution
 	 */
-	public String getTaskVersion() {
-		return taskVersion;
-	}
-
-	/**
-	 * Retrieves the extension maven coordinate for the task.
-	 * @return extension maven coordinate for the task.
-	 */
-	public String getTaskExtension() {
-		return taskExtension;
-	}
-
-	/**
-	 * Retrieves the classifier maven coordinate for the task.
-	 * @return classifier maven coordinate for the task.
-	 */
-	public String getTaskClassifier() {
-		return taskClassifier;
-	}
-
-	/**
-	 * Retrieves the artifact maven coordinate for the task.
-	 * @return artifact maven coordinate for the task.
-	 */
-	public String getArtifact() {
-		return artifact;
+	public List<String> getCommandlineArguments() {
+		return  Collections.unmodifiableList(commandlineArguments);
 	}
 
 	/**
@@ -116,12 +79,11 @@ public class TaskLaunchRequest implements Serializable{
 
 	@Override
 	public String toString() {
-		String coordinates = taskGroupId + ":" + artifact + ":" + taskVersion ;
-		if(StringUtils.hasText(taskClassifier)){
-			coordinates = coordinates + ":" + taskClassifier;
-		}
-		coordinates = coordinates + ":" + taskExtension;
-		return coordinates;
+		return "TaskLaunchRequest{" +
+				"uri='" + uri + '\'' +
+				", commandlineArguments=" + commandlineArguments +
+				", properties=" + properties +
+				'}';
 	}
 
 	@Override
@@ -135,19 +97,10 @@ public class TaskLaunchRequest implements Serializable{
 
 		TaskLaunchRequest that = (TaskLaunchRequest) o;
 
-		if (!artifact.equals(that.artifact)){
+		if (!uri.equals(that.uri)){
 			return false;
 		}
-		if (!taskGroupId.equals(that.taskGroupId)){
-			return false;
-		}
-		if (!taskVersion.equals(that.taskVersion)){
-			return false;
-		}
-		if (!taskExtension.equals(that.taskExtension)){
-			return false;
-		}
-		if (taskClassifier != null ? !taskClassifier.equals(that.taskClassifier) : that.taskClassifier != null){
+		if (!(commandlineArguments != null ? commandlineArguments.equals(that.commandlineArguments) : that.commandlineArguments == null)){
 			return false;
 		}
 		return properties != null ? properties.equals(that.properties) : that.properties == null;
@@ -156,11 +109,8 @@ public class TaskLaunchRequest implements Serializable{
 
 	@Override
 	public int hashCode() {
-		int result = artifact != null ? artifact.hashCode() : 0;
-		result = 31 * result + (taskGroupId != null ? taskGroupId.hashCode() : 0);
-		result = 31 * result + (taskVersion != null ? taskVersion.hashCode() : 0);
-		result = 31 * result + (taskExtension != null ? taskExtension.hashCode() : 0);
-		result = 31 * result + (taskClassifier != null ? taskClassifier.hashCode() : 0);
+		int result = uri != null ? uri.hashCode() : 0;
+		result = 31 * result + (commandlineArguments != null ? commandlineArguments.hashCode() : 0);
 		result = 31 * result + (properties != null ? properties.hashCode() : 0);
 		return result;
 	}

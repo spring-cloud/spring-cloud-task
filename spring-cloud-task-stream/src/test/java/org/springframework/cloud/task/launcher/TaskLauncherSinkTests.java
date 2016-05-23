@@ -16,9 +16,12 @@
 
 package org.springframework.cloud.task.launcher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +44,12 @@ import static org.junit.Assert.assertEquals;
 @SpringApplicationConfiguration(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
 public class TaskLauncherSinkTests {
 
+	private final static String PARAM1 = "FOO";
+
+	private final static String PARAM2 = "BAR";
+
+	private Map<String, String> properties;
+
 	@ClassRule
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
@@ -53,19 +62,32 @@ public class TaskLauncherSinkTests {
 	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
-	@Test
-	public void testSuccess() {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher =
-				 context.getBean(TaskConfiguration.TestTaskLauncher.class);
-
-		Map<String, String> properties = new HashMap<>();
+	@Before
+	public void setup() {
+		properties = new HashMap<>();
 		properties.put("server.port", "0");
-		TaskLaunchRequest request = new TaskLaunchRequest("timestamp-task",
-				"org.springframework.cloud.task.module","1.0.0.BUILD-SNAPSHOT", "jar",
-				"exec", properties);
-		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
-		this.sink.input().send(message);
+	}
+
+	@Test
+	public void testSuccessWithParams() {
+
+		List<String> commandLineArgs = new ArrayList<>();
+		commandLineArgs.add(PARAM1);
+		commandLineArgs.add(PARAM2);
+
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(commandLineArgs);
+
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
+		assertEquals(2, testTaskLauncher.getCommandlineArguments().size());
+		assertEquals(testTaskLauncher.getCommandlineArguments().get(0), PARAM1);
+		assertEquals(testTaskLauncher.getCommandlineArguments().get(1), PARAM2);
+	}
+
+	@Test
+	public void testSuccessNoParams() {
+		TaskConfiguration.TestTaskLauncher testTaskLauncher= launchTask(null);
+		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
+		assertEquals(0, testTaskLauncher.getCommandlineArguments().size());
 	}
 
 	@Test
@@ -78,11 +100,19 @@ public class TaskLauncherSinkTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoTaskLauncher() {
-		Map<String, String> properties = new HashMap<>();
-		properties.put("server.port", "0");
 		TaskLauncherSink sink = new TaskLauncherSink();
-		sink.taskLauncherSink(new TaskLaunchRequest("timestamp-task",
-				"org.springframework.cloud.task.module","1.0.0.BUILD-SNAPSHOT", "jar",
-				"exec", properties));
+		sink.taskLauncherSink(new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",null, properties));
+	}
+
+	private TaskConfiguration.TestTaskLauncher launchTask(List<String> commandLineArgs) {
+		TaskConfiguration.TestTaskLauncher testTaskLauncher =
+				context.getBean(TaskConfiguration.TestTaskLauncher.class);
+
+		TaskLaunchRequest request = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",commandLineArgs, properties);
+		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
+		this.sink.input().send(message);
+		return testTaskLauncher;
 	}
 }

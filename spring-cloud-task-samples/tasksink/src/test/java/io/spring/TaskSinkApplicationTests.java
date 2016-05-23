@@ -59,9 +59,8 @@ public class TaskSinkApplicationTests {
 
 		Map<String, String> properties = new HashMap();
 		properties.put("server.port", "0");
-		TaskLaunchRequest request = new TaskLaunchRequest("timestamp-task",
-				"org.springframework.cloud.task.module","1.0.0.BUILD-SNAPSHOT", "jar",
-				"exec", properties);
+		TaskLaunchRequest request = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT", null, properties);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<TaskLaunchRequest>(request);
 		this.sink.input().send(message);
 		assertEquals(LaunchState.complete, testTaskLauncher.status("TESTSTATUS").getState());

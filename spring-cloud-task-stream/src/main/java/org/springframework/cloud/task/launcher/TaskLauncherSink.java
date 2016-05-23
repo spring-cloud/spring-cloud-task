@@ -19,14 +19,16 @@ package org.springframework.cloud.task.launcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.deployer.resource.maven.MavenResource;
+import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.core.io.Resource;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.util.Assert;
+
 
 /**
  * A sink stream application that launches a tasks.
@@ -42,6 +44,9 @@ public class TaskLauncherSink {
 	@Autowired
 	public TaskLauncher taskLauncher;
 
+	@Autowired
+	private DelegatingResourceLoader delegatingResourceLoader;
+
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
 	 * @param request is a TaskLaunchRequest containing the information required to launch
@@ -55,15 +60,9 @@ public class TaskLauncherSink {
 	private void launchTask(TaskLaunchRequest taskLaunchRequest) {
 		Assert.notNull(taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following resource " + taskLaunchRequest);
-		MavenResource resource = new MavenResource.Builder()
-				.artifactId(taskLaunchRequest.getArtifact())
-				.groupId(taskLaunchRequest.getTaskGroupId())
-				.version(taskLaunchRequest.getTaskVersion())
-				.extension(taskLaunchRequest.getTaskExtension())
-				.classifier(taskLaunchRequest.getTaskClassifier())
-				.build();
-		AppDefinition definition = new AppDefinition(taskLaunchRequest.getArtifact(), taskLaunchRequest.getProperties());
-		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource);
+		Resource resource = delegatingResourceLoader.getResource(taskLaunchRequest.getUri());
+		AppDefinition definition = new AppDefinition("Task-" + taskLaunchRequest.hashCode(), taskLaunchRequest.getProperties());
+		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, null, taskLaunchRequest.getCommandlineArguments());
 		taskLauncher.launch(request);
 	}
 

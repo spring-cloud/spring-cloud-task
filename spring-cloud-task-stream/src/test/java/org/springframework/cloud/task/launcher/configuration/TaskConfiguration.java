@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.launcher.configuration;
 
+import java.util.List;
+
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
@@ -41,9 +43,12 @@ public class TaskConfiguration {
 
 		private LaunchState state = LaunchState.unknown;
 
+		private List<String> commandlineArguments;
+
 		@Override
 		public String launch(AppDeploymentRequest request) {
 			state = LaunchState.complete;
+			this.commandlineArguments = request.getCommandlineArguments();
 			return null;
 		}
 
@@ -55,6 +60,10 @@ public class TaskConfiguration {
 		@Override
 		public TaskStatus status(String id) {
 			return new TaskStatus(LAUNCH_ID, state, null);
+		}
+
+		public List<String> getCommandlineArguments() {
+			return commandlineArguments;
 		}
 	}
 }

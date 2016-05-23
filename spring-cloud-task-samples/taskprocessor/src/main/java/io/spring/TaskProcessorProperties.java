@@ -24,24 +24,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public class TaskProcessorProperties {
 
-	private static final String DEFAULT_GROUP = "io.spring.cloud";
-
-	private static final String DEFAULT_ARTIFACT = "timestamp-task";
-
-	private static final String DEFAULT_VERSION = "1.0.0.BUILD-SNAPSHOT";
-
-	private static final String DEFAULT_EXTENSION = "jar";
+	private static final String DEFAULT_URI = "maven://org.springframework.cloud.task.app:"
+			+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT";
 
 
-	private String group = DEFAULT_GROUP;
-
-	private String artifact = DEFAULT_ARTIFACT;
-
-	private String version = DEFAULT_VERSION;
-
-	private String extension = DEFAULT_EXTENSION;
-
-	private String classifiers;
+	private String uri = DEFAULT_URI;
 
 	private String dataSourceUrl;
 
@@ -52,21 +39,6 @@ public class TaskProcessorProperties {
 	private String dataSourcePassword;
 
 
-	public String getExtension() {
-		return extension;
-	}
-
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
-
-	public String getClassifiers() {
-		return classifiers;
-	}
-
-	public void setClassifiers(String classifiers) {
-		this.classifiers = classifiers;
-	}
 
 	public String getDataSourceUrl() {
 		return dataSourceUrl;
@@ -100,27 +72,11 @@ public class TaskProcessorProperties {
 		this.dataSourcePassword = dataSourcePassword;
 	}
 
-	public void setGroup(String group) {
-		this.group = group;
+	public String getUri() {
+		return uri;
 	}
 
-	public String getGroup() {
-		return group;
-	}
-
-	public String getArtifact() {
-		return artifact;
-	}
-
-	public void setArtifact(String artifact) {
-		this.artifact = artifact;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 }

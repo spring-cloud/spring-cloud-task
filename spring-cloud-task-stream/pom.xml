@@ -13,7 +13,6 @@
 		<artifactId>spring-cloud-task-parent</artifactId>
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 	</parent>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
@@ -56,6 +55,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-batch</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-deployer-resource-support</artifactId>
 		</dependency>
 	</dependencies>
 </project>

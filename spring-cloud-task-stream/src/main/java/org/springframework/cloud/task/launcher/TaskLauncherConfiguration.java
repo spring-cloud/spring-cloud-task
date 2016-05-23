@@ -16,13 +16,21 @@
 
 package org.springframework.cloud.task.launcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.deployer.resource.maven.MavenProperties;
+import org.springframework.cloud.deployer.resource.maven.MavenResourceLoader;
+import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Creates the appropriate Task Launcher Configuration based on the TaskLauncher
@@ -44,4 +52,25 @@ public class TaskLauncherConfiguration {
 		}
 	}
 
+	@Bean
+	public MavenResourceLoader mavenResourceLoader(MavenProperties properties) {
+		return new MavenResourceLoader(properties);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(DelegatingResourceLoader.class)
+	public DelegatingResourceLoader delegatingResourceLoader(MavenResourceLoader mavenResourceLoader) {
+		Map<String, ResourceLoader> loaders = new HashMap<>();
+		loaders.put("maven", mavenResourceLoader);
+		return new DelegatingResourceLoader(loaders);
+	}
+
+	@Bean
+	public MavenProperties mavenProperties() {
+		return new MavenConfigurationProperties();
+	}
+
+	@ConfigurationProperties(prefix = "maven")
+	static class MavenConfigurationProperties extends MavenProperties {
+	}
 }

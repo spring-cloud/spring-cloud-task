@@ -21,6 +21,7 @@
 		<spring-cloud-deployer-spi.version>1.0.0.M1</spring-cloud-deployer-spi.version>
 		<spring-cloud-deployer-local.version>1.0.0.M1</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>1.0.0.RC3</spring-cloud-stream-binder-rabbit.version>
+		<spring.cloud.deployer.resource.support>1.0.0.M1</spring.cloud.deployer.resource.support>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -69,6 +70,11 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-deployer-local</artifactId>
 				<version>${spring-cloud-deployer-spi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-deployer-resource-support</artifactId>
+				<version>${spring.cloud.deployer.resource.support}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
