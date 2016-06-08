@@ -308,7 +308,7 @@ public class SimpleTaskExplorerTests {
 	private TaskExecution createAndSaveTaskExecution(int i) {
 		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
 		taskExecution = this.taskRepository.createTaskExecution(taskExecution.getTaskName(),
-				taskExecution.getStartTime(), taskExecution.getParameters());
+				taskExecution.getStartTime(), taskExecution.getArguments());
 		return taskExecution;
 	}
 

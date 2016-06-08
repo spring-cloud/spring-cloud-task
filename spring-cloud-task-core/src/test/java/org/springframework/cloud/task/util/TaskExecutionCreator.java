@@ -37,9 +37,9 @@ public class TaskExecutionCreator {
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
 		return expectedTaskExecution;
 	}
 
@@ -50,13 +50,13 @@ public class TaskExecutionCreator {
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution createAndStoreTaskExecutionWithParams(TaskRepository taskRepository) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoParam();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		List<String> params = new ArrayList<String>();
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
-		expectedTaskExecution.setParameters(params);
+		expectedTaskExecution.setArguments(params);
 		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getParameters());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
 		return expectedTaskExecution;
 	}
 

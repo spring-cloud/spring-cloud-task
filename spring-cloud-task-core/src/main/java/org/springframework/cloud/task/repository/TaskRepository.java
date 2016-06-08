@@ -47,11 +47,11 @@ public interface TaskRepository {
 	 *
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
-	 * @param parameters list of key/value pairs that configure the task.
+	 * @param arguments list of key/value pairs that configure the task.
 	 * @return the initial {@link TaskExecution}
 	 */
 	@Transactional
 	TaskExecution createTaskExecution(String taskName,
-			Date startTime,List<String> parameters);
+			Date startTime,List<String> arguments);
 
 }

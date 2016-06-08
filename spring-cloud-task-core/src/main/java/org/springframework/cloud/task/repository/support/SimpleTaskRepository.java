@@ -71,11 +71,11 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
-			Date startTime,List<String> parameters) {
+			Date startTime,List<String> arguments) {
 		initialize();
 		validateCreateInformation(startTime, taskName);
 		TaskExecution taskExecution =
-				taskExecutionDao.createTaskExecution(taskName, startTime, parameters);
+				taskExecutionDao.createTaskExecution(taskName, startTime, arguments);
 		logger.debug("Creating: " + taskExecution.toString());
 		return taskExecution;
 	}

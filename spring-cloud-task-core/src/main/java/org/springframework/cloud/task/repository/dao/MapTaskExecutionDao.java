@@ -53,10 +53,10 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
-			Date startTime, List<String> parameters) {
+			Date startTime, List<String> arguments) {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, parameters);
+				startTime, null, null, arguments);
 		taskExecutions.put(taskExecutionId, taskExecution);
 		return taskExecution;
 	}

@@ -215,19 +215,19 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	private void launchWorker(StepExecution workerStepExecution) {
 		//TODO: Refactor these to be passed as command line args once SCD-20 is complete
 		// https://github.com/spring-cloud/spring-cloud-deployer/issues/20
-		Map<String, String> parameters = getParameters(this.taskExecution.getParameters());
-		parameters.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
+		Map<String, String> arguments = getArguments(this.taskExecution.getArguments());
+		arguments.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
 				String.valueOf(workerStepExecution.getJobExecution().getId()));
-		parameters.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
+		arguments.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
 				String.valueOf(workerStepExecution.getId()));
-		parameters.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
+		arguments.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
 
 		AppDefinition definition =
 				new AppDefinition(String.format("%s:%s:%s",
 						taskExecution.getTaskName(),
 						workerStepExecution.getJobExecution().getJobInstance().getJobName(),
 						workerStepExecution.getStepName()),
-						parameters);
+						arguments);
 
 		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
 		environmentProperties.putAll(getCurrentEnvironmentProperties());
@@ -295,15 +295,15 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		return status.equals(BatchStatus.COMPLETED) || status.isGreaterThan(BatchStatus.STARTED);
 	}
 
-	private Map<String, String> getParameters(List<String> parameters) {
-		Map<String, String> parameterMap = new HashMap<>(parameters.size());
+	private Map<String, String> getArguments(List<String> arguments) {
+		Map<String, String> argumentMap = new HashMap<>(arguments.size());
 
-		for (String parameter : parameters) {
-			String[] pieces = parameter.split("=");
-			parameterMap.put(pieces[0], pieces[1]);
+		for (String argument : arguments) {
+			String[] pieces = argument.split("=");
+			argumentMap.put(pieces[0], pieces[1]);
 		}
 
-		return parameterMap;
+		return argumentMap;
 	}
 
 	@Override

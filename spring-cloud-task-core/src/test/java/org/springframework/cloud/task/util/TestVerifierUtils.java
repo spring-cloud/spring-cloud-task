@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  */
 public class TestVerifierUtils {
 
-	public static final int PARAM_SIZE = 5;
+	public static final int ARG_SIZE = 5;
 
 	/**
 	 * Creates a mock {@link Appender} to be added to the root logger.
@@ -79,11 +79,11 @@ public class TestVerifierUtils {
 	}
 
 	/**
-	 * Creates a fully populated TaskExecution (except params) for testing.
+	 * Creates a fully populated TaskExecution (except args) for testing.
 	 *
 	 * @return
 	 */
-	public static TaskExecution createSampleTaskExecutionNoParam() {
+	public static TaskExecution createSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
 		Date startTime = new Date();
 		long executionId = randomGenerator.nextLong();
@@ -94,11 +94,11 @@ public class TestVerifierUtils {
 	}
 
 	/**
-	 * Creates a fully populated TaskExecution (except params) for testing.
+	 * Creates a fully populated TaskExecution (except args) for testing.
 	 *
 	 * @return
 	 */
-	public static TaskExecution endSampleTaskExecutionNoParam() {
+	public static TaskExecution endSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
 		int exitCode = randomGenerator.nextInt();
 		Date startTime = new Date();
@@ -120,12 +120,12 @@ public class TestVerifierUtils {
 		Random randomGenerator = new Random();
 		Date startTime = new Date();
 		String taskName = UUID.randomUUID().toString();
-		List<String> params = new ArrayList<>(PARAM_SIZE);
-		for (int i = 0 ; i < PARAM_SIZE ; i++){
-			params.add(UUID.randomUUID().toString());
+		List<String> args = new ArrayList<>(ARG_SIZE);
+		for (int i = 0; i < ARG_SIZE; i++){
+			args.add(UUID.randomUUID().toString());
 		}
 		return new TaskExecution(executionId, null, taskName,
-				startTime, null, null, params);
+				startTime, null, null, args);
 	}
 
 	/**
@@ -153,22 +153,22 @@ public class TestVerifierUtils {
 		assertEquals("exitMessage must be equal",
 				expectedTaskExecution.getExitMessage(),
 				actualTaskExecution.getExitMessage());
-		if (expectedTaskExecution.getParameters() != null) {
-			assertNotNull("parameters should not be null",
-					actualTaskExecution.getParameters());
-			assertEquals("parameters result set count should match expected count",
-					expectedTaskExecution.getParameters().size(),
-					actualTaskExecution.getParameters().size());
+		if (expectedTaskExecution.getArguments() != null) {
+			assertNotNull("arguments should not be null",
+					actualTaskExecution.getArguments());
+			assertEquals("arguments result set count should match expected count",
+					expectedTaskExecution.getArguments().size(),
+					actualTaskExecution.getArguments().size());
 		}
 		else {
-			assertNull("parameters should be null", actualTaskExecution.getParameters());
+			assertNull("arguments should be null", actualTaskExecution.getArguments());
 		}
-		Set<String> params = new HashSet<String>();
-		for (String param : expectedTaskExecution.getParameters()) {
-			params.add(param);
+		Set<String> args = new HashSet<String>();
+		for (String param : expectedTaskExecution.getArguments()) {
+			args.add(param);
 		}
-		for (String param : actualTaskExecution.getParameters()) {
-			assertTrue("param must exist in the repository", params.contains(param));
+		for (String arg : actualTaskExecution.getArguments()) {
+			assertTrue("arg must exist in the repository", args.contains(arg));
 		}
 	}
 

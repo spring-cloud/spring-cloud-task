@@ -36,11 +36,11 @@ public interface TaskExecutionDao {
 	 *
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
-	 * @param parameters list of key/value pairs that configure the task.
+	 * @param arguments list of key/value pairs that configure the task.
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
 	TaskExecution createTaskExecution( String taskName,
-						   Date startTime, List<String> parameters);
+						   Date startTime, List<String> arguments);
 
 	/**
 	 * Update and existing {@link TaskExecution}.

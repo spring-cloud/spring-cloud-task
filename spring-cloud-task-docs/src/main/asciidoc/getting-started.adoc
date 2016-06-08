@@ -272,17 +272,17 @@ $ mvn clean spring-boot:run
 2016-01-25 11:08:10.185  INFO 12943 --- [           main] com.example.SampleTask                   : No active profile set, falling back to default profiles: default
 2016-01-25 11:08:10.226  INFO 12943 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
 2016-01-25 11:08:11.051  INFO 12943 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
-2016-01-25 11:08:11.065  INFO 12943 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=null, statusCode='null', exitMessage='null', parameters=[]}
+2016-01-25 11:08:11.065  INFO 12943 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=null, statusCode='null', exitMessage='null', arguments=[]}
 Hello World!
 2016-01-25 11:08:11.071  INFO 12943 --- [           main] com.example.SampleTask                   : Started SampleTask in 1.095 seconds (JVM running for 3.826)
 2016-01-25 11:08:11.220  INFO 12943 --- [       Thread-1] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
-2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=Mon Jan 25 11:08:11 CST 2016, statusCode='null', exitMessage='null', parameters=[]}
+2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=Mon Jan 25 11:08:11 CST 2016, statusCode='null', exitMessage='null', arguments=[]}
 2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
 ----
 
 If you notice, there are three lines of interest in the above output:
 
 * `SimpleTaskRepository` logged out the creation of the entry in the `TaskRepository`.
-* The execution of our `CommandLineRunner`, demonstrated by the "Helo World!" output.
-* `SimpleTaskREpository` logging the completion of the task in the `TaskRepository`.
+* The execution of our `CommandLineRunner`, demonstrated by the "Hello World!" output.
+* `SimpleTaskRepository` logging the completion of the task in the `TaskRepository`.
 

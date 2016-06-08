@@ -55,30 +55,30 @@ public class TaskExecution {
 	private Date endTime;
 
 	/**
-	 * Message returned from the task or stacktrace.parameters.
+	 * Message returned from the task or stacktrace.
 	 */
 	private String exitMessage;
 
 	/**
-	 * The parameters that were used for this task execution.
+	 * The arguments that were used for this task execution.
 	 */
-	private List<String> parameters;
+	private List<String> arguments;
 
 	public TaskExecution() {
-		parameters = new ArrayList<>();
+		arguments = new ArrayList<>();
 	}
 
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
 						 Date startTime, Date endTime,
-						 String exitMessage, List<String> parameters) {
+						 String exitMessage, List<String> arguments) {
 
-		Assert.notNull(parameters, "parameters must not be null");
+		Assert.notNull(arguments, "arguments must not be null");
 		Assert.notNull(startTime, "startTime must not be null");
 		this.executionId = executionId;
 		this.exitCode = exitCode;
 		this.taskName = taskName;
 		this.exitMessage = exitMessage;
-		this.parameters = new ArrayList<>(parameters);
+		this.arguments = new ArrayList<>(arguments);
 		this.startTime = (Date)startTime.clone();
 		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 	}
@@ -127,12 +127,12 @@ public class TaskExecution {
 		this.exitMessage = exitMessage;
 	}
 
-	public List<String> getParameters() {
-		return parameters;
+	public List<String> getArguments() {
+		return arguments;
 	}
 
-	public void setParameters(List<String> parameters) {
-		this.parameters = new ArrayList<> (parameters);
+	public void setArguments(List<String> arguments) {
+		this.arguments = new ArrayList<> (arguments);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class TaskExecution {
 				", startTime=" + startTime +
 				", endTime=" + endTime +
 				", exitMessage='" + exitMessage + '\'' +
-				", parameters=" + parameters +
+				", arguments=" + arguments +
 				'}';
 	}
 }

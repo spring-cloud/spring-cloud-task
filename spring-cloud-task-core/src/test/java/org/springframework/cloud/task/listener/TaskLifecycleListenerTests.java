@@ -135,7 +135,7 @@ public class TaskLifecycleListenerTests {
 		assertTrue(taskExecutionsByName.iterator().hasNext());
 		TaskExecution taskExecution = taskExecutionsByName.iterator().next();
 
-		assertEquals(numberOfParams, taskExecution.getParameters().size());
+		assertEquals(numberOfParams, taskExecution.getArguments().size());
 		assertEquals(exitCode, taskExecution.getExitCode());
 
 		if(exception != null) {

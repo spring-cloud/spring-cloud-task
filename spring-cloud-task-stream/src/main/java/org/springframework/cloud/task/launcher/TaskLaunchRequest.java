@@ -62,7 +62,7 @@ public class TaskLaunchRequest implements Serializable{
 	}
 
 	/**
-	 * Returns an unmodifiable list of parameters that will be used for the task execution
+	 * Returns an unmodifiable list of arguments that will be used for the task execution
 	 */
 	public List<String> getCommandlineArguments() {
 		return  Collections.unmodifiableList(commandlineArguments);

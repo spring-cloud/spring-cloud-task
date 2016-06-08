@@ -71,7 +71,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED)"
 			+ "values (?, ?, ?, ?)";
 
-	private static final String CREATE_TASK_PARAMETER = "INSERT into "
+	private static final String CREATE_TASK_ARGUMENT = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
 
 	private static final String CHECK_TASK_EXECUTION_EXISTS = "SELECT COUNT(*) FROM "
@@ -86,7 +86,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "EXIT_MESSAGE, LAST_UPDATED "
 			+ "from %PREFIX%EXECUTION where TASK_EXECUTION_ID = ?";
 
-	private static final String FIND_PARAMS_FROM_ID = "SELECT TASK_EXECUTION_ID, "
+	private static final String FIND_ARGUMENT_FROM_ID = "SELECT TASK_EXECUTION_ID, "
 			+ "TASK_PARAM from %PREFIX%EXECUTION_PARAMS where TASK_EXECUTION_ID = ?";
 
 	private static final String TASK_EXECUTION_COUNT = "SELECT COUNT(*) FROM " +
@@ -126,17 +126,17 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
-			Date startTime, List<String> parameters)  {
+			Date startTime, List<String> arguments)  {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, parameters);
+				startTime, null, null, arguments);
 
 		Object[] queryParameters = new Object[]{ taskExecutionId, startTime, taskName, new Date()};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				queryParameters,
 				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP });
-		insertTaskParameters(taskExecutionId, parameters);
+		insertTaskArguments(taskExecutionId, arguments);
 		return taskExecution;
 	}
 
@@ -175,7 +175,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		try {
 			TaskExecution taskExecution = jdbcTemplate.queryForObject(getQuery(GET_EXECUTION_BY_ID),
 					new TaskExecutionRowMapper(), executionId);
-			taskExecution.setParameters(getTaskParameters(executionId));
+			taskExecution.setArguments(getTaskArguments(executionId));
 			return taskExecution;
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -321,15 +321,15 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	/**
-	 * Convenience method that inserts all parameters from the provided
-	 * task parameters.
+	 * Convenience method that inserts all arguments from the provided
+	 * task arguments.
 	 *
-	 * @param executionId    The executionId to which the params are associated.
-	 * @param taskParameters The parameters to be stored.
+	 * @param executionId    The executionId to which the arguments are associated.
+	 * @param taskArguments  The arguments to be stored.
 	 */
-	private void insertTaskParameters(long executionId, List<String> taskParameters) {
-		for (String param : taskParameters) {
-			insertParameter(executionId, param);
+	private void insertTaskArguments(long executionId, List<String> taskArguments) {
+		for (String args : taskArguments) {
+			insertArgument(executionId, args);
 		}
 	}
 
@@ -337,13 +337,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * Convenience method that inserts an individual records into the
 	 * TASK_EXECUTION_PARAMS table.
 	 */
-	private void insertParameter(long executionId, String param) {
+	private void insertArgument(long executionId, String param) {
 		int[] argTypes = new int[]{ Types.BIGINT, Types.VARCHAR };
 		Object[] args = new Object[]{ executionId, param };
-		jdbcTemplate.update(getQuery(CREATE_TASK_PARAMETER), args, argTypes);
+		jdbcTemplate.update(getQuery(CREATE_TASK_ARGUMENT), args, argTypes);
 	}
 
-	private List<String> getTaskParameters(long executionId){
+	private List<String> getTaskArguments(long executionId){
 		final List<String> params= new ArrayList<>();
 		RowCallbackHandler handler = new RowCallbackHandler() {
 			@Override
@@ -352,7 +352,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			}
 		};
 
-		jdbcTemplate.query(getQuery(FIND_PARAMS_FROM_ID), new Object[] { executionId },
+		jdbcTemplate.query(getQuery(FIND_ARGUMENT_FROM_ID), new Object[] { executionId },
 				handler);
 		return params;
 	}
@@ -374,7 +374,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
 					rs.getString("EXIT_MESSAGE"),
-					getTaskParameters(id));
+					getTaskArguments(id));
 		}
                 
                 private Integer getNullableExitCode(ResultSet rs) throws SQLException {

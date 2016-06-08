@@ -231,7 +231,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		return new TaskExecution(taskExecution.getExecutionId(),
 				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
 				endTime,taskExecution.getExitMessage(),
-				Collections.unmodifiableList(taskExecution.getParameters()));
+				Collections.unmodifiableList(taskExecution.getArguments()));
 	}
 
 	@Override

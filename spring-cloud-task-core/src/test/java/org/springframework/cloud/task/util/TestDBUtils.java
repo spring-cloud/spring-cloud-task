@@ -16,10 +16,6 @@
 
 package org.springframework.cloud.task.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -28,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.Order;
@@ -43,6 +38,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Provides a suite of tools that allow tests the ability to retrieve results from a
@@ -168,10 +167,10 @@ public class TestDBUtils {
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-		List<String> params = new ArrayList<>();
+		List<String> arguments = new ArrayList<>();
 		for (Map row : rows) {
-			params.add((String) row.get("TASK_PARAM"));
+			arguments.add((String) row.get("TASK_PARAM"));
 		}
-		taskExecution.setParameters(params);
+		taskExecution.setArguments(arguments);
 	}
 }

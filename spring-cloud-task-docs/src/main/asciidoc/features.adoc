@@ -83,7 +83,7 @@ assumed to be 0.
 of the task (as indicated via an `ApplicationFailedEvent`), the stack trace for that
 exception will be stored here.
 
-|`parameters`
+|`arguments`
 |A `List` of the string command line arguments as they were passed into the executable boot
 application.
 |===
