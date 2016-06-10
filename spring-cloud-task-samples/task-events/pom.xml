@@ -12,9 +12,9 @@
 	<description>Demo of publishing task events to Spring Cloud Streams</description>
 
 	<parent>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-task-samples</artifactId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.3.5.RELEASE</version>
 	</parent>
 
 	<properties>
@@ -31,16 +31,19 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-core</artifactId>
+			<version>1.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-stream</artifactId>
+			<version>1.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+			<version>1.0.3.BUILD-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
