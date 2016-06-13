@@ -30,4 +30,4 @@ $ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.0.BUILD-SNAPSHOT.jar --se
 
 == Dependencies:
 
-The task processor requires an instance of RabbitMQ to be running.
+The task-events sample requires an instance of RabbitMQ to be running.
