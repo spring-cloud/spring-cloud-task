@@ -1,0 +1,44 @@
+= Task Events
+
+This is a task application that emits batch job events to the following channels:
+
+	* job-execution-events
+	* step-execution-events
+	* chunk-events
+	* item-read-events
+	* item-process-events
+	* item-write-events
+	* skip-events
+
+Note: More information on this topic is available http://docs.spring.io/spring-cloud-task/1.0.0.M2/reference/htmlsingle/#stream-integration-batch-events[here].
+
+== Requirements:
+
+* Java 7 or Above
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ ./mvnw clean install
+----
+
+== Execution:
+
+[source,shell,indent=2]
+----
+$ java -jar target/batch-events-1.0.0.BUILD-SNAPSHOT.jar --spring.cloud.stream.bindings.batch-events.contentType=application/json
+----
+
+For example you can listen for specific job execution events on a specified channel with a Spring Cloud Stream Sink
+like the log sink using the following:
+
+[source,shell,indent=2]
+----
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.0.BUILD-SNAPSHOT.jar --server.port=9090
+--spring.cloud.stream.bindings.input.destination=job-execution-events
+----
+
+== Dependencies:
+
+The batch-events sample requires an instance of RabbitMQ to be running.
