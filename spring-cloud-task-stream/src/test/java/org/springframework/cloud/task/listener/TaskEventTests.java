@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -43,10 +44,10 @@ public class TaskEventTests {
 		ConfigurableApplicationContext applicationContext =
 				SpringApplication.run(new Object[]{ TaskEventsConfiguration.class,
 								TaskEventAutoConfiguration.class,
-								PropertyPlaceholderAutoConfiguration.class },
+								PropertyPlaceholderAutoConfiguration.class,
+								TestSupportBinderAutoConfiguration.class},
 						new String[]{ "--spring.cloud.task.closecontext.enable=false",
-								"--spring.main.web-environment=false",
-								"--spring.cloud.stream.defaultBinder=test" });
+								"--spring.main.web-environment=false"});
 
 		assertNotNull(applicationContext.getBean("taskEventListener"));
 		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));

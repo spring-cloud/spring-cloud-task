@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-local</artifactId>
-			<version>1.0.0.M1</version>
+			<version>1.0.0.RC1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support</artifactId>
-			<version>1.0.3.BUILD-SNAPSHOT</version>
+			<version>1.0.2.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -35,6 +35,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
@@ -183,10 +184,10 @@ public class EventJobExecutionTests {
 		ConfigurableApplicationContext applicationContext =
 				SpringApplication.run(new Object[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
 								EventJobExecutionConfiguration.class,
-								PropertyPlaceholderAutoConfiguration.class},
+								PropertyPlaceholderAutoConfiguration.class,
+								TestSupportBinderAutoConfiguration.class},
 						new String[]{"--spring.cloud.task.closecontext.enable=false",
 								"--spring.main.web-environment=false",
-								"--spring.cloud.stream.defaultBinder=test",
 								disabledPropertyArg});
 
 		for (String beanName : LISTENER_BEAN_NAMES) {
