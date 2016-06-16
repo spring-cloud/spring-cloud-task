@@ -233,7 +233,7 @@ Spring Boot documentation.
 ==== The CommandLineRunner
 
 In Spring, there are many ways to bootstrap an application's logic.  Spring Boot provides
-a convenient method of doing so in an organized manor via their `*Runner` interfaces
+a convenient method of doing so in an organized manner via their `*Runner` interfaces
 (`CommandLineRunner` or `ApplicationRunner`).  A well behaved task will bootstrap any
 logic via one of these two runners.
 

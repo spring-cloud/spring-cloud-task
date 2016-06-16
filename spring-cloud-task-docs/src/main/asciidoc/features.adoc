@@ -72,7 +72,7 @@ assumed to be 0.
 |`taskName`
 |The name for the task as determined by the configured `TaskNameResolver`.
 
-|`starTime`
+|`startTime`
 |The time the task was started as indicated by the `SmartLifecycle#start` call.
 
 |`endTime`
@@ -98,7 +98,7 @@ be of any use to you in the debugging of that.
 
 As such, Spring Boot provides an interface, `ExitCodeExceptionMapper` that allows you to
 map uncaught exceptions to exit codes.  This allows you to be able to indicate at that
-level what went wrong.  Also, by mapping exit codes in this manor, Spring Cloud Task will
+level what went wrong.  Also, by mapping exit codes in this manner, Spring Cloud Task will
 record the exit code returned.
 
 NOTE: While the task is running the exit code will be stored as a null in the repository.
