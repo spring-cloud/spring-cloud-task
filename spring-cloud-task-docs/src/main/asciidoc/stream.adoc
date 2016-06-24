@@ -141,8 +141,29 @@ spring.cloud.stream.bindings.input.destination=job-execution-events
 
 NOTE: A binder implementation is also required to be on the classpath.
 
-To disable the listener functionality, use the following configuration:
+=== Sending Batch Events to different channels
+
+One of the options that Spring Cloud Task offers for batch events is the ability to alter the channel to which a
+specific listener can emit its messages.   To do this use the following configuration:
+`spring.cloud.stream.bindings.<the channel>.destination=<new destination>`.
+For example: If StepExecutionListener needs to emit its messages to another channel `my-step-execution-events`
+instead of the default `step-execution-events` the following configuration can be added:
+
+```
+spring.cloud.stream.bindings.step-execution-events.destination=my-step-execution-events`
+```
+
+=== Disabling Batch Events
+To disable the all batch event listener functionality, use the following configuration:
 
 ```
 spring.cloud.task.batch.events.enabled=false
+```
+
+To disable a specific batch event use the following configuration:
+`spring.cloud.task.events.<batch event listener>.enabled=false`.  For example if the ItemWriteListener should not emit
+events add the following configuration:
+
+```
+spring.cloud.task.events.item.write.events.listener.enabled=false
 ```
