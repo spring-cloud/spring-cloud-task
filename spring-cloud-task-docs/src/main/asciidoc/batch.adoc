@@ -107,3 +107,14 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 Spring Cloud Task provides the ability for batch jobs to emit informational messages.  This
 is covered in detail in the section
 <<stream.adoc#stream-integration-batch-events, Spring Batch Events>>.
+
+[[batch-failures-and-tasks]]
+== Batch Job Exit Codes
+
+As discussed before Spring Cloud Task applications support the ability to record the exit code of a task execution.
+However in cases where a user is running a Spring Batch Job within a task, regardless of how the Batch Job
+Execution completes the result of the task will always be zero when using a CommandLineRunner for example.  Keep in mind
+that a task is a boot application and the exit code returned from the task is the same as a boot application.  So
+to have your task return the exit code based on the result of the batch job execution, you will need to write your
+own CommandLineRunner.
+
