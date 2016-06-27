@@ -82,20 +82,20 @@ public class BatchEventAutoConfiguration {
 
 		@Bean
 		@Lazy
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.job.execution.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.job-execution", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public JobExecutionListener jobExecutionEventsListener() {
 			return new EventEmittingJobExecutionListener(listenerChannels.jobExecutionEvents());
 		}
 
 		@Bean
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.step.execution.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.step-execution", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public StepExecutionListener stepExecutionEventsListener() {
 			return new EventEmittingStepExecutionListener(listenerChannels.stepExecutionEvents());
 		}
 
 		@Bean
 		@Lazy
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.chunk.events.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.chunk", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public GatewayProxyFactoryBean chunkEventsListener() {
 			GatewayProxyFactoryBean factoryBean =
 					new GatewayProxyFactoryBean(ChunkListener.class);
@@ -106,25 +106,25 @@ public class BatchEventAutoConfiguration {
 		}
 
 		@Bean
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.item.read.events.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.item-read", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public ItemReadListener itemReadEventsListener() {
 			return new EventEmittingItemReadListener(listenerChannels.itemReadEvents());
 		}
 
 		@Bean
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.item.write.events.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.item-write", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public ItemWriteListener itemWriteEventsListener() {
 			return new EventEmittingItemWriteListener(listenerChannels.itemWriteEvents());
 		}
 
 		@Bean
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.item.process.events.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.item-process", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public ItemProcessListener itemProcessEventsListener() {
 			return new EventEmittingItemProcessListener(listenerChannels.itemProcessEvents());
 		}
 
 		@Bean
-		@ConditionalOnProperty(prefix = "spring.cloud.task.events.skip.events.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
+		@ConditionalOnProperty(prefix = "spring.cloud.task.batch.events.skip", name = "enabled", havingValue = "true", matchIfMissing = true)
 		public SkipListener skipEventsListener() {
 			return new EventEmittingSkipListener(listenerChannels.skipEvents());
 		}

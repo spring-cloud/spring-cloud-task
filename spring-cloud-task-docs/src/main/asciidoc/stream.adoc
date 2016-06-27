@@ -170,11 +170,11 @@ To disable a specific batch event use the following configuration:
 `spring.cloud.task.events.<batch event listener>.enabled=false`:
 
 ```
-spring.cloud.task.events.job.execution.listener.enabled=false
-spring.cloud.task.events.step.execution.listener.enabled=false
-spring.cloud.task.events.chunk.listener.enabled=false
-spring.cloud.task.events.item.read.listener.enabled=false
-spring.cloud.task.events.item.write.listener.enabled=false
-spring.cloud.task.events.item.process.listener.enabled=false
-spring.cloud.task.events.skip.listener.enabled=false
+spring.cloud.task.batch.events.job-execution.enabled=false
+spring.cloud.task.batch.events.step-execution.enabled=false
+spring.cloud.task.batch.events.chunk.enabled=false
+spring.cloud.task.batch.events.item-read.enabled=false
+spring.cloud.task.batch.events.item-process.enabled=false
+spring.cloud.task.batch.events.item-write.enabled=false
+spring.cloud.task.batch.events.skip.enabled=false
 ```

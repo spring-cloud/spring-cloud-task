@@ -138,43 +138,43 @@ public class EventJobExecutionTests {
 
 	@Test
 	public void testDisabledJobExecutionListener() {
-		testDisabledConfiguration("spring.cloud.task.events.job.execution.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.job-execution.enabled",
 				BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledStepExecutionListener() {
-		testDisabledConfiguration("spring.cloud.task.events.step.execution.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.step-execution.enabled",
 				BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledChunkListener() {
-		testDisabledConfiguration("spring.cloud.task.events.chunk.events.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.chunk.enabled",
 				BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledItemReadListener() {
-		testDisabledConfiguration("spring.cloud.task.events.item.read.events.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.item-read.enabled",
 				BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledItemWriteListener() {
-		testDisabledConfiguration("spring.cloud.task.events.item.write.events.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.item-write.enabled",
 				BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledItemProcessListener() {
-		testDisabledConfiguration("spring.cloud.task.events.item.process.events.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.item-process.enabled",
 				BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER);
 	}
 
 	@Test
 	public void testDisabledSkipEventListener() {
-		testDisabledConfiguration("spring.cloud.task.events.skip.events.listener.enabled",
+		testDisabledConfiguration("spring.cloud.task.batch.events.skip.enabled",
 				BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
 	}
 
