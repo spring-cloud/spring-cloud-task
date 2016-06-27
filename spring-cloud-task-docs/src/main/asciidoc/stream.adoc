@@ -108,6 +108,12 @@ or sink downstream does not have the spring-cloud-task-core jar on its classpath
 
 NOTE: A binder implementation is also required to be on the classpath.
 
+[[stream-integration-disable-task-events]]
+=== Disabling Specific Task Events
+
+To task events, the `spring.cloud.task.events.enabled` property can be set to `false`.
+
+
 [[stream-integration-batch-events]]
 == Spring Batch Events
 
@@ -161,9 +167,14 @@ spring.cloud.task.batch.events.enabled=false
 ```
 
 To disable a specific batch event use the following configuration:
-`spring.cloud.task.events.<batch event listener>.enabled=false`.  For example if the ItemWriteListener should not emit
-events add the following configuration:
+`spring.cloud.task.events.<batch event listener>.enabled=false`:
 
 ```
-spring.cloud.task.events.item.write.events.listener.enabled=false
+spring.cloud.task.events.job.execution.listener.enabled=false
+spring.cloud.task.events.step.execution.listener.enabled=false
+spring.cloud.task.events.chunk.listener.enabled=false
+spring.cloud.task.events.item.read.listener.enabled=false
+spring.cloud.task.events.item.write.listener.enabled=false
+spring.cloud.task.events.item.process.listener.enabled=false
+spring.cloud.task.events.skip.listener.enabled=false
 ```
