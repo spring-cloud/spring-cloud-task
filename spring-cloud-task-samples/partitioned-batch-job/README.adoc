@@ -18,8 +18,15 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
+$ export spring_datasource_url=jdbc:mariadb://localhost:3306/<your databse>
+$ export spring_datasource_username=<your username>
+$ export spring_datasource_password=<your password>
+$ export spring_datasource_driverClassName=org.mariadb.jdbc.Driver
 $ java -jar -Dspring.profiles.active=master target/partitioned-batch-job-1.0.0.BUILD-SNAPSHOT.jar
 ----
+
+NOTE: This example will use require a MySql RDBMS repository and currently uses the mariadb jdbc driver to connect.
+You can changes this another driver based on your needs.
 
 == Dependencies:
 
