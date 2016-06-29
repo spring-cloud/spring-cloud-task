@@ -142,7 +142,7 @@ public class DeployerPartitionHandlerTests {
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
 		assertEquals(this.resource, request.getResource());
-		assertEquals(0, request.getEnvironmentProperties().size());
+		assertEquals(0, request.getDeploymentProperties().size());
 
 		AppDefinition appDefinition = request.getDefinition();
 
@@ -344,9 +344,9 @@ public class DeployerPartitionHandlerTests {
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
 		assertEquals(this.resource, request.getResource());
-		assertEquals(2, request.getEnvironmentProperties().size());
-		assertEquals("bar", request.getEnvironmentProperties().get("foo"));
-		assertEquals("qux", request.getEnvironmentProperties().get("baz"));
+		assertEquals(2, request.getDeploymentProperties().size());
+		assertEquals("bar", request.getDeploymentProperties().get("foo"));
+		assertEquals("qux", request.getDeploymentProperties().get("baz"));
 
 		AppDefinition appDefinition = request.getDefinition();
 
@@ -399,10 +399,10 @@ public class DeployerPartitionHandlerTests {
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
 		assertEquals(this.resource, request.getResource());
-		assertEquals(3, request.getEnvironmentProperties().size());
-		assertEquals("bar", request.getEnvironmentProperties().get("foo"));
-		assertEquals("qux", request.getEnvironmentProperties().get("baz"));
-		assertEquals("batch", request.getEnvironmentProperties().get("task"));
+		assertEquals(3, request.getDeploymentProperties().size());
+		assertEquals("bar", request.getDeploymentProperties().get("foo"));
+		assertEquals("qux", request.getDeploymentProperties().get("baz"));
+		assertEquals("batch", request.getDeploymentProperties().get("task"));
 
 		AppDefinition appDefinition = request.getDefinition();
 
@@ -588,7 +588,7 @@ public class DeployerPartitionHandlerTests {
 		for (int i = 4; i < (numberOfPartitions + 4); i++) {
 			AppDeploymentRequest request = allRequests.get(i - 4);
 			assertEquals(this.resource, request.getResource());
-			assertEquals(0, request.getEnvironmentProperties().size());
+			assertEquals(0, request.getDeploymentProperties().size());
 
 			AppDefinition appDefinition = request.getDefinition();
 			assertEquals("partitionedJobTask:partitionedJob:step1:partition" + (i - 3), appDefinition.getName());
