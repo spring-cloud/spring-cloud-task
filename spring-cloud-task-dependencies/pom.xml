@@ -16,7 +16,6 @@
 	</parent>
 
 	<properties>
-		<spring-cloud-task.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-task.version>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-deployer-spi.version>1.0.0.RELEASE</spring-cloud-deployer-spi.version>
 		<spring-cloud-deployer-local.version>1.0.0.RELEASE</spring-cloud-deployer-local.version>
