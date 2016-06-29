@@ -16,9 +16,14 @@
 
 package org.springframework.cloud.task.launcher;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.deployer.resource.maven.MavenProperties;
+import org.springframework.cloud.deployer.resource.maven.MavenResource;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
@@ -60,7 +65,10 @@ public class TaskLauncherSink {
 	private void launchTask(TaskLaunchRequest taskLaunchRequest) {
 		Assert.notNull(taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following resource " + taskLaunchRequest);
-		Resource resource = delegatingResourceLoader.getResource(taskLaunchRequest.getUri());
+		MavenProperties mavenProperties = new MavenProperties();
+		Map<String, MavenProperties.RemoteRepository> remoteRepositoryMap = new HashMap<>();
+		mavenProperties.setRemoteRepositories(remoteRepositoryMap);
+		MavenResource resource = MavenResource.parse(taskLaunchRequest.getUri(), mavenProperties);
 		AppDefinition definition = new AppDefinition("Task-" + taskLaunchRequest.hashCode(), taskLaunchRequest.getProperties());
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, null, taskLaunchRequest.getCommandlineArguments());
 		taskLauncher.launch(request);
