@@ -67,7 +67,6 @@
 	<modules>
 		<module>spring-cloud-task-dependencies</module>
 		<module>spring-cloud-task-core</module>
-		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-docs</module>
 		<module>spring-cloud-task-batch</module>
 		<module>spring-cloud-task-stream</module>
@@ -218,6 +217,12 @@
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
+		</profile>
+		<profile>
+			<id>samples</id>
+			<modules>
+				<module>spring-cloud-task-samples</module>
+			</modules>
 		</profile>
 	</profiles>
 </project>
