@@ -44,9 +44,6 @@ import org.springframework.core.io.ResourceLoader;
 @ConditionalOnClass({TaskLauncher.class})
 public class TaskLauncherConfiguration {
 
-	@Value("${maven.remoteRepositories.springRepo.url:https://repo.spring.io/libs-snapshot}")
-	private String repository;
-
 	@Configuration
 	@ConditionalOnMissingBean(name = "taskLauncher")
 	@ConditionalOnClass({LocalTaskLauncher.class})
@@ -72,9 +69,12 @@ public class TaskLauncherConfiguration {
 
 	@Bean
 	public MavenProperties mavenProperties() {
-		MavenProperties mavenProperties = new MavenProperties();
-		mavenProperties.setRemoteRepositories(new HashMap<>(Collections.singletonMap("springRepo",
-							new MavenProperties.RemoteRepository(repository))));
-		return mavenProperties;
+		return new MavenConfigurationProperties();
 	}
+
+	@ConfigurationProperties(prefix = "maven")
+	static class MavenConfigurationProperties extends MavenProperties {
+
+	}
+
 }
