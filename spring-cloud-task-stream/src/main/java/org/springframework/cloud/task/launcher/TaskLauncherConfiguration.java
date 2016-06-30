@@ -72,5 +72,7 @@ public class TaskLauncherConfiguration {
 
 	@ConfigurationProperties(prefix = "maven")
 	static class MavenConfigurationProperties extends MavenProperties {
+
 	}
+
 }

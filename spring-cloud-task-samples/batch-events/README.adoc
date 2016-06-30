@@ -35,7 +35,7 @@ like the log sink using the following:
 
 [source,shell,indent=2]
 ----
-$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.0.BUILD-SNAPSHOT.jar --server.port=9090
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.1.BUILD-SNAPSHOT.jar --server.port=9090
 --spring.cloud.stream.bindings.input.destination=job-execution-events
 ----
 
