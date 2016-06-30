@@ -21,6 +21,7 @@
 		<spring-cloud-deployer-local.version>1.0.1.RELEASE</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>1.0.2.RELEASE</spring-cloud-stream-binder-rabbit.version>
 		<spring.cloud.deployer.resource.support>1.0.1.RELEASE</spring.cloud.deployer.resource.support>
+		<spring-cloud-deployer-resource-maven>1.0.1.RELEASE</spring-cloud-deployer-resource-maven>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -80,6 +81,11 @@
 				<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
 				<version>${spring-cloud-stream-binder-rabbit.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-deployer-resource-maven</artifactId>
+				<version>${spring-cloud-deployer-resource-maven}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

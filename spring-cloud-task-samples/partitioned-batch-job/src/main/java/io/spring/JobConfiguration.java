@@ -60,9 +60,6 @@ import org.springframework.core.io.ResourceLoader;
 @Configuration
 public class JobConfiguration {
 
-	@Value("${maven.remoteRepositories.springRepo.url:https://repo.spring.io/libs-snapshot}")
-	private String repository;
-
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
 
@@ -184,26 +181,4 @@ public class JobConfiguration {
 				.build();
 	}
 
-	@Bean
-	public MavenResourceLoader mavenResourceLoader(MavenProperties properties) {
-		return new MavenResourceLoader(properties);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(DelegatingResourceLoader.class)
-	public DelegatingResourceLoader delegatingResourceLoader(MavenResourceLoader mavenResourceLoader) {
-		Map<String, ResourceLoader> loaders = new HashMap<>();
-		loaders.put("maven", mavenResourceLoader);
-		return new DelegatingResourceLoader(loaders);
-	}
-
-	@Bean
-	public MavenProperties mavenProperties() {
-		return new MavenConfigurationProperties();
-	}
-
-	@ConfigurationProperties(prefix = "maven")
-	static class MavenConfigurationProperties extends MavenProperties {
-
-	}
 }
