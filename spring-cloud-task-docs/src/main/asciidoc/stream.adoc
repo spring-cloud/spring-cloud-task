@@ -42,6 +42,10 @@ repository execute a maven build from the `spring-cloud-task-samples` directory 
 property `skipInstall` set to false.  For example:
 `mvn clean install`.
 
+NOTE:  The maven.remoteRepositories.springRepo.url property will need to be set to
+the location of the remote repository from which the über-jar is located.  If not
+set the default is `https://repo.spring.io/libs-snapshot`.
+
 [[stream-integration-launching-sink-dataflow]]
 === Spring Cloud Data Flow
 

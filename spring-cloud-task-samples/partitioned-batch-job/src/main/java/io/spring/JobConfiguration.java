@@ -15,6 +15,7 @@
  */
 package io.spring;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -37,6 +38,8 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.deployer.resource.maven.MavenProperties;
 import org.springframework.cloud.deployer.resource.maven.MavenResource;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
@@ -53,6 +56,9 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 public class JobConfiguration {
+
+	@Value("${maven.remoteRepositories.springRepo.url:https://repo.spring.io/libs-snapshot}")
+	private String repository;
 
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
@@ -91,7 +97,12 @@ public class JobConfiguration {
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		MavenResource resource = MavenResource.parse("io.spring.cloud:partitioned-batch-job:1.0.0.BUILD-SNAPSHOT");
+
+		MavenProperties mavenProperties = new MavenProperties();
+		mavenProperties.setRemoteRepositories(new HashMap<>(Collections.singletonMap("springRepo",
+				new MavenProperties.RemoteRepository(repository))));
+		MavenResource resource = MavenResource.parse("io.spring.cloud:partitioned-batch-job:1.0.1.BUILD-SNAPSHOT",
+				mavenProperties);
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
