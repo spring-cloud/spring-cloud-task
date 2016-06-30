@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.deployer.resource.maven.MavenProperties;
@@ -33,6 +34,7 @@ import org.springframework.cloud.deployer.resource.maven.MavenResourceLoader;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -47,6 +49,9 @@ import org.springframework.util.CollectionUtils;
 @ConditionalOnBean({Job.class})
 @ConditionalOnProperty(name = "spring.cloud.task.batch.listener.enable", havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
+
+	@Autowired
+	ApplicationContext context;
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -99,6 +104,21 @@ public class TaskBatchAutoConfiguration {
 		@ConfigurationProperties(prefix = "maven")
 		static class MavenConfigurationProperties extends MavenProperties {
 
+		}
+	}
+
+	@Configuration
+	@ConditionalOnMissingClass(name = "org.springframework.cloud.deployer.resource.maven.MavenResourceLoader")
+	public static class DefaultResourceConfiguration {
+		@Autowired
+		ApplicationContext context;
+
+		@Bean
+		@ConditionalOnMissingBean(DelegatingResourceLoader.class)
+		public DelegatingResourceLoader delegatingResourceLoader(ResourceLoader resourceLoader) {
+			Map<String, ResourceLoader> loaders = new HashMap<>();
+			loaders.put("file", context);
+			return new DelegatingResourceLoader(loaders);
 		}
 	}
 }
