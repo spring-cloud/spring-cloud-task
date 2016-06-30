@@ -44,7 +44,7 @@ property `skipInstall` set to false.  For example:
 
 NOTE:  The maven.remoteRepositories.springRepo.url property will need to be set to
 the location of the remote repository from which the über-jar is located.  If not
-set, the default will use the local repo.
+set, then there will be no remote repository, so it will rely upon the local repository only.
 
 [[stream-integration-launching-sink-dataflow]]
 === Spring Cloud Data Flow

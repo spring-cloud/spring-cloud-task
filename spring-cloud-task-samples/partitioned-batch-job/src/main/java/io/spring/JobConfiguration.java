@@ -15,7 +15,6 @@
  */
 package io.spring;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -28,7 +27,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
@@ -38,9 +36,11 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.deployer.resource.maven.MavenProperties;
-import org.springframework.cloud.deployer.resource.maven.MavenResource;
+import org.springframework.cloud.deployer.resource.maven.MavenResourceLoader;
+import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
@@ -50,9 +50,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 @Configuration
 public class JobConfiguration {
@@ -74,6 +77,9 @@ public class JobConfiguration {
 
 	@Autowired
 	private ConfigurableApplicationContext context;
+
+	@Autowired
+	private DelegatingResourceLoader delegatingResourceLoader;
 
 	private static final int GRID_SIZE = 4;
 
@@ -98,11 +104,7 @@ public class JobConfiguration {
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
 
-		MavenProperties mavenProperties = new MavenProperties();
-		mavenProperties.setRemoteRepositories(new HashMap<>(Collections.singletonMap("springRepo",
-				new MavenProperties.RemoteRepository(repository))));
-		MavenResource resource = MavenResource.parse("io.spring.cloud:partitioned-batch-job:1.0.1.BUILD-SNAPSHOT",
-				mavenProperties);
+		Resource resource = delegatingResourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.0.0.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
@@ -180,5 +182,28 @@ public class JobConfiguration {
 		return jobBuilderFactory.get("partitionedJob")
 				.start(step1(partitionHandler))
 				.build();
+	}
+
+	@Bean
+	public MavenResourceLoader mavenResourceLoader(MavenProperties properties) {
+		return new MavenResourceLoader(properties);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(DelegatingResourceLoader.class)
+	public DelegatingResourceLoader delegatingResourceLoader(MavenResourceLoader mavenResourceLoader) {
+		Map<String, ResourceLoader> loaders = new HashMap<>();
+		loaders.put("maven", mavenResourceLoader);
+		return new DelegatingResourceLoader(loaders);
+	}
+
+	@Bean
+	public MavenProperties mavenProperties() {
+		return new MavenConfigurationProperties();
+	}
+
+	@ConfigurationProperties(prefix = "maven")
+	static class MavenConfigurationProperties extends MavenProperties {
+
 	}
 }
