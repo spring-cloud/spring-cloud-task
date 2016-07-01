@@ -64,11 +64,16 @@ look like the following:
 @Bean
 public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 		JobExplorer jobExplorer) throws Exception {
-	MavenResource resource =
+
+	MavenProperties mavenProperties = new MavenProperties();
+	mavenProperties.setRemoteRepositories(new HashMap<>(Collections.singletonMap("springRepo",
+		new MavenProperties.RemoteRepository(repository))));
+
+ 	MavenResource resource =
 		MavenResource.parse(String.format("%s:%s:%s",
 				"io.spring.cloud",
 				"partitioned-batch-job",
-				"1.0.0.RELEASE"));
+				"1.0.0.RELEASE"), mavenProperties);
 
 	DeployerPartitionHandler partitionHandler =
 		new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
@@ -85,11 +90,12 @@ public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 
 The `Resource` to be executed is expected to be a Spring Boot über-jar with a
 `DeployerStepExecutionHandler` configured as a `CommandLineRunner` in the current context.
-Both the master and slave are expected to have visibility into the same data store being
-used as the job repository and task repository.  Once the underlying infrastructure has
-bootstrapped the Spring Boot jar and Spring Boot has launched the
-`DeployerStepExecutionHandler`, the step handler will execute the Step requested.  An
-example of configuring the `DefaultStepExecutionHandler`:
+The repository enumerated in the example above should be the location of the remote repository
+from which the über-jar is located. Both the master and slave are expected to have
+visibility into the same data store being used as the job repository and task repository.
+Once the underlying infrastructure has bootstrapped the Spring Boot jar and Spring Boot
+has launched the `DeployerStepExecutionHandler`, the step handler will execute the Step
+requested.  An example of configuring the `DefaultStepExecutionHandler`:
 
 ```
 @Bean

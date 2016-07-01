@@ -38,6 +38,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.deployer.resource.maven.MavenResource;
+import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
@@ -47,6 +48,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
 
 /**
  * @author Michael Minella
@@ -68,6 +70,9 @@ public class JobConfiguration {
 
 	@Autowired
 	private ConfigurableApplicationContext context;
+
+	@Autowired
+	private DelegatingResourceLoader delegatingResourceLoader;
 
 	private static final int GRID_SIZE = 4;
 
@@ -91,7 +96,7 @@ public class JobConfiguration {
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		MavenResource resource = MavenResource.parse("io.spring.cloud:partitioned-batch-job:1.0.0.BUILD-SNAPSHOT");
+		Resource resource = delegatingResourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.0.1.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
