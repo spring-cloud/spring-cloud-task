@@ -25,6 +25,7 @@ import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -54,6 +55,7 @@ import org.springframework.messaging.MessageChannel;
  * @author Glenn Renfro
  */
 @Configuration
+@ConditionalOnClass(Job.class)
 @ConditionalOnBean(value = { Job.class, TaskLifecycleListener.class })
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BatchEventAutoConfiguration {
@@ -68,11 +70,12 @@ public class BatchEventAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public TaskBatchEventListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
+	public TaskBatchEventListenerBeanPostProcessor batchTaskEventListenerBeanPostProcessor() {
 		return new TaskBatchEventListenerBeanPostProcessor();
 	}
 
 	@Configuration
+	@ConditionalOnClass(EnableBinding.class)
 	@EnableBinding(BatchEventsChannels.class)
 	@ConditionalOnMissingBean(name = JOB_EXECUTION_EVENTS_LISTENER)
 	public static class JobExecutionListenerConfiguration {

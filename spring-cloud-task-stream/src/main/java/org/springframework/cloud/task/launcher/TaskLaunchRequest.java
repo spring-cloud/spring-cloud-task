@@ -37,21 +37,25 @@ public class TaskLaunchRequest implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String uri;
 	private List<String> commandlineArguments;
-	private Map<String, String> properties;
+	private Map<String, String> environmentProperties;
+	private Map<String, String> deploymentProperties;
 
 	/**
 	 * Constructor for the TaskLaunchRequest;
 	 * @param uri the URI to the task artifact to be launched.
 	 * @param commandlineArguments list of commandlineArguments to be used by the task
-	 * @param properties is the environment variables for this task.
+	 * @param environmentProperties are the environment variables for this task.
+	 * @param deploymentProperties are the variables used to setup task on the platform.
 	 */
 	public TaskLaunchRequest(String uri, List<String> commandlineArguments,
-							 Map<String, String> properties) {
+							 Map<String, String> environmentProperties,
+							 Map<String, String> deploymentProperties) {
 		Assert.hasText(uri, "uri must not be empty nor null.");
 
 		this.uri = uri;
 		this.commandlineArguments = (commandlineArguments == null) ? new ArrayList<String>() : commandlineArguments;
-		this.properties = properties == null ? new HashMap() : properties;
+		this.environmentProperties = environmentProperties == null ? new HashMap<String, String>() : environmentProperties;
+		this.deploymentProperties = deploymentProperties == null ? new HashMap<String, String>() : deploymentProperties;
 	}
 
 	/**
@@ -73,8 +77,17 @@ public class TaskLaunchRequest implements Serializable{
 	 * @return map containing the environment variables for the task.
 	 */
 
-	public Map<String, String> getProperties() {
-		return properties;
+	public Map<String, String> getEnvironmentProperties() {
+		return environmentProperties;
+	}
+
+	/**
+	 * Returns the properties used by a {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}
+	 *
+	 * @return deployment properties
+	 */
+	public Map<String, String> getDeploymentProperties() {
+		return deploymentProperties;
 	}
 
 	@Override
@@ -82,7 +95,8 @@ public class TaskLaunchRequest implements Serializable{
 		return "TaskLaunchRequest{" +
 				"uri='" + uri + '\'' +
 				", commandlineArguments=" + commandlineArguments +
-				", properties=" + properties +
+				", environmentProperties=" + environmentProperties +
+				", deploymentProperties=" + deploymentProperties +
 				'}';
 	}
 
@@ -103,7 +117,11 @@ public class TaskLaunchRequest implements Serializable{
 		if (!(commandlineArguments != null ? commandlineArguments.equals(that.commandlineArguments) : that.commandlineArguments == null)){
 			return false;
 		}
-		return properties != null ? properties.equals(that.properties) : that.properties == null;
+		if(!(deploymentProperties != null ? deploymentProperties.equals(that.deploymentProperties) : that.deploymentProperties == null))
+		{
+			return false;
+		}
+		return environmentProperties != null ? environmentProperties.equals(that.environmentProperties) : that.environmentProperties == null;
 
 	}
 
@@ -111,7 +129,8 @@ public class TaskLaunchRequest implements Serializable{
 	public int hashCode() {
 		int result = uri != null ? uri.hashCode() : 0;
 		result = 31 * result + (commandlineArguments != null ? commandlineArguments.hashCode() : 0);
-		result = 31 * result + (properties != null ? properties.hashCode() : 0);
+		result = 31 * result + (environmentProperties != null ? environmentProperties.hashCode() : 0);
+		result = 31 * result + (deploymentProperties != null ? deploymentProperties.hashCode() : 0);
 		return result;
 	}
 }
