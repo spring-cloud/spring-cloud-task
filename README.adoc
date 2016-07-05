@@ -9,11 +9,18 @@ process persists beyond the life of the task for future reporting.
 
 * Java 7 or Above
 
-== Build:
+== Build Main Project:
 
 [source,shell,indent=2]
 ----
 $ ./mvnw clean install
+----
+
+== Build Samples:
+
+[source,shell,indent=2]
+----
+$ ./mvnw -P samples clean install
 ----
 
 == Example:
