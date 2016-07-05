@@ -95,7 +95,7 @@ from which the über-jar is located. Both the master and slave are expected to h
 visibility into the same data store being used as the job repository and task repository.
 Once the underlying infrastructure has bootstrapped the Spring Boot jar and Spring Boot
 has launched the `DeployerStepExecutionHandler`, the step handler will execute the Step
-requested.  An example of configuring the `DefaultStepExecutionHandler`:
+requested.  An example of configuring the `DefaultStepExecutionHandler` is show below:
 
 ```
 @Bean

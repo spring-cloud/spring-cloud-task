@@ -35,7 +35,7 @@ import org.springframework.core.io.ResourceLoader;
  * Autoconfiguration of a file or Maven based {@link ResourceLoader}.
  *
  * @author Michael Minella
- * @since 1.0.2
+ * @since 1.0.1
  */
 @Configuration
 public class ResourceLoadingAutoConfiguration {

@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-local</artifactId>
-			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
