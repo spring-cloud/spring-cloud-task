@@ -18,7 +18,6 @@ package org.springframework.cloud.task.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -71,14 +70,11 @@ public class ResourceLoadingAutoConfiguration {
 	@ConditionalOnMissingClass("org.springframework.cloud.deployer.resource.maven.MavenResourceLoader")
 	public static class LocalResourceLoadingAutoConfiguration {
 
-		@Autowired
-		private ApplicationContext context;
-
 		@Bean
 		@ConditionalOnMissingBean
-		public DelegatingResourceLoader delegatingResourceLoader() {
+		public DelegatingResourceLoader delegatingResourceLoader(ApplicationContext context) {
 			Map<String, ResourceLoader> loaders = new HashMap<>(1);
-			loaders.put("file", this.context);
+			loaders.put("file", context);
 
 			return new DelegatingResourceLoader(loaders);
 		}
