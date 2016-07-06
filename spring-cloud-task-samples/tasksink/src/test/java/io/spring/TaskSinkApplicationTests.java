@@ -16,15 +16,13 @@
 
 package io.spring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import io.spring.configuration.TaskSinkConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
@@ -35,6 +33,9 @@ import org.springframework.cloud.task.launcher.TaskLauncherSink;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Glenn Renfro
@@ -60,7 +61,7 @@ public class TaskSinkApplicationTests {
 		Map<String, String> properties = new HashMap();
 		properties.put("server.port", "0");
 		TaskLaunchRequest request = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT", null, properties);
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT", null, properties, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<TaskLaunchRequest>(request);
 		this.sink.input().send(message);
 		assertEquals(LaunchState.complete, testTaskLauncher.status("TESTSTATUS").getState());

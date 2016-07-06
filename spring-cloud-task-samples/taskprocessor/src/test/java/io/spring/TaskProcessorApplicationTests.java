@@ -16,15 +16,12 @@
 
 package io.spring;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.stream.annotation.Bindings;
@@ -33,6 +30,10 @@ import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 
 /**
  * @author Glenn Renfro
@@ -56,7 +57,7 @@ public class TaskProcessorApplicationTests {
 			Map<String, String> properties = new HashMap();
 			properties.put("payload", DEFAULT_PAYLOAD);
 			TaskLaunchRequest expectedRequest = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-					+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT", null, properties);
+					+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT", null, properties, null);
 			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
 		}
 

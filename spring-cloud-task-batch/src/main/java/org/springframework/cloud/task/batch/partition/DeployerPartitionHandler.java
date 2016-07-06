@@ -105,6 +105,8 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private Environment environment;
 
+	private Map<String, String> deploymentProperties;
+
 	public DeployerPartitionHandler(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer,
 			Resource resource,
@@ -168,6 +170,15 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		this.timeout = timeout;
 	}
 
+	/**
+	 * Map of deployment properties to be used by the {@link TaskLauncher}
+	 *
+	 * @param deploymentProperties
+	 */
+	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
+		this.deploymentProperties = deploymentProperties;
+	}
+
 	@BeforeTask
 	public void beforeTask(TaskExecution taskExecution) {
 		this.taskExecution = taskExecution;
@@ -213,30 +224,36 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	}
 
 	private void launchWorker(StepExecution workerStepExecution) {
-		//TODO: Refactor these to be passed as command line args once SCD-20 is complete
-		// https://github.com/spring-cloud/spring-cloud-deployer/issues/20
-		Map<String, String> arguments = getArguments(this.taskExecution.getArguments());
-		arguments.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
-				String.valueOf(workerStepExecution.getJobExecution().getId()));
-		arguments.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-				String.valueOf(workerStepExecution.getId()));
-		arguments.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
+		List<String> arguments = new ArrayList<>();
+		arguments.addAll(this.taskExecution.getArguments());
+		arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
+				String.valueOf(workerStepExecution.getJobExecution().getId())));
+		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
+				String.valueOf(workerStepExecution.getId())));
+		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
+
+		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
+		environmentProperties.putAll(getCurrentEnvironmentProperties());
+		environmentProperties.putAll(this.environmentProperties);
 
 		AppDefinition definition =
 				new AppDefinition(String.format("%s:%s:%s",
 						taskExecution.getTaskName(),
 						workerStepExecution.getJobExecution().getJobInstance().getJobName(),
 						workerStepExecution.getStepName()),
-						arguments);
-
-		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
-		environmentProperties.putAll(getCurrentEnvironmentProperties());
-		environmentProperties.putAll(this.environmentProperties);
+						environmentProperties);
 
 		AppDeploymentRequest request =
-				new AppDeploymentRequest(definition, this.resource, environmentProperties);
+				new AppDeploymentRequest(definition,
+						this.resource,
+						this.deploymentProperties,
+						arguments);
 
 		taskLauncher.launch(request);
+	}
+
+	private String formatArgument(String key, String value) {
+		return String.format("--%s=%s", key, value);
 	}
 
 	private Collection<StepExecution> pollReplies(final StepExecution masterStepExecution,

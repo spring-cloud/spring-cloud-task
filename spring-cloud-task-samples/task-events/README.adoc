@@ -17,7 +17,7 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
-$ java -jar target/task-events-1.0.0.BUILD-SNAPSHOT.jar --spring.cloud.stream.bindings.task-events.contentType=application/json
+$ java -jar target/task-events-1.0.1.BUILD-SNAPSHOT.jar --spring.cloud.stream.bindings.task-events.contentType=application/json
 ----
 
 You can listen for the events on the task-events channel with a Spring Cloud Stream Sink
@@ -25,7 +25,7 @@ like the log sink using the following:
 
 [source,shell,indent=2]
 ----
-$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.0.BUILD-SNAPSHOT.jar --server.port=9090 --spring.cloud.stream.bindings.input.destination=task-events
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.1.BUILD-SNAPSHOT.jar --server.port=9090 --spring.cloud.stream.bindings.input.destination=task-events
 ----
 
 == Dependencies:
