@@ -18,14 +18,15 @@ package org.springframework.cloud.task.launcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.util.Assert;
 
@@ -45,7 +46,7 @@ public class TaskLauncherSink {
 	public TaskLauncher taskLauncher;
 
 	@Autowired
-	private DelegatingResourceLoader delegatingResourceLoader;
+	private ResourceLoader resourceLoader;
 
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
@@ -58,12 +59,12 @@ public class TaskLauncherSink {
 	}
 
 	private void launchTask(TaskLaunchRequest taskLaunchRequest) {
-		Assert.notNull(taskLauncher, "TaskLauncher has not been initialized");
+		Assert.notNull(this.taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following resource " + taskLaunchRequest);
-		Resource resource = delegatingResourceLoader.getResource(taskLaunchRequest.getUri());
+		Resource resource = this.resourceLoader.getResource(taskLaunchRequest.getUri());
 		AppDefinition definition = new AppDefinition("Task-" + taskLaunchRequest.hashCode(), taskLaunchRequest.getEnvironmentProperties());
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, taskLaunchRequest.getDeploymentProperties(), taskLaunchRequest.getCommandlineArguments());
-		taskLauncher.launch(request);
+		this.taskLauncher.launch(request);
 	}
 
 }
