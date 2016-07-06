@@ -105,6 +105,8 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private Environment environment;
 
+	private Map<String, String> deploymentProperties;
+
 	public DeployerPartitionHandler(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer,
 			Resource resource,
@@ -166,6 +168,15 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	 */
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+	}
+
+	/**
+	 * Map of deployment properties to be used by the {@link TaskLauncher}
+	 *
+	 * @param deploymentProperties
+	 */
+	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
+		this.deploymentProperties = deploymentProperties;
 	}
 
 	@BeforeTask
@@ -233,7 +244,10 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 						environmentProperties);
 
 		AppDeploymentRequest request =
-				new AppDeploymentRequest(definition, this.resource, null, arguments);
+				new AppDeploymentRequest(definition,
+						this.resource,
+						this.deploymentProperties,
+						arguments);
 
 		taskLauncher.launch(request);
 	}
