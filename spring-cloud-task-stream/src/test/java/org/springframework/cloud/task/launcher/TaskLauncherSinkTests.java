@@ -102,7 +102,7 @@ public class TaskLauncherSinkTests {
 	public void testNoTaskLauncher() {
 		TaskLauncherSink sink = new TaskLauncherSink();
 		sink.taskLauncherSink(new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",null, properties));
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",null, properties, null));
 	}
 
 	private TaskConfiguration.TestTaskLauncher launchTask(List<String> commandLineArgs) {
@@ -110,7 +110,7 @@ public class TaskLauncherSinkTests {
 				context.getBean(TaskConfiguration.TestTaskLauncher.class);
 
 		TaskLaunchRequest request = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",commandLineArgs, properties);
+				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",commandLineArgs, properties, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 		return testTaskLauncher;

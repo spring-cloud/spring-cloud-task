@@ -61,8 +61,8 @@ public class TaskLauncherSink {
 		Assert.notNull(taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following resource " + taskLaunchRequest);
 		Resource resource = delegatingResourceLoader.getResource(taskLaunchRequest.getUri());
-		AppDefinition definition = new AppDefinition("Task-" + taskLaunchRequest.hashCode(), taskLaunchRequest.getProperties());
-		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, null, taskLaunchRequest.getCommandlineArguments());
+		AppDefinition definition = new AppDefinition("Task-" + taskLaunchRequest.hashCode(), taskLaunchRequest.getEnvironmentProperties());
+		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, taskLaunchRequest.getDeploymentProperties(), taskLaunchRequest.getCommandlineArguments());
 		taskLauncher.launch(request);
 	}
 
