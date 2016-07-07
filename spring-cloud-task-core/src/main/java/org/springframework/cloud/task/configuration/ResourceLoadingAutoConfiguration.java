@@ -72,11 +72,8 @@ public class ResourceLoadingAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean
-		public DelegatingResourceLoader delegatingResourceLoader(ApplicationContext context) {
-			Map<String, ResourceLoader> loaders = new HashMap<>(1);
-			loaders.put("file", context);
-
-			return new DelegatingResourceLoader(loaders);
+		public DelegatingResourceLoader delegatingResourceLoader() {
+			return new DelegatingResourceLoader();
 		}
 	}
 }

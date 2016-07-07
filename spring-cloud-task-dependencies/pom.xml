@@ -16,11 +16,11 @@
 
 	<properties>
 		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
-		<spring-cloud-deployer-spi.version>1.0.1.RELEASE</spring-cloud-deployer-spi.version>
-		<spring-cloud-deployer-local.version>1.0.1.RELEASE</spring-cloud-deployer-local.version>
+		<spring-cloud-deployer-spi.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-deployer-spi.version>
+		<spring-cloud-deployer-local.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>1.0.2.RELEASE</spring-cloud-stream-binder-rabbit.version>
-		<spring-cloud-deployer-resource-support.version>1.0.1.RELEASE</spring-cloud-deployer-resource-support.version>
-		<spring-cloud-deployer-resource-maven.version>1.0.1.RELEASE</spring-cloud-deployer-resource-maven.version>
+		<spring-cloud-deployer-resource-support.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-deployer-resource-support.version>
+		<spring-cloud-deployer-resource-maven.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-deployer-resource-maven.version>
 		<spring-batch.version>3.0.7.RELEASE</spring-batch.version>
 	</properties>
 	<dependencyManagement>
