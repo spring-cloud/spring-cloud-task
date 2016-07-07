@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.deployer.resource.maven.MavenProperties;
 import org.springframework.cloud.deployer.resource.maven.MavenResourceLoader;
@@ -62,5 +63,16 @@ public class ResourceLoadingAutoConfiguration {
 
 		@ConfigurationProperties(prefix = "maven")
 		public static class MavenConfigurationProperties extends MavenProperties {}
+	}
+
+	@Configuration
+	@ConditionalOnMissingClass("org.springframework.cloud.deployer.resource.maven.MavenResourceLoader")
+	public static class LocalResourceLoadingAutoConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		public DelegatingResourceLoader delegatingResourceLoader() {
+			return new DelegatingResourceLoader();
+		}
 	}
 }
