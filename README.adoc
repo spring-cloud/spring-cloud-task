@@ -16,13 +16,6 @@ process persists beyond the life of the task for future reporting.
 $ ./mvnw clean install
 ----
 
-== Build Samples:
-
-[source,shell,indent=2]
-----
-$ ./mvnw -P samples clean install
-----
-
 == Example:
 
 [source,java,indent=2]
