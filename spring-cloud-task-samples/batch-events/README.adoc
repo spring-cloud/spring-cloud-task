@@ -27,7 +27,7 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
-$ java -jar target/batch-events-1.0.1.BUILD-SNAPSHOT.jar --spring.cloud.stream.bindings.batch-events.contentType=application/json
+$ java -jar target/batch-events-1.0.1.RELEASE.jar --spring.cloud.stream.bindings.batch-events.contentType=application/json
 ----
 
 For example you can listen for specific job execution events on a specified channel with a Spring Cloud Stream Sink
@@ -35,7 +35,7 @@ like the log sink using the following:
 
 [source,shell,indent=2]
 ----
-$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.1.BUILD-SNAPSHOT.jar --server.port=9090
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-1.0.2.RELEASE.jar --server.port=9090
 --spring.cloud.stream.bindings.input.destination=job-execution-events
 ----
 
