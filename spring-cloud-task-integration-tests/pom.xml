@@ -6,7 +6,8 @@
 		<version>1.0.1.BUILD-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<name>spring-cloud-task-integration-tests</name>
+	<name>Spring Cloud Task Integration Tests</name>
+	<description>Tests the integration between Task/Batch Events and Stream Binders</description>
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-task-integration-tests</artifactId>
 

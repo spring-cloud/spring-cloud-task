@@ -7,8 +7,8 @@
 	<version>1.0.1.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>TaskProcessor</name>
-	<description>Task processor sample application</description>
+	<name>Task Processor Sample Application</name>
+	<description>Task processor converts inbound message to a TaskLaunchRequest</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
