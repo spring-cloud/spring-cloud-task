@@ -4,11 +4,11 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>tasksink</artifactId>
-	<version>1.0.1.BUILD-SNAPSHOT</version>
+	<version>1.0.2.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>TaskSink</name>
-	<description>Task sink sample project</description>
+	<name>Task Sink Sample Application</name>
+	<description>Launches tasks based on contents of TaskLaunchRequest for local deployer</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -26,7 +26,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>1.0.2.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-starter</artifactId>
-			<version>1.0.1.BUILD-SNAPSHOT</version>
+			<version>1.0.2.BUILD-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

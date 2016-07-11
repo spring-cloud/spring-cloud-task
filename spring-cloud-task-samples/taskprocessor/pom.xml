@@ -4,11 +4,11 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>taskprocessor</artifactId>
-	<version>1.0.1.BUILD-SNAPSHOT</version>
+	<version>1.0.2.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>TaskProcessor</name>
-	<description>Task processor sample application</description>
+	<name>Task Processor Sample Application</name>
+	<description>Task processor converts inbound message to a TaskLaunchRequest</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -26,7 +26,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>1.0.2.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-starter</artifactId>
-			<version>1.0.1.BUILD-SNAPSHOT</version>
+			<version>1.0.2.BUILD-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
