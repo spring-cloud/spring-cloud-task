@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.task.listener;
 
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -27,15 +28,11 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
-import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
@@ -253,12 +250,6 @@ public class BatchExecutionEventTests {
 	private Object[] getConfigurations(Class sinkClazz, Class jobConfigurationClazz) {
 		return new Object[]{
 				jobConfigurationClazz,
-				PropertyPlaceholderAutoConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class,
-				TaskEventAutoConfiguration.class,
-				BatchEventAutoConfiguration.class,
-				RabbitServiceAutoConfiguration.class,
 				sinkClazz };
 	}
 
@@ -268,6 +259,7 @@ public class BatchExecutionEventTests {
 				"--spring.main.web-environment=false",
 				"--spring.cloud.stream.defaultBinder=rabbit",
 				"--spring.cloud.stream.bindings.task-events.destination=test",
+				"foo=" + UUID.randomUUID().toString(),
 				sinkChannelParam };
 	}
 
