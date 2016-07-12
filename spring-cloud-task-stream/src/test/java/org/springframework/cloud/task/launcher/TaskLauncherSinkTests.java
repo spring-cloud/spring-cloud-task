@@ -35,6 +35,7 @@ import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.messaging.MessageHandlingException;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -47,6 +48,12 @@ public class TaskLauncherSinkTests {
 	private final static String PARAM1 = "FOO";
 
 	private final static String PARAM2 = "BAR";
+
+	private final static String VALID_URL = "maven://org.springframework.cloud.task.app:"
+			+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT";
+
+	private final static String INVALID_URL = "maven://not.real.group:"
+			+ "invalid:jar:1.0.0.BUILD-SNAPSHOT";
 
 	private Map<String, String> properties;
 
@@ -75,7 +82,7 @@ public class TaskLauncherSinkTests {
 		commandLineArgs.add(PARAM1);
 		commandLineArgs.add(PARAM2);
 
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(commandLineArgs);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(VALID_URL, commandLineArgs);
 
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
 		assertEquals(2, testTaskLauncher.getCommandlineArguments().size());
@@ -85,9 +92,14 @@ public class TaskLauncherSinkTests {
 
 	@Test
 	public void testSuccessNoParams() {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher= launchTask(null);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(VALID_URL, null);
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
 		assertEquals(0, testTaskLauncher.getCommandlineArguments().size());
+	}
+
+	@Test(expected = MessageHandlingException.class)
+	public void testInvalidJar() {
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(INVALID_URL, null);
 	}
 
 	@Test
@@ -101,16 +113,14 @@ public class TaskLauncherSinkTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoTaskLauncher() {
 		TaskLauncherSink sink = new TaskLauncherSink();
-		sink.taskLauncherSink(new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",null, properties, null));
+		sink.taskLauncherSink(new TaskLaunchRequest(VALID_URL, null, properties, null));
 	}
 
-	private TaskConfiguration.TestTaskLauncher launchTask(List<String> commandLineArgs) {
+	private TaskConfiguration.TestTaskLauncher launchTask(String artifactURL, List<String> commandLineArgs) {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher =
 				context.getBean(TaskConfiguration.TestTaskLauncher.class);
 
-		TaskLaunchRequest request = new TaskLaunchRequest("maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT",commandLineArgs, properties, null);
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs, properties, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 		return testTaskLauncher;
