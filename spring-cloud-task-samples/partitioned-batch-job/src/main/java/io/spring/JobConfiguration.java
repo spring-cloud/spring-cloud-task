@@ -42,10 +42,12 @@ import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
 import org.springframework.cloud.task.batch.partition.DeployerStepExecutionHandler;
+import org.springframework.cloud.task.batch.partition.SimpleEnvironmentVariablesProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
 /**
@@ -71,6 +73,9 @@ public class JobConfiguration {
 
 	@Autowired
 	private DelegatingResourceLoader resourceLoader;
+
+	@Autowired
+	private Environment environment;
 
 	private static final int GRID_SIZE = 4;
 
@@ -101,7 +106,10 @@ public class JobConfiguration {
 		Map<String, String> environmentProperties = new HashMap<>();
 		environmentProperties.put("spring.profiles.active", "worker");
 
-		partitionHandler.setEnvironmentProperties(environmentProperties);
+		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
+		environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
+		partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
+
 		partitionHandler.setMaxWorkers(2);
 
 		return partitionHandler;
@@ -130,9 +138,7 @@ public class JobConfiguration {
 	@Bean
 	@Profile("worker")
 	public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer) {
-		DeployerStepExecutionHandler handler = new DeployerStepExecutionHandler(this.context, jobExplorer, this.jobRepository);
-
-		return handler;
+		return new DeployerStepExecutionHandler(this.context, jobExplorer, this.jobRepository);
 	}
 
 	@Bean

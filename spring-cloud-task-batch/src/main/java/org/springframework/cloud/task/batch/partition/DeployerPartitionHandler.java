@@ -16,11 +16,8 @@
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,18 +33,17 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.StepExecutionSplitter;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -68,7 +64,7 @@ import org.springframework.util.CollectionUtils;
  *
  * @author Michael Minella
  */
-public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware {
+public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware, InitializingBean {
 
 	public static final String SPRING_CLOUD_TASK_JOB_EXECUTION_ID =
 			"spring.cloud.task.job-execution-id";
@@ -93,8 +89,6 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private Resource resource;
 
-	private Map<String, String> environmentProperties = new HashMap<>();
-
 	private String stepName;
 
 	private Log logger = LogFactory.getLog(DeployerPartitionHandler.class);
@@ -106,6 +100,8 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	private Environment environment;
 
 	private Map<String, String> deploymentProperties;
+
+	private EnvironmentVariablesProvider environmentVariablesProvider;
 
 	public DeployerPartitionHandler(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer,
@@ -120,6 +116,10 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		this.jobExplorer = jobExplorer;
 		this.resource = resource;
 		this.stepName = stepName;
+	}
+
+	public void setEnvironmentVariablesProvider(EnvironmentVariablesProvider environmentVariablesProvider) {
+		this.environmentVariablesProvider = environmentVariablesProvider;
 	}
 
 	/**
@@ -144,15 +144,6 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	}
 
 	/**
-	 * System properties to be made available for all workers.
-	 *
-	 * @param environmentProperties Map of properties
-	 */
-	public void setEnvironmentProperties(Map<String, String> environmentProperties) {
-		this.environmentProperties = environmentProperties;
-	}
-
-	/**
 	 * The interval to check the job repository for completed steps.
 	 *
 	 * @param pollInterval interval.  Defaults to 10 seconds
@@ -173,7 +164,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	/**
 	 * Map of deployment properties to be used by the {@link TaskLauncher}
 	 *
-	 * @param deploymentProperties
+	 * @param deploymentProperties properites to be used by the {@link TaskLauncher}
 	 */
 	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
 		this.deploymentProperties = deploymentProperties;
@@ -232,16 +223,14 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 				String.valueOf(workerStepExecution.getId())));
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
 
-		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
-		environmentProperties.putAll(getCurrentEnvironmentProperties());
-		environmentProperties.putAll(this.environmentProperties);
+		ExecutionContext copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
 
 		AppDefinition definition =
 				new AppDefinition(String.format("%s:%s:%s",
 						taskExecution.getTaskName(),
 						workerStepExecution.getJobExecution().getJobInstance().getJobName(),
 						workerStepExecution.getStepName()),
-						environmentProperties);
+						this.environmentVariablesProvider.getEnvironmentVariables(copyContext));
 
 		AppDeploymentRequest request =
 				new AppDeploymentRequest(definition,
@@ -312,38 +301,17 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		return status.equals(BatchStatus.COMPLETED) || status.isGreaterThan(BatchStatus.STARTED);
 	}
 
-	private Map<String, String> getArguments(List<String> arguments) {
-		Map<String, String> argumentMap = new HashMap<>(arguments.size());
-
-		for (String argument : arguments) {
-			String[] pieces = argument.split("=");
-			argumentMap.put(pieces[0], pieces[1]);
-		}
-
-		return argumentMap;
-	}
-
 	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 	}
 
-	private Map<String, String> getCurrentEnvironmentProperties() {
-		Map<String, String> currentEnvironment = new HashMap<>();
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		if(this.environmentVariablesProvider == null) {
+			this.environmentVariablesProvider =
+					new SimpleEnvironmentVariablesProvider(this.environment);
 
-		Set<String> keys = new HashSet<>();
-
-		for (Iterator it = ((AbstractEnvironment) this.environment).getPropertySources().iterator(); it.hasNext(); ) {
-			PropertySource propertySource = (PropertySource) it.next();
-			if (propertySource instanceof MapPropertySource) {
-				keys.addAll(Arrays.asList(((MapPropertySource) propertySource).getPropertyNames()));
-			}
 		}
-
-		for (String key : keys) {
-			currentEnvironment.put(key, this.environment.getProperty(key));
-		}
-
-		return currentEnvironment;
 	}
 }

@@ -134,7 +134,10 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
+		handler.afterPropertiesSet();
+
 		handler.beforeTask(taskExecution);
+
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
 		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
@@ -190,6 +193,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
 
+		handler.afterPropertiesSet();
+
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
@@ -235,6 +240,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
+
+		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
@@ -282,6 +289,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
 
+		handler.afterPropertiesSet();
+
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
@@ -319,13 +328,14 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
-		handler.setEnvironment(this.environment);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
 		environmentParameters.put("foo", "bar");
 		environmentParameters.put("baz", "qux");
 
-		handler.setEnvironmentProperties(environmentParameters);
+		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
+		environmentVariablesProvider.setEnvironmentProperties(environmentParameters);
+		handler.setEnvironmentVariablesProvider(environmentVariablesProvider);
 
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName("partitionedJobTask");
@@ -335,6 +345,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
@@ -384,7 +396,9 @@ public class DeployerPartitionHandlerTests {
 		environmentParameters.put("foo", "bar");
 		environmentParameters.put("baz", "qux");
 
-		handler.setEnvironmentProperties(environmentParameters);
+		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
+		environmentVariablesProvider.setEnvironmentProperties(environmentParameters);
+		handler.setEnvironmentVariablesProvider(environmentVariablesProvider);
 
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName("partitionedJobTask");
@@ -394,6 +408,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
@@ -450,6 +466,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 
+		handler.afterPropertiesSet();
+
 		handler.beforeTask(taskExecution);
 
 		Date startTime = new Date();
@@ -497,6 +515,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 
+		handler.afterPropertiesSet();
+
 		handler.beforeTask(taskExecution);
 
 		handler.handle(this.splitter, masterStepExecution);
@@ -529,6 +549,8 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
 		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
+
+		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 
@@ -569,6 +591,8 @@ public class DeployerPartitionHandlerTests {
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
 		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
