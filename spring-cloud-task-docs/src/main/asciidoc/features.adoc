@@ -101,6 +101,9 @@ map uncaught exceptions to exit codes.  This allows you to be able to indicate a
 level what went wrong.  Also, by mapping exit codes in this manner, Spring Cloud Task will
 record the exit code returned.
 
+If the task is terminated with a SIG-INT or a SIG-TERM, the exit code will be zero unless
+otherwise specified within the code.
+
 NOTE: While the task is running the exit code will be stored as a null in the repository.
 Once complete the appropriate exit code will be stored based on the guidelines enumerated
 above.
