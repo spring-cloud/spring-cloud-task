@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -62,7 +63,7 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  */
-public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle {
+public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean {
 
 	@Autowired
 	private ConfigurableApplicationContext context;
@@ -77,6 +78,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private TaskExecution taskExecution;
 
 	private boolean started = false;
+
+	private boolean finished = false;
 
 	private TaskNameResolver taskNameResolver;
 
@@ -139,7 +142,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private void doTaskEnd() {
-		if(started) {
+		if(this.started && !this.finished) {
 			this.taskExecution.setEndTime(new Date());
 
 			if(this.exitCodeEvent != null) {
@@ -167,8 +170,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			if(this.closeContext && this.context.isActive()) {
 				this.context.close();
 			}
+
+			this.finished = true;
 		}
-		else {
+		else if(!this.started){
 			logger.error("An event to end a task has been received for a task that has " +
 					"not yet started.");
 		}
@@ -254,7 +259,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	@Override
 	public void stop() {
-
 	}
 
 	@Override
@@ -265,5 +269,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public int getPhase() {
 		return 0;
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		this.doTaskEnd();
 	}
 }
