@@ -79,6 +79,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private boolean started = false;
 
+	private boolean finished = false;
+
 	private TaskNameResolver taskNameResolver;
 
 	private ApplicationArguments applicationArguments;
@@ -140,7 +142,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private void doTaskEnd() {
-		if(started) {
+		if(this.started && !this.finished) {
 			this.taskExecution.setEndTime(new Date());
 
 			if(this.exitCodeEvent != null) {
@@ -168,8 +170,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			if(this.closeContext && this.context.isActive()) {
 				this.context.close();
 			}
+
+			this.finished = true;
 		}
-		else {
+		else if(!this.started){
 			logger.error("An event to end a task has been received for a task that has " +
 					"not yet started.");
 		}
