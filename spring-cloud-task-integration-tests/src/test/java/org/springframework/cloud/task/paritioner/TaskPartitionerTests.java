@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 
 import io.spring.PartitionedBatchJobApplication;
 import org.h2.tools.Server;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,6 +36,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.SocketUtils;
@@ -50,7 +52,11 @@ public class TaskPartitionerTests {
 	private final static String DATASOURCE_USER_PASSWORD = "";
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
 
-	TaskExplorer taskExplorer;
+	private TaskExplorer taskExplorer;
+
+	@Autowired
+
+	private DataSource dataSource;
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
@@ -63,6 +69,24 @@ public class TaskPartitionerTests {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
 				+ "DB_CLOSE_ON_EXIT=FALSE";
+	}
+
+	@Before
+	public void setup() {
+		JdbcTemplate template = new JdbcTemplate(this.dataSource);
+		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
+		template.execute("DROP TABLE IF EXISTS TASK_SEQ");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
 	}
 
 	@Test

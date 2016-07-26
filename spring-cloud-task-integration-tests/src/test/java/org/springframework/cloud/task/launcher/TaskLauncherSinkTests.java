@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,6 +67,7 @@ public class TaskLauncherSinkTests {
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
+	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
 
 	private static int randomPort;
 
@@ -101,6 +103,22 @@ public class TaskLauncherSinkTests {
 		properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
 		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
 		properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
+		properties.put("spring.application.name",TASK_NAME);
+
+		JdbcTemplate template = new JdbcTemplate(this.dataSource);
+		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
+		template.execute("DROP TABLE IF EXISTS TASK_SEQ");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
 	}
 
 	@Test
@@ -109,6 +127,7 @@ public class TaskLauncherSinkTests {
 		assertTrue(waitForDBToBePopulated());
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
 	}
