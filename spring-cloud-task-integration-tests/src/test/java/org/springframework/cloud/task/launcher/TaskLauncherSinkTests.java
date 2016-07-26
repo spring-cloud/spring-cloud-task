@@ -67,20 +67,6 @@ public class TaskLauncherSinkTests {
 	private final static String DATASOURCE_USER_PASSWORD = "";
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
 
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
-
-
-	@Autowired
-	@Bindings(TaskLauncherSink.class)
-	private Sink sink;
-
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
-	}
-
 	private static int randomPort;
 
 	static {
@@ -89,16 +75,28 @@ public class TaskLauncherSinkTests {
 				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
+	@ClassRule
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
+
+	@Autowired
+	@Bindings(TaskLauncherSink.class)
+	private Sink sink;
+
 	private DataSource dataSource;
 
 	private Map<String, String> properties;
 
 	private TaskExplorer taskExplorer;
 
+	@Autowired
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+		taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
+	}
+
 	@Before
 	public void setup() {
 		properties = new HashMap<>();
-		properties.put("server.port", "0");
 		properties.put("spring.datasource.url", DATASOURCE_URL);
 		properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
 		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
@@ -116,11 +114,11 @@ public class TaskLauncherSinkTests {
 	}
 
 	private boolean tableExists() throws SQLException {
-		boolean result = false;
+		boolean result;
 		try (
 				Connection conn = dataSource.getConnection();
 				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
-						new String[]{"TABLE"});) {
+						new String[]{"TABLE"})) {
 			result = res.next();
 		}
 		return result;
@@ -156,7 +154,7 @@ public class TaskLauncherSinkTests {
 
 		@Bean(destroyMethod = "stop")
 		public Server initH2TCPServer() {
-			Server server = null;
+			Server server;
 			try {
 				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
 						String.valueOf(randomPort)).start();
