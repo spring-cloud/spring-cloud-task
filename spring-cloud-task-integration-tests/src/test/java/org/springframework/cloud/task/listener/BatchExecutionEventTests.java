@@ -36,7 +36,6 @@ import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 
@@ -161,7 +160,7 @@ public class BatchExecutionEventTests {
 
 		@StreamListener(Sink.INPUT)
 		public void receive(JobExecutionEvent execution) {
-			assertEquals(String.format("Job name should be job"), "job", execution.getJobInstance().getJobName());
+			assertEquals("Job name should be job", "job", execution.getJobInstance().getJobName());
 			jobExecutionLatch.countDown();
 		}
 	}
