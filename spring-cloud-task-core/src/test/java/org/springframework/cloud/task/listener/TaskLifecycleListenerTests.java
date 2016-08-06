@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -109,6 +110,20 @@ public class TaskLifecycleListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		verifyTaskExecution(0, true, 1, exception);
+	}
+
+	@Test
+	public void testTaskFailedWithExitCodeEvent() {
+		final int exitCode = 10;
+		context.refresh();
+		RuntimeException exception = new RuntimeException("This was expected");
+		SpringApplication application = new SpringApplication();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
+		context.publishEvent(new ExitCodeEvent(context, exitCode));
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
+		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
+
+		verifyTaskExecution(0, true, exitCode, exception);
 	}
 
 	@Test

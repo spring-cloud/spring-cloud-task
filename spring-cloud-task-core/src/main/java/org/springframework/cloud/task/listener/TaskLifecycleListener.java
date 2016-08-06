@@ -125,7 +125,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		}
 		else if(applicationEvent instanceof ExitCodeEvent){
 			this.exitCodeEvent = (ExitCodeEvent) applicationEvent;
-			doTaskEnd();
 		}
 		else if(applicationEvent instanceof ApplicationReadyEvent) {
 			doTaskEnd();
@@ -159,7 +158,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedEvent.getException()));
 			}
 
-			if(this.taskExecution.getExitCode() != 0){
+			if (this.applicationFailedEvent != null && this.taskExecution.getExitCode() != 0) {
 				taskExecution.setExitMessage(invokeOnTaskError(taskExecution,
 						this.applicationFailedEvent.getException()).getExitMessage());
 			}
