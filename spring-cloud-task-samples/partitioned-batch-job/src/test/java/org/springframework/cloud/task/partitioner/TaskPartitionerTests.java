@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.paritioner;
+package org.springframework.cloud.task.partitioner;
 
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
@@ -44,7 +44,7 @@ import org.springframework.util.SocketUtils;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TaskPartitionerTests.TaskLauncherConfiguration.class})
+@SpringBootTest(classes = {TaskPartitionerTests.TaskLauncherConfiguration.class})
 public class TaskPartitionerTests {
 
 	private static String DATASOURCE_URL;
@@ -55,7 +55,6 @@ public class TaskPartitionerTests {
 	private TaskExplorer taskExplorer;
 
 	@Autowired
-
 	private DataSource dataSource;
 
 	@Autowired
@@ -99,8 +98,8 @@ public class TaskPartitionerTests {
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
 		assertEquals("Five rows are expected", 5, taskExecutions.getTotalElements());
-		assertEquals("Only One master is expected", 1, taskExplorer.getTaskExecutionCountByTaskName("batchEvents:master:0"));
-		assertEquals("4 partitions is expected", 4, taskExplorer.getTaskExecutionCountByTaskName("batchEvents:worker:0"));
+		assertEquals("Only One master is expected", 1, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:master:0"));
+		assertEquals("4 partitions is expected", 4, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:worker:0"));
 		for (TaskExecution taskExecution : taskExecutions) {
 			assertEquals("return code should be 0", 0, taskExecution.getExitCode().intValue());
 		}
