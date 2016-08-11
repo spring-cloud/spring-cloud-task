@@ -58,7 +58,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	public static final String SELECT_CLAUSE = "TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED ";
+			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED ";
 
 	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
@@ -78,12 +78,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
 
 	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
-			+ "END_TIME = ?, EXIT_CODE = ?, EXIT_MESSAGE = ?, LAST_UPDATED = ? "
-			+ "where TASK_EXECUTION_ID = ?";
+			+ "END_TIME = ?, EXIT_CODE = ?, EXIT_MESSAGE = ?, ERROR_MESSAGE = ?, "
+			+ "LAST_UPDATED = ? where TASK_EXECUTION_ID = ?";
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
 			"START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, LAST_UPDATED "
+			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED "
 			+ "from %PREFIX%EXECUTION where TASK_EXECUTION_ID = ?";
 
 	private static final String FIND_ARGUMENT_FROM_ID = "SELECT TASK_EXECUTION_ID, "
@@ -129,7 +129,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			Date startTime, List<String> arguments)  {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, arguments);
+				startTime, null, null, arguments, null);
 
 		Object[] queryParameters = new Object[]{ taskExecutionId, startTime, taskName, new Date()};
 		jdbcTemplate.update(
@@ -142,7 +142,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime,
-			String exitMessage) {
+			String exitMessage, String errorMessage) {
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
@@ -150,13 +150,19 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
 		}
 
-		Object[] parameters = new Object[]{ endTime, exitCode, exitMessage, new Date(),
+		Object[] parameters = new Object[]{ endTime, exitCode, exitMessage, errorMessage, new Date(),
 				taskExecutionId};
 		jdbcTemplate.update(
 				getQuery(UPDATE_TASK_EXECUTION),
 				parameters,
-				new int[]{ Types.TIMESTAMP, Types.INTEGER, Types.VARCHAR, Types.TIMESTAMP,
+				new int[]{ Types.TIMESTAMP, Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP,
 						Types.BIGINT});
+	}
+
+	@Override
+	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime,
+			String exitMessage) {
+		completeTaskExecution(taskExecutionId, exitCode, endTime, exitMessage, null);
 	}
 
 	/**
@@ -374,7 +380,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getTimestamp("START_TIME"),
 					rs.getTimestamp("END_TIME"),
 					rs.getString("EXIT_MESSAGE"),
-					getTaskArguments(id));
+					getTaskArguments(id),
+					rs.getString("ERROR_MESSAGE"));
 		}
                 
                 private Integer getNullableExitCode(ResultSet rs) throws SQLException {

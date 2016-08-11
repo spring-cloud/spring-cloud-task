@@ -90,7 +90,7 @@ public class TestVerifierUtils {
 		String taskName = UUID.randomUUID().toString();
 
 		return new TaskExecution(executionId, 0, taskName,
-				startTime, null, null, new ArrayList<String>());
+				startTime, null, null, new ArrayList<String>(), null);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class TestVerifierUtils {
 		String exitMessage = UUID.randomUUID().toString();
 
 		return new TaskExecution(executionId, exitCode, taskName,
-				startTime, endTime, exitMessage, new ArrayList<String>());
+				startTime, endTime, exitMessage, new ArrayList<String>(), null);
 	}
 
 	/**
@@ -117,7 +117,6 @@ public class TestVerifierUtils {
 	 * @return
 	 */
 	public static TaskExecution createSampleTaskExecution(long executionId) {
-		Random randomGenerator = new Random();
 		Date startTime = new Date();
 		String taskName = UUID.randomUUID().toString();
 		List<String> args = new ArrayList<>(ARG_SIZE);
@@ -125,7 +124,7 @@ public class TestVerifierUtils {
 			args.add(UUID.randomUUID().toString());
 		}
 		return new TaskExecution(executionId, null, taskName,
-				startTime, null, null, args);
+				startTime, null, null, args, null);
 	}
 
 	/**
@@ -153,6 +152,9 @@ public class TestVerifierUtils {
 		assertEquals("exitMessage must be equal",
 				expectedTaskExecution.getExitMessage(),
 				actualTaskExecution.getExitMessage());
+		assertEquals("errorMessage must be equal",
+				expectedTaskExecution.getErrorMessage(),
+				actualTaskExecution.getErrorMessage());
 		if (expectedTaskExecution.getArguments() != null) {
 			assertNotNull("arguments should not be null",
 					actualTaskExecution.getArguments());

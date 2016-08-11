@@ -79,9 +79,12 @@ assumed to be 0.
 |The time the task was completed as indicated by the `ApplicationReadyEvent`.
 
 |`exitMessage`
-|Any information available at the time of exit.  If an exception is the cause of the end
-of the task (as indicated via an `ApplicationFailedEvent`), the stack trace for that
-exception will be stored here.
+|Any information available at the time of exit.  This can programatically be set via a
+`TaskExecutionListener`.
+
+|`errorMessage`
+|If an exception is the cause of the end of the task (as indicated via an
+`ApplicationFailedEvent`), the stack trace for that exception will be stored here.
 
 |`arguments`
 |A `List` of the string command line arguments as they were passed into the executable boot

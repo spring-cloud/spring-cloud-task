@@ -44,10 +44,13 @@ import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.SocketUtils;
@@ -61,8 +64,8 @@ public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 5000;
-	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT";
+	private final static String URL = "maven://io.spring.cloud:"
+			+ "timestamp-task:jar:1.1.0.BUILD-SNAPSHOT";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
@@ -104,6 +107,7 @@ public class TaskLauncherSinkTests {
 		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
 		properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
 		properties.put("spring.application.name",TASK_NAME);
+		properties.put("spring.cloud.task.initialize.enable", "false");
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
@@ -119,6 +123,16 @@ public class TaskLauncherSinkTests {
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
+
+
+		DataSourceInitializer initializer = new DataSourceInitializer();
+
+		initializer.setDataSource(dataSource);
+		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+		databasePopulator.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
+		initializer.setDatabasePopulator(databasePopulator);
+
+		initializer.afterPropertiesSet();
 	}
 
 	@Test

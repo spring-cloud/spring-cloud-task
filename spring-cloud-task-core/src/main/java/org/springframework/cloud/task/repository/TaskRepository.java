@@ -43,6 +43,20 @@ public interface TaskRepository {
 			 String exitMessage);
 
 	/**
+	 * Notifies the repository that a taskExecution has completed.
+	 *
+	 * @param executionId to the task execution to be updated.
+	 * @param exitCode to be stored for this task.
+	 * @param endTime designated when the task completed.
+	 * @param exitMessage to be stored for the task.
+	 * @return the updated {@link TaskExecution}
+	 * @since 1.1.0
+	 */
+	@Transactional
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
+			 String exitMessage, String errorMessage);
+
+	/**
 	 * Notifies the repository that a taskExecution needs to be created.
 	 *
 	 * @param taskName the name that associated with the task execution.

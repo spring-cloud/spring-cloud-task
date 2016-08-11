@@ -28,8 +28,8 @@ public class TaskCoreTests {
 	private static final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
 	private static final String SUCCESS_EXIT_CODE_MESSAGE = "with the following {exitCode=0";
 	private static final String EXCEPTION_EXIT_CODE_MESSAGE = "with the following {exitCode=1";
-	private static final String EXIT_MESSAGE =
-			"exitMessage='java.lang.IllegalStateException: Failed to execute CommandLineRunner";
+	private static final String ERROR_MESSAGE =
+			"errorMessage='java.lang.IllegalStateException: Failed to execute CommandLineRunner";
 
 	private ConfigurableApplicationContext applicationContext;
 
@@ -83,7 +83,7 @@ public class TaskCoreTests {
 		assertTrue("Test results have incorrect exit code: " + output,
 				output.contains(EXCEPTION_EXIT_CODE_MESSAGE));
 		assertTrue("Test results have incorrect exit message: " + output,
-				output.contains(EXIT_MESSAGE));
+				output.contains(ERROR_MESSAGE));
 		assertTrue("Test results have exception message: " + output,
 				output.contains(EXCEPTION_MESSAGE));
 	}

@@ -156,7 +156,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			}
 
 			if(this.applicationFailedEvent != null) {
-				this.taskExecution.setExitMessage(stackTraceToString(this.applicationFailedEvent.getException()));
+				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedEvent.getException()));
 			}
 
 			if(this.taskExecution.getExitCode() != 0){
@@ -165,7 +165,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			}
 			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
 			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
-					taskExecution.getEndTime(), taskExecution.getExitMessage());
+					taskExecution.getEndTime(), taskExecution.getExitMessage(), taskExecution.getErrorMessage());
 
 			this.finished = true;
 
@@ -237,7 +237,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		return new TaskExecution(taskExecution.getExecutionId(),
 				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
 				endTime,taskExecution.getExitMessage(),
-				Collections.unmodifiableList(taskExecution.getArguments()));
+				Collections.unmodifiableList(taskExecution.getArguments()),
+				taskExecution.getErrorMessage());
 	}
 
 	@Override
