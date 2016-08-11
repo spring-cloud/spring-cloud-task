@@ -49,6 +49,17 @@ public interface TaskExecutionDao {
 	 * @param exitCode the status of the task upon completion.
 	 * @param endTime the time the task completed.
 	 * @param exitMessage the message assigned to the task upon completion.
+	 * @since 1.1.0
+	 */
+	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage, String errorMessage);
+
+	/**
+	 * Update and existing {@link TaskExecution}.
+	 *
+	 * @param executionId the id of  the taskExecution to be updated.
+	 * @param exitCode the status of the task upon completion.
+	 * @param endTime the time the task completed.
+	 * @param exitMessage the message assigned to the task upon completion.
 	 */
 	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 

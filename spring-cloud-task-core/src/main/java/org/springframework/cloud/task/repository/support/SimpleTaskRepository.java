@@ -52,18 +52,24 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+		return completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
+	}
+
+	@Override
 	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage) {
+			String exitMessage, String errorMessage) {
 		initialize();
 
 		validateExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimExitMessage(exitMessage);
-		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage);
+		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
 		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
 				+ "exitCode=" + exitCode
 				+ ", endTime=" + endTime
 				+ ", exitMessage='" + exitMessage + '\''
+				+ ", errorMessage='" + errorMessage + '\''
 				+ '}');
 
 		return taskExecutionDao.getTaskExecution(executionId);

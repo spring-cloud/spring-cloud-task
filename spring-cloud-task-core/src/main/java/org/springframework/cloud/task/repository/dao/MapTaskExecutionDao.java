@@ -56,17 +56,23 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			Date startTime, List<String> arguments) {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, arguments);
+				startTime, null, null, arguments, null);
 		taskExecutions.put(taskExecutionId, taskExecution);
 		return taskExecution;
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage, String errorMessage) {
 		TaskExecution taskExecution= taskExecutions.get(executionId);
 		taskExecution.setEndTime(endTime);
 		taskExecution.setExitCode(exitCode);
 		taskExecution.setExitMessage(exitMessage);
+		taskExecution.setErrorMessage(errorMessage);
+	}
+
+	@Override
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+		completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override

@@ -73,7 +73,8 @@ public class TestDBUtils {
 						rs.getTimestamp("START_TIME"),
 						rs.getTimestamp("END_TIME"),
 						rs.getString("EXIT_MESSAGE"),
-						new ArrayList<String>(0));
+						new ArrayList<String>(0),
+						rs.getString("ERROR_MESSAGE"));
 				return taskExecution;
 			}
 		});
