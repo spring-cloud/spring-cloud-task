@@ -16,17 +16,18 @@
 
 package org.springframework.cloud.task.repository.database.support;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Glenn Renfro
@@ -42,30 +43,30 @@ public class FindAllPagingQueryProviderTests {
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][]{
 				{"Oracle", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
-						+ "EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED FROM "
+						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED FROM "
 						+ "(SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
-						+ "EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED, ROWNUM as "
+						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, ROWNUM as "
 						+ "TMP_ROW_NUM FROM (SELECT TASK_EXECUTION_ID, START_TIME, "
-						+ "END_TIME, TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED "
+						+ "END_TIME, TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED "
 						+ "FROM %PREFIX%EXECUTION ORDER BY START_TIME DESC, "
 						+ "TASK_EXECUTION_ID DESC)) WHERE TMP_ROW_NUM >= 1 AND "
 						+ "TMP_ROW_NUM < 11"},
 				{"HSQL Database Engine","SELECT LIMIT 0 10 TASK_EXECUTION_ID, "
 						+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, EXIT_MESSAGE, "
-						+ "LAST_UPDATED FROM %PREFIX%EXECUTION ORDER BY "
+						+ "ERROR_MESSAGE, LAST_UPDATED FROM %PREFIX%EXECUTION ORDER BY "
 						+ "START_TIME DESC, TASK_EXECUTION_ID DESC"},
 				{"PostgreSQL","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
-						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED "
+						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED "
 						+ "FROM %PREFIX%EXECUTION ORDER BY START_TIME DESC, "
 						+ "TASK_EXECUTION_ID DESC LIMIT 10 OFFSET 0"},
 				{"MySQL","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
-						+ "EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED FROM "
+						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED FROM "
 						+ "%PREFIX%EXECUTION ORDER BY START_TIME DESC, "
 						+ "TASK_EXECUTION_ID DESC LIMIT 0, 10"},
 				{"Microsoft SQL Server","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
-						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED FROM "
+						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED FROM "
 						+ "(SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
-						+ "EXIT_CODE, EXIT_MESSAGE, LAST_UPDATED, ROW_NUMBER() "
+						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, ROW_NUMBER() "
 						+ "OVER (ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC) AS "
 						+ "TMP_ROW_NUM  FROM %PREFIX%EXECUTION) TASK_EXECUTION_PAGE  "
 						+ "WHERE TMP_ROW_NUM >= 1 AND TMP_ROW_NUM < 11 ORDER BY START_TIME DESC, "

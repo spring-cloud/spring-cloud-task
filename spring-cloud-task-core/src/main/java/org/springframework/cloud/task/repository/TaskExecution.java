@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
  * Represents the state of the Task for each execution.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  */
 
 public class TaskExecution {
@@ -60,6 +61,13 @@ public class TaskExecution {
 	private String exitMessage;
 
 	/**
+	 * Error information available upon the failure of a task
+	 *
+	 * @since 1.1.0
+	 */
+	private String errorMessage;
+
+	/**
 	 * The arguments that were used for this task execution.
 	 */
 	private List<String> arguments;
@@ -70,7 +78,8 @@ public class TaskExecution {
 
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
 						 Date startTime, Date endTime,
-						 String exitMessage, List<String> arguments) {
+						 String exitMessage, List<String> arguments,
+						 String errorMessage) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		Assert.notNull(startTime, "startTime must not be null");
@@ -81,6 +90,7 @@ public class TaskExecution {
 		this.arguments = new ArrayList<>(arguments);
 		this.startTime = (Date)startTime.clone();
 		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
+		this.errorMessage = errorMessage;
 	}
 
 	public long getExecutionId() {
@@ -135,6 +145,14 @@ public class TaskExecution {
 		this.arguments = new ArrayList<> (arguments);
 	}
 
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	@Override
 	public String toString() {
 		return "TaskExecution{" +
@@ -144,6 +162,7 @@ public class TaskExecution {
 				", startTime=" + startTime +
 				", endTime=" + endTime +
 				", exitMessage='" + exitMessage + '\'' +
+				", errorMessage='" + errorMessage + "\'" +
 				", arguments=" + arguments +
 				'}';
 	}

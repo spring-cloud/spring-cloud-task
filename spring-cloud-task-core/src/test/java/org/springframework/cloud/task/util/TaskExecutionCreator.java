@@ -70,6 +70,6 @@ public class TaskExecutionCreator {
 			TaskExecution expectedTaskExecution) {
 		return taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage());
+				expectedTaskExecution.getExitMessage(), expectedTaskExecution.getErrorMessage());
 	}
 }

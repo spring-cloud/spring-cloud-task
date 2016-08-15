@@ -139,7 +139,7 @@ public class TaskLifecycleListenerTests {
 		assertEquals(exitCode, taskExecution.getExitCode());
 
 		if(exception != null) {
-			assertTrue(taskExecution.getExitMessage().length() > exception.getStackTrace().length);
+			assertTrue(taskExecution.getErrorMessage().length() > exception.getStackTrace().length);
 		}
 		else {
 			assertNull(taskExecution.getExitMessage());
