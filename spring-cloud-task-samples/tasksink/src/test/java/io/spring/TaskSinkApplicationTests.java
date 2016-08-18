@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
@@ -33,6 +34,7 @@ import org.springframework.cloud.task.launcher.TaskLauncherSink;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,8 +42,8 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Glenn Renfro
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TaskSinkApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TaskSinkApplication.class)
 public class TaskSinkApplicationTests {
 
 	@Autowired

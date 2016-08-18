@@ -24,12 +24,14 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -38,8 +40,8 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
 /**
  * @author Glenn Renfro
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TaskProcessorApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TaskProcessorApplication.class)
 public class TaskProcessorApplicationTests {
 
 	private static final String DEFAULT_PAYLOAD = "hello";
