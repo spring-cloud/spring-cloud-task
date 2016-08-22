@@ -71,7 +71,7 @@ public class TaskExecutionListenerTests {
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
 		TaskExecution taskExecution = new TaskExecution(0, null, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null);
+				new Date(), new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, false, false, taskExecution,taskExecutionListener);
 	}
 
@@ -87,7 +87,7 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null);
+				new Date(), new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, true, false, taskExecution,taskExecutionListener);
 	}
 
@@ -106,7 +106,7 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
-				new Date(), null, new ArrayList<String>(), null);
+				new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, true, true, taskExecution,taskExecutionListener);
 	}
 
@@ -120,7 +120,7 @@ public class TaskExecutionListenerTests {
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener =
 				context.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
 		TaskExecution taskExecution = new TaskExecution(0, null, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null);
+				new Date(), new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, false, false, taskExecution,annotatedListener);
 	}
 
@@ -136,7 +136,7 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null);
+				new Date(), new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, true, false, taskExecution,annotatedListener);
 	}
 
@@ -155,7 +155,7 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
-				new Date(), null, new ArrayList<String>(), null);
+				new Date(), null, new ArrayList<String>(), null, null);
 		verifyListenerResults(true, true, true, taskExecution,annotatedListener);
 	}
 
@@ -184,6 +184,7 @@ public class TaskExecutionListenerTests {
 
 		assertEquals(taskExecution.getExecutionId(), actualListener.getTaskExecution().getExecutionId());
 		assertEquals(taskExecution.getExitCode(), actualListener.getTaskExecution().getExitCode());
+		assertEquals(taskExecution.getExternalExecutionId(), actualListener.getTaskExecution().getExternalExecutionId());
 	}
 
 	private void setupContextForTaskExecutionListener(){

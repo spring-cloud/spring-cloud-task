@@ -37,10 +37,11 @@ public interface TaskExecutionDao {
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
 	TaskExecution createTaskExecution( String taskName,
-						   Date startTime, List<String> arguments);
+						   Date startTime, List<String> arguments, String externalExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as started.
@@ -49,10 +50,11 @@ public interface TaskExecutionDao {
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform
 	 * @since 1.1.0
 	 */
 	TaskExecution startTaskExecution(long executionId, String taskName,
-						   Date startTime, List<String> arguments);
+						   Date startTime, List<String> arguments, String externalExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as completed.

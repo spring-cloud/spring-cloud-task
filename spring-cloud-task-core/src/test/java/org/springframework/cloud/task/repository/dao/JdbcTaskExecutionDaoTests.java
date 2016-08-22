@@ -63,14 +63,15 @@ public class JdbcTaskExecutionDaoTests {
 	@DirtiesContext
 	public void testStartTaskExecution() {
 		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
-				new ArrayList<String>(0));
+				new ArrayList<String>(0), null);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(new Date());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
@@ -81,7 +82,7 @@ public class JdbcTaskExecutionDaoTests {
 	public void createTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments());
+				expectedTaskExecution.getArguments(), expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
@@ -91,7 +92,7 @@ public class JdbcTaskExecutionDaoTests {
 	@DirtiesContext
 	public void createEmptyTaskExecution() {
 		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
-				new ArrayList<String>(0));
+				new ArrayList<String>(0), null);
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
@@ -102,7 +103,8 @@ public class JdbcTaskExecutionDaoTests {
 	public void completeTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
 		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId());
 		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());

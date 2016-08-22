@@ -74,7 +74,8 @@ public class TestDBUtils {
 						rs.getTimestamp("END_TIME"),
 						rs.getString("EXIT_MESSAGE"),
 						new ArrayList<String>(0),
-						rs.getString("ERROR_MESSAGE"));
+						rs.getString("ERROR_MESSAGE"),
+						rs.getString("EXTERNAL_EXECUTION_ID"));
 				return taskExecution;
 			}
 		});

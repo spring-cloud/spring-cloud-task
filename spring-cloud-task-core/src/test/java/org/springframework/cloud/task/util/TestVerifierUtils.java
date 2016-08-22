@@ -90,7 +90,7 @@ public class TestVerifierUtils {
 		String taskName = UUID.randomUUID().toString();
 
 		return new TaskExecution(executionId, 0, taskName,
-				startTime, null, null, new ArrayList<String>(), null);
+				startTime, null, null, new ArrayList<String>(), null, null);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class TestVerifierUtils {
 		String exitMessage = UUID.randomUUID().toString();
 
 		return new TaskExecution(executionId, exitCode, taskName,
-				startTime, endTime, exitMessage, new ArrayList<String>(), null);
+				startTime, endTime, exitMessage, new ArrayList<String>(), null, null);
 	}
 
 	/**
@@ -119,12 +119,13 @@ public class TestVerifierUtils {
 	public static TaskExecution createSampleTaskExecution(long executionId) {
 		Date startTime = new Date();
 		String taskName = UUID.randomUUID().toString();
+		String externalExecutionId = UUID.randomUUID().toString();
 		List<String> args = new ArrayList<>(ARG_SIZE);
 		for (int i = 0; i < ARG_SIZE; i++){
 			args.add(UUID.randomUUID().toString());
 		}
 		return new TaskExecution(executionId, null, taskName,
-				startTime, null, null, args, null);
+				startTime, null, null, args, null, externalExecutionId);
 	}
 
 	/**

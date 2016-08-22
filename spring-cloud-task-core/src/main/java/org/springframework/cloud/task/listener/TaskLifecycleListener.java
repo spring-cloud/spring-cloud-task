@@ -98,6 +98,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Value("${spring.cloud.task.executionid:}")
 	private Integer taskExecutionId;
 
+	@Value("${spring.cloud.task.external.executionid:#{null}}")
+	private String externalExecutionId;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
@@ -201,11 +204,11 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				Assert.isNull(taskExecution.getEndTime(), String.format(
 						"Invalid TaskExecution, ID %s task is already complete", this.taskExecutionId));
 				this.taskExecution = this.taskRepository.startTaskExecution(this.taskExecutionId,
-						this.taskNameResolver.getTaskName(), new Date(), args);
+						this.taskNameResolver.getTaskName(), new Date(), args, externalExecutionId);
 			}
 			else {
 				this.taskExecution = this.taskRepository.createTaskExecution(
-						this.taskNameResolver.getTaskName(), new Date(), args);
+						this.taskNameResolver.getTaskName(), new Date(), args, externalExecutionId);
 			}
 		}
 		else {
@@ -254,7 +257,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
 				endTime,taskExecution.getExitMessage(),
 				Collections.unmodifiableList(taskExecution.getArguments()),
-				taskExecution.getErrorMessage());
+				taskExecution.getErrorMessage(), taskExecution.getExternalExecutionId());
 	}
 
 	@Override
