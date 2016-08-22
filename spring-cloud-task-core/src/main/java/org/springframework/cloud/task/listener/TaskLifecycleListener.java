@@ -92,6 +92,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Value("${spring.cloud.task.closecontext.enable:true}")
 	private Boolean closeContext;
 
+	@Value("${spring.cloud.task.executionid:}")
+	private Integer taskExecutionId;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
@@ -188,8 +191,14 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
 			}
 
-			this.taskExecution = this.taskRepository.createTaskExecution(
-					this.taskNameResolver.getTaskName(), new Date(), args);
+			if(this.taskExecutionId != null) {
+				this.taskExecution = this.taskRepository.startTaskExecution(this.taskExecutionId,
+						this.taskNameResolver.getTaskName(), new Date(), args);
+			}
+			else {
+				this.taskExecution = this.taskRepository.createTaskExecution(
+						this.taskNameResolver.getTaskName(), new Date(), args);
+			}
 		}
 		else {
 			logger.error("Multiple start events have been received.  The first one was " +

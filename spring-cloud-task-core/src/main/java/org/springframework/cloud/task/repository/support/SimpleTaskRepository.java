@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,6 +107,24 @@ public class SimpleTaskRepository implements TaskRepository {
 		TaskExecution taskExecution =
 				taskExecutionDao.createTaskExecution(taskName, startTime, arguments);
 		logger.debug("Creating: " + taskExecution.toString());
+		return taskExecution;
+	}
+
+	@Override
+	public TaskExecution createTaskExecution() {
+		initialize();
+		TaskExecution taskExecution =
+				taskExecutionDao.createTaskExecution(null, null, new ArrayList<String>(0));
+		logger.debug("Creating: " + taskExecution.toString());
+		return taskExecution;
+	}
+
+	@Override
+	public TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments) {
+		initialize();
+		TaskExecution taskExecution =
+				taskExecutionDao.startTaskExecution(executionid, taskName, startTime, arguments);
+		logger.debug("Starting: " + taskExecution.toString());
 		return taskExecution;
 	}
 

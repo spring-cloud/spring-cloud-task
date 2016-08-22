@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -63,6 +64,17 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Test
 	@DirtiesContext
+	public void testCreateEmptyExecution() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(dataSource,
+				expectedTaskExecution.getExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				actualTaskExecution);
+	}
+
+	@Test
+	@DirtiesContext
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
@@ -78,6 +90,39 @@ public class SimpleTaskRepositoryJdbcTests {
 				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(
 				dataSource, expectedTaskExecution.getExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+	@Test
+	@DirtiesContext
+	public void startTaskExecutionWithParam() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+	@Test
+	@DirtiesContext
+	public void startTaskExecutionWithNoParam() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments());
+
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
@@ -199,7 +244,6 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
-
 
 	@Test(expected=IllegalArgumentException.class)
 	@DirtiesContext

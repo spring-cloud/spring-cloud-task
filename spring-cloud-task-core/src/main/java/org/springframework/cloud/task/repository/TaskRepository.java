@@ -68,4 +68,10 @@ public interface TaskRepository {
 	TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> arguments);
 
+	@Transactional
+	TaskExecution createTaskExecution();
+
+	@Transactional
+	TaskExecution startTaskExecution(long executionid, String taskName,
+			Date startTime,List<String> arguments);
 }

@@ -42,6 +42,9 @@ public interface TaskExecutionDao {
 	TaskExecution createTaskExecution( String taskName,
 						   Date startTime, List<String> arguments);
 
+	TaskExecution startTaskExecution(long executionId, String taskName,
+						   Date startTime, List<String> arguments);
+
 	/**
 	 * Update and existing {@link TaskExecution}.
 	 *
