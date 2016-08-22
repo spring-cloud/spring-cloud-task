@@ -42,7 +42,7 @@ public class TaskEventTests {
 								TaskEventAutoConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},
-						new String[]{ "--spring.cloud.task.closecontext.enable=false",
+						new String[]{ "--spring.cloud.task.closecontext_enable=false",
 								"--spring.main.web-environment=false"});
 
 		assertNotNull(applicationContext.getBean("taskEventListener"));

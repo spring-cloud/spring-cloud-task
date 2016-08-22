@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Represents the state of the Task for each execution.
@@ -61,6 +62,13 @@ public class TaskExecution {
 	private String exitMessage;
 
 	/**
+	 * Id assigned to the task by the platform.
+	 *
+	 * @since 1.1.0
+	 */
+	private String externalExecutionId;
+
+	/**
 	 * Error information available upon the failure of a task
 	 *
 	 * @since 1.1.0
@@ -79,7 +87,7 @@ public class TaskExecution {
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
 						 Date startTime, Date endTime,
 						 String exitMessage, List<String> arguments,
-						 String errorMessage) {
+						 String errorMessage, String externalExecutionId) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		this.executionId = executionId;
@@ -90,6 +98,7 @@ public class TaskExecution {
 		this.startTime = (startTime != null) ? (Date)startTime.clone() : null;
 		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 		this.errorMessage = errorMessage;
+		this.externalExecutionId = externalExecutionId;
 	}
 
 	public long getExecutionId() {
@@ -150,6 +159,14 @@ public class TaskExecution {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public String getExternalExecutionId() {
+		return externalExecutionId;
+	}
+
+	public void setExternalExecutionId(String externalExecutionId) {
+		this.externalExecutionId = externalExecutionId;
 	}
 
 	@Override

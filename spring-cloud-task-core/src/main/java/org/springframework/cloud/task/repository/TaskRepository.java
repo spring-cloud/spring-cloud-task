@@ -62,11 +62,12 @@ public interface TaskRepository {
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform.
 	 * @return the initial {@link TaskExecution}
 	 */
 	@Transactional
 	TaskExecution createTaskExecution(String taskName,
-			Date startTime,List<String> arguments);
+			Date startTime,List<String> arguments, String externalExecutionId);
 
 	/**
 	 * Creates an empty TaskExecution with just an id provided. This is intended to be
@@ -85,9 +86,11 @@ public interface TaskRepository {
 	 * @param taskName the name that associated with the task execution.
 	 * @param startTime the time task began.
 	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform.
+
 	 * @return
 	 */
 	@Transactional
 	TaskExecution startTaskExecution(long executionid, String taskName,
-			Date startTime,List<String> arguments);
+			Date startTime,List<String> arguments, String externalExecutionId);
 }

@@ -105,7 +105,7 @@ public class SimpleTaskRepositoryJdbcTests {
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments());
+				expectedTaskExecution.getArguments(), expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
@@ -121,7 +121,7 @@ public class SimpleTaskRepositoryJdbcTests {
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments());
+				expectedTaskExecution.getArguments(), expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
@@ -194,7 +194,8 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(new String(new char[MAX_TASK_NAME_SIZE + 1]));
 		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -204,7 +205,8 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE + 1]));
 		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId());
 	}
 
 	@Test
@@ -230,7 +232,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	public void testCreateTaskExecutionNoParamMaxTaskName(){
 		taskRepository.createTaskExecution(
 				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]),
-				new Date(), null);
+				new Date(), null, null);
 	}
 
 	@Test(expected=IllegalArgumentException.class)

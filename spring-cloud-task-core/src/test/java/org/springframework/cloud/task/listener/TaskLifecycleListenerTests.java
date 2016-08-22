@@ -84,7 +84,7 @@ public class TaskLifecycleListenerTests {
 	public void testTaskCreate() {
 		context.refresh();
 		this.taskExplorer = context.getBean(TaskExplorer.class);
-		verifyTaskExecution(0, false, 0, null);
+		verifyTaskExecution(0, false);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class TaskLifecycleListenerTests {
 		context.register(ArgsConfiguration.class);
 		context.refresh();
 		this.taskExplorer = context.getBean(TaskExplorer.class);
-		verifyTaskExecution(2, false, 0, null);
+		verifyTaskExecution(2, false);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class TaskLifecycleListenerTests {
 
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
-		verifyTaskExecution(0, true, 0, null);
+		verifyTaskExecution(0, true);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class TaskLifecycleListenerTests {
 		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
-		verifyTaskExecution(0, true, 1, exception);
+		verifyTaskExecution(0, true, 1, exception, null);
 	}
 
 	@Test
@@ -128,13 +128,13 @@ public class TaskLifecycleListenerTests {
 		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
-		verifyTaskExecution(0, true, exitCode, exception);
+		verifyTaskExecution(0, true, exitCode, exception, null);
 	}
 
 	@Test
 	public void testNoClosingOfContext() {
 		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Object[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
-				new String[] {"--spring.cloud.task.closecontext.enable=false"});
+				new String[] {"--spring.cloud.task.closecontext_enable=false"});
 
 		try {
 			assertTrue(applicationContext.isActive());
@@ -155,7 +155,27 @@ public class TaskLifecycleListenerTests {
 		context.refresh();
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception) {
+	@Test
+	public void testExternalExecutionId() {
+		ConfigurableEnvironment environment = new StandardEnvironment();
+		MutablePropertySources propertySources = environment.getPropertySources();
+		Map myMap = new HashMap();
+		myMap.put("spring.cloud.task.external-execution-id", "myid");
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		context.setEnvironment(environment);
+		context.refresh();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
+
+		verifyTaskExecution(0, false, 0, null, "myid");
+
+	}
+
+	private void verifyTaskExecution(int numberOfParams, boolean update) {
+		verifyTaskExecution(numberOfParams, update, 0, null, null);
+	}
+
+	private void verifyTaskExecution(int numberOfParams, boolean update,
+			Integer exitCode, Throwable exception, String externalExecutionId) {
 
 		Sort sort = new Sort("id");
 
@@ -168,6 +188,7 @@ public class TaskLifecycleListenerTests {
 
 		assertEquals(numberOfParams, taskExecution.getArguments().size());
 		assertEquals(exitCode, taskExecution.getExitCode());
+		assertEquals(externalExecutionId, taskExecution.getExternalExecutionId());
 
 		if(exception != null) {
 			assertTrue(taskExecution.getErrorMessage().length() > exception.getStackTrace().length);

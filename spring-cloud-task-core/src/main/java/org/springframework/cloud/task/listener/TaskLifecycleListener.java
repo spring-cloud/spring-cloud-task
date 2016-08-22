@@ -34,6 +34,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -80,6 +81,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution taskExecution;
 
+	private TaskProperties taskProperties;
+
 	private boolean started = false;
 
 	private boolean finished = false;
@@ -92,26 +95,23 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
-	@Value("${spring.cloud.task.closecontext.enable:true}")
-	private Boolean closeContext;
-
-	@Value("${spring.cloud.task.executionid:}")
-	private Integer taskExecutionId;
-
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,
-			ApplicationArguments applicationArguments, TaskExplorer taskExplorer) {
+			ApplicationArguments applicationArguments, TaskExplorer taskExplorer,
+			TaskProperties taskProperties) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
+		Assert.notNull(taskProperties, "TaskProperties is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments;
 		this.taskExplorer = taskExplorer;
+		this.taskProperties = taskProperties;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 			this.finished = true;
 
-			if(this.closeContext && this.context.isActive()) {
+			if(taskProperties.getClosecontextEnable() && this.context.isActive()) {
 				this.context.close();
 			}
 
@@ -195,17 +195,17 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			if(this.applicationArguments != null) {
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
 			}
-			if(this.taskExecutionId != null) {
-				TaskExecution taskExecution = taskExplorer.getTaskExecution(this.taskExecutionId);
-				Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found", this.taskExecutionId));
+			if(taskProperties.getExecutionid() != null) {
+				TaskExecution taskExecution = taskExplorer.getTaskExecution(taskProperties.getExecutionid());
+				Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found", taskProperties.getExecutionid()));
 				Assert.isNull(taskExecution.getEndTime(), String.format(
-						"Invalid TaskExecution, ID %s task is already complete", this.taskExecutionId));
-				this.taskExecution = this.taskRepository.startTaskExecution(this.taskExecutionId,
-						this.taskNameResolver.getTaskName(), new Date(), args);
+						"Invalid TaskExecution, ID %s task is already complete", taskProperties.getExecutionid()));
+				this.taskExecution = this.taskRepository.startTaskExecution(taskProperties.getExecutionid(),
+						this.taskNameResolver.getTaskName(), new Date(), args, taskProperties.getExternalExecutionId());
 			}
 			else {
 				this.taskExecution = this.taskRepository.createTaskExecution(
-						this.taskNameResolver.getTaskName(), new Date(), args);
+						this.taskNameResolver.getTaskName(), new Date(), args, taskProperties.getExternalExecutionId());
 			}
 		}
 		else {
@@ -254,7 +254,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
 				endTime,taskExecution.getExitMessage(),
 				Collections.unmodifiableList(taskExecution.getArguments()),
-				taskExecution.getErrorMessage());
+				taskExecution.getErrorMessage(), taskExecution.getExternalExecutionId());
 	}
 
 	@Override

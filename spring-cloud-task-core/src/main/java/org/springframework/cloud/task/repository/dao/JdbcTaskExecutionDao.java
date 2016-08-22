@@ -58,7 +58,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	public static final String SELECT_CLAUSE = "TASK_EXECUTION_ID, "
 			+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED ";
+			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID ";
 
 	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
@@ -68,14 +68,14 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = ? ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED)"
-			+ "values (?, ?, ?, ?)";
+			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED, EXTERNAL_EXECUTION_ID)"
+			+ "values (?, ?, ?, ?, ?)";
 
 	private static final String CREATE_TASK_ARGUMENT = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
 
 	private static final String START_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
-			+ "START_TIME = ?, TASK_NAME = ?, LAST_UPDATED = ? where TASK_EXECUTION_ID = ?";
+			+ "START_TIME = ?, TASK_NAME = ?, LAST_UPDATED = ?, EXTERNAL_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
 
 	private static final String CHECK_TASK_EXECUTION_EXISTS = "SELECT COUNT(*) FROM "
 			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
@@ -86,7 +86,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
 			"START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
-			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED "
+			+ "EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID "
 			+ "from %PREFIX%EXECUTION where TASK_EXECUTION_ID = ?";
 
 	private static final String FIND_ARGUMENT_FROM_ID = "SELECT TASK_EXECUTION_ID, "
@@ -129,31 +129,32 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
-			Date startTime, List<String> arguments)  {
+			Date startTime, List<String> arguments, String externalExecutionId)  {
 		long nextExecutionId = getNextExecutionId();
 
 		TaskExecution taskExecution = new TaskExecution(nextExecutionId, null, taskName,
-				startTime, null, null, arguments, null);
+				startTime, null, null, arguments, null, externalExecutionId);
 
-		Object[] queryParameters = new Object[]{ nextExecutionId, startTime, taskName, new Date()};
+		Object[] queryParameters = new Object[]{ nextExecutionId, startTime, taskName, new Date(), externalExecutionId};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				queryParameters,
-				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP });
+				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP, Types.VARCHAR });
 		insertTaskArguments(nextExecutionId, arguments);
 		return taskExecution;
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId) {
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
-				startTime, null, null, arguments, null);
+				startTime, null, null, arguments, null, externalExecutionId);
 
-		Object[] queryParameters = new Object[]{ startTime, taskName, new Date(), executionId};
+		Object[] queryParameters = new Object[]{ startTime, taskName, new Date(), externalExecutionId, executionId};
 		jdbcTemplate.update(
 				getQuery(START_TASK_EXECUTION),
 				queryParameters,
-				new int[]{ Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP, Types.BIGINT });
+				new int[]{ Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT });
 		insertTaskArguments(executionId, arguments);
 		return taskExecution;
 	}
@@ -399,7 +400,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getTimestamp("END_TIME"),
 					rs.getString("EXIT_MESSAGE"),
 					getTaskArguments(id),
-					rs.getString("ERROR_MESSAGE"));
+					rs.getString("ERROR_MESSAGE"),
+					rs.getString("EXTERNAL_EXECUTION_ID"));
 		}
                 
                 private Integer getNullableExitCode(ResultSet rs) throws SQLException {
