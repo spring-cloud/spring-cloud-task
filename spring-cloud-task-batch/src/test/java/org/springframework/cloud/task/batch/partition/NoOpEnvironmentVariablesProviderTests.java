@@ -15,29 +15,31 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
-import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.batch.item.ExecutionContext;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * A simple no-op implementation of the {@link EnvironmentVariablesProvider}.  It returns
- * an empty {@link Map}.
- *
  * @author Michael Minella
- *
- * @since 1.0.2
  */
-public class NoOpEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
+public class NoOpEnvironmentVariablesProviderTests {
 
-	/**
-	 *
-	 * @param executionContext the {@link ExecutionContext} associated with the worker's
-	 * 			step
-	 * @return an empty {@link Map}
-	 */
-	@Override
-	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
-		return Collections.emptyMap();
+	private NoOpEnvironmentVariablesProvider provider;
+
+	@Before
+	public void setUp() {
+		this.provider = new NoOpEnvironmentVariablesProvider();
+	}
+
+	@Test
+	public void test() {
+		Map<String, String> environmentVariables = this.provider.getEnvironmentVariables(null);
+		assertNotNull(environmentVariables);
+		assertTrue(environmentVariables.isEmpty());
+
+		Map<String, String> environmentVariables2 = this.provider.getEnvironmentVariables(null);
+		assertTrue(environmentVariables == environmentVariables2);
 	}
 }

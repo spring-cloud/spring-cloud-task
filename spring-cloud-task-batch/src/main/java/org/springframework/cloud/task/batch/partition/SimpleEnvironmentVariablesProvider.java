@@ -42,6 +42,8 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 
 	private Map<String, String> environmentProperties = new HashMap<>(0);
 
+	private boolean includeCurrentEnvironment = true;
+
 	/**
 	 * @param environment The {@link Environment} for this context
 	 */
@@ -57,11 +59,19 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 		this.environmentProperties = environmentProperties;
 	}
 
+	public void setIncludeCurrentEnvironment(boolean includeCurrentEnvironment) {
+		this.includeCurrentEnvironment = includeCurrentEnvironment;
+	}
+
 	@Override
 	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
 
 		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
-		environmentProperties.putAll(getCurrentEnvironmentProperties());
+
+		if(includeCurrentEnvironment) {
+			environmentProperties.putAll(getCurrentEnvironmentProperties());
+		}
+
 		environmentProperties.putAll(this.environmentProperties);
 
 		return environmentProperties;

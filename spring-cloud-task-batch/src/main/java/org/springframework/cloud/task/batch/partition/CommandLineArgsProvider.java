@@ -15,29 +15,28 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
 
 /**
- * A simple no-op implementation of the {@link EnvironmentVariablesProvider}.  It returns
- * an empty {@link Map}.
+ * Strategy to allow for the customization of command line arguments passed to each
+ * partition's execution.
  *
  * @author Michael Minella
- *
- * @since 1.0.2
+ * @since 1.1.0
  */
-public class NoOpEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
+public interface CommandLineArgsProvider {
 
 	/**
+	 * Returns a unique list of command line arguements to be passed to the partition's
+	 * worker for the specified {@link ExecutionContext}.
 	 *
-	 * @param executionContext the {@link ExecutionContext} associated with the worker's
-	 * 			step
-	 * @return an empty {@link Map}
+	 * Note: This method is called once per partition.
+	 *
+	 * @param executionContext the unique state for the step to be executed
+	 * @return a list of formatted command line arguments to be passed to the worker (the
+	 *         list will be joined via spaces).
 	 */
-	@Override
-	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
-		return Collections.emptyMap();
-	}
+	List<String> getCommandLineArgs(ExecutionContext executionContext);
 }

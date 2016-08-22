@@ -47,6 +47,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>A {@link PartitionHandler} implementation that delegates to a {@link TaskLauncher} for
@@ -74,6 +75,8 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	public static final String SPRING_CLOUD_TASK_STEP_NAME =
 			"spring.cloud.task.step-name";
+
+	public static final String SPRING_CLOUD_TASK_NAME = "spring.cloud.task.name";
 
 	private int maxWorkers = -1;
 
@@ -103,6 +106,10 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private EnvironmentVariablesProvider environmentVariablesProvider;
 
+	private String applicationName;
+
+	private CommandLineArgsProvider commandLineArgsProvider;
+
 	public DeployerPartitionHandler(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer,
 			Resource resource,
@@ -118,8 +125,22 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		this.stepName = stepName;
 	}
 
+	/**
+	 * Used to provide any environment variables to be set on each worker launched.
+	 *
+	 * @param environmentVariablesProvider an {@link EnvironmentVariablesProvider}
+	 */
 	public void setEnvironmentVariablesProvider(EnvironmentVariablesProvider environmentVariablesProvider) {
 		this.environmentVariablesProvider = environmentVariablesProvider;
+	}
+
+	/**
+	 * Used to provide any command line arguements to be passed to each worker launched.
+	 *
+	 * @param commandLineArgsProvider {@link CommandLineArgsProvider}
+	 */
+	public void setCommandLineArgsProvider(CommandLineArgsProvider commandLineArgsProvider) {
+		this.commandLineArgsProvider = commandLineArgsProvider;
 	}
 
 	/**
@@ -170,9 +191,24 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		this.deploymentProperties = deploymentProperties;
 	}
 
+	/**
+	 * The name of the application to be launched.  Useful in environments where
+	 * application deployments are reused (such as CloudFoundry).
+	 *
+	 * @param applicationName The name of the application to be launched
+	 */
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
 	@BeforeTask
 	public void beforeTask(TaskExecution taskExecution) {
 		this.taskExecution = taskExecution;
+
+		if(this.commandLineArgsProvider == null) {
+			this.commandLineArgsProvider =
+					new SimpleCommandLineArgsProvider(this.taskExecution);
+		}
 	}
 
 	@Override
@@ -216,21 +252,30 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private void launchWorker(StepExecution workerStepExecution) {
 		List<String> arguments = new ArrayList<>();
-		arguments.addAll(this.taskExecution.getArguments());
+
+		ExecutionContext copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
+
+		arguments.addAll(
+				this.commandLineArgsProvider
+						.getCommandLineArgs(copyContext));
+
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
 				String.valueOf(workerStepExecution.getJobExecution().getId())));
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
 				String.valueOf(workerStepExecution.getId())));
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
+		arguments.add(formatArgument(SPRING_CLOUD_TASK_NAME, String.format("%s:%s:%s",
+				taskExecution.getTaskName(),
+				workerStepExecution.getJobExecution().getJobInstance().getJobName(),
+				workerStepExecution.getStepName())));
 
-		ExecutionContext copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
+		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
+
+		Map<String, String> environmentVariables = this.environmentVariablesProvider.getEnvironmentVariables(copyContext);
 
 		AppDefinition definition =
-				new AppDefinition(String.format("%s:%s:%s",
-						taskExecution.getTaskName(),
-						workerStepExecution.getJobExecution().getJobInstance().getJobName(),
-						workerStepExecution.getStepName()),
-						this.environmentVariablesProvider.getEnvironmentVariables(copyContext));
+				new AppDefinition(resolveApplicationName(),
+						environmentVariables);
 
 		AppDeploymentRequest request =
 				new AppDeploymentRequest(definition,
@@ -239,6 +284,15 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 						arguments);
 
 		taskLauncher.launch(request);
+	}
+
+	private String resolveApplicationName() {
+		if(StringUtils.hasText(this.applicationName)) {
+			return this.applicationName;
+		}
+		else {
+			return this.taskExecution.getTaskName();
+		}
 	}
 
 	private String formatArgument(String key, String value) {
