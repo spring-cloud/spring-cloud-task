@@ -28,7 +28,8 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 
 /**
- * Copies all existing environment variables as made available in the {@link Environment}.
+ * Copies all existing environment variables as made available in the {@link Environment}
+ * only if includeCurrentEnvironment is set to true (default).
  * The <code>environmentProperties</code> option provides the ability to override any
  * specific values on an as needed basis.
  *
@@ -41,6 +42,8 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 	private Environment environment;
 
 	private Map<String, String> environmentProperties = new HashMap<>(0);
+
+	private boolean includeCurrentEnvironment = true;
 
 	/**
 	 * @param environment The {@link Environment} for this context
@@ -57,11 +60,24 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 		this.environmentProperties = environmentProperties;
 	}
 
+	/**
+	 * Establishes if current environment variables will be included as a part of the provider.
+	 * @param includeCurrentEnvironment true(default) include local environment properties.  False do not include
+	 * current environment properties.
+	 */
+	public void setIncludeCurrentEnvironment(boolean includeCurrentEnvironment) {
+		this.includeCurrentEnvironment = includeCurrentEnvironment;
+	}
+
 	@Override
 	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
 
 		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
-		environmentProperties.putAll(getCurrentEnvironmentProperties());
+
+		if(includeCurrentEnvironment) {
+			environmentProperties.putAll(getCurrentEnvironmentProperties());
+		}
+
 		environmentProperties.putAll(this.environmentProperties);
 
 		return environmentProperties;

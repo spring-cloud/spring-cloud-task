@@ -15,29 +15,30 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.util.Assert;
 
 /**
- * A simple no-op implementation of the {@link EnvironmentVariablesProvider}.  It returns
- * an empty {@link Map}.
+ * Returns any command line arguments used with the {@link TaskExecution} provided.
  *
  * @author Michael Minella
- *
- * @since 1.0.2
+ * @since 1.1.0
  */
-public class NoOpEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
+public class SimpleCommandLineArgsProvider implements CommandLineArgsProvider {
 
-	/**
-	 *
-	 * @param executionContext the {@link ExecutionContext} associated with the worker's
-	 * 			step
-	 * @return an empty {@link Map}
-	 */
+	private final TaskExecution taskExecution;
+
+	public SimpleCommandLineArgsProvider(TaskExecution taskExecution) {
+		Assert.notNull(taskExecution, "A taskExecution is required");
+
+		this.taskExecution = taskExecution;
+	}
+
 	@Override
-	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
-		return Collections.emptyMap();
+	public List<String> getCommandLineArgs(ExecutionContext executionContext) {
+		return this.taskExecution.getArguments();
 	}
 }

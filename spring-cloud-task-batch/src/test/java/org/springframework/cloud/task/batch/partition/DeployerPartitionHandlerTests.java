@@ -149,7 +149,7 @@ public class DeployerPartitionHandlerTests {
 
 		AppDefinition appDefinition = request.getDefinition();
 
-		assertEquals("partitionedJobTask:partitionedJob:step1:partition1", appDefinition.getName());
+		assertEquals("partitionedJobTask", appDefinition.getName());
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")));
@@ -362,7 +362,7 @@ public class DeployerPartitionHandlerTests {
 
 		AppDefinition appDefinition = request.getDefinition();
 
-		assertEquals("partitionedJobTask:partitionedJob:step1:partition1", appDefinition.getName());
+		assertEquals("partitionedJobTask", appDefinition.getName());
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")));
@@ -426,7 +426,7 @@ public class DeployerPartitionHandlerTests {
 
 		AppDefinition appDefinition = request.getDefinition();
 
-		assertEquals("partitionedJobTask:partitionedJob:step1:partition1", appDefinition.getName());
+		assertEquals("partitionedJobTask", appDefinition.getName());
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")));
@@ -608,7 +608,7 @@ public class DeployerPartitionHandlerTests {
 
 		AppDefinition appDefinition = request.getDefinition();
 
-		assertEquals("partitionedJobTask:partitionedJob:step1:partition1", appDefinition.getName());
+		assertEquals("partitionedJobTask", appDefinition.getName());
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")));
 		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")));
@@ -661,7 +661,27 @@ public class DeployerPartitionHandlerTests {
 		Collections.sort(allRequests, new Comparator<AppDeploymentRequest>() {
 			@Override
 			public int compare(AppDeploymentRequest o1, AppDeploymentRequest o2) {
-				return o1.getDefinition().getName().compareTo(o2.getDefinition().getName());
+				List<String> commandlineArguments = o1.getCommandlineArguments();
+
+				String o1Command = "";
+				for (String commandlineArgument : commandlineArguments) {
+					if(commandlineArgument.contains(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
+						o1Command = commandlineArgument;
+						break;
+					}
+				}
+
+				commandlineArguments = o2.getCommandlineArguments();
+
+				String o2Command = "";
+				for (String commandlineArgument : commandlineArguments) {
+					if(commandlineArgument.contains(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
+						o2Command = commandlineArgument;
+						break;
+					}
+				}
+
+				return o1Command.compareTo(o2Command);
 			}
 		});
 
@@ -671,7 +691,7 @@ public class DeployerPartitionHandlerTests {
 			assertEquals(0, request.getDeploymentProperties().size());
 
 			AppDefinition appDefinition = request.getDefinition();
-			assertEquals("partitionedJobTask:partitionedJob:step1:partition" + (i - 3), appDefinition.getName());
+			assertEquals("partitionedJobTask", appDefinition.getName());
 			assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")));
 			assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(i))));
 			assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")));

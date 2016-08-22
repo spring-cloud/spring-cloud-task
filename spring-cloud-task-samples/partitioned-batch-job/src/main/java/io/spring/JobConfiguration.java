@@ -15,8 +15,11 @@
  */
 package io.spring;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
@@ -37,11 +40,11 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
-import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
-import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
 import org.springframework.cloud.task.batch.partition.DeployerStepExecutionHandler;
+import org.springframework.cloud.task.batch.partition.NoOpEnvironmentVariablesProvider;
+import org.springframework.cloud.task.batch.partition.PassThroughCommandLineArgsProvider;
 import org.springframework.cloud.task.batch.partition.SimpleEnvironmentVariablesProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -89,28 +92,19 @@ public class JobConfiguration {
 	}
 
 	@Bean
-	public TaskLauncher taskLauncher() {
-		LocalDeployerProperties localDeployerProperties = new LocalDeployerProperties();
-
-		localDeployerProperties.setDeleteFilesOnExit(false);
-
-		return new LocalTaskLauncher(localDeployerProperties);
-	}
-
-	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
 		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
-		Map<String, String> environmentProperties = new HashMap<>();
-		environmentProperties.put("spring.profiles.active", "worker");
-
-		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
-		environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
-		partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
-
-		partitionHandler.setMaxWorkers(2);
+		List<String> commandLineArgs = new ArrayList<>(3);
+		commandLineArgs.add("--spring.profiles.active=worker");
+		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
+		commandLineArgs.add("--spring.batch.initializer.enabled=false");
+		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
+		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
+		partitionHandler.setMaxWorkers(1);
+		partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
 		return partitionHandler;
 	}
@@ -173,9 +167,10 @@ public class JobConfiguration {
 	}
 
 	@Bean
-	@Profile("master")
+	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
-		return jobBuilderFactory.get("partitionedJob")
+		Random random = new Random();
+		return jobBuilderFactory.get("partitionedJob"+random.nextInt())
 				.start(step1(partitionHandler))
 				.build();
 	}

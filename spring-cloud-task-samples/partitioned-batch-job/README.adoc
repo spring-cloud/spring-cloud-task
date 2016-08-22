@@ -22,7 +22,7 @@ $ export spring_datasource_url=jdbc:mysql://localhost:3306/<your database>
 $ export spring_datasource_username=<your username>
 $ export spring_datasource_password=<your password>
 $ export spring_datasource_driverClassName=org.mariadb.jdbc.Driver
-$ java -jar -Dspring.profiles.active=master target/partitioned-batch-job-1.1.0.BUILD-SNAPSHOT.jar
+$ java -jar target/partitioned-batch-job-1.1.0.BUILD-SNAPSHOT.jar
 ----
 
 NOTE: This example will use require a MySql RDBMS repository and currently uses the mariadb jdbc driver to connect.

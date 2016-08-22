@@ -15,29 +15,32 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
-import org.springframework.batch.item.ExecutionContext;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * A simple no-op implementation of the {@link EnvironmentVariablesProvider}.  It returns
- * an empty {@link Map}.
- *
  * @author Michael Minella
- *
- * @since 1.0.2
  */
-public class NoOpEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
+public class PassThroughCommandLineArgsProviderTests {
 
-	/**
-	 *
-	 * @param executionContext the {@link ExecutionContext} associated with the worker's
-	 * 			step
-	 * @return an empty {@link Map}
-	 */
-	@Override
-	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
-		return Collections.emptyMap();
+	@Test(expected = IllegalArgumentException.class)
+	public void testNull() {
+		new PassThroughCommandLineArgsProvider(null);
+	}
+
+	@Test
+	public void test() {
+		List<String> args = Arrays.asList("foo", "bar", "baz");
+
+		CommandLineArgsProvider provider = new PassThroughCommandLineArgsProvider(args);
+
+		List<String> commandLineArgs = provider.getCommandLineArgs(null);
+
+		assertEquals("foo", commandLineArgs.get(0));
+		assertEquals("bar", commandLineArgs.get(1));
+		assertEquals("baz", commandLineArgs.get(2));
 	}
 }
