@@ -69,8 +69,8 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskLifecycleListener taskHandler(){
-		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), applicationArguments);
+	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer){
+		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), applicationArguments, taskExplorer);
 	}
 
 	@Override

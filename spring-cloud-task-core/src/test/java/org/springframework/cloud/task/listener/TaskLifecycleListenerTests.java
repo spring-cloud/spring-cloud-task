@@ -35,10 +35,15 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -137,6 +142,17 @@ public class TaskLifecycleListenerTests {
 		finally {
 			applicationContext.close();
 		}
+	}
+
+	@Test(expected = ApplicationContextException.class)
+	public void testInvalidTaskExecutionId() {
+		ConfigurableEnvironment environment = new StandardEnvironment();
+		MutablePropertySources propertySources = environment.getPropertySources();
+		Map myMap = new HashMap();
+		myMap.put("spring.cloud.task.executionid", "55");
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		context.setEnvironment(environment);
+		context.refresh();
 	}
 
 	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception) {

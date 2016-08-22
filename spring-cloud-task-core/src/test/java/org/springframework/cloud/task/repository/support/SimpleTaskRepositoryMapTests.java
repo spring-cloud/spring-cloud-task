@@ -16,8 +16,10 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,14 @@ public class SimpleTaskRepositoryMapTests {
 	}
 
 	@Test
+	public void testCreateEmptyExecution() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
@@ -57,6 +67,37 @@ public class SimpleTaskRepositoryMapTests {
 				TaskExecutionCreator.createAndStoreTaskExecutionWithParams(taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	public void startTaskExecutionWithParam() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+	@Test
+	public void startTaskExecutionWithNoParam() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
 	@Test

@@ -16,13 +16,19 @@
 
 package org.springframework.cloud.task.repository.dao;
 
-import static org.junit.Assert.assertNotNull;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
+import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestVerifierUtils;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Executes unit tests on MapTaskExecutionDaoTests.
@@ -30,14 +36,52 @@ import org.springframework.cloud.task.util.TestVerifierUtils;
  */
 public class MapTaskExecutionDaoTests {
 
+	private MapTaskExecutionDao dao;
+
+	@Before
+	public void setUp() {
+		this.dao = new MapTaskExecutionDao();
+	}
+
+	@Test
+	public void testStartTaskExecution() {
+		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<String>(0));
+
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	public void createEmptyTaskExecution() {
+		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
+				new ArrayList<String>(0));
+
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void completeTaskExecutionWithNoCreate() {
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+				expectedTaskExecution.getExitMessage());
+	}
 
 	@Test
 	public void saveTaskExecution(){
-		MapTaskExecutionDao dao = new MapTaskExecutionDao();
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
-		Map<Long, TaskExecution> taskExecutionMap = dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
@@ -45,14 +89,13 @@ public class MapTaskExecutionDaoTests {
 
 	@Test
 	public void completeTaskExecution(){
-		MapTaskExecutionDao dao = new MapTaskExecutionDao();
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
-		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());
-		Map<Long, TaskExecution> taskExecutionMap = dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));

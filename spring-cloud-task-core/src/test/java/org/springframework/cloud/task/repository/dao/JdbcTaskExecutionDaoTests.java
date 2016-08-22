@@ -16,11 +16,16 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -56,10 +61,37 @@ public class JdbcTaskExecutionDaoTests {
 
 	@Test
 	@DirtiesContext
-	public void saveTaskExecution() {
+	public void testStartTaskExecution() {
+		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
+				new ArrayList<String>(0));
+
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+
+		dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	@DirtiesContext
+	public void createTaskExecution() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
 				expectedTaskExecution.getArguments());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	@DirtiesContext
+	public void createEmptyTaskExecution() {
+		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
+				new ArrayList<String>(0));
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));

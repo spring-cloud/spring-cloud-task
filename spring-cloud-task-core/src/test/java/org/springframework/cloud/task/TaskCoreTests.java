@@ -7,8 +7,9 @@ import org.junit.Test;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.test.OutputCapture;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class TaskCoreTests {
 	private static final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
 	private static final String SUCCESS_EXIT_CODE_MESSAGE = "with the following {exitCode=0";
 	private static final String EXCEPTION_EXIT_CODE_MESSAGE = "with the following {exitCode=1";
+	private static final String EXCEPTION_INVALID_TASK_EXECUTION_ID =
+			"java.lang.IllegalArgumentException: Invalid TaskExecution, ID 55 not found";
 	private static final String ERROR_MESSAGE =
 			"errorMessage='java.lang.IllegalStateException: Failed to execute CommandLineRunner";
 
@@ -86,6 +89,27 @@ public class TaskCoreTests {
 				output.contains(ERROR_MESSAGE));
 		assertTrue("Test results have exception message: " + output,
 				output.contains(EXCEPTION_MESSAGE));
+	}
+
+	@Test
+	public void invalidExecutionId() {
+		boolean exceptionFired = false;
+		try {
+			applicationContext = new SpringApplicationBuilder().sources(new Object[]{TaskExceptionConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
+					"--spring.cloud.task.closecontext.enable=false",
+					"--spring.cloud.task.name=" + TASK_NAME,
+					"--spring.main.web-environment=false",
+					"--spring.cloud.task.executionid=55"});
+		}
+		catch (ApplicationContextException exception) {
+			exceptionFired = true;
+		}
+		assertTrue("An ApplicationContextException should have been thrown", exceptionFired);
+
+		String output = this.outputCapture.toString();
+		assertTrue("Test results do not show the correct exception message: " + output,
+				output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID));
 	}
 
 	@Configuration
