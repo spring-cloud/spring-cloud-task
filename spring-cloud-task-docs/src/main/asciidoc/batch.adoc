@@ -80,8 +80,10 @@ public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 
 	Map<String, String> environmentProperties = new HashMap<>();
 	environmentProperties.put("spring.profiles.active", "worker");
+	SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
+	environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
+	partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
 
-	partitionHandler.setEnvironmentProperties(environmentProperties);
 	partitionHandler.setMaxWorkers(2);
 
 	return partitionHandler;
@@ -106,6 +108,20 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 	return handler;
 }
 ```
+
+=== Notes on developing a batch partitioned app for the Yarn platform
+
+* When deploying partitioned apps on the Yarn platform be sure use the following dependency for the
+Spring Cloud Yarn Deployer:
+```
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-deployer-yarn</artifactId>
+		</dependency>
+```
+* Also add the following property to your application.properties: `spring.yarn.container.keepContextAlive=false`.
+* When setting up environment variables for the partitions in the PartitionHandler it is recommended that you do not
+copy the current working environment properties.
 
 [[batch-informational-messages]]
 == Batch Informational Messages
