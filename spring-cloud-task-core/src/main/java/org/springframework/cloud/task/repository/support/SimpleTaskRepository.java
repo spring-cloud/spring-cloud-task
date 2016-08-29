@@ -36,6 +36,7 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
 	public static final int MAX_TASK_NAME_SIZE = 100;
+	public static final int MAX_ERROR_MESSAGE_SIZE = 2500;
 
 	private final static Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
@@ -62,7 +63,8 @@ public class SimpleTaskRepository implements TaskRepository {
 		initialize();
 
 		validateExitInformation(executionId, exitCode, endTime);
-		exitMessage = trimExitMessage(exitMessage);
+		exitMessage = trimMessage(exitMessage, MAX_EXIT_MESSAGE_SIZE);
+		errorMessage = trimMessage(errorMessage, MAX_ERROR_MESSAGE_SIZE);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
 		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
@@ -126,12 +128,13 @@ public class SimpleTaskRepository implements TaskRepository {
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");
 	}
 
-	private String trimExitMessage(String exitMessage){
+	private String trimMessage(String exitMessage, int maxSize){
 		String result = exitMessage;
 		if(exitMessage != null &&
-				exitMessage.length() > MAX_EXIT_MESSAGE_SIZE) {
-			result = exitMessage.substring(0, MAX_EXIT_MESSAGE_SIZE - 1);
+				exitMessage.length() > maxSize) {
+			result = exitMessage.substring(0, maxSize);
 		}
 		return result;
 	}
+
 }

@@ -259,6 +259,16 @@ public class SimpleTaskExplorerTests {
 		verifyPageResults(pageable, 0);
 	}
 
+	@Test
+	public void findTasksForInvalidJob() {
+		assertNull(taskExplorer.getTaskExecutionIdByJobExecutionId(55555L));
+	}
+
+	@Test
+	public void findJobsExecutionIdsForInvalidTask () {
+		assertEquals(0, taskExplorer.getJobExecutionIdsByTaskExecutionId(555555L).size());
+	}
+
 	private void verifyPageResults(Pageable pageable, int totalNumberOfExecs) {
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(totalNumberOfExecs);
 		List<Long> sortedExecIds = getSortedOfTaskExecIds(expectedResults);

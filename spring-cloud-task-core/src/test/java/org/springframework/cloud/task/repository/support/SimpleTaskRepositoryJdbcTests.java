@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfigurati
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestDBUtils;
@@ -36,6 +37,8 @@ import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the SimpleTaskRepository that uses JDBC as a datastore.
@@ -54,6 +57,9 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired
 	private DataSource dataSource;
+
+	@Autowired
+	private TaskExplorer taskExplorer;
 
 	@Test
 	@DirtiesContext
@@ -97,6 +103,21 @@ public class SimpleTaskRepositoryJdbcTests {
 		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), new Date(),
 				expectedTaskExecution.getExitMessage());
+		TaskExecution actualTaskExecution = taskExplorer.getTaskExecution(expectedTaskExecution.getExecutionId());
+		assertEquals(SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE, actualTaskExecution.getExitMessage().length());
+	}
+
+	@Test
+	@DirtiesContext
+	public void testCreateTaskExecutionNoParamMaxErrorMessageSize(){
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE+1]));
+		expectedTaskExecution.setEndTime(new Date());
+		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), new Date(),
+				expectedTaskExecution.getExitMessage(), expectedTaskExecution.getErrorMessage());
+		TaskExecution actualTaskExecution = taskExplorer.getTaskExecution(expectedTaskExecution.getExecutionId());
+		assertEquals(SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE, actualTaskExecution.getErrorMessage().length());
 	}
 
 	@Test(expected=IllegalArgumentException.class)
