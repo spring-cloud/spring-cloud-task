@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfigurati
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestDBUtils;
@@ -36,6 +37,8 @@ import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the SimpleTaskRepository that uses JDBC as a datastore.
@@ -54,6 +57,9 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired
 	private DataSource dataSource;
+
+	@Autowired
+	private TaskExplorer taskExplorer;
 
 	@Test
 	@DirtiesContext
@@ -90,13 +96,88 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Test
 	@DirtiesContext
-	public void testCreateTaskExecutionNoParamMaxExitMessageSize(){
+	public void testCreateTaskExecutionNoParamMaxExitDefaultMessageSize(){
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
 		expectedTaskExecution.setEndTime(new Date());
-		taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getExitCode(), new Date(),
-				expectedTaskExecution.getExitMessage());
+		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
+		assertEquals(SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE, actualTaskExecution.getExitMessage().length());
+	}
+
+	@Test
+	public void testCreateTaskExecutionNoParamMaxExitMessageSize() {
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(this.dataSource));
+		simpleTaskRepository.setMaxExitMessageSize(5);
+
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
+		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE + 1]));
+		expectedTaskExecution.setEndTime(new Date());
+		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, simpleTaskRepository);
+		assertEquals(5, actualTaskExecution.getExitMessage().length());
+	}
+
+	@Test
+	@DirtiesContext
+	public void testCreateTaskExecutionNoParamMaxErrorDefaultMessageSize(){
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE+1]));
+		expectedTaskExecution.setEndTime(new Date());
+		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
+		assertEquals(SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE, actualTaskExecution.getErrorMessage().length());
+	}
+
+	@Test
+	public void testCreateTaskExecutionNoParamMaxErrorMessageSize() {
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean(this.dataSource));
+		simpleTaskRepository.setMaxErrorMessageSize(5);
+
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
+		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE + 1]));
+		expectedTaskExecution.setEndTime(new Date());
+		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, simpleTaskRepository);
+		assertEquals(5, actualTaskExecution.getErrorMessage().length());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testMaxTaskNameSizeForConstructor() {
+		final int MAX_EXIT_MESSAGE_SIZE = 10;
+		final int MAX_ERROR_MESSAGE_SIZE = 20;
+		final int MAX_TASK_NAME_SIZE = 30;
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(
+				new TaskExecutionDaoFactoryBean(this.dataSource), MAX_EXIT_MESSAGE_SIZE, MAX_TASK_NAME_SIZE,
+				MAX_ERROR_MESSAGE_SIZE);
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		expectedTaskExecution.setTaskName(new String(new char[MAX_TASK_NAME_SIZE + 1]));
+		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDefaultMaxTaskNameSizeForConstructor() {
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(
+				new TaskExecutionDaoFactoryBean(this.dataSource), null, null, null);
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE + 1]));
+		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments());
+	}
+
+	@Test
+	public void testMaxSizeConstructor() {
+		final int MAX_EXIT_MESSAGE_SIZE = 10;
+		final int MAX_ERROR_MESSAGE_SIZE = 20;
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(
+				new TaskExecutionDaoFactoryBean(this.dataSource), MAX_EXIT_MESSAGE_SIZE, null,
+				MAX_ERROR_MESSAGE_SIZE);
+		verifyTaskRepositoryConstructor(MAX_EXIT_MESSAGE_SIZE, MAX_ERROR_MESSAGE_SIZE, simpleTaskRepository);
+	}
+
+	@Test
+	public void testDefaultConstructor() {
+		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(
+				new TaskExecutionDaoFactoryBean(this.dataSource), null, null, null);
+		verifyTaskRepositoryConstructor(SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE,
+				SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE, simpleTaskRepository);
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -127,6 +208,24 @@ public class SimpleTaskRepositoryJdbcTests {
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setExitCode(-1);
 		TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
+	}
+
+	private TaskExecution completeTaskExecution(TaskExecution expectedTaskExecution, TaskRepository taskRepository) {
+		return taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExitCode(), new Date(),
+				expectedTaskExecution.getExitMessage(), expectedTaskExecution.getErrorMessage());
+	}
+
+	private void verifyTaskRepositoryConstructor(Integer maxExitMessage, Integer maxErrorMessage,
+			TaskRepository taskRepository) {
+		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setErrorMessage(new String(new char[maxErrorMessage+ 1]));
+		expectedTaskExecution.setExitMessage(new String(new char[maxExitMessage + 1]));
+		expectedTaskExecution.setEndTime(new Date());
+
+		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
+		assertEquals(maxErrorMessage.intValue(), actualTaskExecution.getErrorMessage().length());
+		assertEquals(maxExitMessage.intValue(), actualTaskExecution.getExitMessage().length());
 	}
 }
 

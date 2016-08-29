@@ -36,6 +36,7 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
 	public static final int MAX_TASK_NAME_SIZE = 100;
+	public static final int MAX_ERROR_MESSAGE_SIZE = 2500;
 
 	private final static Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
@@ -45,9 +46,30 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	private boolean initialized = false;
 
+	private int maxExitMessageSize = MAX_EXIT_MESSAGE_SIZE;
+
+	private int maxTaskNameSize = MAX_TASK_NAME_SIZE;
+
+	private int maxErrorMessageSize = MAX_ERROR_MESSAGE_SIZE;
+
 	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean){
 		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
 
+		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
+	}
+
+	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean, Integer maxExitMessageSize,
+			Integer maxTaskNameSize, Integer maxErrorMessageSize){
+		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
+		if(maxTaskNameSize != null) {
+			this.maxTaskNameSize = maxTaskNameSize;
+		}
+		if(maxExitMessageSize != null) {
+			this.maxExitMessageSize = maxExitMessageSize;
+		}
+		if(maxErrorMessageSize != null) {
+			this.maxErrorMessageSize = maxErrorMessageSize;
+		}
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
@@ -62,7 +84,8 @@ public class SimpleTaskRepository implements TaskRepository {
 		initialize();
 
 		validateExitInformation(executionId, exitCode, endTime);
-		exitMessage = trimExitMessage(exitMessage);
+		exitMessage = trimMessage(exitMessage, this.maxExitMessageSize);
+		errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
 		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
@@ -114,9 +137,9 @@ public class SimpleTaskRepository implements TaskRepository {
 		Assert.notNull(startTime, "TaskExecution start time cannot be null.");
 
 		if (taskName != null &&
-				taskName.length() > MAX_TASK_NAME_SIZE) {
+				taskName.length() > this.maxTaskNameSize) {
 			throw new IllegalArgumentException("TaskName length exceeds "
-					+ MAX_TASK_NAME_SIZE + " characters");
+					+ this.maxTaskNameSize + " characters");
 		}
 	}
 
@@ -126,12 +149,24 @@ public class SimpleTaskRepository implements TaskRepository {
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");
 	}
 
-	private String trimExitMessage(String exitMessage){
+	private String trimMessage(String exitMessage, int maxSize){
 		String result = exitMessage;
 		if(exitMessage != null &&
-				exitMessage.length() > MAX_EXIT_MESSAGE_SIZE) {
-			result = exitMessage.substring(0, MAX_EXIT_MESSAGE_SIZE - 1);
+				exitMessage.length() > maxSize) {
+			result = exitMessage.substring(0, maxSize);
 		}
 		return result;
+	}
+
+	public void setMaxExitMessageSize(int maxExitMessageSize) {
+		this.maxExitMessageSize = maxExitMessageSize;
+	}
+
+	public void setMaxTaskNameSize(int maxTaskNameSize) {
+		this.maxTaskNameSize = maxTaskNameSize;
+	}
+
+	public void setMaxErrorMessageSize(int maxErrorMessageSize) {
+		this.maxErrorMessageSize = maxErrorMessageSize;
 	}
 }
