@@ -76,6 +76,14 @@
 	</modules>
 
 	<properties>
+		<spring-cloud-stream.version>1.0.2.RELEASE</spring-cloud-stream.version>
+		<spring-cloud-deployer-spi.version>1.0.2.RELEASE</spring-cloud-deployer-spi.version>
+		<spring-cloud-deployer-local.version>1.0.2.RELEASE</spring-cloud-deployer-local.version>
+		<spring-cloud-stream-binder-rabbit.version>1.0.2.RELEASE</spring-cloud-stream-binder-rabbit.version>
+		<spring-cloud-deployer-resource-support.version>1.0.2.RELEASE</spring-cloud-deployer-resource-support.version>
+		<spring-cloud-deployer-resource-maven.version>1.0.2.RELEASE</spring-cloud-deployer-resource-maven.version>
+		<spring-batch.version>3.0.7.RELEASE</spring-batch.version>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
 	</properties>
@@ -118,6 +126,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>

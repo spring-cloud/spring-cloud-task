@@ -22,6 +22,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-spi</artifactId>
+			<version>${spring-cloud-deployer-spi.version}</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -33,16 +34,19 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-local</artifactId>
+			<version>${spring-cloud-deployer-local.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-resource-support</artifactId>
+			<version>${spring-cloud-deployer-resource-support.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-integration</artifactId>
+			<version>${spring-batch.version}</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
