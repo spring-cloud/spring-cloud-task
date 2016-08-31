@@ -46,9 +46,24 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	private boolean initialized = false;
 
+	private int maxExitMessageSize = MAX_EXIT_MESSAGE_SIZE;
+
+	private int maxTaskNameSize = MAX_TASK_NAME_SIZE;
+
+	private int maxErrorMessageSize = MAX_ERROR_MESSAGE_SIZE;
+
 	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean){
 		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
 
+		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
+	}
+
+	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean, int maxExitMessageSize,
+			int maxTaskNameSize, int maxErrorMessageSize){
+		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
+		this.maxTaskNameSize = maxTaskNameSize;
+		this.maxExitMessageSize = maxExitMessageSize;
+		this.maxErrorMessageSize = maxErrorMessageSize;
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
@@ -63,8 +78,8 @@ public class SimpleTaskRepository implements TaskRepository {
 		initialize();
 
 		validateExitInformation(executionId, exitCode, endTime);
-		exitMessage = trimMessage(exitMessage, MAX_EXIT_MESSAGE_SIZE);
-		errorMessage = trimMessage(errorMessage, MAX_ERROR_MESSAGE_SIZE);
+		exitMessage = trimMessage(exitMessage, this.maxExitMessageSize);
+		errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
 		logger.debug("Updating: TaskExecution with executionId="+executionId
 				+ " with the following {"
@@ -116,9 +131,9 @@ public class SimpleTaskRepository implements TaskRepository {
 		Assert.notNull(startTime, "TaskExecution start time cannot be null.");
 
 		if (taskName != null &&
-				taskName.length() > MAX_TASK_NAME_SIZE) {
+				taskName.length() > this.maxTaskNameSize) {
 			throw new IllegalArgumentException("TaskName length exceeds "
-					+ MAX_TASK_NAME_SIZE + " characters");
+					+ this.maxTaskNameSize + " characters");
 		}
 	}
 
@@ -137,4 +152,27 @@ public class SimpleTaskRepository implements TaskRepository {
 		return result;
 	}
 
+	public int getMaxExitMessageSize() {
+		return maxExitMessageSize;
+	}
+
+	public void setMaxExitMessageSize(int maxExitMessageSize) {
+		this.maxExitMessageSize = maxExitMessageSize;
+	}
+
+	public int getMaxTaskNameSize() {
+		return maxTaskNameSize;
+	}
+
+	public void setMaxTaskNameSize(int maxTaskNameSize) {
+		this.maxTaskNameSize = maxTaskNameSize;
+	}
+
+	public int getMaxErrorMessageSize() {
+		return maxErrorMessageSize;
+	}
+
+	public void setMaxErrorMessageSize(int maxErrorMessageSize) {
+		this.maxErrorMessageSize = maxErrorMessageSize;
+	}
 }
