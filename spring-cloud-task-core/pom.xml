@@ -22,13 +22,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-resource-support</artifactId>
-			<version>${spring-cloud-deployer-resource-support.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-resource-maven</artifactId>
 			<optional>true</optional>
-			<version>${spring-cloud-deployer-resource-maven.version}</version>
+			<!--<version>${spring-cloud-deployer-resource-maven.version}</version>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -52,7 +51,6 @@
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-infrastructure</artifactId>
-			<version>${spring-batch.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>

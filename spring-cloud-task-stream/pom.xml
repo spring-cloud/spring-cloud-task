@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
-			<version>${spring-batch.version}</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -28,13 +27,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-local</artifactId>
-			<version>${spring-cloud-deployer-local.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -54,19 +51,16 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-			<version>${spring-cloud-stream-binder-rabbit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support</artifactId>
-			<version>${spring-cloud-stream.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -77,7 +71,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-resource-support</artifactId>
-			<version>${spring-cloud-deployer-resource-support.version}</version>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
