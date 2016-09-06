@@ -58,12 +58,18 @@ public class SimpleTaskRepository implements TaskRepository {
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
-	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean, int maxExitMessageSize,
-			int maxTaskNameSize, int maxErrorMessageSize){
+	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean, Integer maxExitMessageSize,
+			Integer maxTaskNameSize, Integer maxErrorMessageSize){
 		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
-		this.maxTaskNameSize = maxTaskNameSize;
-		this.maxExitMessageSize = maxExitMessageSize;
-		this.maxErrorMessageSize = maxErrorMessageSize;
+		if(maxTaskNameSize != null) {
+			this.maxTaskNameSize = maxTaskNameSize;
+		}
+		if(maxExitMessageSize != null) {
+			this.maxExitMessageSize = maxExitMessageSize;
+		}
+		if(maxErrorMessageSize != null) {
+			this.maxErrorMessageSize = maxErrorMessageSize;
+		}
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
@@ -152,24 +158,12 @@ public class SimpleTaskRepository implements TaskRepository {
 		return result;
 	}
 
-	public int getMaxExitMessageSize() {
-		return maxExitMessageSize;
-	}
-
 	public void setMaxExitMessageSize(int maxExitMessageSize) {
 		this.maxExitMessageSize = maxExitMessageSize;
 	}
 
-	public int getMaxTaskNameSize() {
-		return maxTaskNameSize;
-	}
-
 	public void setMaxTaskNameSize(int maxTaskNameSize) {
 		this.maxTaskNameSize = maxTaskNameSize;
-	}
-
-	public int getMaxErrorMessageSize() {
-		return maxErrorMessageSize;
 	}
 
 	public void setMaxErrorMessageSize(int maxErrorMessageSize) {
