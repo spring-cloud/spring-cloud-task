@@ -54,8 +54,8 @@ Application we created.  In the example below we are registering the Processor a
 sample applications using the Spring Cloud Data Flow shell:
 
 ```
-module register --name taskSink --type sink --uri maven://io.spring:tasksink:1.0.0.RELEASE
-module register --name taskProcessor --type processor --uri maven:io.spring:taskprocessor:1.0.0.RELEASE
+app register --name taskSink --type sink --uri maven://io.spring.cloud:tasksink:<version>
+app register --name taskProcessor --type processor --uri maven:io.spring.cloud:taskprocessor:<version>
 ```
 
 Creating a stream from the Spring Cloud Data Flow shell would look like this:
