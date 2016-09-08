@@ -27,7 +27,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-resource-maven</artifactId>
 			<optional>true</optional>
-			<!--<version>${spring-cloud-deployer-resource-maven.version}</version>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
