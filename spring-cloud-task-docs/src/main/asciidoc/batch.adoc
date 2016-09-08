@@ -61,6 +61,7 @@ at once, the interval to poll for the results (defaults to 10 seconds), and a ti
 look like the following:
 
 ```
+
 @Bean
 public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 		JobExplorer jobExplorer) throws Exception {
@@ -69,22 +70,24 @@ public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 	mavenProperties.setRemoteRepositories(new HashMap<>(Collections.singletonMap("springRepo",
 		new MavenProperties.RemoteRepository(repository))));
 
- 	MavenResource resource =
+ 	Resource resource =
 		MavenResource.parse(String.format("%s:%s:%s",
 				"io.spring.cloud",
 				"partitioned-batch-job",
-				"1.0.0.RELEASE"), mavenProperties);
+				"1.1.0.BUILD-SNAPSHOT"), mavenProperties);
 
 	DeployerPartitionHandler partitionHandler =
 		new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
-	Map<String, String> environmentProperties = new HashMap<>();
-	environmentProperties.put("spring.profiles.active", "worker");
-	SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
-	environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
-	partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
+	List<String> commandLineArgs = new ArrayList<>(3);
+	commandLineArgs.add("--spring.profiles.active=worker");
+	commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
+	commandLineArgs.add("--spring.batch.initializer.enabled=false");
 
+	partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
+	partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());
 	partitionHandler.setMaxWorkers(2);
+	partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
 	return partitionHandler;
 }
@@ -112,7 +115,7 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 === Notes on developing a batch partitioned app for the Yarn platform
 
 * When deploying partitioned apps on the Yarn platform be sure use the following dependency for the
-Spring Cloud Yarn Deployer:
+Spring Cloud Yarn Deployer (with a version 1.0.2 or higher):
 ```
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
