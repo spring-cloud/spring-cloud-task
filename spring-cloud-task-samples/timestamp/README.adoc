@@ -22,5 +22,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/timestamp-task-1.0.3.BUILD-SNAPSHOT.jar
+$ java -jar target/timestamp-task-1.0.3.RELEASE.jar
 ----
