@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TaskProcessorProperties {
 
 	private static final String DEFAULT_URI = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT";
+			+ "timestamp-task:jar:1.0.1.RELEASE";
 
 
 	private String uri = DEFAULT_URI;
