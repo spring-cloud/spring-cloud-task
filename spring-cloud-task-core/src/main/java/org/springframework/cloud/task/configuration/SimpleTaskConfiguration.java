@@ -136,7 +136,8 @@ public class SimpleTaskConfiguration {
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
 
-		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(), this.applicationArguments);
+		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
+				this.applicationArguments, taskExplorer);
 
 		initialized = true;
 	}

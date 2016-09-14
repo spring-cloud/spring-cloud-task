@@ -35,6 +35,7 @@ import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
@@ -75,6 +76,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private final TaskRepository taskRepository;
 
+	private final TaskExplorer taskExplorer;
+
 	private TaskExecution taskExecution;
 
 	private boolean started = false;
@@ -100,13 +103,15 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,
-			ApplicationArguments applicationArguments) {
+			ApplicationArguments applicationArguments, TaskExplorer taskExplorer) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
+		Assert.notNull(taskExplorer, "A taskExplorer is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments;
+		this.taskExplorer = taskExplorer;
 	}
 
 	/**
@@ -190,8 +195,11 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			if(this.applicationArguments != null) {
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
 			}
-
 			if(this.taskExecutionId != null) {
+				TaskExecution taskExecution = taskExplorer.getTaskExecution(this.taskExecutionId);
+				Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found", this.taskExecutionId));
+				Assert.isNull(taskExecution.getEndTime(), String.format(
+						"Invalid TaskExecution, ID %s task is already complete", this.taskExecutionId));
 				this.taskExecution = this.taskRepository.startTaskExecution(this.taskExecutionId,
 						this.taskNameResolver.getTaskName(), new Date(), args);
 			}

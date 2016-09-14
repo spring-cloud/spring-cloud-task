@@ -68,9 +68,23 @@ public interface TaskRepository {
 	TaskExecution createTaskExecution(String taskName,
 			Date startTime,List<String> arguments);
 
+	/**
+	 * Notifies the repository that an empty taskExecution needs to be created. TaskName, startTime are set to null
+	 * and arguments are comprised of an empty list.
+	 *
+	 * @return the initial {@link TaskExecution}
+	 */
 	@Transactional
 	TaskExecution createTaskExecution();
 
+	/**
+	 * Notifies the repository that a taskExecution has has started.
+	 * @param executionid  to the task execution to be updated.
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param arguments list of key/value pairs that configure the task.
+	 * @return
+	 */
 	@Transactional
 	TaskExecution startTaskExecution(long executionid, String taskName,
 			Date startTime,List<String> arguments);
