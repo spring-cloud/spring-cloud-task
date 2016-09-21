@@ -44,6 +44,10 @@ public TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBea
 	return postProcessor;
 }
 ```
+NOTE: A sample batch application can be found in the samples module
+of the Spring Cloud Task Project
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/batch-job[here].
+
 
 [[batch-partitioning]]
 == Remote Partitioning
@@ -92,6 +96,9 @@ public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 	return partitionHandler;
 }
 ```
+NOTE: When passing environment variables to partitions, each partition may
+ be on a different machine with a different environment settings.
+ So only pass those that are required.
 
 The `Resource` to be executed is expected to be a Spring Boot über-jar with a
 `DeployerStepExecutionHandler` configured as a `CommandLineRunner` in the current context.
@@ -111,6 +118,9 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 	return handler;
 }
 ```
+NOTE: A sample remote partition application can be found in the samples module
+of the Spring Cloud Task Project
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/partitioned-batch-job[here].
 
 === Notes on developing a batch partitioned app for the Yarn platform
 
@@ -139,6 +149,12 @@ Spring Cloud Yarn Deployer (with a version 1.0.2 or higher):
 * Also add the following property to your application.properties: `spring.yarn.container.keepContextAlive=false`.
 * When setting up environment variables for the partitions in the PartitionHandler it is recommended that you do not
 copy the current working environment properties.
+
+=== Notes on developing a batch partitioned app for the Kubernetes platform
+
+Application name for the task application and its partitions  need to follow
+the following regex pattern `[a-z0-9]([-a-z0-9]*[a-z0-9])`.
+Else an exception will be thrown.
 
 [[batch-informational-messages]]
 == Batch Informational Messages

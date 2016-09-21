@@ -286,3 +286,8 @@ If you notice, there are three lines of interest in the above output:
 * The execution of our `CommandLineRunner`, demonstrated by the "Hello World!" output.
 * `SimpleTaskRepository` logging the completion of the task in the `TaskRepository`.
 
+NOTE: A simple task application can be found in the samples module
+of the Spring Cloud Task Project
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/timestamp[here].
+
+

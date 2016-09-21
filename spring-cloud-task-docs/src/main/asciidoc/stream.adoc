@@ -112,6 +112,10 @@ or sink downstream does not have the spring-cloud-task-core jar on its classpath
 
 NOTE: A binder implementation is also required to be on the classpath.
 
+NOTE: A sample task event application can be found in the samples module
+of the Spring Cloud Task Project
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/task-events[here].
+
 [[stream-integration-disable-task-events]]
 === Disabling Specific Task Events
 
@@ -150,6 +154,10 @@ spring.cloud.stream.bindings.input.destination=job-execution-events
 ```
 
 NOTE: A binder implementation is also required to be on the classpath.
+
+NOTE: A sample batch event application can be found in the samples module
+of the Spring Cloud Task Project
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/batch-events[here].
 
 === Sending Batch Events to different channels
 
