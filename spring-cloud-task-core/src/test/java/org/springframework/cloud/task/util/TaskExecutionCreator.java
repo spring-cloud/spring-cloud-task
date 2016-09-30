@@ -36,6 +36,16 @@ public class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
+	public static TaskExecution createAndStoreEmptyTaskExecution(TaskRepository taskRepository) {
+		return taskRepository.createTaskExecution();
+	}
+
+	/**
+	 * Creates a sample TaskExecution and stores it in the taskRepository.
+	 *
+	 * @param taskRepository the taskRepository where the taskExecution should be stored.
+	 * @return the taskExecution created.
+	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),

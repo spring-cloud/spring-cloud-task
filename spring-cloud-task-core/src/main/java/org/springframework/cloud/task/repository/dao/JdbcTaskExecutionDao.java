@@ -74,6 +74,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String CREATE_TASK_ARGUMENT = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
 
+	private static final String START_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
+			+ "START_TIME = ?, TASK_NAME = ?, LAST_UPDATED = ? where TASK_EXECUTION_ID = ?";
+
 	private static final String CHECK_TASK_EXECUTION_EXISTS = "SELECT COUNT(*) FROM "
 			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
 
@@ -127,16 +130,31 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
 			Date startTime, List<String> arguments)  {
-		long taskExecutionId = getNextExecutionId();
-		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
+		long nextExecutionId = getNextExecutionId();
+
+		TaskExecution taskExecution = new TaskExecution(nextExecutionId, null, taskName,
 				startTime, null, null, arguments, null);
 
-		Object[] queryParameters = new Object[]{ taskExecutionId, startTime, taskName, new Date()};
+		Object[] queryParameters = new Object[]{ nextExecutionId, startTime, taskName, new Date()};
 		jdbcTemplate.update(
 				getQuery(SAVE_TASK_EXECUTION),
 				queryParameters,
 				new int[]{ Types.BIGINT, Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP });
-		insertTaskArguments(taskExecutionId, arguments);
+		insertTaskArguments(nextExecutionId, arguments);
+		return taskExecution;
+	}
+
+	@Override
+	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments) {
+		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
+				startTime, null, null, arguments, null);
+
+		Object[] queryParameters = new Object[]{ startTime, taskName, new Date(), executionId};
+		jdbcTemplate.update(
+				getQuery(START_TASK_EXECUTION),
+				queryParameters,
+				new int[]{ Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP, Types.BIGINT });
+		insertTaskArguments(executionId, arguments);
 		return taskExecution;
 	}
 
@@ -146,7 +164,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
 		if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
-				new Object[]{ taskExecutionId}) != 1) {
+				taskExecutionId) != 1) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
 		}
 
