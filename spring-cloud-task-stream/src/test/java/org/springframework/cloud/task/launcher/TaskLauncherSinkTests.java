@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,7 +30,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
@@ -56,9 +54,6 @@ public class TaskLauncherSinkTests {
 			+ "invalid:jar:1.0.0.BUILD-SNAPSHOT";
 
 	private Map<String, String> properties;
-
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	private final static String DEFAULT_STATUS = "test_status";
 
