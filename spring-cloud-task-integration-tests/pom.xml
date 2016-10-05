@@ -45,6 +45,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-rabbit-test-support</artifactId>
+			<version>${spring-cloud-stream-binder-rabbit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
 			<scope>test</scope>

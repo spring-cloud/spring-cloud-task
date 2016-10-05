@@ -34,9 +34,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.annotation.Bindings;
+import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -84,7 +83,6 @@ public class TaskLauncherSinkTests {
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@Autowired
-	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
 	private DataSource dataSource;
