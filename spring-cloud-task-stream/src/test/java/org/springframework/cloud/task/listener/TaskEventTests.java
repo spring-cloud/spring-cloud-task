@@ -15,13 +15,11 @@
  */
 package org.springframework.cloud.task.listener;
 
-import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +29,9 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Michael Minella
  * @author Ilayaperumal Gopinathan
+ * @author Glenn Renfro
  */
 public class TaskEventTests {
-
-	@Rule
-	public RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	private static final String TASK_NAME = "taskEventTest";
 

@@ -29,8 +29,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.context.annotation.PropertySource;
 

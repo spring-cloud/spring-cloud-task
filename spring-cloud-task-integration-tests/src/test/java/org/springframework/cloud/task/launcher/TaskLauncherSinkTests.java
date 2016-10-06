@@ -34,9 +34,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.annotation.Bindings;
+import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -65,7 +64,7 @@ public class TaskLauncherSinkTests {
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 5000;
 	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.1.0.M1";
+			+ "timestamp-task:jar:1.1.0.BUILD-SNAPSHOT";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
@@ -84,7 +83,6 @@ public class TaskLauncherSinkTests {
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@Autowired
-	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
 	private DataSource dataSource;
