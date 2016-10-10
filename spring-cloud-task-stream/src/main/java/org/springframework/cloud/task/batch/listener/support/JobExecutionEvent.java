@@ -270,15 +270,6 @@ public class JobExecutionEvent extends Entity {
 		return new ArrayList<>(allExceptions);
 	}
 
-	/**
-	 * Deserialize and ensure transient fields are re-instantiated when read
-	 * back
-	 */
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		stream.defaultReadObject();
-		this.failureExceptions = new ArrayList<>();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *

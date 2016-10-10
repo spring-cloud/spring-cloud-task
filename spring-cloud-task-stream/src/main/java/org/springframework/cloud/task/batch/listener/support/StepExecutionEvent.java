@@ -417,15 +417,6 @@ public class StepExecutionEvent extends Entity {
 				&& getId().equals(other.getId());
 	}
 
-	/**
-	 * Deserialize and ensure transient fields are re-instantiated when read
-	 * back
-	 */
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		stream.defaultReadObject();
-		this.failureExceptions = new ArrayList<>();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *

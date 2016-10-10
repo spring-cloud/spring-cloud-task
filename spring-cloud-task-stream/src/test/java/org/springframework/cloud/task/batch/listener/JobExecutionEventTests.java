@@ -27,17 +27,20 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
+import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -45,12 +48,13 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Glenn Renfro.
  */
-public class EventJobExecutionTests {
+public class JobExecutionEventTests {
 
 	private static final String JOB_NAME = "FOODJOB";
 	private static final Long JOB_INSTANCE_ID = 1l;
@@ -176,6 +180,99 @@ public class EventJobExecutionTests {
 	public void testDisabledSkipEventListener() {
 		testDisabledConfiguration("spring.cloud.task.batch.events.skip.enabled",
 				BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
+	}
+
+	@Test
+	public void testDefaultConstructor() {
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertEquals("UNKNOWN", jobExecutionEvent.getExitStatus().getExitCode());
+	}
+
+	@Test
+	public void testFailureExceptions() {
+		final String EXCEPTION_MESSAGE = "TEST EXCEPTION";
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertEquals(0, jobExecutionEvent.getFailureExceptions().size());
+		jobExecutionEvent.addFailureException(new IllegalStateException(EXCEPTION_MESSAGE));
+		assertEquals(1, jobExecutionEvent.getFailureExceptions().size());
+		assertEquals(1, jobExecutionEvent.getAllFailureExceptions().size());
+		assertEquals(jobExecutionEvent.getFailureExceptions().get(0).getMessage(), EXCEPTION_MESSAGE);
+		assertEquals(jobExecutionEvent.getAllFailureExceptions().get(0).getMessage(), EXCEPTION_MESSAGE);
+	}
+
+	@Test
+	public void testToString() {
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertTrue(jobExecutionEvent.toString().startsWith("JobExecutionEvent:"));
+	}
+
+	@Test
+	public void testGetterSetters() {
+		Date date = new Date();
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		jobExecutionEvent.setLastUpdated(date);
+		assertEquals(date, jobExecutionEvent.getLastUpdated());
+		jobExecutionEvent.setCreateTime(date);
+		assertEquals(date, jobExecutionEvent.getCreateTime());
+		jobExecutionEvent.setEndTime(date);
+		assertEquals(date, jobExecutionEvent.getEndTime());
+		jobExecutionEvent.setStartTime(date);
+		assertEquals(date, jobExecutionEvent.getStartTime());
+	}
+
+	@Test
+	public void testExitStatus() {
+		final String EXIT_CODE = "KNOWN";
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertEquals("UNKNOWN", jobExecutionEvent.getExitStatus().getExitCode());
+		org.springframework.cloud.task.batch.listener.support.ExitStatus expectedExitStatus =
+				new org.springframework.cloud.task.batch.listener.support.ExitStatus();
+		expectedExitStatus.setExitCode(EXIT_CODE);
+		jobExecutionEvent.setExitStatus(expectedExitStatus);
+		assertEquals(EXIT_CODE, jobExecutionEvent.getExitStatus().getExitCode());
+	}
+
+	@Test
+	public void testJobInstance() {
+		final String JOB_NAME = "KNOWN";
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertNull(jobExecutionEvent.getJobInstance());
+		assertNull(jobExecutionEvent.getJobId());
+		JobInstanceEvent expectedJobInstanceEvent = new JobInstanceEvent(1L,
+				JOB_NAME);
+		jobExecutionEvent.setJobInstance(expectedJobInstanceEvent);
+		assertEquals(expectedJobInstanceEvent.getJobName(),
+				jobExecutionEvent.getJobInstance().getJobName());
+		assertEquals(expectedJobInstanceEvent.getId(),
+				jobExecutionEvent.getJobId());
+	}
+
+	@Test
+	public void testExecutionContext() {
+		ExecutionContext executionContext = new ExecutionContext();
+		executionContext.put("hello", "world");
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertNotNull(jobExecutionEvent.getExecutionContext());
+		jobExecutionEvent.setExecutionContext(executionContext);
+		assertEquals("world", jobExecutionEvent.getExecutionContext().getString("hello"));
+	}
+
+	@Test
+	public  void testBatchStatus() {
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertEquals(BatchStatus.STARTING, jobExecutionEvent.getStatus());
+		jobExecutionEvent.setStatus(BatchStatus.ABANDONED);
+		assertEquals(BatchStatus.ABANDONED, jobExecutionEvent.getStatus());
+	}
+
+	@Test
+	public  void testUpgradeBatchStatus() {
+		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
+		assertEquals(BatchStatus.STARTING, jobExecutionEvent.getStatus());
+		jobExecutionEvent.upgradeStatus(BatchStatus.FAILED);
+		assertEquals(BatchStatus.FAILED, jobExecutionEvent.getStatus());
+		jobExecutionEvent.upgradeStatus(BatchStatus.COMPLETED);
+		assertEquals(BatchStatus.FAILED, jobExecutionEvent.getStatus());
 	}
 
 	public void testDisabledConfiguration(String property, String disabledListener) {
