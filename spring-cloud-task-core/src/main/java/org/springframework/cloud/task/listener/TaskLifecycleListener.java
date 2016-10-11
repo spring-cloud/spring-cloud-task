@@ -98,7 +98,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Value("${spring.cloud.task.executionid:}")
 	private Integer taskExecutionId;
 
-	@Value("${spring.cloud.task.external.executionid:#{null}}")
+	@Value("${spring.cloud.task.external-execution-id:#{null}}")
 	private String externalExecutionId;
 
 	/**

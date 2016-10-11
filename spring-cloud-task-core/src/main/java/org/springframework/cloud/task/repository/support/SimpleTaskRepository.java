@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -114,7 +115,8 @@ public class SimpleTaskRepository implements TaskRepository {
 	public TaskExecution createTaskExecution() {
 		initialize();
 		TaskExecution taskExecution =
-				taskExecutionDao.createTaskExecution(null, null, new ArrayList<String>(0), null);
+				taskExecutionDao.createTaskExecution(null, null,
+						Collections.<String>emptyList(), null);
 		logger.debug("Creating: " + taskExecution.toString());
 		return taskExecution;
 	}
