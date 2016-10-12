@@ -78,7 +78,7 @@ public PartitionHandler partitionHandler(TaskLauncher taskLauncher,
 		MavenResource.parse(String.format("%s:%s:%s",
 				"io.spring.cloud",
 				"partitioned-batch-job",
-				"1.1.0.M1"), mavenProperties);
+				"1.1.0.M2"), mavenProperties);
 
 	DeployerPartitionHandler partitionHandler =
 		new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
