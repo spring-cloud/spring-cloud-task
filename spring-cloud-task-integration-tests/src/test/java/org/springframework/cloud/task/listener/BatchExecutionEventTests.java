@@ -254,7 +254,7 @@ public class BatchExecutionEventTests {
 	}
 
 	private String[] getCommandLineParams(String sinkChannelParam) {
-		return new String[]{ "--spring.cloud.task.closecontext.enable=false",
+		return new String[]{ "--spring.cloud.task.closecontext_enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false",
 				"--spring.cloud.stream.defaultBinder=rabbit",

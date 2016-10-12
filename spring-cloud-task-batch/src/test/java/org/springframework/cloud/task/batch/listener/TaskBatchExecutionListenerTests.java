@@ -61,7 +61,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TaskBatchExecutionListenerTests {
 
-	public static final String[] ARGS = new String[] {"--spring.cloud.task.closecontext.enable=false"};
+	public static final String[] ARGS = new String[] {"--spring.cloud.task.closecontext_enable=false"};
 
 	private ConfigurableApplicationContext applicationContext;
 

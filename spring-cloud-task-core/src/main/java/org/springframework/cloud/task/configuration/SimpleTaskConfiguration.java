@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -49,6 +50,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Configuration
 @EnableTransactionManagement
+@EnableConfigurationProperties(TaskProperties.class)
 public class SimpleTaskConfiguration {
 
 	protected static final Log logger = LogFactory.getLog(SimpleTaskConfiguration.class);
@@ -61,6 +63,9 @@ public class SimpleTaskConfiguration {
 
 	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
+
+	@Autowired
+	private TaskProperties taskProperties;
 
 	private boolean initialized = false;
 
@@ -137,7 +142,7 @@ public class SimpleTaskConfiguration {
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
 
 		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
-				this.applicationArguments, taskExplorer);
+				this.applicationArguments, taskExplorer, taskProperties);
 
 		initialized = true;
 	}

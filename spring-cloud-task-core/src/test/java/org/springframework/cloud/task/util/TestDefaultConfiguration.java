@@ -21,6 +21,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -40,9 +42,13 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  */
 @Configuration
+@EnableConfigurationProperties(TaskProperties.class)
 public class TestDefaultConfiguration implements InitializingBean {
 
 	private TaskExecutionDaoFactoryBean factoryBean;
+
+	@Autowired
+	TaskProperties taskProperties;
 
 	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
@@ -70,7 +76,8 @@ public class TestDefaultConfiguration implements InitializingBean {
 
 	@Bean
 	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer){
-		return new TaskLifecycleListener(taskRepository(), taskNameResolver(), applicationArguments, taskExplorer);
+		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
+				applicationArguments, taskExplorer, taskProperties);
 	}
 
 	@Override
