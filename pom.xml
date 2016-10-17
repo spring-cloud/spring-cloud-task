@@ -284,5 +284,11 @@
 				</pluginRepository>
 			</pluginRepositories>
 		</profile>
+		<profile>
+			<id>samples</id>
+			<modules>
+				<module>spring-cloud-task-samples</module>
+			</modules>
+		</profile>
 	</profiles>
 </project>
