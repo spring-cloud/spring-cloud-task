@@ -63,6 +63,10 @@ import org.springframework.data.domain.Pageable;
 @RunWith(Parameterized.class)
 public class SimpleTaskExplorerTests {
 
+	private final static String TASK_NAME = "FOOBAR";
+
+	private final static String EXTERNAL_EXECUTION_ID = "123ABC";
+
 	private AnnotationConfigApplicationContext context;
 
 	@Autowired
@@ -154,8 +158,6 @@ public class SimpleTaskExplorerTests {
 	public void findRunningTasks() {
 		final int TEST_COUNT = 2;
 		final int COMPLETE_COUNT = 5;
-		final String TASK_NAME = "FOOBAR";
-		final String EXTERNAL_EXECUTION_ID = "123ABC";
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		//Store completed jobs
@@ -165,8 +167,8 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (; i < (COMPLETE_COUNT + TEST_COUNT); i++) {
-			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(
-					TASK_NAME, new Date(), new ArrayList<String>(), EXTERNAL_EXECUTION_ID);
+			TaskExecution expectedTaskExecution = this.taskRepository.
+					createTaskExecution(getSimpleTaskExecution());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 		Pageable pageable = new PageRequest(0, 10);
@@ -190,8 +192,6 @@ public class SimpleTaskExplorerTests {
 	public void findTasksByName() {
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
-		final String TASK_NAME = "FOOBAR";
-		final String EXTERNAL_EXECUTION_ID = "123ABC";
 		Random randomGenerator = new Random();
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
@@ -201,8 +201,8 @@ public class SimpleTaskExplorerTests {
 		}
 
 		for (int i = 0; i < TEST_COUNT; i++) {
-			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(
-					TASK_NAME, new Date(), new ArrayList<String>(), EXTERNAL_EXECUTION_ID);
+			TaskExecution expectedTaskExecution = this.taskRepository.
+					createTaskExecution(getSimpleTaskExecution());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 
@@ -319,8 +319,7 @@ public class SimpleTaskExplorerTests {
 
 	private TaskExecution createAndSaveTaskExecution(int i) {
 		TaskExecution taskExecution = TestVerifierUtils.createSampleTaskExecution(i);
-		taskExecution = this.taskRepository.createTaskExecution(taskExecution.getTaskName(),
-				taskExecution.getStartTime(), taskExecution.getArguments(), taskExecution.getExternalExecutionId());
+		taskExecution = this.taskRepository.createTaskExecution(taskExecution);
 		return taskExecution;
 	}
 
@@ -377,6 +376,14 @@ public class SimpleTaskExplorerTests {
 				return result;
 			}
 		});
+	}
+
+	private TaskExecution getSimpleTaskExecution() {
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setTaskName(TASK_NAME);
+		taskExecution.setStartTime(new Date());
+		taskExecution.setExternalExecutionId(EXTERNAL_EXECUTION_ID);
+		return taskExecution;
 	}
 
 	private enum DaoType{jdbc, map}

@@ -193,9 +193,7 @@ public class SimpleTaskRepositoryJdbcTests {
 				MAX_ERROR_MESSAGE_SIZE);
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(new String(new char[MAX_TASK_NAME_SIZE + 1]));
-		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				expectedTaskExecution.getExternalExecutionId());
+		simpleTaskRepository.createTaskExecution(expectedTaskExecution);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -204,9 +202,7 @@ public class SimpleTaskRepositoryJdbcTests {
 				new TaskExecutionDaoFactoryBean(this.dataSource), null, null, null);
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE + 1]));
-		simpleTaskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				expectedTaskExecution.getExternalExecutionId());
+		simpleTaskRepository.createTaskExecution(expectedTaskExecution);
 	}
 
 	@Test
@@ -230,9 +226,11 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test(expected=IllegalArgumentException.class)
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxTaskName(){
-		taskRepository.createTaskExecution(
-				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]),
-				new Date(), null, null);
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setTaskName(
+				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE+1]));
+		taskExecution.setStartTime(new Date());
+		taskRepository.createTaskExecution(taskExecution);
 	}
 
 	@Test(expected=IllegalArgumentException.class)

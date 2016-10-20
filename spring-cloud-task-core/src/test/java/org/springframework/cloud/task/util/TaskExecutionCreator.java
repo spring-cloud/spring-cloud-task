@@ -48,9 +48,7 @@ public class TaskExecutionCreator {
 	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				expectedTaskExecution.getExternalExecutionId());
+		expectedTaskExecution = taskRepository.createTaskExecution();
 		return expectedTaskExecution;
 	}
 
@@ -66,9 +64,7 @@ public class TaskExecutionCreator {
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
 		expectedTaskExecution.setArguments(params);
-		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				expectedTaskExecution.getExternalExecutionId());
+		expectedTaskExecution = taskRepository.createTaskExecution(expectedTaskExecution);
 		return expectedTaskExecution;
 	}
 

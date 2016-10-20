@@ -204,8 +204,13 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 						this.taskNameResolver.getTaskName(), new Date(), args, taskProperties.getExternalExecutionId());
 			}
 			else {
+				TaskExecution taskExecution = new TaskExecution();
+				taskExecution.setTaskName(this.taskNameResolver.getTaskName());
+				taskExecution.setStartTime(new Date());
+				taskExecution.setArguments(args);
+				taskExecution.setExternalExecutionId(taskProperties.getExternalExecutionId());
 				this.taskExecution = this.taskRepository.createTaskExecution(
-						this.taskNameResolver.getTaskName(), new Date(), args, taskProperties.getExternalExecutionId());
+						taskExecution);
 			}
 		}
 		else {

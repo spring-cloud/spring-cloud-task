@@ -59,15 +59,16 @@ public interface TaskRepository {
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.
 	 *
-	 * @param taskName the name that associated with the task execution.
-	 * @param startTime the time task began.
-	 * @param arguments list of key/value pairs that configure the task.
-	 * @param externalExecutionId id assigned to the task by the platform.
-	 * @return the initial {@link TaskExecution}
+	 * @param taskExecution a TaskExecution instance containing the startTime,
+	 * arguments and externalExecutionId that will be stored in the repository.
+	 * Only the values enumerated above will be stored for this
+	 * TaskExecution.
+	 * @return the {@link TaskExecution} that was stored in the repository.  The
+	 * TaskExecution's taskExecutionId will also contain the id that was used
+	 * to store the TaskExecution.
 	 */
 	@Transactional
-	TaskExecution createTaskExecution(String taskName,
-			Date startTime,List<String> arguments, String externalExecutionId);
+	TaskExecution createTaskExecution(TaskExecution taskExecution);
 
 	/**
 	 * Creates an empty TaskExecution with just an id provided. This is intended to be

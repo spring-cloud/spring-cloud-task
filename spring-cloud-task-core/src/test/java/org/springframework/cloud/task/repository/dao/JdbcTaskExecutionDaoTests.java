@@ -177,20 +177,23 @@ public class JdbcTaskExecutionDaoTests {
 	}
 
 	private void initializeRepository() {
-		repository.createTaskExecution("FOO3",
-				new Date(),new ArrayList<String>(0), "externalA");
-		repository.createTaskExecution("FOO2",
-				new Date(),new ArrayList<String>(0), "externalB");
-		repository.createTaskExecution("FOO1",
-				new Date(),new ArrayList<String>(0), "externalC");
+		repository.createTaskExecution(getTaskExecution("FOO3", "externalA"));
+		repository.createTaskExecution(getTaskExecution("FOO2", "externalB"));
+		repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
 	}
 
 	private void initializeRepositoryNotInOrder() {
-		repository.createTaskExecution("FOO1",
-				new Date(), new ArrayList<String>(0), "externalC");
-		repository.createTaskExecution("FOO2",
-				new Date(), new ArrayList<String>(0), "externalA");
-		repository.createTaskExecution("FOO3",
-				new Date(), new ArrayList<String>(0), "externalB");
+		repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
+		repository.createTaskExecution(getTaskExecution("FOO2", "externalA"));
+		repository.createTaskExecution(getTaskExecution("FOO3", "externalB"));
+	}
+
+	private TaskExecution getTaskExecution(String taskName,
+			String externalExecutionId) {
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setTaskName(taskName);
+		taskExecution.setExternalExecutionId(externalExecutionId);
+		taskExecution.setStartTime(new Date());
+		return taskExecution;
 	}
 }

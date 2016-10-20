@@ -101,14 +101,17 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName,
-			Date startTime,List<String> arguments, String externalExecutionId) {
+	public TaskExecution createTaskExecution(TaskExecution taskExecution) {
 		initialize();
-		validateCreateInformation(startTime, taskName);
-		TaskExecution taskExecution =
-				taskExecutionDao.createTaskExecution(taskName, startTime, arguments, externalExecutionId);
+		validateCreateInformation(taskExecution);
+		TaskExecution daoTaskExecution =
+				taskExecutionDao.createTaskExecution(
+						taskExecution.getTaskName(),
+						taskExecution.getStartTime(),
+						taskExecution.getArguments(),
+						taskExecution.getExternalExecutionId());
 		logger.debug("Creating: " + taskExecution.toString());
-		return taskExecution;
+		return daoTaskExecution;
 	}
 
 	@Override
@@ -155,11 +158,11 @@ public class SimpleTaskRepository implements TaskRepository {
 	/**
 	 * Validate startTime and taskName are valid.
 	 */
-	private void validateCreateInformation(Date startTime, String taskName) {
-		Assert.notNull(startTime, "TaskExecution start time cannot be null.");
+	private void validateCreateInformation(TaskExecution taskExecution) {
+		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
 
-		if (taskName != null &&
-				taskName.length() > this.maxTaskNameSize) {
+		if (taskExecution.getTaskName() != null &&
+				taskExecution.getTaskName().length() > this.maxTaskNameSize) {
 			throw new IllegalArgumentException("TaskName length exceeds "
 					+ this.maxTaskNameSize + " characters");
 		}
