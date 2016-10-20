@@ -156,6 +156,14 @@ Application name for the task application and its partitions  need to follow
 the following regex pattern `[a-z0-9]([-a-z0-9]*[a-z0-9])`.
 Else an exception will be thrown.
 
+=== Notes on developing a batch partitioned app for the Mesos platform
+
+When configuring the partition handler, do not add any command line arguments to
+the `CommandLineArgsProvider`.  This is due to Chronos adding the command line
+args to the Mesos ID. Thus when launching the partition on Mesos this can cause
+the partition to fail to start if command line arg contains characters such as
+`/` or `:`.
+
 [[batch-informational-messages]]
 == Batch Informational Messages
 
