@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Glenn Renfro
@@ -35,5 +36,24 @@ public class JobInstanceEventTests {
 		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent(INSTANCE_ID, JOB_NAME);
 		assertEquals(INSTANCE_ID, jobInstanceEvent.getInstanceId());
 		assertEquals(JOB_NAME, jobInstanceEvent.getJobName());
+	}
+
+	@Test
+	public void testEmptyConstructor() {
+		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent();
+		assertNull(jobInstanceEvent.getJobName());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testEmptyConstructorEmptyId() {
+		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent();
+		jobInstanceEvent.getInstanceId();
+	}
+
+	@Test
+	public void testToString() {
+		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent(INSTANCE_ID, JOB_NAME);
+		assertEquals("JobInstanceEvent: id=1, version=null, Job=[FOOBAR]",
+				jobInstanceEvent.toString());
 	}
 }

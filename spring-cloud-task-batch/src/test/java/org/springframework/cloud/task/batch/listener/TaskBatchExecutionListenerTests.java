@@ -15,7 +15,10 @@
  */
 package org.springframework.cloud.task.batch.listener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -29,6 +32,7 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -38,6 +42,7 @@ import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfigurati
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
+import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerBeanPostProcessor;
 import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerFactoryBean;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -159,6 +164,55 @@ public class TaskBatchExecutionListenerTests {
 		Iterator<Long> jobExecutionIdsIterator = jobExecutionIds.iterator();
 		assertEquals(0, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
 		assertEquals(0, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
+	}
+
+	@Test
+	public void testBatchExecutionListenerBeanPostProcessorWithJobNames() {
+		List jobNames = new ArrayList<String>(3);
+		jobNames.add("job1");
+		jobNames.add("job2");
+		jobNames.add("TESTOBJECT");
+
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
+				beanPostProcessor(jobNames);
+
+		SimpleJob testObject = new SimpleJob();
+		SimpleJob bean = (SimpleJob) beanPostProcessor.
+				postProcessBeforeInitialization(testObject,"TESTOBJECT");
+		assertEquals(testObject,bean);
+	}
+
+	@Test
+	public void testBatchExecutionListenerBeanPostProcessorWithEmptyJobNames() {
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
+				beanPostProcessor(Collections.<String>emptyList());
+
+		SimpleJob testObject = new SimpleJob();
+		SimpleJob bean = (SimpleJob) beanPostProcessor.
+				postProcessBeforeInitialization(testObject,"TESTOBJECT");
+		assertEquals(testObject,bean);
+	}
+
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testBatchExecutionListenerBeanPostProcessorNullJobNames() {
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
+				beanPostProcessor(null);
+	}
+
+	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(
+			List<String> jobNames) {
+		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				BatchAutoConfiguration.class,
+				TaskBatchAutoConfiguration.class}, ARGS);
+
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
+				this.applicationContext.getBean(
+						TaskBatchExecutionListenerBeanPostProcessor.class);
+
+		beanPostProcessor.setJobNames(jobNames);
+		return beanPostProcessor;
 	}
 
 	@Configuration
