@@ -29,6 +29,7 @@ While you can begin developing a task without a database (the status of the task
  as part of the task repository's updates), for production environments, you'll want to
 utilize a supported database.  Below is a list of the ones currently supported:
 
+- DB2
 - H2
 - HSQLDB
 - MySql
