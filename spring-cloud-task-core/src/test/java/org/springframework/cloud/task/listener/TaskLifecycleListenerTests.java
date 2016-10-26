@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.ApplicationArguments;
@@ -32,6 +33,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
@@ -65,6 +68,9 @@ public class TaskLifecycleListenerTests {
 	private AnnotationConfigApplicationContext context;
 
 	private TaskExplorer taskExplorer;
+
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
 
 	@Before
 	public void setUp() {
@@ -153,6 +159,17 @@ public class TaskLifecycleListenerTests {
 		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		context.setEnvironment(environment);
 		context.refresh();
+	}
+
+	@Test
+	public void testRestartExistingTask() {
+		context.refresh();
+		TaskLifecycleListener taskLifecycleListener =
+				context.getBean(TaskLifecycleListener.class);
+		taskLifecycleListener.start();
+		String output = this.outputCapture.toString();
+		assertTrue("Test results do not show error message: " + output,
+				output.contains("Multiple start events have been received"));
 	}
 
 	@Test

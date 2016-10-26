@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -49,6 +50,7 @@ public class TaskLaunchRequestTests {
 				Collections.EMPTY_MAP,
 				Collections.EMPTY_MAP);
 		assertFalse(request.equals(null));
+		assertFalse(request.equals("nope"));
 		assertTrue(request.equals(request));
 		assertTrue(request.equals(request2));
 		TaskLaunchRequest requestDiff = new TaskLaunchRequest("http://oops",
@@ -64,6 +66,10 @@ public class TaskLaunchRequestTests {
 		assertFalse(request.equals(requestDiff));
 
 		requestDiff = new TaskLaunchRequest(URI,
+				null, null, null);
+		assertTrue(request.equals(requestDiff));
+
+		requestDiff = new TaskLaunchRequest(URI,
 				Collections.EMPTY_LIST,
 				map,
 				Collections.EMPTY_MAP);
@@ -74,6 +80,8 @@ public class TaskLaunchRequestTests {
 				Collections.EMPTY_MAP,
 				map);
 		assertFalse(request.equals(requestDiff));
+
+		assertEquals(request.hashCode(), request.hashCode());
 
 	}
 }

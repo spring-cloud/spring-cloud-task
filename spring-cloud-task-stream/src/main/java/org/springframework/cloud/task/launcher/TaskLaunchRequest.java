@@ -114,23 +114,23 @@ public class TaskLaunchRequest implements Serializable{
 		if (!uri.equals(that.uri)){
 			return false;
 		}
-		if (!(commandlineArguments != null ? commandlineArguments.equals(that.commandlineArguments) : that.commandlineArguments == null)){
+		if (!commandlineArguments.equals(that.commandlineArguments)){
 			return false;
 		}
-		if(!(deploymentProperties != null ? deploymentProperties.equals(that.deploymentProperties) : that.deploymentProperties == null))
+		if(!deploymentProperties.equals(that.deploymentProperties))
 		{
 			return false;
 		}
-		return environmentProperties != null ? environmentProperties.equals(that.environmentProperties) : that.environmentProperties == null;
+		return environmentProperties.equals(that.environmentProperties);
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = uri != null ? uri.hashCode() : 0;
-		result = 31 * result + (commandlineArguments != null ? commandlineArguments.hashCode() : 0);
-		result = 31 * result + (environmentProperties != null ? environmentProperties.hashCode() : 0);
-		result = 31 * result + (deploymentProperties != null ? deploymentProperties.hashCode() : 0);
+		int result = uri.hashCode();
+		result = 31 * result + commandlineArguments.hashCode();
+		result = 31 * result + environmentProperties.hashCode();
+		result = 31 * result + deploymentProperties.hashCode();
 		return result;
 	}
 }

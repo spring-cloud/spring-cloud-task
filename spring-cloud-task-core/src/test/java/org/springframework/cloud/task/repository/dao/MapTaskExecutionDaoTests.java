@@ -19,7 +19,10 @@ package org.springframework.cloud.task.repository.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -28,7 +31,9 @@ import org.junit.Test;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Executes unit tests on MapTaskExecutionDaoTests.
@@ -103,6 +108,33 @@ public class MapTaskExecutionDaoTests {
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	public void testJobQueries(){
+		List<TaskExecution> expectedTaskExecutionList = new ArrayList<TaskExecution>(2);
+		expectedTaskExecutionList.add(TestVerifierUtils.createSampleTaskExecutionNoArg());
+		expectedTaskExecutionList.add(TestVerifierUtils.createSampleTaskExecutionNoArg());
+
+		for (TaskExecution expectedTaskExecution : expectedTaskExecutionList) {
+			expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+					expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+					expectedTaskExecution.getExternalExecutionId());
+			this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+					expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
+					expectedTaskExecution.getExitMessage());
+		}
+		Set jobIds = new HashSet<Long>(2);
+		jobIds.add(123L);
+		jobIds.add(456L);
+		this.dao.getBatchJobAssociations().put(
+				expectedTaskExecutionList.get(0).getExecutionId(), jobIds);
+
+		assertEquals(Long.valueOf(expectedTaskExecutionList.get(0).getExecutionId()),
+				this.dao.getTaskExecutionIdByJobExecutionId(123L));
+		assertEquals(Long.valueOf(expectedTaskExecutionList.get(0).getExecutionId()),
+				this.dao.getTaskExecutionIdByJobExecutionId(456L));
+		assertNull(this.dao.getTaskExecutionIdByJobExecutionId(789L));
 	}
 
 }
