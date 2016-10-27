@@ -49,7 +49,7 @@ public class BatchEventsApplicationTests {
 	@Test
 	public void testExecution() throws Exception {
 		SpringApplication.run(BatchEventsApplication.class);
-		Assert.assertTrue(jobExecutionLatch.await(1, TimeUnit.SECONDS));
+		Assert.assertTrue(jobExecutionLatch.await(5, TimeUnit.SECONDS));
 	}
 
 	@EnableBinding(Sink.class)
