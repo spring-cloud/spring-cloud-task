@@ -124,45 +124,99 @@ https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-
 
 === Notes on developing a batch partitioned app for the Yarn platform
 
-* When deploying partitioned apps on the Yarn platform be sure use the following dependency for the
-Spring Cloud Yarn Deployer (with a version 1.0.2 or higher):
+* When deploying partitioned apps on the Yarn platform be sure to use the
+following dependency for the Spring Cloud Yarn Deployer
+(with a version 1.0.2 or higher):
 ```
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-deployer-yarn</artifactId>
-		</dependency>
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-deployer-yarn</artifactId>
+</dependency>
 ```
 * Add the following dependency to the dependency management for a transient dependency required by Yarn:
 ```
-	<dependencyManagement>
-		<dependencies>
+<dependencyManagement>
+    <dependencies>
 ...
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>18.0</version>
-			</dependency>
-		</dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+    </dependencies>
 ...
-	</dependencyManagement>
+</dependencyManagement>
 ```
 * Also add the following property to your application.properties: `spring.yarn.container.keepContextAlive=false`.
 * When setting up environment variables for the partitions in the PartitionHandler it is recommended that you do not
 copy the current working environment properties.
 
 === Notes on developing a batch partitioned app for the Kubernetes platform
+* When deploying partitioned apps on the Kubernetes platform be sure to use the
+following dependency for the Spring Cloud Kubernetes Deployer:
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-deployer-kubernetes</artifactId>
+</dependency>
+```
 
-Application name for the task application and its partitions  need to follow
+* Application name for the task application and its partitions  need to follow
 the following regex pattern `[a-z0-9]([-a-z0-9]*[a-z0-9])`.
 Else an exception will be thrown.
 
 === Notes on developing a batch partitioned app for the Mesos platform
+* When deploying partitioned apps on the Mesos platform be sure to use the
+following dependency for the Spring Cloud Mesos Deployer:
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-deployer-mesos</artifactId>
+</dependency>
+```
 
-When configuring the partition handler, do not add any command line arguments to
+* When configuring the partition handler, do not add any command line arguments to
 the `CommandLineArgsProvider`.  This is due to Chronos adding the command line
 args to the Mesos ID. Thus when launching the partition on Mesos this can cause
 the partition to fail to start if command line arg contains characters such as
 `/` or `:`.
+
+=== Notes on developing a batch partitioned app for the Cloud Foundry platform
+* When deploying partitioned apps on the Cloud Foundry platform be sure to use
+the following dependencies for the Spring Cloud Cloud Foundry Deployer:
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-deployer-cloudfoundry</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.projectreactor</groupId>
+    <artifactId>reactor-core</artifactId>
+    <version>3.0.2.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>io.projectreactor.ipc</groupId>
+    <artifactId>reactor-netty</artifactId>
+    <version>0.5.1.RELEASE</version>
+</dependency>
+```
+
+* When configuring the partition handler, Cloud Foundry Deployment
+environment variables need to be established so that the partition handler
+can start the partitions. The following example assumes a PCF-Dev
+deployment and that it is using a database service named `mysql`:
+
+```
+spring_cloud_deployer_cloudfoundry_url=https://api.local.pcfdev.io
+spring_cloud_deployer_cloudfoundry_org=pcfdev-org
+spring_cloud_deployer_cloudfoundry_space=pcfdev-space
+spring_cloud_deployer_cloudfoundry_domain=local.pcfdev.io
+spring_cloud_deployer_cloudfoundry_username=admin
+spring_cloud_deployer_cloudfoundry_password=admin
+spring_cloud_deployer_cloudfoundry_skipSslValidation=true
+spring_cloud_deployer_cloudfoundry_services=mysql
+spring_cloud_deployer_cloudfoundry_taskTimeout=300
+```
 
 [[batch-informational-messages]]
 == Batch Informational Messages
