@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.sql.DataSource;
@@ -39,6 +38,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -46,12 +46,14 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
  * Stores Task Execution Information to a JDBC DataSource.
  *
  * @author Glenn Renfro
+ * @author Gunnar Hillert
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
@@ -114,7 +116,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private DataSource dataSource;
 
-	private Map<String, Order> orderMap;
+	private LinkedHashMap<String, Order> orderMap;
 
 	private DataFieldMaxValueIncrementer taskIncrementer;
 
@@ -122,7 +124,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		Assert.notNull(dataSource);
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSource = dataSource;
-		orderMap = new TreeMap<>();
+		orderMap = new LinkedHashMap<>();
 		orderMap.put("START_TIME", Order.DESCENDING);
 		orderMap.put("TASK_EXECUTION_ID", Order.DESCENDING);
 	}
@@ -323,8 +325,23 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		if(StringUtils.hasText(whereClause)){
 			factoryBean.setWhereClause(whereClause);
 		}
-		factoryBean.setSortKeys(orderMap);
-		factoryBean.setDataSource(dataSource);
+		final Sort sort = pageable.getSort();
+		final LinkedHashMap<String, Order> sortOrderMap = new LinkedHashMap<>();
+
+		if (sort != null) {
+			for (Sort.Order sortOrder : sort) {
+				sortOrderMap.put(sortOrder.getProperty(), sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
+			}
+		}
+
+		if (!CollectionUtils.isEmpty(sortOrderMap)) {
+			factoryBean.setSortKeys(sortOrderMap);
+		}
+		else {
+			factoryBean.setSortKeys(this.orderMap);
+		}
+
+		factoryBean.setDataSource(this.dataSource);
 		PagingQueryProvider pagingQueryProvider;
 		try {
 			pagingQueryProvider = factoryBean.getObject();
@@ -403,7 +420,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getString("ERROR_MESSAGE"),
 					rs.getString("EXTERNAL_EXECUTION_ID"));
 		}
-                
+
                 private Integer getNullableExitCode(ResultSet rs) throws SQLException {
                     int exitCode = rs.getInt("EXIT_CODE");
                     return !rs.wasNull() ? exitCode : null;
