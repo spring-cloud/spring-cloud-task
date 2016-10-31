@@ -19,6 +19,7 @@ package org.springframework.cloud.task.repository.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.UUID;
 import javax.sql.DataSource;
 
@@ -31,11 +32,18 @@ import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfigurati
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Executes unit tests on JdbcTaskExecutionDao.
@@ -52,6 +60,9 @@ public class JdbcTaskExecutionDaoTests {
 	private DataSource dataSource;
 
 	private JdbcTaskExecutionDao dao;
+
+	@Autowired
+	TaskRepository repository;
 
 	@Before
 	public void setup(){
@@ -121,5 +132,65 @@ public class JdbcTaskExecutionDaoTests {
 		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());
+	}
+
+	@Test
+	@DirtiesContext
+	public void testFindAllPageableSort()  {
+		initializeRepositoryNotInOrder();
+		Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC,
+				"EXTERNAL_EXECUTION_ID"));
+		Iterator<TaskExecution> iter = getPageIterator(0, 2, sort);
+		TaskExecution taskExecution = iter.next();
+		assertEquals("FOO2", taskExecution.getTaskName());
+		taskExecution = iter.next();
+		assertEquals("FOO3", taskExecution.getTaskName());
+
+		iter = getPageIterator(1, 2, sort);
+		taskExecution = iter.next();
+		assertEquals("FOO1", taskExecution.getTaskName());
+	}
+
+	@Test
+	@DirtiesContext
+	public void testFindAllDefaultSort()  {
+		initializeRepository();
+		Iterator<TaskExecution> iter = getPageIterator(0, 2, null);
+		TaskExecution taskExecution = iter.next();
+		assertEquals("FOO1", taskExecution.getTaskName());
+		taskExecution = iter.next();
+		assertEquals("FOO2", taskExecution.getTaskName());
+
+		iter = getPageIterator(1, 2, null);
+		taskExecution = iter.next();
+		assertEquals("FOO3", taskExecution.getTaskName());
+	}
+
+	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize, Sort sort) {
+		Pageable pageable = (sort == null) ?
+				new PageRequest(pageNum, pageSize) :
+				new PageRequest(pageNum, pageSize, sort);
+		Page<TaskExecution> page = dao.findAll(pageable);
+		assertEquals(3, page.getTotalElements());
+		assertEquals(2, page.getTotalPages());
+		return page.iterator();
+	}
+
+	private void initializeRepository() {
+		repository.createTaskExecution("FOO3",
+				new Date(),new ArrayList<String>(0), "externalA");
+		repository.createTaskExecution("FOO2",
+				new Date(),new ArrayList<String>(0), "externalB");
+		repository.createTaskExecution("FOO1",
+				new Date(),new ArrayList<String>(0), "externalC");
+	}
+
+	private void initializeRepositoryNotInOrder() {
+		repository.createTaskExecution("FOO1",
+				new Date(), new ArrayList<String>(0), "externalC");
+		repository.createTaskExecution("FOO2",
+				new Date(), new ArrayList<String>(0), "externalA");
+		repository.createTaskExecution("FOO3",
+				new Date(), new ArrayList<String>(0), "externalB");
 	}
 }
