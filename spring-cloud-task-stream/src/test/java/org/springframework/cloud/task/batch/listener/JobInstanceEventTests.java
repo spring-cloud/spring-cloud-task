@@ -44,7 +44,7 @@ public class JobInstanceEventTests {
 		assertNull(jobInstanceEvent.getJobName());
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testEmptyConstructorEmptyId() {
 		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent();
 		jobInstanceEvent.getInstanceId();

@@ -21,28 +21,51 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
+import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+
 /**
- * Tests the TaskLauncherConfiguration in a case where a TaskLauncher is not
+ * Tests the TaskLauncherConfiguration in a case where a TaskLauncher is already
  * present.
  *
  * @author  Glenn Renfro
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskLauncherConfiguration.class})
-public class TaskLaunchConfigurationTests {
+@SpringBootTest(classes =
+		{TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class,
+		TaskLauncherConfiguration.class})
+public class TaskLaunchConfigurationExistingTests {
+
 	@Autowired
-	ApplicationContext context;
+	private ApplicationContext context;
+
+	private static TaskLauncher testTaskLauncher;
 
 	@Test
 	public void testTaskLauncher() {
 		LocalTaskLauncher taskLauncher =
 				context.getBean(LocalTaskLauncher.class);
+		assertNotNull(testTaskLauncher);
 		assertNotNull(taskLauncher);
+		assertEquals(testTaskLauncher, taskLauncher);
+	}
+
+	@Configuration
+	protected static class TestTaskDeployerConfiguration {
+		@Bean
+		public TaskLauncher taskLauncher() {
+			testTaskLauncher =
+					new LocalTaskLauncher(new LocalDeployerProperties());
+			return testTaskLauncher;
+		}
 	}
 }

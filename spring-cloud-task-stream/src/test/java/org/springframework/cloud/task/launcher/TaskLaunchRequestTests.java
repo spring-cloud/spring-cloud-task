@@ -36,8 +36,8 @@ public class TaskLaunchRequestTests {
 
 	@Test
 	public void testEquals() {
-		List args = new ArrayList<String>();
-		Map map = new HashMap<String,String>();
+		List<String> args = new ArrayList<>();
+		Map<String, String> map = new HashMap<>();
 		args.add("foo");
 		map.put("bar", "baz");
 

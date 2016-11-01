@@ -31,7 +31,7 @@ public class JobInstanceEvent extends Entity {
 	private String jobName;
 
 	public JobInstanceEvent() {
-
+		super(-1L);
 	}
 
 	public JobInstanceEvent(Long id, String jobName) {

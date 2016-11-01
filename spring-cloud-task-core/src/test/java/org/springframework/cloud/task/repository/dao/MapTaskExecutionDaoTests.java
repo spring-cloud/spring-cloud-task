@@ -112,7 +112,7 @@ public class MapTaskExecutionDaoTests {
 
 	@Test
 	public void testJobQueries(){
-		List<TaskExecution> expectedTaskExecutionList = new ArrayList<TaskExecution>(2);
+		List<TaskExecution> expectedTaskExecutionList = new ArrayList<>(2);
 		expectedTaskExecutionList.add(TestVerifierUtils.createSampleTaskExecutionNoArg());
 		expectedTaskExecutionList.add(TestVerifierUtils.createSampleTaskExecutionNoArg());
 
