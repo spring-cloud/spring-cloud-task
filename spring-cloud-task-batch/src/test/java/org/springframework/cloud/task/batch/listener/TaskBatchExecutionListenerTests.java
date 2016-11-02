@@ -95,18 +95,7 @@ public class TaskBatchExecutionListenerTests {
 		assertEquals(1, jobExecutionIds.size());
 		assertEquals(1, taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId());
 	}
-
-	@Test
-	public void testBeanFactoryReturnsSameInstance() throws Exception{
-		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
-
-		TaskBatchExecutionListenerFactoryBean bean = this.applicationContext.getBean(TaskBatchExecutionListenerFactoryBean.class);
-		assertTrue(bean.getObject() == bean.getObject());
-	}
+	
 	@Test
 	public void testMultipleDataSources() {
 		this.applicationContext = SpringApplication.run(new Object[] {JobConfigurationMultipleDataSources.class,
