@@ -62,7 +62,7 @@ import static org.junit.Assert.assertTrue;
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
-	private final static int MAX_WAIT_TIME = 5000;
+	private final static int MAX_WAIT_TIME = 10000;
 	private final static String URL = "maven://io.spring.cloud:"
 			+ "timestamp-task:jar:1.1.0.M2";
 	private final static String DATASOURCE_URL;
@@ -169,7 +169,8 @@ public class TaskLauncherSinkTests {
 	}
 
 	private void launchTask(String artifactURL) {
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null, this.properties, null);
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
+				this.properties, null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 	}

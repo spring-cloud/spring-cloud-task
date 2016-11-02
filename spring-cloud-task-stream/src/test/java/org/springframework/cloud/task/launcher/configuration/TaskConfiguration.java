@@ -45,10 +45,13 @@ public class TaskConfiguration {
 
 		private List<String> commandlineArguments;
 
+		private String applicationName;
+
 		@Override
 		public String launch(AppDeploymentRequest request) {
 			state = LaunchState.complete;
 			this.commandlineArguments = request.getCommandlineArguments();
+			this.applicationName = request.getDefinition().getName();
 			return null;
 		}
 
@@ -64,6 +67,10 @@ public class TaskConfiguration {
 
 		public List<String> getCommandlineArguments() {
 			return commandlineArguments;
+		}
+
+		public String getApplicationName() {
+			return applicationName;
 		}
 	}
 }

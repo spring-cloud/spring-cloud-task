@@ -26,22 +26,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
-import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.MessageHandlingException;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
 public class TaskLauncherSinkTests {
+
+	private final static String TASK_NAME_PREFIX = "Task-";
+
+	private final static String APP_NAME = "MY_APP_NAME";
 
 	private final static String PARAM1 = "FOO";
 
@@ -61,7 +65,6 @@ public class TaskLauncherSinkTests {
 	private ApplicationContext context;
 
 	@Autowired
-	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
 	@Before
@@ -72,29 +75,43 @@ public class TaskLauncherSinkTests {
 
 	@Test
 	public void testSuccessWithParams() {
-
 		List<String> commandLineArgs = new ArrayList<>();
 		commandLineArgs.add(PARAM1);
 		commandLineArgs.add(PARAM2);
 
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(VALID_URL, commandLineArgs);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher =
+				launchTask(VALID_URL, commandLineArgs, null);
 
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
 		assertEquals(2, testTaskLauncher.getCommandlineArguments().size());
-		assertEquals(testTaskLauncher.getCommandlineArguments().get(0), PARAM1);
-		assertEquals(testTaskLauncher.getCommandlineArguments().get(1), PARAM2);
+		assertEquals(PARAM1, testTaskLauncher.getCommandlineArguments().get(0));
+		assertEquals(PARAM2, testTaskLauncher.getCommandlineArguments().get(1));
+		assertTrue(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX));
+	}
+
+	@Test
+	public void testSuccessWithAppName() {
+		TaskConfiguration.TestTaskLauncher testTaskLauncher =
+				launchTask(VALID_URL, null, APP_NAME);
+
+		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
+		assertEquals(0, testTaskLauncher.getCommandlineArguments().size());
+		assertEquals(APP_NAME, testTaskLauncher.getApplicationName());
 	}
 
 	@Test
 	public void testSuccessNoParams() {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(VALID_URL, null);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher =
+				launchTask(VALID_URL, null, null);
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
 		assertEquals(0, testTaskLauncher.getCommandlineArguments().size());
+		assertTrue(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX));
 	}
 
 	@Test(expected = MessageHandlingException.class)
 	public void testInvalidJar() {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(INVALID_URL, null);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(
+				INVALID_URL, null, null);
 	}
 
 	@Test
@@ -108,14 +125,17 @@ public class TaskLauncherSinkTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoTaskLauncher() {
 		TaskLauncherSink sink = new TaskLauncherSink();
-		sink.taskLauncherSink(new TaskLaunchRequest(VALID_URL, null, properties, null));
+		sink.taskLauncherSink(new TaskLaunchRequest(VALID_URL, null, properties,
+				null, null));
 	}
 
-	private TaskConfiguration.TestTaskLauncher launchTask(String artifactURL, List<String> commandLineArgs) {
+	private TaskConfiguration.TestTaskLauncher launchTask(String artifactURL,
+			List<String> commandLineArgs, String applicationName) {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher =
 				context.getBean(TaskConfiguration.TestTaskLauncher.class);
 
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs, properties, null);
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL,
+				commandLineArgs, properties, null, applicationName);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 		return testTaskLauncher;
