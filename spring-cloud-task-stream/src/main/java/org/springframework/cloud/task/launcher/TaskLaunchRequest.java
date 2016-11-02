@@ -39,6 +39,7 @@ public class TaskLaunchRequest implements Serializable{
 	private List<String> commandlineArguments;
 	private Map<String, String> environmentProperties;
 	private Map<String, String> deploymentProperties;
+	private String applicationName;
 
 	/**
 	 * Constructor for the TaskLaunchRequest;
@@ -46,16 +47,21 @@ public class TaskLaunchRequest implements Serializable{
 	 * @param commandlineArguments list of commandlineArguments to be used by the task
 	 * @param environmentProperties are the environment variables for this task.
 	 * @param deploymentProperties are the variables used to setup task on the platform.
+	 * @param applicationName name to be applied to the launched task.   If set
+	 * 	to null then the launched task name will be "Task-<hash code of the
+	 * 	TaskLaunchRequest>.
 	 */
 	public TaskLaunchRequest(String uri, List<String> commandlineArguments,
-							 Map<String, String> environmentProperties,
-							 Map<String, String> deploymentProperties) {
+							Map<String, String> environmentProperties,
+							Map<String, String> deploymentProperties,
+							String applicationName) {
 		Assert.hasText(uri, "uri must not be empty nor null.");
 
 		this.uri = uri;
 		this.commandlineArguments = (commandlineArguments == null) ? new ArrayList<String>() : commandlineArguments;
 		this.environmentProperties = environmentProperties == null ? new HashMap<String, String>() : environmentProperties;
 		this.deploymentProperties = deploymentProperties == null ? new HashMap<String, String>() : deploymentProperties;
+		setApplicationName(applicationName);
 	}
 
 	/**
@@ -88,6 +94,26 @@ public class TaskLaunchRequest implements Serializable{
 	 */
 	public Map<String, String> getDeploymentProperties() {
 		return deploymentProperties;
+	}
+
+	/**
+	 * Returns the name that will be associated with the launched task.
+	 *
+	 * @return string containing the application name.
+	 */
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	/**
+	 * Sets the name to be applied to the launched task.   If set
+	 * 	to null then the launched task name will be "Task-<hash code of the task
+	 * 	launch request>.
+	 * @param applicationName the name to be
+	 */
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName == null ? "Task-" + hashCode() :
+				applicationName;
 	}
 
 	@Override
