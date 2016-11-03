@@ -38,6 +38,8 @@ public class TaskProcessorProperties {
 
 	private String dataSourcePassword;
 
+	private String applicationName;
+
 
 
 	public String getDataSourceUrl() {
@@ -78,5 +80,13 @@ public class TaskProcessorProperties {
 
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
 	}
 }

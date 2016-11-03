@@ -34,6 +34,8 @@ import static org.junit.Assert.assertTrue;
 public class TaskLaunchRequestTests {
 	public static final String URI = "http://myURI";
 
+	public static final String APP_NAME = "MY_APP_NAME";
+
 	@Test
 	public void testEquals() {
 		List<String> args = new ArrayList<>();
@@ -42,46 +44,50 @@ public class TaskLaunchRequestTests {
 		map.put("bar", "baz");
 
 		TaskLaunchRequest request = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST,
-				Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP);
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, null);
 		TaskLaunchRequest request2 = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST,
-				Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP);
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, null);
 		assertFalse(request.equals(null));
 		assertFalse(request.equals("nope"));
 		assertTrue(request.equals(request));
 		assertTrue(request.equals(request2));
 		TaskLaunchRequest requestDiff = new TaskLaunchRequest("http://oops",
-				Collections.EMPTY_LIST,
-				Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP);
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, null);
+		assertFalse(request.equals(requestDiff));
+
+		requestDiff = new TaskLaunchRequest(URI, args, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, null);
 		assertFalse(request.equals(requestDiff));
 
 		requestDiff = new TaskLaunchRequest(URI,
-				args,
-				Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP);
-		assertFalse(request.equals(requestDiff));
-
-		requestDiff = new TaskLaunchRequest(URI,
-				null, null, null);
+				null, null, null, null);
 		assertTrue(request.equals(requestDiff));
 
-		requestDiff = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST,
-				map,
-				Collections.EMPTY_MAP);
+		requestDiff = new TaskLaunchRequest(URI, Collections.EMPTY_LIST, map,
+				Collections.EMPTY_MAP, null);
 		assertFalse(request.equals(requestDiff));
 
-		requestDiff = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST,
-				Collections.EMPTY_MAP,
-				map);
+		requestDiff = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
+				Collections.EMPTY_MAP, map, null);
 		assertFalse(request.equals(requestDiff));
 
 		assertEquals(request.hashCode(), request.hashCode());
 
+	}
+
+	@Test
+	public void testApplicationName() {
+		TaskLaunchRequest request = new TaskLaunchRequest(URI,
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, null);
+		assertTrue(request.getApplicationName().startsWith("Task-"));
+
+		request = new TaskLaunchRequest(URI,
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
+				Collections.EMPTY_MAP, APP_NAME);
+		assertEquals(APP_NAME, request.getApplicationName());
 	}
 }
