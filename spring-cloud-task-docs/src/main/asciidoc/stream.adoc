@@ -18,7 +18,7 @@ TaskLaunchRequest contains:
 * uri - to the task artifact that is to be executed.
 * applicationName - the name that will be associated with the task. If no
 applicationName is set the TaskLaunchRequest will generate a task name
-comprised of the following: `Task-<hashcode of the TaskLaunchRequest>`
+comprised of the following: `Task-<UUID>`
 * commandLineArguments - a list containing the command line arguments for the
 task.
 * environmentProperties - a map containing the environment variables to be used

@@ -23,8 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Request that contains the maven repository and property information required by the
@@ -112,8 +114,8 @@ public class TaskLaunchRequest implements Serializable{
 	 * @param applicationName the name to be
 	 */
 	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName == null ? "Task-" + hashCode() :
-				applicationName;
+		this.applicationName = !StringUtils.hasText(applicationName) ? "Task-" +
+				UUID.randomUUID().toString() : applicationName;
 	}
 
 	@Override
