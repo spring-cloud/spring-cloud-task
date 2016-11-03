@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+	<id>${project.build.finalName}</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<!--<baseDirectory>${project.basedir}</baseDirectory>-->
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}/../../target/site/apidocs</directory>
+			<outputDirectory>/apidocs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/docbook</directory>
+			<outputDirectory>/reference</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>

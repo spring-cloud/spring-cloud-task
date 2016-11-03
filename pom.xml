@@ -122,12 +122,12 @@
 	<modules>
 		<module>spring-cloud-task-dependencies</module>
 		<module>spring-cloud-task-core</module>
-		<module>spring-cloud-task-docs</module>
 		<module>spring-cloud-task-batch</module>
 		<module>spring-cloud-task-stream</module>
 		<module>spring-cloud-starter-task</module>
 		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-integration-tests</module>
+		<module>spring-cloud-task-docs</module>
 	</modules>
 
 	<properties>
@@ -174,6 +174,13 @@
 						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>aggregate</id>
+						<phase>package</phase>
+						<goals>
+							<goal>aggregate</goal>
 						</goals>
 					</execution>
 				</executions>
