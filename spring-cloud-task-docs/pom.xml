@@ -284,6 +284,7 @@
 									<descriptors>
 										<descriptor>src/main/assembly/assemble.xml</descriptor>
 									</descriptors>
+									<attach>false</attach>
 								</configuration>
 								<goals>
 									<goal>single</goal>
