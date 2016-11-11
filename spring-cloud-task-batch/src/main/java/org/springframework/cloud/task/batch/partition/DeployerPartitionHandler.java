@@ -264,7 +264,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
 				String.valueOf(workerStepExecution.getId())));
 		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
-		arguments.add(formatArgument(SPRING_CLOUD_TASK_NAME, String.format("%s:%s:%s",
+		arguments.add(formatArgument(SPRING_CLOUD_TASK_NAME, String.format("%s_%s_%s",
 				taskExecution.getTaskName(),
 				workerStepExecution.getJobExecution().getJobInstance().getJobName(),
 				workerStepExecution.getStepName())));
