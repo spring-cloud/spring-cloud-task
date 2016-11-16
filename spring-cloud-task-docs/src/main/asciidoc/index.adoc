@@ -42,25 +42,35 @@ v{project-version}
 // ======================================================================================
 
 include::preface.adoc[]
+
 ifdef::backend-pdf[]
 <<<
 endif::backend-pdf[]
+
 include::getting-started.adoc[]
+
 ifdef::backend-pdf[]
 <<<
 endif::backend-pdf[]
+
 include::features.adoc[]
+
 ifdef::backend-pdf[]
 <<<
 endif::backend-pdf[]
+
 include::batch.adoc[]
+
 ifdef::backend-pdf[]
 <<<
 endif::backend-pdf[]
+
 include::stream.adoc[]
+
 ifdef::backend-pdf[]
 <<<
 endif::backend-pdf[]
+
 include::appendix.adoc[]
 
 // ======================================================================================
