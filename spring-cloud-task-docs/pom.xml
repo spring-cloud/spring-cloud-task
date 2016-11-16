@@ -227,25 +227,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					<!-- <plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>docs-assembly</id>
-								<phase>package</phase>
-								<configuration>
-									<appendAssemblyId>false</appendAssemblyId>
-									<descriptors>
-										<descriptor>src/main/assembly/assemble.xml</descriptor>
-									</descriptors>
-									<attach>false</attach>
-								</configuration>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin> -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
