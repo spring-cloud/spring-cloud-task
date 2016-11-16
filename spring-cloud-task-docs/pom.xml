@@ -129,7 +129,6 @@
 								</configuration>
 							</execution>
 							<execution>
-								<!--To be later customized, see issue #995-->
 								<id>generate-pdf</id>
 								<phase>prepare-package</phase>
 								<goals>
