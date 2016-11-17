@@ -65,7 +65,7 @@ public class TaskStartTests {
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 5000;
 	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.1.0.RC1";
+			+ "timestamp-task:jar:1.1.0.GA";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
