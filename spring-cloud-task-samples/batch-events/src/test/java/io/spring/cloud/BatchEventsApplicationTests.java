@@ -48,7 +48,7 @@ public class BatchEventsApplicationTests {
 
 	@Test
 	public void testExecution() throws Exception {
-		SpringApplication.run(BatchEventsApplication.class);
+		SpringApplication.run(BatchEventsApplication.class, "--server.port=0");
 		Assert.assertTrue(jobExecutionLatch.await(5, TimeUnit.SECONDS));
 	}
 
