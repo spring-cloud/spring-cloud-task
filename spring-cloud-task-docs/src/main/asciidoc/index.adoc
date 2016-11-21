@@ -1,6 +1,5 @@
 = Spring Cloud Task Reference Guide
-Michael Minella; Glenn Renfro
-v{project-version}
+Michael Minella, Glenn Renfro
 :doctype: book
 :toc:
 :toclevels: 4
@@ -8,7 +7,6 @@ v{project-version}
 :numbered:
 :icons: font
 :hide-uri-scheme:
-:title-logo-image: image:logo.png[top=10%, align=center, pdfwidth=6cm]
 :spring-cloud-task-repo: snapshot
 :github-tag: master
 :spring-cloud-task-docs-version: current
@@ -42,35 +40,10 @@ v{project-version}
 // ======================================================================================
 
 include::preface.adoc[]
-
-ifdef::backend-pdf[]
-<<<
-endif::backend-pdf[]
-
 include::getting-started.adoc[]
-
-ifdef::backend-pdf[]
-<<<
-endif::backend-pdf[]
-
 include::features.adoc[]
-
-ifdef::backend-pdf[]
-<<<
-endif::backend-pdf[]
-
 include::batch.adoc[]
-
-ifdef::backend-pdf[]
-<<<
-endif::backend-pdf[]
-
 include::stream.adoc[]
-
-ifdef::backend-pdf[]
-<<<
-endif::backend-pdf[]
-
 include::appendix.adoc[]
 
 // ======================================================================================

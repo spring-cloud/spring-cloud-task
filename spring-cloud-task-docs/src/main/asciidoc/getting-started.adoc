@@ -74,7 +74,7 @@ you have created a suitable folder and that it is your "current directory".
 We need to start by creating a Maven `pom.xml` file.  The `pom.xml` is the recipe that
 will be used to build your project.  Open your favorite text editor and add the following:
 
-[source,xml]
+[code,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
