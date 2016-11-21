@@ -41,8 +41,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes =
-		{TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class,
-		TaskLauncherConfiguration.class})
+		{TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class})
 public class TaskLaunchConfigurationExistingTests {
 
 	@Autowired

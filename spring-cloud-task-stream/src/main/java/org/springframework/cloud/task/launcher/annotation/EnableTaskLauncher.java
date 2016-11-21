@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
 
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
-import org.springframework.cloud.task.launcher.TaskLauncherConfiguration;
 import org.springframework.cloud.task.launcher.TaskLauncherSink;
 import org.springframework.context.annotation.Import;
 
@@ -56,6 +55,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({TaskLauncherConfiguration.class, TaskLauncherSink.class})
+@Import({TaskLauncherSink.class})
 public @interface EnableTaskLauncher {
 }
