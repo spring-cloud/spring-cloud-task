@@ -65,6 +65,16 @@ public class TaskConfiguration {
 			return new TaskStatus(LAUNCH_ID, state, null);
 		}
 
+		@Override
+		public void cleanup(String id) {
+			throw new UnsupportedOperationException("Cleanup is not supported");
+		}
+
+		@Override
+		public void destroy(String appName) {
+			throw new UnsupportedOperationException("Destroy is not supported");
+		}
+
 		public List<String> getCommandlineArguments() {
 			return commandlineArguments;
 		}
