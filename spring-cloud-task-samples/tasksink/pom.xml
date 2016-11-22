@@ -4,7 +4,7 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>tasksink</artifactId>
-	<version>1.1.0.BUILD-SNAPSHOT</version>
+	<version>1.1.0.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<name>Task Sink Sample Application</name>
@@ -14,7 +14,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.4.1.RELEASE</version>
-		<relativePath/>
+		<relativePath />
 	</parent>
 
 	<properties>
@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>1.1.0.BUILD-SNAPSHOT</version>
+				<version>1.1.0.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
