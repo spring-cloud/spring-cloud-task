@@ -22,5 +22,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/timestamp-task-1.1.0.GA.jar
+$ java -jar target/timestamp-task-1.1.0.RELEASE.jar
 ----
