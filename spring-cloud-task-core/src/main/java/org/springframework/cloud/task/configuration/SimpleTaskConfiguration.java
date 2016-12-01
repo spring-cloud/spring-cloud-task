@@ -79,6 +79,8 @@ public class SimpleTaskConfiguration {
 
 	private TaskExplorer taskExplorer;
 
+	private TaskContext taskContext;
+
 	@Bean
 	public TaskRepository taskRepository(){
 		return this.taskRepository;
@@ -122,6 +124,11 @@ public class SimpleTaskConfiguration {
 		return taskRepositoryInitializer;
 	}
 
+	@Bean
+	public TaskContext taskContext() {
+		return taskContext;
+	}
+
 	/**
 	 * Determines the {@link TaskConfigurer} to use.
 	 */
@@ -140,7 +147,7 @@ public class SimpleTaskConfiguration {
 		this.taskListenerExecutorFactoryBean = new TaskListenerExecutorFactoryBean(context);
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
-
+		taskContext = new TaskContext(taskConfigurer.getDataSource());
 		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
 				this.applicationArguments, taskExplorer, taskProperties);
 
@@ -151,7 +158,6 @@ public class SimpleTaskConfiguration {
 		verifyEnvironment();
 
 		int configurers = this.context.getBeanNamesForType(TaskConfigurer.class).length;
-
 		if (configurers < 1) {
 			if(!CollectionUtils.isEmpty(this.dataSources) && this.dataSources.size() == 1) {
 				return new DefaultTaskConfigurer(this.dataSources.iterator().next());
