@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
+import org.springframework.cloud.task.configuration.TaskContext;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,16 +54,16 @@ public class TaskBatchAutoConfiguration {
 		@Autowired(required = false)
 		private Collection<DataSource> dataSources;
 
+		@Autowired(required = false)
+		TaskContext taskContext;
+
 		@Bean
 		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
-			if(!CollectionUtils.isEmpty(dataSources) && dataSources.size() == 1) {
-				return new TaskBatchExecutionListenerFactoryBean(dataSources.iterator().next(), taskExplorer);
-			}
-			else if(CollectionUtils.isEmpty(dataSources)) {
-				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
+			if(taskContext != null && taskContext.getDataSource() != null) {
+				return new TaskBatchExecutionListenerFactoryBean(taskContext.getDataSource(), taskExplorer);
 			}
 			else {
-				throw new IllegalStateException("Expected one datasource and found " + dataSources.size());
+				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
 			}
 		}
 	}

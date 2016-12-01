@@ -100,4 +100,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	private boolean isDataSourceAvailable() {
 		return this.dataSource != null;
 	}
+
+	public DataSource getDataSource() {
+		return dataSource;
+	}
 }
