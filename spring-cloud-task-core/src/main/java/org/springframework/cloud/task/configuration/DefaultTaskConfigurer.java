@@ -84,6 +84,11 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	@Override
+	public DataSource getTaskDataSource() {
+		return this.dataSource;
+	}
+
+	@Override
 	public PlatformTransactionManager getTransactionManager() {
 		if(this.transactionManager == null) {
 			if(isDataSourceAvailable()) {

@@ -288,11 +288,7 @@ public class TaskBatchExecutionListenerTests {
 					.setName("incorrectDataSource");
 			return builder.build();
 		}
-
-		@Bean
-		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
-			return new TaskBatchExecutionListenerFactoryBean(myDataSource(), taskExplorer);
-		}
+		
 
 		@Bean
 		public TaskConfigurer taskConfigurer() {
