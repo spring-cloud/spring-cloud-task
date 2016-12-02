@@ -25,7 +25,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
+import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
@@ -50,20 +52,25 @@ public class TaskBatchAutoConfiguration {
 	@ConditionalOnMissingBean(name = "taskBatchExecutionListener")
 	public static class TaskBatchExecutionListenerAutoconfiguration {
 
-		@Autowired(required = false)
-		private Collection<DataSource> dataSources;
+		@Autowired
+		private ApplicationContext context;
 
 		@Bean
 		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
-			if(!CollectionUtils.isEmpty(dataSources) && dataSources.size() == 1) {
-				return new TaskBatchExecutionListenerFactoryBean(dataSources.iterator().next(), taskExplorer);
+
+			TaskConfigurer taskConfigurer = null;
+			if(!context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
+				taskConfigurer = context.getBean(TaskConfigurer.class);
 			}
-			else if(CollectionUtils.isEmpty(dataSources)) {
-				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
+			if(taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
+				return new TaskBatchExecutionListenerFactoryBean(
+						taskConfigurer.getTaskDataSource(),
+						taskExplorer);
 			}
 			else {
-				throw new IllegalStateException("Expected one datasource and found " + dataSources.size());
+				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
 			}
 		}
+
 	}
 }

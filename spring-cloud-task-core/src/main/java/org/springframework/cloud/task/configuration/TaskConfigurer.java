@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.configuration;
 
+import javax.sql.DataSource;
+
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -49,4 +51,11 @@ public interface TaskConfigurer {
 	 * @return a <code>TaskExplorer</code>
 	 */
 	TaskExplorer getTaskExplorer();
+
+	/**
+	 * Retrieves the DataSource that will be used for task operations.  If a
+	 * DataSource is not being used for the implemented TaskConfigurer this
+	 * method will return null.
+	 */
+	DataSource getTaskDataSource();
 }
