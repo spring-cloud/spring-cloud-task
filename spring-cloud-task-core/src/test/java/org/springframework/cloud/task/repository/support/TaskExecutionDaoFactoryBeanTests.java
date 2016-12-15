@@ -99,8 +99,7 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 		DataSource dataSource = this.context.getBean(DataSource.class);
 
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
-		factoryBean.setTablePrefix("foo_");
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource, "foo_");
 		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
 
 		assertEquals("foo_", ReflectionTestUtils.getField(taskExecutionDao, "tablePrefix"));

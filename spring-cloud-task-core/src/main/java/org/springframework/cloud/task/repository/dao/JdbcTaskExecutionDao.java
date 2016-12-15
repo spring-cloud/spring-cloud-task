@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.Order;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.repository.database.support.SqlPagingQueryProviderFactoryBean;
@@ -108,9 +109,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String FIND_TASK_EXECUTION_BY_JOB_EXECUTION_ID = "SELECT TASK_EXECUTION_ID FROM %PREFIX%TASK_BATCH WHERE JOB_EXECUTION_ID = ?";
 	private static final String FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID = "SELECT JOB_EXECUTION_ID FROM %PREFIX%TASK_BATCH WHERE TASK_EXECUTION_ID = ?";
 
-	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
-
-	private String tablePrefix = DEFAULT_TABLE_PREFIX;
+	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
 	private JdbcOperations jdbcTemplate;
 
@@ -120,6 +119,22 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private DataFieldMaxValueIncrementer taskIncrementer;
 
+	/**
+	 * Initializes the JdbcTaskExecutionDao.
+	 * @param dataSource used by the dao to execute queries and update the tables.
+	 * @param tablePrefix the table prefix to use for this dao.
+	 */
+	public JdbcTaskExecutionDao(DataSource dataSource, String tablePrefix) {
+		this(dataSource);
+		Assert.hasText(tablePrefix, "tablePrefix must not be null nor empty");
+		this.tablePrefix = tablePrefix;
+	}
+
+	/**
+	 * Initializes the JdbTaskExecutionDao and defaults the table prefix to
+	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 * @param dataSource used by the dao to execute queries and update the tables.
+	 */
 	public JdbcTaskExecutionDao(DataSource dataSource) {
 		Assert.notNull(dataSource);
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -184,17 +199,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime,
 			String exitMessage) {
 		completeTaskExecution(taskExecutionId, exitCode, endTime, exitMessage, null);
-	}
-
-	/**
-	 * Public setter for the table prefix property. This will be prefixed to all
-	 * the table names before queries are executed. Defaults to
-	 * {@link #DEFAULT_TABLE_PREFIX}.
-	 *
-	 * @param tablePrefix the tablePrefix to set
-	 */
-	public void setTablePrefix(String tablePrefix) {
-		this.tablePrefix = tablePrefix;
 	}
 
 	@Override

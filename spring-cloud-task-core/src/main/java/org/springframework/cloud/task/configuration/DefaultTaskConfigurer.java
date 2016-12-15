@@ -59,20 +59,33 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	/**
+	 * Initializes the DefaultTaskConfigurer and sets the default table prefix
+	 * to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for
 	 * production use.
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
+		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX);
+	}
+
+	/** Initializes the DefaultTaskConfigurer.
+	 * @param dataSource references the {@link DataSource} to be used as the Task
+	 * repository.  If none is provided, a Map will be used (not recommended for
+	 * production use.
+	 * @param tablePrefix the prefix to apply to the task table names used by
+	 * task infrastructure.
+	 */
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix) {
 		this.dataSource = dataSource;
 
 		if(this.dataSource != null) {
-			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource);
+			this.taskExecutionDaoFactoryBean = new
+					TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
 		}
 		else {
 			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
 		}
-
 		this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
 		this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
 	}

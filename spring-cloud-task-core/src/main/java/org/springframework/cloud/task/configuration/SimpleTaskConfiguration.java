@@ -155,11 +155,13 @@ public class SimpleTaskConfiguration {
 		if (configurers < 1) {
 			TaskConfigurer taskConfigurer;
 			if(!CollectionUtils.isEmpty(this.dataSources) && this.dataSources.size() == 1) {
-				taskConfigurer = new DefaultTaskConfigurer(this.dataSources.iterator().next());
-
+				taskConfigurer = new DefaultTaskConfigurer(
+						this.dataSources.iterator().next(),
+						taskProperties.getTablePrefix());
 			}
 			else {
-				taskConfigurer = new DefaultTaskConfigurer();
+				taskConfigurer = new DefaultTaskConfigurer(null,
+						taskProperties.getTablePrefix());
 			}
 			this.context.getBeanFactory().registerSingleton("taskConfigurer", taskConfigurer);
 			return taskConfigurer;
