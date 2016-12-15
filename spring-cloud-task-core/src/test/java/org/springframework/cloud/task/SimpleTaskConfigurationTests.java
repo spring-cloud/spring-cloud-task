@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -79,12 +81,12 @@ public class SimpleTaskConfigurationTests {
 
 		@Bean
 		public TaskConfigurer taskConfigurer1() {
-			return new DefaultTaskConfigurer(null);
+			return new DefaultTaskConfigurer((DataSource) null);
 		}
 
 		@Bean
 		public TaskConfigurer taskConfigurer2() {
-			return new DefaultTaskConfigurer(null);
+			return new DefaultTaskConfigurer((DataSource) null);
 		}
 	}
 

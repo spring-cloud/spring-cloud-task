@@ -27,6 +27,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.cloud.task")
 public class TaskProperties {
 
+	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
+
 	/**
 	 * An id that can be associated with a task.
 	 */
@@ -36,6 +38,11 @@ public class TaskProperties {
 	 * An id that will be used by the task when updating the task execution.
 	 */
 	private Integer executionid;
+
+	/**
+	 * The prefix to append to the table names created by Spring Cloud Task.
+	 */
+	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
 	/**
 	 * When set to true the context is closed at the end of the task.  Else
@@ -65,5 +72,13 @@ public class TaskProperties {
 
 	public void setClosecontextEnable(Boolean closecontextEnable) {
 		this.closecontextEnable = closecontextEnable;
+	}
+
+	public String getTablePrefix() {
+		return tablePrefix;
+	}
+
+	public void setTablePrefix(String tablePrefix) {
+		this.tablePrefix = tablePrefix;
 	}
 }

@@ -24,9 +24,11 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.JdbcTaskBatchDao;
 import org.springframework.cloud.task.batch.listener.support.MapTaskBatchDao;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -44,9 +46,32 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 
 	private TaskExplorer taskExplorer;
 
+	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
+
+	/**
+	 * Initializes the TaskBatchExecutionListenerFactoryBean and defaults the
+	 * tablePrefix to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 *
+	 * @param dataSource the dataSource to use for the TaskBatchExecutionListener.
+	 * @param taskExplorer the taskExplorer to use for the TaskBatchExecutionListener.
+	 */
 	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer) {
 		this.dataSource = dataSource;
 		this.taskExplorer = taskExplorer;
+	}
+
+	/**
+	 * Initializes the TaskBatchExecutionListenerFactoryBean.
+	 *
+	 * @param dataSource the dataSource to use for the TaskBatchExecutionListener.
+	 * @param taskExplorer the taskExplorer to use for the TaskBatchExecutionListener.
+	 * @param tablePrefix the prefix for the task tables accessed by the
+	 * TaskBatchExecutionListener.
+	 */
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer, String tablePrefix) {
+		this(dataSource,taskExplorer);
+		Assert.hasText(tablePrefix, "tablePrefix must not be null nor empty.");
+		this.tablePrefix = tablePrefix;
 	}
 
 	@Override
@@ -58,7 +83,8 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 			this.listener = new TaskBatchExecutionListener(getMapTaskBatchDao());
 		}
 		else {
-			this.listener = new TaskBatchExecutionListener(new JdbcTaskBatchDao(this.dataSource));
+			this.listener = new TaskBatchExecutionListener(
+					new JdbcTaskBatchDao(this.dataSource, tablePrefix));
 		}
 
 		return listener;

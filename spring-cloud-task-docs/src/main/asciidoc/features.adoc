@@ -135,6 +135,33 @@ If your application utilizes more than one `DataSource`, you'll need to configur
 task repository with the appropriate `DataSource`.  This customization can be done via an
 implementation of the `TaskConfigurer`.
 
+[[features-table-prefix]]
+=== Table Prefix
+One modifiable property of the TaskRepository is the table prefix for the
+task tables. By default they are all prefaced with `TASK_`.
+TASK_EXECUTION and TASK_EXECUTION_PARAMS are two examples. However, there are
+potential reasons to modify this prefix. If the schema names needs to be
+prepended to the table names, or if more than one set of task tables is
+needed within the same schema, then the table prefix will need to be changed.
+This is done by setting the `spring.cloud.task.tablePrefix` to the prefix
+that is required.
+
+```
+ spring.cloud.task.tablePrefix=<yourPrefix>
+```
+
+[[features-table-initialization]]
+=== Enable/Disable table initialization
+In cases where you are creating the task tables and do not wish for
+Spring Cloud Task to create them (if not present) at task startup set the
+`spring.cloud.task.initialize.enable` property to `false`.  It is currently
+defaulted to `true`.
+
+
+```
+ spring.cloud.task.initialize.enable=<true or false>
+```
+
 [[features-generated_task_id]]
 === Externally Generated Task Id
 
