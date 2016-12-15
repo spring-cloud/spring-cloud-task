@@ -54,6 +54,10 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private DataSource dataSource;
 
+	public DefaultTaskConfigurer() {
+		this(null);
+	}
+
 	/**
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for

@@ -53,12 +53,16 @@ public class TaskBatchAutoConfiguration {
 	public static class TaskBatchExecutionListenerAutoconfiguration {
 
 		@Autowired
-		ApplicationContext context;
+		private ApplicationContext context;
 
 		@Bean
 		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
-			TaskConfigurer taskConfigurer = context.getBean(TaskConfigurer.class);
-			if(taskConfigurer.getTaskDataSource() != null) {
+
+			TaskConfigurer taskConfigurer = null;
+			if(!context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
+				taskConfigurer = context.getBean(TaskConfigurer.class);
+			}
+			if(taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
 				return new TaskBatchExecutionListenerFactoryBean(
 						taskConfigurer.getTaskDataSource(),
 						taskExplorer);

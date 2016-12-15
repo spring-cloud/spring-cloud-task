@@ -159,7 +159,7 @@ public class SimpleTaskConfiguration {
 
 			}
 			else {
-				taskConfigurer = new DefaultTaskConfigurer(null);
+				taskConfigurer = new DefaultTaskConfigurer();
 			}
 			this.context.getBeanFactory().registerSingleton("taskConfigurer", taskConfigurer);
 			return taskConfigurer;
