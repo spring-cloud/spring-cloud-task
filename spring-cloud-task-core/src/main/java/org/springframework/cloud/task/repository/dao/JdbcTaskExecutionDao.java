@@ -201,6 +201,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		completeTaskExecution(taskExecutionId, exitCode, endTime, exitMessage, null);
 	}
 
+	/**
+	 * Public setter for the table prefix property. This will be prefixed to all
+	 * the table names before queries are executed. Defaults to
+	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 *
+	 * @param tablePrefix the tablePrefix to set
+	 */
+	@Deprecated
+	public void setTablePrefix(String tablePrefix) {
+		this.tablePrefix = tablePrefix;
+	}
+
 	@Override
 	public TaskExecution getTaskExecution(long executionId) {
 		try {

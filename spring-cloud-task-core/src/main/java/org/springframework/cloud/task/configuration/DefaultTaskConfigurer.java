@@ -55,7 +55,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	private DataSource dataSource;
 
 	public DefaultTaskConfigurer() {
-		this(null);
+		this(TaskProperties.DEFAULT_TABLE_PREFIX);
 	}
 
 	/**
@@ -67,6 +67,14 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX);
+	}
+
+	/** Initializes the DefaultTaskConfigurer.
+	 * @param tablePrefix the prefix to apply to the task table names used by
+	 * task infrastructure.
+	 */
+	public DefaultTaskConfigurer(String tablePrefix) {
+		this(null, tablePrefix);
 	}
 
 	/** Initializes the DefaultTaskConfigurer.

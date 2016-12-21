@@ -71,6 +71,17 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 		jdbcTemplate.update(getQuery(INSERT_STATEMENT), taskExecution.getExecutionId(), jobExecution.getId());
 	}
 
+	/**
+	 * The table prefix for the task batch table.
+	 *
+	 * @param tablePrefix defaults to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 */
+	@Deprecated
+ 	public void setTablePrefix(String tablePrefix) {
+		Assert.notNull(tablePrefix, "Null is not allowed as a tablePrefix (use an empty string if you don't want a prefix at all).");
+		this.tablePrefix = tablePrefix;
+	}
+
 	private String getQuery(String base) {
 		return StringUtils.replace(base, "%PREFIX%", tablePrefix);
 	}

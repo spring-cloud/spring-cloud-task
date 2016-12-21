@@ -44,7 +44,6 @@ include::getting-started.adoc[]
 include::features.adoc[]
 include::batch.adoc[]
 include::stream.adoc[]
-include::repository.adoc[]
 include::appendix.adoc[]
 
 // ======================================================================================

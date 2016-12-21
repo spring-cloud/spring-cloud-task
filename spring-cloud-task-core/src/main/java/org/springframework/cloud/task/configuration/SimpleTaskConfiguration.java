@@ -160,7 +160,7 @@ public class SimpleTaskConfiguration {
 						taskProperties.getTablePrefix());
 			}
 			else {
-				taskConfigurer = new DefaultTaskConfigurer(null,
+				taskConfigurer = new DefaultTaskConfigurer(
 						taskProperties.getTablePrefix());
 			}
 			this.context.getBeanFactory().registerSingleton("taskConfigurer", taskConfigurer);
