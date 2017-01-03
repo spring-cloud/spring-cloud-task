@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,6 +156,10 @@ public class TestVerifierUtils {
 		assertEquals("errorMessage must be equal",
 				expectedTaskExecution.getErrorMessage(),
 				actualTaskExecution.getErrorMessage());
+		assertEquals("externalExecutionId must be equal",
+				expectedTaskExecution.getExternalExecutionId(),
+				actualTaskExecution.getExternalExecutionId());
+
 		if (expectedTaskExecution.getArguments() != null) {
 			assertNotNull("arguments should not be null",
 					actualTaskExecution.getArguments());

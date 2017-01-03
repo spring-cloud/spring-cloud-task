@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,4 +163,12 @@ public interface TaskExecutionDao {
 	 * @return a <code>Set</code> of the ids of the job executions executed within the task.
 	 */
 	Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId);
+
+	/**
+	 * Updates the externalExecutionId for the execution id specified.
+	 * @param taskExecutionId the execution id for the task to be updated.
+	 * @param externalExecutionId the new externalExecutionId.
+	 */
+	void updateExternalExecutionId(long taskExecutionId,
+			String externalExecutionId);
 }

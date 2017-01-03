@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,6 +201,15 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		else {
 			return new TreeSet<>();
 		}
+	}
+
+	@Override
+	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
+		if(!this.taskExecutions.containsKey(taskExecutionId)) {
+			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
+		}
+		TaskExecution taskExecution = taskExecutions.get(taskExecutionId);
+		taskExecution.setExternalExecutionId(externalExecutionId);
 	}
 
 	public ConcurrentMap<Long, Set<Long>> getBatchJobAssociations() {
