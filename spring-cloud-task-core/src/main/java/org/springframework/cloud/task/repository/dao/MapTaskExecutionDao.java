@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 
 /**
  * Stores Task Execution Information to a in-memory map.
@@ -201,6 +202,14 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		else {
 			return new TreeSet<>();
 		}
+	}
+
+	@Override
+	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
+		TaskExecution taskExecution = taskExecutions.get(taskExecutionId);
+		Assert.notNull(taskExecution, "Invalid TaskExecution, ID "
+				+ taskExecutionId + " not found.");
+		taskExecution.setExternalExecutionId(externalExecutionId);
 	}
 
 	public ConcurrentMap<Long, Set<Long>> getBatchJobAssociations() {

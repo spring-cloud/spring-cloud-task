@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String UPDATE_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
 			+ "END_TIME = ?, EXIT_CODE = ?, EXIT_MESSAGE = ?, ERROR_MESSAGE = ?, "
 			+ "LAST_UPDATED = ? where TASK_EXECUTION_ID = ?";
+
+	private static final String UPDATE_TASK_EXECUTION_EXTERNAL_EXECUTION_ID = "UPDATE %PREFIX%EXECUTION set "
+			+ "EXTERNAL_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
 
 	private static final String GET_EXECUTION_BY_ID = "SELECT TASK_EXECUTION_ID, " +
 			"START_TIME, END_TIME, TASK_NAME, EXIT_CODE, "
@@ -310,6 +313,19 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		}
 		catch (DataAccessException e) {
 			return Collections.emptySet();
+		}
+	}
+
+	@Override
+	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
+		Object[] parameters = new Object[]{externalExecutionId,
+				taskExecutionId};
+		if (jdbcTemplate.update(
+				getQuery(UPDATE_TASK_EXECUTION_EXTERNAL_EXECUTION_ID),
+				parameters,
+				new int[]{Types.VARCHAR, Types.BIGINT}) != 1) {
+			throw new IllegalStateException("Invalid TaskExecution, ID "
+					+ taskExecutionId + " not found.");
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,6 +124,42 @@ public class SimpleTaskRepositoryJdbcTests {
 				expectedTaskExecution.getArguments(), expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+	@Test
+	public void testUpdateExternalExecutionId() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExternalExecutionId(UUID.randomUUID().toString());
+		taskRepository.updateExternalExecutionId(
+				expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExternalExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource,
+						expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	public void testUpdateNullExternalExecutionId() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExternalExecutionId(null);
+		taskRepository.updateExternalExecutionId(
+				expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getExternalExecutionId());
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				TestDBUtils.getTaskExecutionFromDB(dataSource,
+						expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
+		expectedTaskExecution.setExternalExecutionId(null);
+		taskRepository.updateExternalExecutionId(
+				-1,
+				expectedTaskExecution.getExternalExecutionId());
 	}
 
 	@Test
