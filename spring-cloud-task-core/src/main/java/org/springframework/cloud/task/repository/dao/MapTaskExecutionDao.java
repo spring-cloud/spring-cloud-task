@@ -32,6 +32,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 
 /**
  * Stores Task Execution Information to a in-memory map.
@@ -205,10 +206,9 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
-		if(!this.taskExecutions.containsKey(taskExecutionId)) {
-			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
-		}
 		TaskExecution taskExecution = taskExecutions.get(taskExecutionId);
+		Assert.notNull(taskExecution, "Invalid TaskExecution, ID "
+				+ taskExecutionId + " not found.");
 		taskExecution.setExternalExecutionId(externalExecutionId);
 	}
 

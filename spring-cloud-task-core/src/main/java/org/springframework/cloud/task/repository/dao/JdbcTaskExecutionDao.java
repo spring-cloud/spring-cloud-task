@@ -318,17 +318,15 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
-			if (jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), Integer.class,
-					taskExecutionId) != 1) {
-				throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
-			}
-
-			Object[] parameters = new Object[]{ externalExecutionId,
-					taskExecutionId};
-			jdbcTemplate.update(
-					getQuery(UPDATE_TASK_EXECUTION_EXTERNAL_EXECUTION_ID),
-					parameters,
-					new int[]{ Types.VARCHAR, Types.BIGINT});
+		Object[] parameters = new Object[]{externalExecutionId,
+				taskExecutionId};
+		if (jdbcTemplate.update(
+				getQuery(UPDATE_TASK_EXECUTION_EXTERNAL_EXECUTION_ID),
+				parameters,
+				new int[]{Types.VARCHAR, Types.BIGINT}) != 1) {
+			throw new IllegalStateException("Invalid TaskExecution, ID "
+					+ taskExecutionId + " not found.");
+		}
 	}
 
 	private Page<TaskExecution> queryForPageableResults(Pageable pageable,

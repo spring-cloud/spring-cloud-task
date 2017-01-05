@@ -83,13 +83,13 @@ public interface TaskRepository {
 
 	/**
 	 * Notifies the repository that a taskExecution has has started.
-	 * @param executionid  to the task execution to be updated.
-	 * @param taskName the name that associated with the task execution.
-	 * @param startTime the time task began.
-	 * @param arguments list of key/value pairs that configure the task.
+	 *
+	 * @param executionid         to the task execution to be updated.
+	 * @param taskName            the name that associated with the task execution.
+	 * @param startTime           the time task began.
+	 * @param arguments           list of key/value pairs that configure the task.
 	 * @param externalExecutionId id assigned to the task by the platform.
-
-	 * @return
+	 * @return TaskExecution created based on the parameters.
 	 */
 	@Transactional
 	TaskExecution startTaskExecution(long executionid, String taskName,
@@ -97,10 +97,9 @@ public interface TaskRepository {
 
 	/**
 	 * Notifies the repository to update the taskExecution's externalExecutionId.
-	 * @param executionid  to the task execution to be updated.
+	 *
+	 * @param executionid         to the task execution to be updated.
 	 * @param externalExecutionId id assigned to the task by the platform.
-
-	 * @return
 	 */
 	@Transactional
 	void updateExternalExecutionId(long executionid,

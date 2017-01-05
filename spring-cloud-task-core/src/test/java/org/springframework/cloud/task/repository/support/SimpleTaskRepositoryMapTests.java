@@ -86,7 +86,7 @@ public class SimpleTaskRepositoryMapTests {
 				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
