@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
@@ -102,6 +101,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	 * used.
 	 *
 	 * @param tablePrefix the string prefix for the task table names
+	 * @deprecated Use the constructor to inject
 	 */
 	@Deprecated
 	public void setTablePrefix(String tablePrefix) {

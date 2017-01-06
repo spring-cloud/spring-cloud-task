@@ -153,10 +153,9 @@ that is required.
 [[features-table-initialization]]
 === Enable/Disable table initialization
 In cases where you are creating the task tables and do not wish for
-Spring Cloud Task to create them (if not present) at task startup set the
+Spring Cloud Task to create them at task startup set the
 `spring.cloud.task.initialize.enable` property to `false`.  It is currently
 defaulted to `true`.
-
 
 ```
  spring.cloud.task.initialize.enable=<true or false>

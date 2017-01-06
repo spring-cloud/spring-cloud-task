@@ -21,7 +21,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.cloud.task.batch.listener.TaskBatchDao;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
@@ -75,6 +74,7 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	 * The table prefix for the task batch table.
 	 *
 	 * @param tablePrefix defaults to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 * @deprecated Use the constructor to inject this value
 	 */
 	@Deprecated
  	public void setTablePrefix(String tablePrefix) {

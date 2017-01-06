@@ -61,6 +61,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	/**
 	 * Initializes the DefaultTaskConfigurer and sets the default table prefix
 	 * to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
+	 *
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for
 	 * production use.
@@ -69,7 +70,9 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX);
 	}
 
-	/** Initializes the DefaultTaskConfigurer.
+	/**
+	 * Initializes the DefaultTaskConfigurer.
+	 *
 	 * @param tablePrefix the prefix to apply to the task table names used by
 	 * task infrastructure.
 	 */
@@ -77,7 +80,9 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		this(null, tablePrefix);
 	}
 
-	/** Initializes the DefaultTaskConfigurer.
+	/**
+	 * Initializes the DefaultTaskConfigurer.
+	 *
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for
 	 * production use.
