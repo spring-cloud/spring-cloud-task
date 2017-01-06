@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.task.repository.support;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +108,8 @@ public class SimpleTaskRepository implements TaskRepository {
 						taskExecution.getTaskName(),
 						taskExecution.getStartTime(),
 						taskExecution.getArguments(),
-						taskExecution.getExternalExecutionId());
+						taskExecution.getExternalExecutionId(),
+						taskExecution.getParentExecutionId());
 		logger.debug("Creating: " + taskExecution.toString());
 		return daoTaskExecution;
 	}
@@ -127,17 +127,27 @@ public class SimpleTaskRepository implements TaskRepository {
 	@Override
 	public TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
 			String externalExecutionId) {
-		initialize();
-		TaskExecution taskExecution =
-				taskExecutionDao.startTaskExecution(executionid, taskName, startTime, arguments, externalExecutionId);
-		logger.debug("Starting: " + taskExecution.toString());
-		return taskExecution;
+		return startTaskExecution(executionid, taskName, startTime, arguments,
+				externalExecutionId, null);
 	}
 
 	@Override
 	public void updateExternalExecutionId(long executionid, String externalExecutionId) {
 		initialize();
 		taskExecutionDao.updateExternalExecutionId(executionid, externalExecutionId);
+	}
+
+	@Override
+	public TaskExecution startTaskExecution(long executionid, String taskName,
+			Date startTime, List<String> arguments, String externalExecutionId,
+			Long parentExecutionId) {
+		initialize();
+		TaskExecution taskExecution =
+				taskExecutionDao.startTaskExecution(executionid, taskName,
+						startTime, arguments, externalExecutionId,
+						parentExecutionId);
+		logger.debug("Starting: " + taskExecution.toString());
+		return taskExecution;
 	}
 
 	/**

@@ -44,6 +44,21 @@ public interface TaskExecutionDao {
 						   Date startTime, List<String> arguments, String externalExecutionId);
 
 	/**
+	 * Save a new {@link TaskExecution}.
+	 *
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform
+	 * @param parentExecutionId the parent task execution id.
+	 * @return A fully qualified {@link TaskExecution} instance.
+	 * @since 1.2.0
+	 */
+	TaskExecution createTaskExecution( String taskName,
+			Date startTime, List<String> arguments, String externalExecutionId,
+			Long parentExecutionId);
+
+	/**
 	 * Update and existing {@link TaskExecution} to mark it as started.
 	 *
 	 * @param executionId the id of  the taskExecution to be updated.
@@ -55,6 +70,21 @@ public interface TaskExecutionDao {
 	 */
 	TaskExecution startTaskExecution(long executionId, String taskName,
 						   Date startTime, List<String> arguments, String externalExecutionId);
+
+	/**
+	 * Update and existing {@link TaskExecution} to mark it as started.
+	 *
+	 * @param executionId the id of  the taskExecution to be updated.
+	 * @param taskName the name that associated with the task execution.
+	 * @param startTime the time task began.
+	 * @param arguments list of key/value pairs that configure the task.
+	 * @param externalExecutionId id assigned to the task by the platform
+	 * @param parentExecutionId the parent task execution id.
+	 * @since 1.2.0
+	 */
+	TaskExecution startTaskExecution(long executionId, String taskName,
+			Date startTime, List<String> arguments, String externalExecutionId,
+			Long parentExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as completed.

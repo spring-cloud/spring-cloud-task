@@ -159,6 +159,9 @@ public class TestVerifierUtils {
 		assertEquals("externalExecutionId must be equal",
 				expectedTaskExecution.getExternalExecutionId(),
 				actualTaskExecution.getExternalExecutionId());
+		assertEquals("parentExecutionId must be equal",
+				expectedTaskExecution.getParentExecutionId(),
+				actualTaskExecution.getParentExecutionId());
 
 		if (expectedTaskExecution.getArguments() != null) {
 			assertNotNull("arguments should not be null",

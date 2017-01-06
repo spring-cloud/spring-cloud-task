@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 the original author or authors.
+ *  Copyright 2016-2017 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,13 @@ public class TaskProperties {
 	/**
 	 * An id that will be used by the task when updating the task execution.
 	 */
-	private Integer executionid;
+	private Long executionid;
+
+	/**
+	 * The id of the parent task execution id that launched this task execution.
+	 * Defaults to null if task execution had no parent.
+	 */
+	private Long parentExecutionId;
 
 	/**
 	 * The prefix to append to the table names created by Spring Cloud Task.
@@ -58,11 +64,11 @@ public class TaskProperties {
 		this.externalExecutionId = externalExecutionId;
 	}
 
-	public Integer getExecutionid() {
+	public Long getExecutionid() {
 		return executionid;
 	}
 
-	public void setExecutionid(Integer executionid) {
+	public void setExecutionid(Long executionid) {
 		this.executionid = executionid;
 	}
 
@@ -80,5 +86,13 @@ public class TaskProperties {
 
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;
+	}
+
+	public Long getParentExecutionId() {
+		return parentExecutionId;
+	}
+
+	public void setParentExecutionId(Long parentExecutionId) {
+		this.parentExecutionId = parentExecutionId;
 	}
 }

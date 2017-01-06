@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,7 @@ public class TaskExecutionCreator {
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = taskRepository.createTaskExecution();
+		TaskExecution expectedTaskExecution = taskRepository.createTaskExecution();
 		return expectedTaskExecution;
 	}
 

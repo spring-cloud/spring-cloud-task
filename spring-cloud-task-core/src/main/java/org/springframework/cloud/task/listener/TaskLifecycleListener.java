@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,7 +201,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				Assert.isNull(taskExecution.getEndTime(), String.format(
 						"Invalid TaskExecution, ID %s task is already complete", taskProperties.getExecutionid()));
 				this.taskExecution = this.taskRepository.startTaskExecution(taskProperties.getExecutionid(),
-						this.taskNameResolver.getTaskName(), new Date(), args, taskProperties.getExternalExecutionId());
+						this.taskNameResolver.getTaskName(), new Date(), args,
+						taskProperties.getExternalExecutionId(),
+						taskProperties.getParentExecutionId());
 			}
 			else {
 				TaskExecution taskExecution = new TaskExecution();
@@ -209,6 +211,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecution.setStartTime(new Date());
 				taskExecution.setArguments(args);
 				taskExecution.setExternalExecutionId(taskProperties.getExternalExecutionId());
+				taskExecution.setParentExecutionId(taskProperties.getParentExecutionId());
 				this.taskExecution = this.taskRepository.createTaskExecution(
 						taskExecution);
 			}
