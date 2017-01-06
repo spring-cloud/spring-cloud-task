@@ -164,6 +164,25 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Test
 	@DirtiesContext
+	public void startTaskExecutionWithParent() {
+		TaskExecution expectedTaskExecution =
+				TaskExecutionCreator.createAndStoreEmptyTaskExecution(taskRepository);
+
+		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
+		expectedTaskExecution.setParentExecutionId(12345L);
+
+		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId(),
+				expectedTaskExecution.getParentExecutionId());
+
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+	}
+
+	@Test
+	@DirtiesContext
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);

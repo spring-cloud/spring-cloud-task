@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -158,6 +159,41 @@ public class DeployerPartitionHandlerTests {
 		StepExecution resultStepExecution = results.iterator().next();
 		assertEquals(BatchStatus.COMPLETED, resultStepExecution.getStatus());
 		assertEquals("step1:partition1", resultStepExecution.getStepName());
+	}
+
+	@Test
+	public void testParentExecutionId() throws Exception {
+
+		StepExecution masterStepExecution = createMasterStepExecution();
+		JobExecution jobExecution = masterStepExecution.getJobExecution();
+
+		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
+
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
+
+		TaskExecution taskExecution = new TaskExecution(55, null, null, null,
+				null, null, new ArrayList<String>(), null, null);
+
+		taskExecution.setTaskName("partitionedJobTask");
+
+		Set<StepExecution> stepExecutions = new HashSet<>();
+		stepExecutions.add(workerStepExecutionStart);
+		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
+
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.afterPropertiesSet();
+
+		handler.beforeTask(taskExecution);
+
+		handler.handle(this.splitter, masterStepExecution);
+
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
+
+		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
+		assertTrue(request.getCommandlineArguments().contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID, "55")));
 	}
 
 	@Test

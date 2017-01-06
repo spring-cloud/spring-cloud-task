@@ -55,9 +55,15 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public TaskExecution createTaskExecution(String taskName,
 			Date startTime, List<String> arguments, String externalExecutionId) {
+		return createTaskExecution(taskName, startTime, arguments,
+				externalExecutionId, null);
+	}
+
+	@Override
+	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments, String externalExecutionId, Long parentExecutionId) {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, arguments, null, externalExecutionId);
+				startTime, null, null, arguments, null, externalExecutionId, parentExecutionId);
 		taskExecutions.put(taskExecutionId, taskExecution);
 		return taskExecution;
 	}
@@ -65,12 +71,20 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
 			String externalExecutionid) {
-		TaskExecution taskExecution= taskExecutions.get(executionId);
+		return startTaskExecution(executionId, taskName, startTime, arguments,
+				externalExecutionid, null);
+	}
 
+	@Override
+	public TaskExecution startTaskExecution(long executionId, String taskName,
+			Date startTime, List<String> arguments, String externalExecutionid,
+			Long parentExecutionId) {
+		TaskExecution taskExecution= taskExecutions.get(executionId);
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(startTime);
 		taskExecution.setArguments(arguments);
 		taskExecution.setExternalExecutionId(externalExecutionid);
+		taskExecution.setParentExecutionId(parentExecutionId);
 
 		return taskExecution;
 	}

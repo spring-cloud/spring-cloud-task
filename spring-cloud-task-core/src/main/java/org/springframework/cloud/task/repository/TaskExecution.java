@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Represents the state of the Task for each execution.
@@ -31,10 +30,16 @@ import org.springframework.util.StringUtils;
  */
 
 public class TaskExecution {
+
 	/**
 	 * The unique id  associated with the task execution.
 	 */
 	private long executionId;
+
+	/**
+	 * The parent task execution id.
+	 */
+	private Long parentExecutionId;
 
 	/**
 	 * The recorded exit code for the task.
@@ -87,7 +92,8 @@ public class TaskExecution {
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
 						 Date startTime, Date endTime,
 						 String exitMessage, List<String> arguments,
-						 String errorMessage, String externalExecutionId) {
+						 String errorMessage, String externalExecutionId,
+						 Long parentExecutionId) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		this.executionId = executionId;
@@ -99,6 +105,16 @@ public class TaskExecution {
 		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
 		this.errorMessage = errorMessage;
 		this.externalExecutionId = externalExecutionId;
+		this.parentExecutionId = parentExecutionId;
+	}
+
+	public TaskExecution(long executionId, Integer exitCode, String taskName,
+			Date startTime, Date endTime,
+			String exitMessage, List<String> arguments,
+			String errorMessage, String externalExecutionId) {
+
+		this(executionId, exitCode, taskName, startTime, endTime, exitMessage,
+				arguments, errorMessage,externalExecutionId, null);
 	}
 
 	public long getExecutionId() {
@@ -169,16 +185,26 @@ public class TaskExecution {
 		this.externalExecutionId = externalExecutionId;
 	}
 
+	public Long getParentExecutionId() {
+		return parentExecutionId;
+	}
+
+	public void setParentExecutionId(Long parentExecutionId) {
+		this.parentExecutionId = parentExecutionId;
+	}
+
 	@Override
 	public String toString() {
 		return "TaskExecution{" +
 				"executionId=" + executionId +
+				", parentExecutionId=" + parentExecutionId +
 				", exitCode=" + exitCode +
 				", taskName='" + taskName + '\'' +
 				", startTime=" + startTime +
 				", endTime=" + endTime +
 				", exitMessage='" + exitMessage + '\'' +
-				", errorMessage='" + errorMessage + "\'" +
+				", externalExecutionId='" + externalExecutionId + '\'' +
+				", errorMessage='" + errorMessage + '\'' +
 				", arguments=" + arguments +
 				'}';
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,15 +184,34 @@ public class TaskLifecycleListenerTests {
 		this.taskExplorer = context.getBean(TaskExplorer.class);
 
 		verifyTaskExecution(0, false, 0, null, "myid");
+	}
 
+	@Test
+	public void testParentExecutionId() {
+		ConfigurableEnvironment environment = new StandardEnvironment();
+		MutablePropertySources propertySources = environment.getPropertySources();
+		Map myMap = new HashMap();
+		myMap.put("spring.cloud.task.parentExecutionId", 789);
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		context.setEnvironment(environment);
+		context.refresh();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
+
+		verifyTaskExecution(0, false, 0, null, null, 789L);
 	}
 
 	private void verifyTaskExecution(int numberOfParams, boolean update) {
 		verifyTaskExecution(numberOfParams, update, 0, null, null);
 	}
-
 	private void verifyTaskExecution(int numberOfParams, boolean update,
 			Integer exitCode, Throwable exception, String externalExecutionId) {
+		verifyTaskExecution(numberOfParams, update, exitCode, exception,
+				externalExecutionId, null);
+	}
+
+	private void verifyTaskExecution(int numberOfParams, boolean update,
+			Integer exitCode, Throwable exception, String externalExecutionId,
+			Long parentExecutionId) {
 
 		Sort sort = new Sort("id");
 
@@ -206,6 +225,7 @@ public class TaskLifecycleListenerTests {
 		assertEquals(numberOfParams, taskExecution.getArguments().size());
 		assertEquals(exitCode, taskExecution.getExitCode());
 		assertEquals(externalExecutionId, taskExecution.getExternalExecutionId());
+		assertEquals(parentExecutionId, taskExecution.getParentExecutionId());
 
 		if(exception != null) {
 			assertTrue(taskExecution.getErrorMessage().length() > exception.getStackTrace().length);

@@ -194,6 +194,19 @@ following property:
 spring.cloud.task.external-execution-id=<externalTaskId>
 ```
 
+[[features-parent_task_id]]
+=== Parent Task Id
+
+Spring Cloud Task allows a user to store an parent task Id for each
+TaskExecution.  An example of this would be a task that executes another task
+or tasks and the user would like to store what task launched the child tasks.
+In order to configure your Task to set a parent TaskExecutionId add the
+following property on the child task:
+
+```
+spring.cloud.task.parent-execution-id=<parentExecutionTaskId>
+```
+
 [[features-task-configurer]]
 === TaskConfigurer
 
