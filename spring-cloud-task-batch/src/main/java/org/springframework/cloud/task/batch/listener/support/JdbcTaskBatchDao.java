@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.cloud.task.batch.listener.TaskBatchDao;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -35,13 +36,26 @@ import org.springframework.util.StringUtils;
  */
 public class JdbcTaskBatchDao implements TaskBatchDao {
 
-	private String tablePrefix = JdbcTaskExecutionDao.DEFAULT_TABLE_PREFIX;
+	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
 	private static final String INSERT_STATEMENT = "INSERT INTO %PREFIX%TASK_BATCH VALUES(?, ?)";
 
 	private JdbcOperations jdbcTemplate;
 
 	/**
+	 * Intializes the JdbcTaskBatchDao.
+	 * @param dataSource {@link DataSource} where the task batch table resides.
+	 * @param tablePrefix the table prefix to use for this dao.
+	 */
+	public JdbcTaskBatchDao(DataSource dataSource, String tablePrefix) {
+		this(dataSource);
+		Assert.hasText(tablePrefix, "tablePrefix must not be null nor empty.");
+		this.tablePrefix = tablePrefix;
+	}
+
+	/**
+	 * Intializes the JdbcTaskBatchDao and defaults the table prefix to
+	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 * @param dataSource {@link DataSource} where the task batch table resides.
 	 */
 	public JdbcTaskBatchDao(DataSource dataSource) {
@@ -60,9 +74,10 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	/**
 	 * The table prefix for the task batch table.
 	 *
-	 * @param tablePrefix defaults to {@link JdbcTaskExecutionDao#DEFAULT_TABLE_PREFIX}.
+	 * @param tablePrefix defaults to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 */
-	public void setTablePrefix(String tablePrefix) {
+	@Deprecated
+ 	public void setTablePrefix(String tablePrefix) {
 		Assert.notNull(tablePrefix, "Null is not allowed as a tablePrefix (use an empty string if you don't want a prefix at all).");
 		this.tablePrefix = tablePrefix;
 	}
