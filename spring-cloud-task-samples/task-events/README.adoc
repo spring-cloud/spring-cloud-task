@@ -17,7 +17,7 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
-$ java -jar target/task-events-1.1.1.RELEASE.jar --spring.cloud.stream.bindings.task-events.contentType=application/json
+$ java -jar target/task-events-1.1.2.RELEASE.jar --spring.cloud.stream.bindings.task-events.contentType=application/json
 ----
 
 You can listen for the events on the task-events channel with a Spring Cloud Stream Sink
