@@ -259,19 +259,18 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 				this.commandLineArgsProvider
 						.getCommandLineArgs(copyContext));
 
-		arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
-				String.valueOf(workerStepExecution.getJobExecution().getId())));
-		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-				String.valueOf(workerStepExecution.getId())));
-		arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
-		arguments.add(formatArgument(SPRING_CLOUD_TASK_NAME, String.format("%s_%s_%s",
-				taskExecution.getTaskName(),
-				workerStepExecution.getJobExecution().getJobInstance().getJobName(),
-				workerStepExecution.getStepName())));
-
 		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
 
 		Map<String, String> environmentVariables = this.environmentVariablesProvider.getEnvironmentVariables(copyContext);
+		environmentVariables.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
+				String.valueOf(workerStepExecution.getJobExecution().getId()));
+		environmentVariables.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
+				String.valueOf(workerStepExecution.getId()));
+		environmentVariables.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
+		environmentVariables.put(SPRING_CLOUD_TASK_NAME, String.format("%s_%s_%s",
+				taskExecution.getTaskName(),
+				workerStepExecution.getJobExecution().getJobInstance().getJobName(),
+				workerStepExecution.getStepName()));
 
 		AppDefinition definition =
 				new AppDefinition(resolveApplicationName(),
@@ -293,10 +292,6 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		else {
 			return this.taskExecution.getTaskName();
 		}
-	}
-
-	private String formatArgument(String key, String value) {
-		return String.format("--%s=%s", key, value);
 	}
 
 	private Collection<StepExecution> pollReplies(final StepExecution masterStepExecution,
