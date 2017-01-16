@@ -83,9 +83,10 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(startTime);
 		taskExecution.setArguments(arguments);
-		taskExecution.setExternalExecutionId(externalExecutionid);
 		taskExecution.setParentExecutionId(parentExecutionId);
-
+		if(externalExecutionid != null) {
+			taskExecution.setExternalExecutionId(externalExecutionid);
+		}
 		return taskExecution;
 	}
 

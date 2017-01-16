@@ -78,10 +78,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private static final String CREATE_TASK_ARGUMENT = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (?, ?)";
 
-	private static final String START_TASK_EXECUTION = "UPDATE %PREFIX%EXECUTION set "
-			+ "START_TIME = ?, TASK_NAME = ?, LAST_UPDATED = ?, "
-			+ "EXTERNAL_EXECUTION_ID = ?, PARENT_EXECUTION_ID = ? "
-			+ "where TASK_EXECUTION_ID = ?";
+	private static final String START_TASK_EXECUTION_PREFIX = "UPDATE %PREFIX%EXECUTION set "
+			+ "START_TIME = ?, TASK_NAME = ?, LAST_UPDATED = ?";
+
+	private static final String START_TASK_EXECUTION_EXTERNAL_ID_SUFFIX = ", "
+			+ "EXTERNAL_EXECUTION_ID = ?, PARENT_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
+
+	private static final String START_TASK_EXECUTION_SUFFIX = ", PARENT_EXECUTION_ID = ? where TASK_EXECUTION_ID = ?";
 
 	private static final String CHECK_TASK_EXECUTION_EXISTS = "SELECT COUNT(*) FROM "
 			+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = ?";
@@ -180,7 +183,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+	public TaskExecution startTaskExecution(long executionId, String taskName,
+			Date startTime, List<String> arguments,
 			String externalExecutionId) {
 		return startTaskExecution(executionId, taskName, startTime, arguments,
 				externalExecutionId, null);
@@ -192,15 +196,22 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			String externalExecutionId, Long parentExecutionId) {
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
 				startTime, null, null, arguments,null, externalExecutionId, parentExecutionId);
-
 		Object[] queryParameters = new Object[]{ startTime, taskName,
-				new Date(), externalExecutionId,
-				parentExecutionId, executionId};
-		jdbcTemplate.update(
-				getQuery(START_TASK_EXECUTION),
-				queryParameters,
-				new int[]{ Types.TIMESTAMP, Types.VARCHAR,  Types.TIMESTAMP,
-						Types.VARCHAR, Types.BIGINT, Types.BIGINT });
+				new Date(), externalExecutionId, parentExecutionId, executionId};
+		int[] argTypes = new int[]{ Types.TIMESTAMP, Types.VARCHAR,
+				Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT, Types.BIGINT };
+		String updateString = START_TASK_EXECUTION_PREFIX +
+				START_TASK_EXECUTION_EXTERNAL_ID_SUFFIX;
+		if(externalExecutionId == null) {
+			queryParameters = new Object[]{startTime, taskName,
+					new Date(), parentExecutionId, executionId};
+			updateString = START_TASK_EXECUTION_PREFIX +
+					START_TASK_EXECUTION_SUFFIX;
+			argTypes = new int[]{Types.TIMESTAMP, Types.VARCHAR,
+					Types.TIMESTAMP, Types.BIGINT, Types.BIGINT};
+		}
+
+		jdbcTemplate.update(getQuery(updateString), queryParameters, argTypes);
 		insertTaskArguments(executionId, arguments);
 		return taskExecution;
 	}
