@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,4 +137,34 @@ public class MapTaskExecutionDaoTests {
 		assertNull(this.dao.getTaskExecutionIdByJobExecutionId(789L));
 	}
 
+	@Test
+	public void testStartExecutionWithNullExternalExecutionIdExisting(){
+		TaskExecution expectedTaskExecution =
+				initializeTaskExecutionWithExternalExecutionId();
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				null);
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	public void testStartExecutionWithNullExternalExecutionIdNonExisting(){
+		TaskExecution expectedTaskExecution =
+				initializeTaskExecutionWithExternalExecutionId();
+		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				"BAR");
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		return this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				"FOO1");
+	}
 }
