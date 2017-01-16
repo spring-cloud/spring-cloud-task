@@ -196,19 +196,22 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			String externalExecutionId, Long parentExecutionId) {
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName,
 				startTime, null, null, arguments,null, externalExecutionId, parentExecutionId);
-		Object[] queryParameters = new Object[]{ startTime, taskName,
-				new Date(), externalExecutionId, parentExecutionId, executionId};
-		int[] argTypes = new int[]{ Types.TIMESTAMP, Types.VARCHAR,
-				Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT, Types.BIGINT };
-		String updateString = START_TASK_EXECUTION_PREFIX +
-				START_TASK_EXECUTION_EXTERNAL_ID_SUFFIX;
+		Object[] queryParameters;
+		int[] argTypes;
+		String updateString = START_TASK_EXECUTION_PREFIX;
 		if(externalExecutionId == null) {
 			queryParameters = new Object[]{startTime, taskName,
 					new Date(), parentExecutionId, executionId};
-			updateString = START_TASK_EXECUTION_PREFIX +
-					START_TASK_EXECUTION_SUFFIX;
+			updateString += START_TASK_EXECUTION_SUFFIX;
 			argTypes = new int[]{Types.TIMESTAMP, Types.VARCHAR,
-					Types.TIMESTAMP, Types.BIGINT, Types.BIGINT};
+					Types.TIMESTAMP, Types.BIGINT, Types.BIGINT, Types.BIGINT};
+		}
+		else {
+			queryParameters = new Object[]{ startTime, taskName,
+					new Date(), externalExecutionId, executionId};
+			argTypes = new int[]{ Types.TIMESTAMP, Types.VARCHAR,
+					Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT };
+			updateString += START_TASK_EXECUTION_EXTERNAL_ID_SUFFIX;
 		}
 
 		jdbcTemplate.update(getQuery(updateString), queryParameters, argTypes);
