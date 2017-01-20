@@ -204,13 +204,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					new Date(), parentExecutionId, executionId};
 			updateString += START_TASK_EXECUTION_SUFFIX;
 			argTypes = new int[]{Types.TIMESTAMP, Types.VARCHAR,
-					Types.TIMESTAMP, Types.BIGINT, Types.BIGINT, Types.BIGINT};
+					Types.TIMESTAMP, Types.BIGINT, Types.BIGINT};
 		}
 		else {
 			queryParameters = new Object[]{ startTime, taskName,
-					new Date(), externalExecutionId, executionId};
+					new Date(), externalExecutionId, parentExecutionId, executionId};
 			argTypes = new int[]{ Types.TIMESTAMP, Types.VARCHAR,
-					Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT };
+					Types.TIMESTAMP, Types.VARCHAR, Types.BIGINT, Types.BIGINT };
 			updateString += START_TASK_EXECUTION_EXTERNAL_ID_SUFFIX;
 		}
 
