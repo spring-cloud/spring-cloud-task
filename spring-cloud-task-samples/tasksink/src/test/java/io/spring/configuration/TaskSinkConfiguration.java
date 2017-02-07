@@ -57,6 +57,12 @@ public class TaskSinkConfiguration {
 			TaskStatus taskStatus = new TaskStatus(taskLaunchId, state, null);
 			return taskStatus;
 		}
+
+		@Override
+		public void cleanup(String id) {}
+
+		@Override
+		public void destroy(String appName) {}
 	}
 
 }
