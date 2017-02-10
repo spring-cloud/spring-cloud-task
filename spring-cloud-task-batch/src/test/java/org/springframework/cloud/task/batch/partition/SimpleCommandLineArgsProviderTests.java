@@ -15,6 +15,7 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,6 +44,46 @@ public class SimpleCommandLineArgsProviderTests {
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
+		assertEquals("foo", commandLineArgs.get(0));
+		assertEquals("bar", commandLineArgs.get(1));
+		assertEquals("baz", commandLineArgs.get(2));
+	}
+
+	@Test
+	public void testAppending() {
+		List<String> appendedValues = new ArrayList<>(3);
+		appendedValues.add("one");
+		appendedValues.add("two");
+		appendedValues.add("three");
+
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
+
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		provider.setAppendedArgs(appendedValues);
+
+		List<String> commandLineArgs = provider.getCommandLineArgs(null);
+
+		assertEquals("foo", commandLineArgs.get(0));
+		assertEquals("bar", commandLineArgs.get(1));
+		assertEquals("baz", commandLineArgs.get(2));
+		assertEquals("one", commandLineArgs.get(3));
+		assertEquals("two", commandLineArgs.get(4));
+		assertEquals("three", commandLineArgs.get(5));
+	}
+
+	@Test
+	public void testAppendingNull() {
+
+		TaskExecution taskExecution = new TaskExecution();
+		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
+
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		provider.setAppendedArgs(null);
+
+		List<String> commandLineArgs = provider.getCommandLineArgs(null);
+
+		assertEquals(3, commandLineArgs.size());
 		assertEquals("foo", commandLineArgs.get(0));
 		assertEquals("bar", commandLineArgs.get(1));
 		assertEquals("baz", commandLineArgs.get(2));
