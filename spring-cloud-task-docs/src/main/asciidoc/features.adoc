@@ -236,6 +236,12 @@ repository) to be used.
 `ResourcelessTransactionManager` if it is not.
 |===
 
+Customizing any of the above is accomplished via a custom implementation of the
+`TaskConfigurer` interface.  Typically, extending the `DefaultTaskConfigurer` (which is
+provided out of the box if a `TaskConfigurer` is not found) and overriding the
+required getter is sufficient, however, implementing your own from scratch may be
+required.
+
 [[features-task-name]]
 === Task Name
 
