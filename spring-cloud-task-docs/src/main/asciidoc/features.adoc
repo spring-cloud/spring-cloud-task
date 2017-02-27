@@ -236,6 +236,12 @@ repository) to be used.
 `ResourcelessTransactionManager` if it is not.
 |===
 
+NOTE: In cases where you will need a different TaskRepository, TaskExplorer, or
+PlatformTransactionManager than what is provided by the DefaultTaskConfigurer
+you must provide your own implementation of the TaskConfigurer.  Spring Cloud
+Task auto configuration will detect and use your TaskConfigurer implementation
+if you provide one.
+
 [[features-task-name]]
 === Task Name
 
