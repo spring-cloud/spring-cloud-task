@@ -1,1 +1,1 @@
-alter table task_execution add PARENT_EXECUTION_ID BIGINT;
+alter table TASK_EXECUTION add PARENT_EXECUTION_ID BIGINT;
