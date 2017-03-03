@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -189,7 +190,7 @@ public class BatchExecutionEventTests {
 	public static class ItemProcessListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(Object object) {
+		public void receive(String object) {
 			itemProcessLatch.countDown();
 		}
 	}
@@ -200,7 +201,7 @@ public class BatchExecutionEventTests {
 	public static class ChunkEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(Object chunkContext) {
+		public void receive(ChunkContext chunkContext) {
 			chunkEventsLatch.countDown();
 		}
 	}
@@ -223,7 +224,7 @@ public class BatchExecutionEventTests {
 		private static final String SKIPPING_READ_MESSAGE = "Skipped when reading.";
 		private static final String SKIPPING_WRITE_CONTENT = "-1";
 		@StreamListener(Sink.INPUT)
-		public void receive(Object exceptionMessage) {
+		public void receive(String exceptionMessage) {
 			if(exceptionMessage.toString().equals(SKIPPING_READ_MESSAGE)){
 				readSkipCount++;
 			}
@@ -240,7 +241,7 @@ public class BatchExecutionEventTests {
 	public static class ItemWriteEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(Object itemWrite) {
+		public void receive(String itemWrite) {
 			assertTrue("Message should start with '3 items'", itemWrite.toString().startsWith("3 items "));
 			assertTrue("Message should end with ' written.'", itemWrite.toString().endsWith(" written."));
 			itemWriteEventsLatch.countDown();

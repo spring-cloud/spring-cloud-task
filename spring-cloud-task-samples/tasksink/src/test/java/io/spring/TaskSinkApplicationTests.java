@@ -24,16 +24,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
-import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
-import org.springframework.cloud.task.launcher.TaskLauncherSink;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -50,7 +46,6 @@ public class TaskSinkApplicationTests {
 	ApplicationContext context;
 
 	@Autowired
-	@Bindings(TaskLauncherSink.class)
 	private Sink sink;
 
 	@Test
@@ -58,7 +53,7 @@ public class TaskSinkApplicationTests {
 		assertNotNull(this.sink.input());
 
 		TaskSinkConfiguration.TestTaskLauncher testTaskLauncher =
-				(TaskSinkConfiguration.TestTaskLauncher) context.getBean(TaskSinkConfiguration.TestTaskLauncher.class);
+				 context.getBean(TaskSinkConfiguration.TestTaskLauncher.class);
 
 		Map<String, String> properties = new HashMap();
 		properties.put("server.port", "0");

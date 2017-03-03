@@ -19,6 +19,7 @@ package org.springframework.cloud.task.launcher.configuration;
 import java.util.List;
 
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
+import org.springframework.cloud.deployer.spi.core.RuntimeEnvironmentInfo;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskStatus;
@@ -73,6 +74,11 @@ public class TaskConfiguration {
 		@Override
 		public void destroy(String appName) {
 			throw new UnsupportedOperationException("Destroy is not supported");
+		}
+
+		@Override
+		public RuntimeEnvironmentInfo environmentInfo() {
+			throw new UnsupportedOperationException("environmentInfo is not supported");
 		}
 
 		public List<String> getCommandlineArguments() {
