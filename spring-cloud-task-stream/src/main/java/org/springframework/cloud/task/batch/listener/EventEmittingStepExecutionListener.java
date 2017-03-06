@@ -20,6 +20,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
@@ -30,8 +31,9 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
-public class EventEmittingStepExecutionListener implements StepExecutionListener {
+public class EventEmittingStepExecutionListener implements StepExecutionListener , Ordered {
 
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
 
@@ -50,5 +52,10 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 		this.messagePublisher.publish(new StepExecutionEvent(stepExecution));
 
 		return stepExecution.getExitStatus();
+	}
+
+	@Override
+	public int getOrder() {
+		return 0;
 	}
 }
