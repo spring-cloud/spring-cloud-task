@@ -201,7 +201,7 @@ public class BatchExecutionEventTests {
 	public static class ChunkEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)
-		public void receive(ChunkContext chunkContext) {
+		public void receive(String message) {
 			chunkEventsLatch.countDown();
 		}
 	}

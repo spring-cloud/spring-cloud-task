@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
@@ -35,16 +36,23 @@ import org.springframework.util.Assert;
  *  the exception's message via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
-public class EventEmittingItemWriteListener implements ItemWriteListener{
+public class EventEmittingItemWriteListener implements ItemWriteListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(EventEmittingItemWriteListener.class);
 
 	private MessagePublisher<String> messagePublisher;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingItemWriteListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingItemWriteListener(MessageChannel output, int order) {
+		this(output);
+		this.order = order;
 	}
 
 	@Override
@@ -67,5 +75,10 @@ public class EventEmittingItemWriteListener implements ItemWriteListener{
 		}
 		String payload = "Exception while " + items.size() + " items are attempted to be written.";
 		this.messagePublisher.publishWithThrowableHeader(payload, exception.getMessage());
+	}
+
+	@Override
+	public int getOrder() {
+		return this.order;
 	}
 }
