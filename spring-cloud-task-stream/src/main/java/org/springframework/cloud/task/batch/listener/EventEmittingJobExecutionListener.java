@@ -30,13 +30,20 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingJobExecutionListener implements JobExecutionListener,Ordered {
+public class EventEmittingJobExecutionListener implements JobExecutionListener, Ordered {
 
 	private MessagePublisher<JobExecutionEvent> messagePublisher;
+	private int order = Ordered.HIGHEST_PRECEDENCE;
 
 	public EventEmittingJobExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingJobExecutionListener(MessageChannel output,int order) {
+		Assert.notNull(output, "An output channel is required");
+		this.messagePublisher = new MessagePublisher<>(output);
+		this.order = order;
 	}
 
 	@Override
@@ -51,6 +58,6 @@ public class EventEmittingJobExecutionListener implements JobExecutionListener,O
 
 	@Override
 	public int getOrder() {
-		return 0;
+		return this.order;
 	}
 }

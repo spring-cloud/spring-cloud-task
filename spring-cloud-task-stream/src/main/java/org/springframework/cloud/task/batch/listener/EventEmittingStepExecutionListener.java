@@ -33,13 +33,20 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingStepExecutionListener implements StepExecutionListener , Ordered {
+public class EventEmittingStepExecutionListener implements StepExecutionListener, Ordered {
 
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
+	private int order = Ordered.HIGHEST_PRECEDENCE;
 
 	public EventEmittingStepExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingStepExecutionListener(MessageChannel output,int order) {
+		Assert.notNull(output, "An output channel is required");
+		this.messagePublisher = new MessagePublisher<>(output);
+		this.order = order;
 	}
 
 	@Override
@@ -56,6 +63,6 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 
 	@Override
 	public int getOrder() {
-		return 0;
+		return this.order;
 	}
 }

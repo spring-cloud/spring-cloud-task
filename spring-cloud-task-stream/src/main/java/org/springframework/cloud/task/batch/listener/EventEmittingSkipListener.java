@@ -38,15 +38,22 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingSkipListener implements SkipListener , Ordered {
+public class EventEmittingSkipListener implements SkipListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(EventEmittingSkipListener.class);
 
 	private MessagePublisher<Object> messagePublisher;
+	private int order = Ordered.HIGHEST_PRECEDENCE;
 
 	public EventEmittingSkipListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingSkipListener(MessageChannel output,int order) {
+		Assert.notNull(output, "An output channel is required");
+		this.messagePublisher = new MessagePublisher<>(output);
+		this.order = order;
 	}
 
 	@Override
@@ -75,6 +82,6 @@ public class EventEmittingSkipListener implements SkipListener , Ordered {
 
 	@Override
 	public int getOrder() {
-		return 0;
+		return this.order;
 	}
 }

@@ -37,15 +37,22 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingItemReadListener implements ItemReadListener,Ordered {
+public class EventEmittingItemReadListener implements ItemReadListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(EventEmittingItemReadListener.class);
 
 	private MessagePublisher<String> messagePublisher;
+	private int order = Ordered.HIGHEST_PRECEDENCE;
 
 	public EventEmittingItemReadListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher(output);
+	}
+
+	public EventEmittingItemReadListener(MessageChannel output,int order) {
+		Assert.notNull(output, "An output channel is required");
+		this.messagePublisher = new MessagePublisher(output);
+		this.order = order;
 	}
 
 	@Override
@@ -69,6 +76,6 @@ public class EventEmittingItemReadListener implements ItemReadListener,Ordered {
 
 	@Override
 	public int getOrder() {
-		return 0;
+		return this.order;
 	}
 }
