@@ -43,7 +43,7 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 		this.messagePublisher = new MessagePublisher<>(output);
 	}
 
-	public EventEmittingStepExecutionListener(MessageChannel output,int order) {
+	public EventEmittingStepExecutionListener(MessageChannel output, int order) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
 		this.order = order;

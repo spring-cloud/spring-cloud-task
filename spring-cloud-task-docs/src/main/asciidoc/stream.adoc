@@ -189,7 +189,7 @@ spring.cloud.task.batch.events.enabled=false
 ```
 
 To disable a specific batch event use the following configuration:
-`spring.cloud.task.events.<batch event listener>.enabled=false`:
+`spring.cloud.task.batch.events.<batch event listener>.enabled=false`:
 
 ```
 spring.cloud.task.batch.events.job-execution.enabled=false
@@ -199,4 +199,17 @@ spring.cloud.task.batch.events.item-read.enabled=false
 spring.cloud.task.batch.events.item-process.enabled=false
 spring.cloud.task.batch.events.item-write.enabled=false
 spring.cloud.task.batch.events.skip.enabled=false
+```
+
+=== Emit Order for Batch Events
+By default batch events have `Ordered.HIGHEST_PRECEDENCE` , to change this value ( for example to 5 ) use the following configuration:
+
+```
+spring.cloud.task.batch.events.job-execution.order=5
+spring.cloud.task.batch.events.step-execution.order=5
+spring.cloud.task.batch.events.chunk.order=5
+spring.cloud.task.batch.events.item-read.order=5
+spring.cloud.task.batch.events.item-process.order=5
+spring.cloud.task.batch.events.item-write.order=5
+spring.cloud.task.batch.events.skip.order=5
 ```
