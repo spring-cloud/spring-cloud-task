@@ -46,8 +46,7 @@ public class EventEmittingChunkListener implements ChunkListener, Ordered {
 	}
 
 	public EventEmittingChunkListener(MessageChannel output, int order) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher(output);
+		this(output);
 		this.order = order;
 	}
 
@@ -58,7 +57,7 @@ public class EventEmittingChunkListener implements ChunkListener, Ordered {
 
 	@Override
 	public void afterChunk(ChunkContext context) {
-
+		messagePublisher.publish("Chunk has been sent to process");
 	}
 
 	@Override

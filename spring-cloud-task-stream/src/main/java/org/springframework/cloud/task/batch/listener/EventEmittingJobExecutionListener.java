@@ -41,8 +41,7 @@ public class EventEmittingJobExecutionListener implements JobExecutionListener, 
 	}
 
 	public EventEmittingJobExecutionListener(MessageChannel output, int order) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+		this(output);
 		this.order = order;
 	}
 

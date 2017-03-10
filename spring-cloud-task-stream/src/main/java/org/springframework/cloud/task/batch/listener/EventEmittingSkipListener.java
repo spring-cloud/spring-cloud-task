@@ -51,8 +51,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 	}
 
 	public EventEmittingSkipListener(MessageChannel output, int order) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+		this(output);
 		this.order = order;
 	}
 

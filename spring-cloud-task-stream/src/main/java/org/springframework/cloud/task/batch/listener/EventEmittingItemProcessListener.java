@@ -47,8 +47,7 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 	}
 
 	public EventEmittingItemProcessListener(MessageChannel output, int order) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+		this(output);
 		this.order = order;
 	}
 
