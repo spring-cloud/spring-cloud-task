@@ -26,94 +26,93 @@ import org.springframework.core.Ordered;
 public class TaskEventProperties {
 
     /**
-     * Properties for jobExecution listener
+     * Properties for jobExecution listener order
      */
-	private ListenerProperties jobExecution = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int jobExecutionOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for stepExecution listener
+     * Properties for stepExecution listener order
      */
-	private ListenerProperties stepExecution = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int stepExecutionOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for itemRead listener
+     * Properties for itemRead listener order
      */
-	private ListenerProperties itemRead = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int itemReadOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for itemProcess listener
+     * Properties for itemProcess listener order
      */
-	private ListenerProperties itemProcess = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int itemProcessOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for itemWrite listener
+     * Properties for itemWrite listener order
      */
-	private ListenerProperties itemWrite = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int itemWriteOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for chunk listener
+     * Properties for chunk listener order
      */
-	private ListenerProperties chunk = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int chunkOrder = Ordered.LOWEST_PRECEDENCE;
 
     /**
-     * Properties for skip listener
+     * Properties for skip listener order
      */
-	private ListenerProperties skip = new ListenerProperties(Ordered.HIGHEST_PRECEDENCE);
+	private int skipOrder = Ordered.LOWEST_PRECEDENCE;
 
-	public ListenerProperties getJobExecution() {
-		return jobExecution;
+	public int getJobExecutionOrder() {
+		return jobExecutionOrder;
 	}
 
-	public void setJobExecution(ListenerProperties jobExecution) {
-		this.jobExecution = jobExecution;
+	public void setJobExecutionOrder(int jobExecutionOrder) {
+		this.jobExecutionOrder = jobExecutionOrder;
 	}
 
-	public ListenerProperties getStepExecution() {
-		return stepExecution;
+	public int getStepExecutionOrder() {
+		return stepExecutionOrder;
 	}
 
-	public void setStepExecution(ListenerProperties stepExecution) {
-		this.stepExecution = stepExecution;
+	public void setStepExecutionOrder(int stepExecutionOrder) {
+		this.stepExecutionOrder = stepExecutionOrder;
 	}
 
-	public ListenerProperties getItemRead() {
-		return itemRead;
+	public int getItemReadOrder() {
+		return itemReadOrder;
 	}
 
-	public void setItemRead(ListenerProperties itemRead) {
-		this.itemRead = itemRead;
+	public void setItemReadOrder(int itemReadOrder) {
+		this.itemReadOrder = itemReadOrder;
 	}
 
-	public ListenerProperties getItemProcess() {
-		return itemProcess;
+	public int getItemProcessOrder() {
+		return itemProcessOrder;
 	}
 
-	public void setItemProcess(ListenerProperties itemProcess) {
-		this.itemProcess = itemProcess;
+	public void setItemProcessOrder(int itemProcessOrder) {
+		this.itemProcessOrder = itemProcessOrder;
 	}
 
-	public ListenerProperties getItemWrite() {
-		return itemWrite;
+	public int getItemWriteOrder() {
+		return itemWriteOrder;
 	}
 
-	public void setItemWrite(ListenerProperties itemWrite) {
-		this.itemWrite = itemWrite;
+	public void setItemWriteOrder(int itemWriteOrder) {
+		this.itemWriteOrder = itemWriteOrder;
 	}
 
-	public ListenerProperties getChunk() {
-		return chunk;
+	public int getChunkOrder() {
+		return chunkOrder;
 	}
 
-	public void setChunk(ListenerProperties chunk) {
-		this.chunk = chunk;
+	public void setChunkOrder(int chunkOrder) {
+		this.chunkOrder = chunkOrder;
 	}
 
-	public ListenerProperties getSkip() {
-		return skip;
+	public int getSkipOrder() {
+		return skipOrder;
 	}
 
-	public void setSkip(ListenerProperties skip) {
-		this.skip = skip;
+	public void setSkipOrder(int skipOrder) {
+		this.skipOrder = skipOrder;
 	}
-
 }

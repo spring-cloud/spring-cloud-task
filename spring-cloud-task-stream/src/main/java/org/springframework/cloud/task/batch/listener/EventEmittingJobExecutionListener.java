@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 public class EventEmittingJobExecutionListener implements JobExecutionListener, Ordered {
 
 	private MessagePublisher<JobExecutionEvent> messagePublisher;
-	private int order = Ordered.HIGHEST_PRECEDENCE;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingJobExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");

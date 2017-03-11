@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
 public class EventEmittingStepExecutionListener implements StepExecutionListener, Ordered {
 
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
-	private int order = Ordered.HIGHEST_PRECEDENCE;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingStepExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");

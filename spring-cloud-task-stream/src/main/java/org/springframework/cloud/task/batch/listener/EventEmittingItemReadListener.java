@@ -42,7 +42,7 @@ public class EventEmittingItemReadListener implements ItemReadListener, Ordered 
 	private static final Log logger = LogFactory.getLog(EventEmittingItemReadListener.class);
 
 	private MessagePublisher<String> messagePublisher;
-	private int order = Ordered.HIGHEST_PRECEDENCE;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingItemReadListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");

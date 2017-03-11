@@ -27,8 +27,11 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
+import org.springframework.core.Ordered;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.messaging.Message;
 
@@ -47,7 +50,7 @@ public class EventListenerTests {
 	private EventEmittingItemWriteListener eventEmittingItemWriteListener;
 	private EventEmittingJobExecutionListener eventEmittingJobExecutionListener;
 	private EventEmittingStepExecutionListener eventEmittingStepExecutionListener;
-
+	private EventEmittingChunkListener eventEmittingChunkListener;
 
 	@Before
 	public void beforeTests() {
@@ -58,7 +61,20 @@ public class EventListenerTests {
 		eventEmittingItemWriteListener = new EventEmittingItemWriteListener(queueChannel);
 		eventEmittingJobExecutionListener = new EventEmittingJobExecutionListener(queueChannel);
 		eventEmittingStepExecutionListener = new EventEmittingStepExecutionListener(queueChannel);
+		eventEmittingChunkListener = new EventEmittingChunkListener(queueChannel,0);
 	}
+
+	@Test
+	public void testEventListenerOrderProperty() {
+		assertEquals(eventEmittingSkipListener.getOrder(),Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingItemProcessListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingItemReadListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingItemWriteListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingJobExecutionListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingStepExecutionListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
+		assertEquals(eventEmittingChunkListener.getOrder(),0);
+	}
+
 
 	@Test
 	public void testItemProcessListenerOnProcessorError() {
@@ -219,6 +235,30 @@ public class EventListenerTests {
 				stepExecutionEvent.getStepName());
 	}
 
+	@Test
+	public void EventEmittingChunkExecutionListenerBeforeChunk() {
+		ChunkContext chunkContext = getChunkContext();
+		eventEmittingChunkListener.beforeChunk(chunkContext);
+		assertEquals(0,queueChannel.getQueueSize());
+	}
+
+	@Test
+	public void EventEmittingChunkExecutionListenerAfterChunk() {
+		final String CHUNK_MESSAGE = "Chunk has been sent to process";
+		ChunkContext chunkContext = getChunkContext();
+		eventEmittingChunkListener.afterChunk(chunkContext);
+		assertEquals(1,queueChannel.getQueueSize());
+		Message msg = queueChannel.receive();
+		assertEquals(CHUNK_MESSAGE,msg.getPayload());
+	}
+
+	@Test
+	public void EventEmittingChunkExecutionListenerAfterChunkError() {
+		ChunkContext chunkContext = getChunkContext();
+		eventEmittingChunkListener.afterChunkError(chunkContext);
+		assertEquals(0,queueChannel.getQueueSize());
+	}
+
 	private JobExecution getJobExecution() {
 		final String JOB_NAME = UUID.randomUUID().toString();
 		JobInstance jobInstance = new JobInstance(1L, JOB_NAME);
@@ -231,6 +271,13 @@ public class EventListenerTests {
 		testList.add("World");
 		testList.add("foo");
 		return testList;
+	}
+	private ChunkContext getChunkContext() {
+		JobExecution jobExecution = getJobExecution();
+		StepExecution stepExecution = new StepExecution("STEP1",jobExecution);
+		StepContext stepContext = new StepContext(stepExecution);
+		ChunkContext chunkContext = new ChunkContext(stepContext);
+		return chunkContext;
 	}
 
 }

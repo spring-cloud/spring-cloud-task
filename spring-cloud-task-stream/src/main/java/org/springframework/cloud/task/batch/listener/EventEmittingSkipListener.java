@@ -43,7 +43,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 	private static final Log logger = LogFactory.getLog(EventEmittingSkipListener.class);
 
 	private MessagePublisher<Object> messagePublisher;
-	private int order = Ordered.HIGHEST_PRECEDENCE;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingSkipListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
