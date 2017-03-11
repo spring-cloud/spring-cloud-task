@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
 public class EventListenerTests {
 

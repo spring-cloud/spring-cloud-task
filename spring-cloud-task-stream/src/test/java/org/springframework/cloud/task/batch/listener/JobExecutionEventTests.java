@@ -52,6 +52,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author Glenn Renfro.
+ * @author Ali Shahbour
  */
 public class JobExecutionEventTests {
 
