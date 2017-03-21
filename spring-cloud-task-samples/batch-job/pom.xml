@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>batch-job</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.0.M2</version>
+	<version>1.2.0.BUILD-SNAPSHOT</version>
 	<description>Spring Cloud Task Batch Example</description>
 
 	<name>Batch Job Sample Application</name>
@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>1.2.0.M2</version>
+				<version>1.2.0.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

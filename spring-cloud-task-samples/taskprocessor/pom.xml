@@ -4,7 +4,7 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>taskprocessor</artifactId>
-	<version>1.2.0.M2</version>
+	<version>1.2.0.BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Task Processor Sample Application</name>
@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>1.2.0.M2</version>
+				<version>1.2.0.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
