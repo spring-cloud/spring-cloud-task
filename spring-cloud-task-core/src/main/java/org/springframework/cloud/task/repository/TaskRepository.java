@@ -71,6 +71,17 @@ public interface TaskRepository {
 	TaskExecution createTaskExecution(TaskExecution taskExecution);
 
 	/**
+	 * Creates an empty TaskExecution with just an id and name provided. This is intended to be
+	 * utilized in systems where the request of launching a task is separate from the
+	 * actual start of a task (the underlying system may need to deploy the task prior to
+	 * launching, etc).
+	 *
+	 * @return the initial {@link TaskExecution}
+	 */
+	@Transactional
+	TaskExecution createTaskExecution(String name);
+
+	/**
 	 * Creates an empty TaskExecution with just an id provided. This is intended to be
 	 * utilized in systems where the request of launching a task is separate from the
 	 * actual start of a task (the underlying system may need to deploy the task prior to

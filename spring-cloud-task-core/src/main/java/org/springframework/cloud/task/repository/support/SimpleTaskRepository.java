@@ -115,13 +115,18 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution() {
+	public TaskExecution createTaskExecution(String name) {
 		initialize();
 		TaskExecution taskExecution =
-				taskExecutionDao.createTaskExecution(null, null,
+				taskExecutionDao.createTaskExecution(name, null,
 						Collections.<String>emptyList(), null);
 		logger.debug("Creating: " + taskExecution.toString());
 		return taskExecution;
+	}
+
+	@Override
+	public TaskExecution createTaskExecution() {
+		return createTaskExecution((String)null);
 	}
 
 	@Override
