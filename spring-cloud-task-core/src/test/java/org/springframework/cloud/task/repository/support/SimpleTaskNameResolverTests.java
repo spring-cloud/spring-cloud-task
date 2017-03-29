@@ -15,12 +15,12 @@
  */
 package org.springframework.cloud.task.repository.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import org.springframework.context.support.GenericApplicationContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Michael Minella
@@ -35,6 +35,17 @@ public class SimpleTaskNameResolverTests {
 		taskNameResolver.setApplicationContext(context);
 
 		assertTrue(taskNameResolver.getTaskName().startsWith("org.springframework.context.support.GenericApplicationContext"));
+	}
+
+	@Test
+	public void testWithProfile() {
+		GenericApplicationContext context = new GenericApplicationContext();
+		context.setId("foo:bar");
+
+		SimpleTaskNameResolver taskNameResolver = new SimpleTaskNameResolver();
+		taskNameResolver.setApplicationContext(context);
+
+		assertTrue(taskNameResolver.getTaskName().startsWith("foo_bar"));
 	}
 
 	@Test
