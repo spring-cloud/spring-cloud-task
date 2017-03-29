@@ -55,6 +55,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -142,6 +143,23 @@ public class TaskStartTests {
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
+	}
+
+	@Test
+	public void testWithGeneratedTaskExecutionWithName() throws Exception {
+		final String TASK_EXECUTION_NAME = "PRE-EXECUTION-TEST-NAME";
+		taskRepository.createTaskExecution(TASK_EXECUTION_NAME);
+		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
+		assertEquals(TASK_EXECUTION_NAME, taskExplorer.getTaskExecution(1).getTaskName());
+
+		getTaskApplication(1).run(new String[0]);
+		assertTrue(waitForDBToBePopulated());
+
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		TaskExecution te = taskExecutions.iterator().next();
+		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
+		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
+		assertEquals("batchEvents", taskExplorer.getTaskExecution(1).getTaskName());
 	}
 
 	@Test(expected = ApplicationContextException.class)
