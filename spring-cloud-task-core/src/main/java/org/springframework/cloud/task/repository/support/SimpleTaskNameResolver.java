@@ -55,7 +55,7 @@ public class SimpleTaskNameResolver implements TaskNameResolver, ApplicationCont
 			return configuredName;
 		}
 		else {
-			return context.getId();
+			return context.getId().replace(":", "_");
 		}
 	}
 }
