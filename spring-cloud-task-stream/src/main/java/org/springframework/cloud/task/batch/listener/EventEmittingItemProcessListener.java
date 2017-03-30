@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.listener;
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
@@ -33,14 +34,21 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
-public class EventEmittingItemProcessListener implements ItemProcessListener {
+public class EventEmittingItemProcessListener implements ItemProcessListener, Ordered {
 
 	private MessagePublisher<String> messagePublisher;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingItemProcessListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingItemProcessListener(MessageChannel output, int order) {
+		this(output);
+		this.order = order;
 	}
 
 	@Override
@@ -63,5 +71,10 @@ public class EventEmittingItemProcessListener implements ItemProcessListener {
 	@Override
 	public void onProcessError(Object item, Exception e) {
 		messagePublisher.publishWithThrowableHeader("Exception while item was being processed", e.getMessage());
+	}
+
+	@Override
+	public int getOrder() {
+		return this.order;
 	}
 }

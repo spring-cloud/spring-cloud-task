@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
@@ -35,16 +36,23 @@ import org.springframework.util.Assert;
  * of the item that caused the error.
  *
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
-public class EventEmittingSkipListener implements SkipListener {
+public class EventEmittingSkipListener implements SkipListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(EventEmittingSkipListener.class);
 
 	private MessagePublisher<Object> messagePublisher;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingSkipListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingSkipListener(MessageChannel output, int order) {
+		this(output);
+		this.order = order;
 	}
 
 	@Override
@@ -69,5 +77,10 @@ public class EventEmittingSkipListener implements SkipListener {
 			logger.debug("Executing onSkipInProcess: " + t.getMessage(), t);
 		}
 		messagePublisher.publishWithThrowableHeader(item, t.getMessage());
+	}
+
+	@Override
+	public int getOrder() {
+		return this.order;
 	}
 }

@@ -19,6 +19,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
@@ -27,14 +28,21 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  * @author Glenn Renfro
+ * @author Ali Shahbour
  */
-public class EventEmittingJobExecutionListener implements JobExecutionListener {
+public class EventEmittingJobExecutionListener implements JobExecutionListener, Ordered {
 
 	private MessagePublisher<JobExecutionEvent> messagePublisher;
+	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingJobExecutionListener(MessageChannel output) {
 		Assert.notNull(output, "An output channel is required");
 		this.messagePublisher = new MessagePublisher<>(output);
+	}
+
+	public EventEmittingJobExecutionListener(MessageChannel output, int order) {
+		this(output);
+		this.order = order;
 	}
 
 	@Override
@@ -45,5 +53,10 @@ public class EventEmittingJobExecutionListener implements JobExecutionListener {
 	@Override
 	public void afterJob(JobExecution jobExecution) {
 		this.messagePublisher.publish(new JobExecutionEvent(jobExecution));
+	}
+
+	@Override
+	public int getOrder() {
+		return this.order;
 	}
 }
