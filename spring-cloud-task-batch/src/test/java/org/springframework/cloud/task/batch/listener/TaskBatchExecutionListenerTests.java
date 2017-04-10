@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -36,14 +35,14 @@ import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerBeanPostProcessor;
-import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerFactoryBean;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
@@ -60,7 +59,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Michael Minella
@@ -85,7 +83,20 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class}, ARGS);
+		validateContext();
+	}
 
+	@Test
+	public void testFactoryBean() {
+		this.applicationContext = SpringApplication.run(new Object[]{JobFactoryBeanConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				BatchAutoConfiguration.class,
+				TaskBatchAutoConfiguration.class}, ARGS);
+		validateContext();
+	}
+
+	private void validateContext() {
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
@@ -94,8 +105,8 @@ public class TaskBatchExecutionListenerTests {
 
 		assertEquals(1, jobExecutionIds.size());
 		assertEquals(1, taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId());
+
 	}
-	
 	@Test
 	public void testMultipleDataSources() {
 		this.applicationContext = SpringApplication.run(new Object[] {JobConfigurationMultipleDataSources.class,
@@ -245,6 +256,46 @@ public class TaskBatchExecutionListenerTests {
 						}
 					}).build())
 					.build();
+		}
+	}
+
+	@Configuration
+	@EnableBatchProcessing
+	@EnableTask
+	public static class JobFactoryBeanConfiguration {
+
+		@Autowired
+		private JobBuilderFactory jobBuilderFactory;
+
+		@Autowired
+		private StepBuilderFactory stepBuilderFactory;
+
+		@Bean
+		public FactoryBean<Job> job() {
+			return new FactoryBean<Job>() {
+				@Override
+				public Job getObject() throws Exception {
+					return jobBuilderFactory.get("job")
+							.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+								@Override
+								public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+									System.out.println("Executed");
+									return RepeatStatus.FINISHED;
+								}
+							}).build())
+							.build();
+				}
+
+				@Override
+				public Class<?> getObjectType() {
+					return Job.class;
+				}
+
+				@Override
+				public boolean isSingleton() {
+					return true;
+				}
+			};
 		}
 	}
 

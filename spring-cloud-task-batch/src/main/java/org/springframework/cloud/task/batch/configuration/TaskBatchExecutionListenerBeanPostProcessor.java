@@ -44,13 +44,17 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName)
 			throws BeansException {
+		return bean;
+	}
 
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName)
+			throws BeansException {
 		if(jobNames.size() > 0) {
 			if(!jobNames.contains(beanName)) {
 				return bean;
 			}
 		}
-
 		int length = this.applicationContext
 				.getBeanNamesForType(TaskBatchExecutionListener.class).length;
 
@@ -60,17 +64,9 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 						"have exactly 1 instance of the TaskBatchExecutionListener but has " +
 						length);
 			}
-
 			((AbstractJob) bean).registerJobExecutionListener(
 					this.applicationContext.getBean(TaskBatchExecutionListener.class));
 		}
-
-		return bean;
-	}
-
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName)
-			throws BeansException {
 		return bean;
 	}
 
