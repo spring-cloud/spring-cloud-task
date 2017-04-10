@@ -91,7 +91,7 @@ will be used to build your project.  Open your favorite text editor and add the 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.3.RELEASE</version>
+		<version>1.5.2.RELEASE</version>
 	</parent>
 
 	<properties>
@@ -145,7 +145,7 @@ Spring Cloud Task itself:
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-core</artifactId>
-			<version>1.0.0.RELEASE</version>
+			<version>1.2.0.BUILD-SNAPSHOT</version>
 		</dependency>
 
 [[getting-started-writing-the-code]]
@@ -305,7 +305,7 @@ to your tests will keep the context open.  For example:
 ```
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@TestPropertySource(properties = {"spring.cloud.task.closecontext_enable=false"})
+@TestPropertySource(properties = {"spring.cloud.task.closecontext_enabled=false"})
 public class DemoApplicationTests {
 
 	@Test
