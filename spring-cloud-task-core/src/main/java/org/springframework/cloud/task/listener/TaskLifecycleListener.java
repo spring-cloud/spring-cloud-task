@@ -176,7 +176,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 			this.finished = true;
 
-			if(taskProperties.getClosecontextEnable() && this.context.isActive()) {
+			if(taskProperties.getClosecontextEnabled() && this.context.isActive()) {
 				this.context.close();
 			}
 

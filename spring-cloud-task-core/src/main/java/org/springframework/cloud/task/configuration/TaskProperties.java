@@ -16,17 +16,23 @@
 
 package org.springframework.cloud.task.configuration;
 
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Properties available to configure the task.
  *
  * @author Glenn Renfro
+ * @author David Turanski
  */
 
 @ConfigurationProperties(prefix = "spring.cloud.task")
 public class TaskProperties {
-
+	private static final Log logger = LogFactory.getLog(TaskProperties.class);
+	
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
 	/**
@@ -54,7 +60,7 @@ public class TaskProperties {
 	 * When set to true the context is closed at the end of the task.  Else
 	 * the context remains open.
 	 */
-	private Boolean closecontextEnable = true;
+	private Boolean closecontextEnabled = true;
 
 	public String getExternalExecutionId() {
 		return externalExecutionId;
@@ -72,12 +78,34 @@ public class TaskProperties {
 		this.executionid = executionid;
 	}
 
+	/**
+	 * 
+	 * @deprecated use getClosecontextEnabled()
+	 * @since 1.2.0
+	 */
+	@Deprecated
 	public Boolean getClosecontextEnable() {
-		return closecontextEnable;
+		return closecontextEnabled;
 	}
 
+
+	/**
+	 * 
+	 * @deprecated use setClosecontextEnabled()
+	 * @since 1.2.0
+	 */
+	@Deprecated
 	public void setClosecontextEnable(Boolean closecontextEnable) {
-		this.closecontextEnable = closecontextEnable;
+		logger.warn("'closecontextEnable' is deprecated. Use 'closeContextEnabled.'");
+		this.closecontextEnabled = closecontextEnable;
+	}
+
+	public Boolean getClosecontextEnabled() {
+		return closecontextEnabled;
+	}
+
+	public void setClosecontextEnabled(Boolean closecontextEnabled) {
+		this.closecontextEnabled = closecontextEnabled;
 	}
 
 	public String getTablePrefix() {
