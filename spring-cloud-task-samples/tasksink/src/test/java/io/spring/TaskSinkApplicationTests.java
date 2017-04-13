@@ -16,16 +16,18 @@
 
 package io.spring;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.spring.configuration.TaskSinkConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.deployer.spi.task.LaunchState;
+import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
+import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +36,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Glenn Renfro
@@ -49,11 +53,11 @@ public class TaskSinkApplicationTests {
 	private Sink sink;
 
 	@Test
-	public void testLaunch() {
+	public void testLaunch() throws IOException {
 		assertNotNull(this.sink.input());
 
-		TaskSinkConfiguration.TestTaskLauncher testTaskLauncher =
-				 context.getBean(TaskSinkConfiguration.TestTaskLauncher.class);
+		TaskLauncher testTaskLauncher =
+				 context.getBean(TaskLauncher.class);
 
 		Map<String, String> properties = new HashMap();
 		properties.put("server.port", "0");
@@ -63,6 +67,16 @@ public class TaskSinkApplicationTests {
 				null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<TaskLaunchRequest>(request);
 		this.sink.input().send(message);
-		assertEquals(LaunchState.complete, testTaskLauncher.status("TESTSTATUS").getState());
+
+		ArgumentCaptor<AppDeploymentRequest> deploymentRequest = ArgumentCaptor.forClass(AppDeploymentRequest.class);
+
+		verify(testTaskLauncher).launch(deploymentRequest.capture());
+
+		AppDeploymentRequest actualRequest = deploymentRequest.getValue();
+
+		assertTrue(actualRequest.getCommandlineArguments().isEmpty());
+		assertEquals("0", actualRequest.getDefinition().getProperties().get("server.port"));
+		assertTrue(actualRequest.getResource().toString()
+				.contains("maven://org.springframework.cloud.task.app:timestamp-task:jar:1.0.1.RELEASE"));
 	}
 }
