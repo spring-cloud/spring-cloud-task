@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,12 +45,12 @@ public class BatchEventsApplicationTests {
 
 	// Count for two job execution events per task
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
-
-
+	
 	@Test
 	public void testExecution() throws Exception {
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0");
-		Assert.assertTrue(jobExecutionLatch.await(5, TimeUnit.SECONDS));
+		Assert.assertTrue("The latch did not count down to zero before timeout",
+				jobExecutionLatch.await(60, TimeUnit.SECONDS));
 	}
 
 	@EnableBinding(Sink.class)
