@@ -55,8 +55,7 @@ public class BatchEventsApplicationTests {
 	public void testExecution() throws Exception {
 		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.web-environment=false");
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
-				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
-				"--logging.level.org.springframework.integration=DEBUG");
+				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup");
 		Assert.assertTrue("The latch did not count down to zero before timeout",
 				jobExecutionLatch.await(60, TimeUnit.SECONDS));
 	}
