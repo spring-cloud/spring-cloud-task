@@ -21,13 +21,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
@@ -40,9 +37,6 @@ public class BatchEventsApplicationTests {
 	@ClassRule
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
-	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
-
 	// Count for two job execution events per task
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
 	
@@ -50,7 +44,7 @@ public class BatchEventsApplicationTests {
 	public void testExecution() throws Exception {
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0", "--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup");
 		Assert.assertTrue("The latch did not count down to zero before timeout",
-				jobExecutionLatch.await(60, TimeUnit.SECONDS));
+				jobExecutionLatch.await(5, TimeUnit.SECONDS));
 	}
 
 	@EnableBinding(Sink.class)
