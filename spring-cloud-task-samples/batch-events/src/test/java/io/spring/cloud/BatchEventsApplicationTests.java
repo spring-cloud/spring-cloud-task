@@ -44,7 +44,7 @@ public class BatchEventsApplicationTests {
 	public void testExecution() throws Exception {
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0", "--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup");
 		Assert.assertTrue("The latch did not count down to zero before timeout",
-				jobExecutionLatch.await(5, TimeUnit.SECONDS));
+				jobExecutionLatch.await(60, TimeUnit.SECONDS));
 	}
 
 	@EnableBinding(Sink.class)
