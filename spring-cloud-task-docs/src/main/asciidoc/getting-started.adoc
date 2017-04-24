@@ -145,7 +145,7 @@ Spring Cloud Task itself:
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-task-core</artifactId>
-			<version>1.2.0.RC1</version>
+			<version>1.2.0.RELEASE</version>
 		</dependency>
 
 [[getting-started-writing-the-code]]
