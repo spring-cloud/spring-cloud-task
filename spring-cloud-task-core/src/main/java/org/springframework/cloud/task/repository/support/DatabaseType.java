@@ -41,7 +41,10 @@ public enum DatabaseType {
 	MYSQL("MySQL"),
 	POSTGRES("PostgreSQL"),
 	SQLSERVER("Microsoft SQL Server"),
-	DB2("DB2");
+	DB2("DB2"),
+	DB2VSE("DB2VSE"),
+	DB2ZOS("DB2ZOS"),
+	DB2AS400("DB2AS400");
 
 	private static final Map<String, DatabaseType> dbNameMap;
 
@@ -71,8 +74,15 @@ public enum DatabaseType {
 		if (StringUtils.hasText(databaseProductName) && !databaseProductName.equals("DB2/Linux") && databaseProductName.startsWith("DB2")) {
 			String databaseProductVersion =
 					JdbcUtils.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion").toString();
-			if (!databaseProductVersion.startsWith("SQL")) {
+			if (databaseProductVersion.startsWith("ARI")) {
+				databaseProductName = "DB2VSE";
+			}
+			else if (databaseProductVersion.startsWith("DSN")) {
 				databaseProductName = "DB2ZOS";
+			}
+			else if (databaseProductName.indexOf("AS") != -1 && (databaseProductVersion.startsWith("QSQ") ||
+					databaseProductVersion.substring(databaseProductVersion.indexOf('V')).matches("V\\dR\\d[mM]\\d"))) {
+				databaseProductName = "DB2AS400";
 			}
 			else {
 				databaseProductName = JdbcUtils.commonDatabaseName(databaseProductName);

@@ -17,6 +17,9 @@
 package org.springframework.cloud.task.repository.database.support;
 
 import static org.springframework.cloud.task.repository.support.DatabaseType.DB2;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2AS400;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2VSE;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2ZOS;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.H2;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
@@ -69,6 +72,9 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 		providers.put(ORACLE, new OraclePagingQueryProvider());
 		providers.put(SQLSERVER, new SqlServerPagingQueryProvider());
 		providers.put(DB2, new Db2PagingQueryProvider());
+		providers.put(DB2VSE, new Db2PagingQueryProvider());
+		providers.put(DB2ZOS, new Db2PagingQueryProvider());
+		providers.put(DB2AS400, new Db2PagingQueryProvider());
 	}
 
 	/**
