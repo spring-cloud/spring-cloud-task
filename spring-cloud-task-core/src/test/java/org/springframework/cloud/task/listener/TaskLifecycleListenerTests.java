@@ -138,6 +138,20 @@ public class TaskLifecycleListenerTests {
 	}
 
 	@Test
+	public void testTaskFailedWithExitCodeEvent() {
+		final int exitCode = 10;
+		context.refresh();
+		RuntimeException exception = new RuntimeException("This was expected");
+		SpringApplication application = new SpringApplication();
+		this.taskExplorer = context.getBean(TaskExplorer.class);
+		context.publishEvent(new ExitCodeEvent(context, exitCode));
+		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
+		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
+
+		verifyTaskExecution(0, true, exitCode, exception);
+	}
+
+	@Test
 	public void testNoClosingOfContext() {
 		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Object[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
 				new String[] {"--spring.cloud.task.closecontext_enable=false"});
