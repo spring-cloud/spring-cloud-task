@@ -145,6 +145,7 @@
 		<spring-cloud-deployer-resource-maven.version>1.2.0.RELEASE</spring-cloud-deployer-resource-maven.version>
 		<spring-batch.version>3.0.7.RELEASE</spring-batch.version>
 		<commons-logging.version>1.1</commons-logging.version>
+		<java-ee-api.version>7.0</java-ee-api.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
