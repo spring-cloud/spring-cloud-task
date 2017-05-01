@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: Spring Cloud Task JPA Sample Application
+logging:
+  level:
+   org:
+    springframework:
+     cloud:
+      task: debug

@@ -16,7 +16,11 @@
 
 package org.springframework.cloud.task.configuration;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -26,7 +30,9 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -44,6 +50,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class DefaultTaskConfigurer implements TaskConfigurer {
 
+	private static final Log logger = LogFactory.getLog(DefaultTaskConfigurer.class);
+
 	private TaskRepository taskRepository;
 
 	private TaskExplorer taskExplorer;
@@ -53,6 +61,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
 	private DataSource dataSource;
+
+	private ApplicationContext context;
 
 	public DefaultTaskConfigurer() {
 		this(TaskProperties.DEFAULT_TABLE_PREFIX);
@@ -67,7 +77,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * production use.
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
-		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX);
+		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, null);
 	}
 
 	/**
@@ -77,7 +87,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * task infrastructure.
 	 */
 	public DefaultTaskConfigurer(String tablePrefix) {
-		this(null, tablePrefix);
+		this(null, tablePrefix, null);
 	}
 
 	/**
@@ -89,8 +99,9 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param tablePrefix the prefix to apply to the task table names used by
 	 * task infrastructure.
 	 */
-	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix) {
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
 		this.dataSource = dataSource;
+		this.context = context;
 
 		if(this.dataSource != null) {
 			this.taskExecutionDaoFactoryBean = new
@@ -120,11 +131,26 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	@Override
 	public PlatformTransactionManager getTransactionManager() {
-		if(this.transactionManager == null) {
-			if(isDataSourceAvailable()) {
-				this.transactionManager = new DataSourceTransactionManager(this.dataSource);
+		if (this.transactionManager == null) {
+			if (isDataSourceAvailable()) {
+				try {
+					Class.forName("javax.persistence.EntityManager");
+					if (this.context != null && this.context.getBeanNamesForType(EntityManager.class).length > 0) {
+						logger.debug("EntityManager was found, using JpaTransactionManager");
+						this.transactionManager = new JpaTransactionManager();
+					}
+				}
+				catch (ClassNotFoundException ignore) {
+					logger.debug("No EntityManager was found, using DataSourceTransactionManager");
+				}
+				finally {
+					if (this.transactionManager == null) {
+						this.transactionManager = new DataSourceTransactionManager(this.dataSource);
+					}
+				}
 			}
 			else {
+				logger.debug("No DataSource was found, using ResourcelessTransactionManager");
 				this.transactionManager = new ResourcelessTransactionManager();
 			}
 		}

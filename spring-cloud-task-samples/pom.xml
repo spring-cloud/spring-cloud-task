@@ -27,6 +27,7 @@
 		<module>partitioned-batch-job</module>
 		<module>task-events</module>
 		<module>batch-events</module>
+		<module>jpa-sample</module>
 	</modules>
 
 	<dependencyManagement>

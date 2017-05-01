@@ -1,0 +1,28 @@
+= JPA Sample Task
+
+This is a Spring Cloud Task Boot Application that uses JPA to persist data to
+a data store.
+
+== Requirements:
+
+* Java 7 or Above
+
+== Classes:
+
+* JpaApplication - the Spring Boot Main Application.
+* TaskRunComponent - Component responsible for writing data to the repository.
+* TaskRunOutput - Entity to be written to the repository.
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/jpa-sample-1.3.0.RELEASE.jar
+----
