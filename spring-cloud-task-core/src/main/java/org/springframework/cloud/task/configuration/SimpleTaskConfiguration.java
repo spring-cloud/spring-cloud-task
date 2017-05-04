@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
@@ -111,6 +112,7 @@ public class SimpleTaskConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnProperty(prefix = "spring.cloud.task", name = "tablePrefix", matchIfMissing = true)
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
 		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
 
