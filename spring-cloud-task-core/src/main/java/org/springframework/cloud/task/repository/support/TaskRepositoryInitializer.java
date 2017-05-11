@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 
 /**
@@ -76,7 +77,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private String getDatabaseType(DataSource dataSource) {
 		try {
-			return DatabaseType.fromMetaData(dataSource).toString().toLowerCase();
+			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString()).toLowerCase();
 		}
 		catch (MetaDataAccessException ex) {
 			throw new IllegalStateException("Unable to detect database type", ex);
