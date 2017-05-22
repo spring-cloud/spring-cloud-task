@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -48,7 +48,7 @@ public class TaskCoreTests {
 
 	@Test
 	public void successfulTaskTest() {
-		applicationContext = new SpringApplicationBuilder().sources(new Object[]{TaskConfiguration.class,
+		applicationContext = new SpringApplicationBuilder().sources(new Class[]{TaskConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
@@ -67,8 +67,8 @@ public class TaskCoreTests {
 	public void exceptionTaskTest() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(new Object[]{TaskExceptionConfiguration.class,
-					PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
+			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false"});
@@ -95,8 +95,8 @@ public class TaskCoreTests {
 	public void invalidExecutionId() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(new Object[]{TaskExceptionConfiguration.class,
-					PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
+			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false",

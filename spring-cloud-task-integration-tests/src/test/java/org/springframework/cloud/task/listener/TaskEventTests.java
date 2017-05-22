@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -59,7 +59,7 @@ public class TaskEventTests {
 
 	@Test
 	public void testTaskEventListener() throws Exception {
-		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Object[] {TaskEventsConfiguration.class,
+		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Class[] {TaskEventsConfiguration.class,
 				TaskEventAutoConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				RabbitServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext_enable=false",

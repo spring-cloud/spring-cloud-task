@@ -17,7 +17,6 @@
 package org.springframework.cloud.task;
 
 import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.junit.After;
