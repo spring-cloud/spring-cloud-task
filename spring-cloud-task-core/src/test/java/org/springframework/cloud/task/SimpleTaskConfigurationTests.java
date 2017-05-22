@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;

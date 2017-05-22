@@ -18,7 +18,8 @@ package org.springframework.cloud.task.listener;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,9 +39,8 @@ public class TaskEventTests {
 	@Test
 	public void testDefaultConfiguration() {
 		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Object[]{ TaskEventsConfiguration.class,
+				SpringApplication.run(new Class[]{PropertyPlaceholderAutoConfiguration.class,EmbeddedDataSourceConfiguration.class,TaskEventsConfiguration.class,
 								TaskEventAutoConfiguration.class,
-								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},
 						new String[]{ "--spring.cloud.task.closecontext_enable=false",
 								"--spring.main.web-environment=false"});

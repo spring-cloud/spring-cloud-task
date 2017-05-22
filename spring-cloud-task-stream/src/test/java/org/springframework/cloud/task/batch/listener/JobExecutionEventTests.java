@@ -35,7 +35,8 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
@@ -275,7 +276,7 @@ public class JobExecutionEventTests {
 	@Test
 	public void testOrderConfiguration() {
 		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Object[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
+				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},
@@ -299,7 +300,7 @@ public class JobExecutionEventTests {
 		boolean exceptionThrown = false;
 		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Object[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
+				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},

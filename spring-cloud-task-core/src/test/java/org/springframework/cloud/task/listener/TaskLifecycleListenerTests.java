@@ -30,11 +30,10 @@ import org.junit.Test;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.rule.OutputCapture;
-import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
@@ -139,7 +138,7 @@ public class TaskLifecycleListenerTests {
 
 	@Test
 	public void testNoClosingOfContext() {
-		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Object[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
+		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Class[]{TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
 				new String[] {"--spring.cloud.task.closecontext_enable=false"});
 
 		try {
