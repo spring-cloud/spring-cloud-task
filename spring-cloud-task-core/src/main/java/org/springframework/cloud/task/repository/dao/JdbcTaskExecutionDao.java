@@ -66,6 +66,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
 
+	public static final String WHERE_CLAUSE = "TASK_NAME IS NOT NULL";
+
 	public static final String RUNNING_TASK_WHERE_CLAUSE =
 			"where TASK_NAME = ? AND END_TIME IS NULL ";
 
@@ -323,7 +325,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public Page<TaskExecution> findAll(Pageable pageable) {
-		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE, null,
+		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE, WHERE_CLAUSE,
 				new Object[]{  }, getTaskExecutionCount());
 	}
 
