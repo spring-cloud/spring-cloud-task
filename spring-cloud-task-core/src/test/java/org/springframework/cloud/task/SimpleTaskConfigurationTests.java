@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task;
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -23,20 +25,28 @@ import org.junit.Test;
 
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
+import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.PropertiesPropertySource;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that the beans created by the SimpleTaskConfiguration.
@@ -68,6 +78,48 @@ public class SimpleTaskConfigurationTests {
 
 		assertEquals(targetClass, SimpleTaskRepository.class);
 	}
+
+
+	@Test
+	public void testRepositoryInitialized() throws Exception {
+		this.context = new AnnotationConfigApplicationContext(EmbeddedDataSourceConfiguration.class, SimpleTaskConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+
+		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
+
+		assertThat(taskExplorer.getTaskExecutionCount(), is(equalTo(1l)));
+	}
+
+	@Test
+	public void testRepositoryNotInitialized() throws Exception {
+		Properties properties = new Properties();
+
+		properties.put("spring.cloud.task.tablePrefix", "foobarless");
+		PropertiesPropertySource propertiesSource = new PropertiesPropertySource("test", properties);
+
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.getEnvironment().getPropertySources().addLast(propertiesSource);
+		((AnnotationConfigApplicationContext)context).register(SimpleTaskConfiguration.class);
+		((AnnotationConfigApplicationContext)context).register(PropertyPlaceholderAutoConfiguration.class);
+		((AnnotationConfigApplicationContext)context).register(EmbeddedDataSourceConfiguration.class);
+		boolean wasExceptionThrown = false;
+		try {
+			this.context.refresh();
+		}
+		catch (ApplicationContextException ex) {
+			assertThat(ex.getMessage(), equalTo("Failed to start bean " +
+					"'taskLifecycleListener'; nested exception is " +
+					"org.springframework.dao.DataAccessResourceFailureException: " +
+					"Could not obtain sequence value; nested exception is " +
+					"org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement " +
+					"\"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL \"; expected " +
+					"\"identifier\"; SQL statement:\n" +
+					"select foobarlessSEQ.nextval from dual [42001-193]"));
+			wasExceptionThrown = true;
+		}
+		assertTrue("Expected ApplicationContextException to be thrown", wasExceptionThrown);
+	}
+
 
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleConfigurers() {
