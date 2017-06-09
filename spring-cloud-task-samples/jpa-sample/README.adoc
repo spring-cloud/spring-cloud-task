@@ -1,4 +1,4 @@
-= Spring Batch Job Task
+= JPA Sample Task
 
 This is a Spring Cloud Task Boot Application that uses JPA to persist data to
 a data store.
@@ -9,7 +9,7 @@ a data store.
 
 == Classes:
 
-* JPAApplication - the Spring Boot Main Application.
+* JpaApplication - the Spring Boot Main Application.
 * TaskRunComponent - Component responsible for writing data to the repository.
 * TaskRunOutput - Entity to be written to the repository.
 
@@ -24,5 +24,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/batch-job-1.1.0.RELEASE.jar
+$ java -jar target/jpa-sample-1.3.0.RELEASE.jar
 ----

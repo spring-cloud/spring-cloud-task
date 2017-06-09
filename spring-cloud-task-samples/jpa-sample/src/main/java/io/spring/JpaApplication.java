@@ -22,10 +22,10 @@ import org.springframework.cloud.task.configuration.EnableTask;
 
 @SpringBootApplication
 @EnableTask
-public class JPAApplication {
+public class JpaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JPAApplication.class, args);
+		SpringApplication.run(JpaApplication.class, args);
 	}
 
 }

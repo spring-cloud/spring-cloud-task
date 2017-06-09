@@ -43,7 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Glenn Renfro
  */
-public class JPAApplicationTests {
+public class JpaApplicationTests {
 
 	private final static String DATASOURCE_URL;
 
@@ -93,7 +93,7 @@ public class JPAApplicationTests {
 	@Test
 	public void testBatchJobApp() throws Exception {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (id, output) values (null, ?)";
-		SpringApplication.run(JPAApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
+		SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 				"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
 				"--spring.jpa.database-platform=org.hibernate.dialect.H2Dialect");
