@@ -107,14 +107,6 @@ public class SimpleTaskConfigurationTests {
 			this.context.refresh();
 		}
 		catch (ApplicationContextException ex) {
-			assertThat(ex.getMessage(), equalTo("Failed to start bean " +
-					"'taskLifecycleListener'; nested exception is " +
-					"org.springframework.dao.DataAccessResourceFailureException: " +
-					"Could not obtain sequence value; nested exception is " +
-					"org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement " +
-					"\"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL \"; expected " +
-					"\"identifier\"; SQL statement:\n" +
-					"select foobarlessSEQ.nextval from dual [42001-193]"));
 			wasExceptionThrown = true;
 		}
 		assertTrue("Expected ApplicationContextException to be thrown", wasExceptionThrown);
