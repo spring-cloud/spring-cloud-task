@@ -162,6 +162,58 @@ public class DeployerPartitionHandlerTests {
 	}
 
 	@Test
+	public void testSinglePartitionAsEnvVars() throws Exception {
+
+		StepExecution masterStepExecution = createMasterStepExecution();
+		JobExecution jobExecution = masterStepExecution.getJobExecution();
+
+		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart, BatchStatus.COMPLETED);
+
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step1");
+		handler.setEnvironment(this.environment);
+		handler.setDefaultArgsAsEnvironmentVars(true);
+
+		TaskExecution taskExecution = new TaskExecution(55, null, null, null,
+				null, null, new ArrayList<String>(), null, null);
+		taskExecution.setTaskName("partitionedJobTask");
+
+		Set<StepExecution> stepExecutions = new HashSet<>();
+		stepExecutions.add(workerStepExecutionStart);
+		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
+
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
+
+		handler.afterPropertiesSet();
+
+		handler.beforeTask(taskExecution);
+
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
+
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
+
+		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
+
+		assertEquals(this.resource, request.getResource());
+		assertEquals(0, request.getDeploymentProperties().size());
+
+		AppDefinition appDefinition = request.getDefinition();
+
+		assertEquals("partitionedJobTask", appDefinition.getName());
+		assertTrue(request.getCommandlineArguments().isEmpty());
+		assertEquals("1", request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
+		assertEquals("4", request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
+		assertEquals("step1", request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME));
+		assertEquals("partitionedJobTask_partitionedJob_step1:partition1", request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_NAME));
+		assertEquals("55", request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID));
+
+		assertEquals(1, results.size());
+		StepExecution resultStepExecution = results.iterator().next();
+		assertEquals(BatchStatus.COMPLETED, resultStepExecution.getStatus());
+		assertEquals("step1:partition1", resultStepExecution.getStepName());
+	}
+
+	@Test
 	public void testParentExecutionId() throws Exception {
 
 		StepExecution masterStepExecution = createMasterStepExecution();
@@ -409,10 +461,6 @@ public class DeployerPartitionHandlerTests {
 		assertEquals("step1:partition1", resultStepExecution.getStepName());
 	}
 
-	private String formatArgs(String key, String value) {
-		return String.format("--%s=%s", key, value);
-	}
-
 	@Test
 	public void testOverridingEnvironmentProperties() throws Exception {
 
@@ -653,6 +701,10 @@ public class DeployerPartitionHandlerTests {
 		StepExecution resultStepExecution = results.iterator().next();
 		assertEquals(BatchStatus.COMPLETED, resultStepExecution.getStatus());
 		assertEquals("step1:partition1", resultStepExecution.getStepName());
+	}
+
+	private String formatArgs(String key, String value) {
+		return String.format("--%s=%s", key, value);
 	}
 
 	private StepExecution getStepExecutionFinish(StepExecution stepExecutionStart, BatchStatus status) {
