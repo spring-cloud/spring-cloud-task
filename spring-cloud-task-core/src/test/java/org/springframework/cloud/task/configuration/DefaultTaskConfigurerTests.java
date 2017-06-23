@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.configuration;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -24,18 +25,23 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Glenn Renfro
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { EmbeddedDataSourceConfiguration.class })
 public class DefaultTaskConfigurerTests {
 
@@ -53,6 +59,15 @@ public class DefaultTaskConfigurerTests {
 		defaultTaskConfigurer = new DefaultTaskConfigurer("foo");
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
 				is("org.springframework.batch.support.transaction.ResourcelessTransactionManager"));
+	}
+
+	@Test
+	public void testDefaultContext() throws Exception {
+		AnnotationConfigApplicationContext localContext = new AnnotationConfigApplicationContext();
+		localContext.register(EmbeddedDataSourceConfiguration.class,EntityManagerConfiguration.class);
+		localContext.refresh();
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(), is(equalTo("org.springframework.orm.jpa.JpaTransactionManager")));
 	}
 
 	@Test
@@ -90,5 +105,13 @@ public class DefaultTaskConfigurerTests {
 		assertThat(defaultTaskConfigurer.getTaskDataSource(), is(notNullValue()));
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTaskDataSource(), is(nullValue()));
+	}
+
+	@Configuration
+	public static class EntityManagerConfiguration {
+		@Bean
+		public EntityManager entityManager() {
+			return mock(EntityManager.class);
+		}
 	}
 }
