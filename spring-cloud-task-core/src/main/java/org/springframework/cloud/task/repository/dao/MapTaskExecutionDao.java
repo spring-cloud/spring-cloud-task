@@ -245,10 +245,10 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	private Page getPageFromList(List<TaskExecution> executionList, Pageable pageable, long maxSize){
-		int toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList.size()) ?
+		long toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList.size()) ?
 				executionList.size() : pageable.getOffset() + pageable.getPageSize();
 		return new PageImpl<>(
-				executionList.subList(pageable.getOffset(), toIndex),
+				executionList.subList((int)pageable.getOffset(), (int)toIndex),
 				pageable, maxSize);
 	}
 }

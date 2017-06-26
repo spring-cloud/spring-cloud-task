@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -248,8 +249,8 @@ public class BatchExecutionEventTests {
 		}
 	}
 
-	private Object[] getConfigurations(Class sinkClazz, Class jobConfigurationClazz) {
-		return new Object[]{
+	private Class[] getConfigurations(Class sinkClazz, Class jobConfigurationClazz) {
+		return new Class[]{PropertyPlaceholderAutoConfiguration.class,
 				jobConfigurationClazz,
 				sinkClazz };
 	}

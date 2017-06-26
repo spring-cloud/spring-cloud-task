@@ -78,7 +78,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testAutobuiltDataSource() {
-		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
@@ -88,7 +88,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testFactoryBean() {
-		this.applicationContext = SpringApplication.run(new Object[]{JobFactoryBeanConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[]{JobFactoryBeanConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
@@ -109,7 +109,7 @@ public class TaskBatchExecutionListenerTests {
 	}
 	@Test
 	public void testMultipleDataSources() {
-		this.applicationContext = SpringApplication.run(new Object[] {JobConfigurationMultipleDataSources.class,
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfigurationMultipleDataSources.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
@@ -127,7 +127,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testAutobuiltDataSourceNoJob() {
-		this.applicationContext = SpringApplication.run(new Object[] {NoJobConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[] {NoJobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
@@ -135,7 +135,7 @@ public class TaskBatchExecutionListenerTests {
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
@@ -144,38 +144,38 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testMapBased() {
-		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertEquals(1, jobExecutionIds.size());
-		assertEquals(0, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIds.iterator().next()));
+		assertEquals(1, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIds.iterator().next()));
 	}
 
 	@Test
 	public void testMultipleJobs() {
-		this.applicationContext = SpringApplication.run(new Object[] {MultipleJobConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[] {EmbeddedDataSourceConfiguration.class, MultipleJobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class}, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertEquals(2, jobExecutionIds.size());
 		Iterator<Long> jobExecutionIdsIterator = jobExecutionIds.iterator();
-		assertEquals(0, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
-		assertEquals(0, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
+		assertEquals(1, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
+		assertEquals(1, (long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()));
 	}
 
 	@Test
@@ -214,8 +214,8 @@ public class TaskBatchExecutionListenerTests {
 
 	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(
 			List<String> jobNames) {
-		this.applicationContext = SpringApplication.run(new Object[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class}, ARGS);
 
