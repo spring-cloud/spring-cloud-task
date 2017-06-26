@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.configuration;
 
 import java.util.Collection;
+
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 

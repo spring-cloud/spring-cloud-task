@@ -63,6 +63,9 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	@Value("${spring.cloud.task.initialize.enable:true}")
 	private boolean taskInitializationEnable;
 
+	@Value("${spring.cloud.task.tablePrefix:#{null}}")
+	private String tablePrefix;
+
 	public TaskRepositoryInitializer(){
 	}
 
@@ -86,7 +89,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (dataSource != null && taskInitializationEnable) {
+		if (dataSource != null && taskInitializationEnable && this.tablePrefix == null) {
 			String platform = getDatabaseType(dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
