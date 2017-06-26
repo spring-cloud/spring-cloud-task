@@ -22,5 +22,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/batch-job-1.1.0.RELEASE.jar
+$ java -jar target/batch-job-1.2.0.RELEASE.jar
 ----

@@ -27,7 +27,7 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
-$ java -jar target/batch-events-1.1.0.RELEASE.jar --spring.cloud.stream.bindings.batch-events.contentType=application/json
+$ java -jar target/batch-events-1.2.0.RELEASE.jar --spring.cloud.stream.bindings.batch-events.contentType=application/json
 ----
 
 For example you can listen for specific job execution events on a specified channel with a Spring Cloud Stream Sink
