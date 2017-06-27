@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-deployer-local</artifactId>
-			<version>1.2.0.RELEASE</version>
+			<version>1.2.1.RELEASE</version>
 		</dependency>
 
 		<dependency>
