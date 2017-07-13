@@ -92,7 +92,7 @@ public class JpaApplicationTests {
 
 	@Test
 	public void testBatchJobApp() throws Exception {
-		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (id, output) values (null, ?)";
+		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
 		SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 				"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
