@@ -186,13 +186,13 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
-					<!--<execution>-->
-						<!--<id>aggregate</id>-->
-						<!--<phase>package</phase>-->
-						<!--<goals>-->
-							<!--<goal>aggregate</goal>-->
-						<!--</goals>-->
-					<!--</execution>-->
+					<execution>
+						<id>aggregate</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

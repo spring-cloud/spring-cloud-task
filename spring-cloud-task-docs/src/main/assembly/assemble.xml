@@ -12,8 +12,8 @@
 			<outputDirectory>/apidocs</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/docbook</directory>
-			<outputDirectory>/reference</outputDirectory>
+			<directory>${project.build.directory}/contents</directory>
+			<outputDirectory>/</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>
