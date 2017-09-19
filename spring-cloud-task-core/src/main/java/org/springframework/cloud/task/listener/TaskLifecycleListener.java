@@ -64,6 +64,7 @@ import org.springframework.util.Assert;
  * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean {
 
@@ -194,6 +195,13 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 			if(this.applicationArguments != null) {
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
+			}
+			if(taskProperties.getSingleInstanceEnabled() &&
+					taskExplorer.getRunningTaskExecutionCountByTaskName(
+							this.taskNameResolver.getTaskName()) > 0 ) {
+				throw new TaskExecutionException(String.format(
+						"Task with name \"%s\" is currently running.",
+						this.taskNameResolver.getTaskName()));
 			}
 			if(taskProperties.getExecutionid() != null) {
 				TaskExecution taskExecution = taskExplorer.getTaskExecution(taskProperties.getExecutionid());

@@ -19,6 +19,7 @@ package org.springframework.cloud.task.executionid;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +56,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -139,11 +139,46 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
 	}
+
+	@Test
+	public void testDuplicateTaskExecutionWithSingleInstanceEnabled() throws Exception {
+		taskRepository.createTaskExecution();
+		TaskExecution execution = taskRepository.createTaskExecution();
+		taskRepository.startTaskExecution(execution.getExecutionId(), "foo",
+				new Date(), new ArrayList<>(), "");
+		String params[] = {"--spring.cloud.task.singleInstanceEnabled=true",
+				"--spring.cloud.task.name=foo"};
+		boolean testFailed = false;
+		try {
+			getTaskApplication(1).run(params);
+			assertTrue(waitForDBToBePopulated(1));
+		}
+		catch (ApplicationContextException taskException) {
+			assertEquals(taskException.getCause().getMessage(), "Task with " +
+					"name \"foo\" is currently running.");
+			testFailed = true;
+		}
+		assertTrue("Expected TaskExecutionException for because  of " +
+				"singleInstanceEnabled is enabled", testFailed);
+
+	}
+
+	@Test
+	public void testDuplicateTaskExecutionWithSingleInstanceDisabled() throws Exception {
+		taskRepository.createTaskExecution();
+		TaskExecution execution = taskRepository.createTaskExecution();
+		taskRepository.startTaskExecution(execution.getExecutionId(), "foo",
+				new Date(), new ArrayList<>(), "");
+		String params[] = {"--spring.cloud.task.name=foo"};
+		getTaskApplication(1).run(params);
+		assertTrue(waitForDBToBePopulated(1));
+	}
+
 
 	@Test
 	public void testWithGeneratedTaskExecutionWithName() throws Exception {
@@ -155,7 +190,7 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
@@ -196,10 +231,14 @@ public class TaskStartTests {
 	}
 
 	private boolean waitForDBToBePopulated() throws Exception {
+		return waitForDBToBePopulated(0);
+	}
+
+	private boolean waitForDBToBePopulated(int executionCount) throws Exception {
 		boolean isDbPopulated = false;
 		for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
 			Thread.sleep(WAIT_INTERVAL);
-			if (tableExists() && taskExplorer.getTaskExecutionCount() > 0) {
+			if (tableExists() && taskExplorer.getTaskExecutionCount() > executionCount) {
 				isDbPopulated = true;
 				break;
 			}

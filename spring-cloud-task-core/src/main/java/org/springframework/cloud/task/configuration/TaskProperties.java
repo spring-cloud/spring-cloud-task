@@ -62,6 +62,16 @@ public class TaskProperties {
 	 */
 	private Boolean closecontextEnabled = true;
 
+	/**
+	 * When set to true the
+	 * {@link org.springframework.cloud.task.listener.TaskLifecycleListener#doTaskStart()}
+	 * will check to see if a task execution with the same task name is already
+	 * running (by checking to see if the endTime is null).  If a task is still
+	 * running then it will throw a
+	 * {@link org.springframework.cloud.task.listener.TaskExecutionException}.
+	 */
+	private Boolean singleInstanceEnabled = false;
+
 	public String getExternalExecutionId() {
 		return externalExecutionId;
 	}
@@ -122,5 +132,13 @@ public class TaskProperties {
 
 	public void setParentExecutionId(Long parentExecutionId) {
 		this.parentExecutionId = parentExecutionId;
+	}
+
+	public Boolean getSingleInstanceEnabled() {
+		return singleInstanceEnabled;
+	}
+
+	public void setSingleInstanceEnabled(Boolean singleInstanceEnabled) {
+		this.singleInstanceEnabled = singleInstanceEnabled;
 	}
 }
