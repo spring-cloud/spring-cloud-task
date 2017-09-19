@@ -64,6 +64,14 @@ public interface TaskExplorer {
 	long getTaskExecutionCountByTaskName(String taskName);
 
 	/**
+	 * Get number of executions for a taskName that are running.
+	 *
+	 * @param taskName the name of the task to be searched
+	 * @return the number of running tasks that have the taskname specified
+	 */
+	long getRunningTaskExecutionCountByTaskName(String taskName);
+
+	/**
 	 * Retrieves current number of task executions.
 	 *
 	 * @return current number of task executions.

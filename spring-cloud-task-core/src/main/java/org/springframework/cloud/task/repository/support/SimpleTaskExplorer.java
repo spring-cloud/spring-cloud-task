@@ -68,6 +68,11 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
+	public long getRunningTaskExecutionCountByTaskName(String taskName) {
+		return taskExecutionDao.getRunningTaskExecutionCountByTaskName(taskName);
+	}
+
+	@Override
 	public long getTaskExecutionCount() {
 		return taskExecutionDao.getTaskExecutionCount();
 	}

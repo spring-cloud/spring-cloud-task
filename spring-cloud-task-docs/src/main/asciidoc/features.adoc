@@ -205,6 +205,22 @@ following property on the child task:
 
 ```
 spring.cloud.task.parent-execution-id=<parentExecutionTaskId>
+
+```
+[[features-single_instance_enabled]]
+=== Parent Task Id
+
+Spring Cloud Task allows a user to establish whether a task should execute if
+another task with the same `spring.cloud.task.name` is executing.  If
+`spring.cloud.task.single-instance-enabled` is set to true then the current
+task instance will check the datastore to see if a TaskExecution with
+the same `spring.cloud.task.name` is running.  If so this Task instance will
+throw a TaskExecutionException prior to making any entries into the datastore.
+If `spring.cloud.task.single-instance-enabled`  is set to false (the default)
+then this check will not be performed and the task instance will be executed.
+To configure this feature add the following property on the task:
+```
+spring.cloud.task.single-instance-enabled=<true or false>
 ```
 
 [[features-task-configurer]]
