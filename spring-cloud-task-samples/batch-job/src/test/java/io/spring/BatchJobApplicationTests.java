@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import static junit.framework.Assert.assertTrue;
  * Verifies that the Task Application outputs the correct task log entries.
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class BatchJobApplicationTests {
 
@@ -77,7 +78,7 @@ public class BatchJobApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 1, count);
+		assertEquals("The number of task titles did not match expected: ", 2, count);
 	}
 
 }

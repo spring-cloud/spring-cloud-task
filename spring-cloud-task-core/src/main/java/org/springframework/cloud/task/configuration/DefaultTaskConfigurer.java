@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 *
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for
-	 * production use.
+	 * production use).
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, null);
@@ -95,7 +95,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 *
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository.  If none is provided, a Map will be used (not recommended for
-	 * production use.
+	 * production use).
 	 * @param tablePrefix the prefix to apply to the task table names used by
 	 * task infrastructure.
 	 */
@@ -103,7 +103,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		this.dataSource = dataSource;
 		this.context = context;
 
-		if(this.dataSource != null) {
+		if (this.dataSource != null) {
 			this.taskExecutionDaoFactoryBean = new
 					TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
 		}

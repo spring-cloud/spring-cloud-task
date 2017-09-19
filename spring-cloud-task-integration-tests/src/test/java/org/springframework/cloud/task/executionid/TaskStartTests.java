@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@ package org.springframework.cloud.task.executionid;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
@@ -49,13 +51,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -121,6 +123,8 @@ public class TaskStartTests {
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
+		template.execute("DROP TABLE IF EXISTS TASK_LOCK");
+
 		template.execute("DROP SEQUENCE IF EXISTS TASK_SEQ");
 
 		DataSourceInitializer initializer = new DataSourceInitializer();
@@ -139,10 +143,43 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
+	}
+
+	@Test
+	public void testDuplicateTaskExecutionWithSingleInstanceEnabled() throws Exception {
+		String params[] = {"--spring.cloud.task.singleInstanceEnabled=true",
+				"--spring.cloud.task.name=foo"};
+		boolean testFailed = false;
+		try {
+			taskRepository.createTaskExecution();
+			assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
+			enableFooLock();
+			getTaskApplication(1).run(params);
+		}
+		catch (ApplicationContextException taskException) {
+			assertEquals(taskException.getCause().getMessage(), "Task with " +
+					"name \"foo\" is currently running.");
+			testFailed = true;
+		}
+		assertTrue("Expected TaskExecutionException for because  of " +
+				"singleInstanceEnabled is enabled", testFailed);
+
+	}
+
+	@Test
+	public void testDuplicateTaskExecutionWithSingleInstanceDisabled() throws Exception {
+		taskRepository.createTaskExecution();
+		TaskExecution execution = taskRepository.createTaskExecution();
+		taskRepository.startTaskExecution(execution.getExecutionId(), "foo",
+				new Date(), new ArrayList<>(), "");
+		String params[] = {"--spring.cloud.task.name=foo"};
+		enableFooLock();
+		getTaskApplication(1).run(params);
+		assertTrue(waitForDBToBePopulated());
 	}
 
 	@Test
@@ -155,7 +192,7 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
@@ -205,6 +242,16 @@ public class TaskStartTests {
 			}
 		}
 		return isDbPopulated;
+	}
+
+	private void enableFooLock() {
+		SimpleJdbcInsert taskLockInsert = new SimpleJdbcInsert(this.dataSource).withTableName("TASK_LOCK");
+		Map<String, Object> taskLockParams = new HashMap<>();
+		taskLockParams.put("LOCK_KEY", "acbd18db-4cc2-385c-adef-654fccc4a4d8");
+		taskLockParams.put("REGION", "DEFAULT");
+		taskLockParams.put("CLIENT_ID", "ac39193d-4a24-4112-9d1b-5d79d6286921");
+		taskLockParams.put("CREATED_DATE", new Date());
+		taskLockInsert.execute(taskLockParams);
 	}
 
 	@Configuration

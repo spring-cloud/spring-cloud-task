@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.task.LaunchState;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +41,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
+@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class, TaskProperties.class} )
 public class TaskLauncherSinkTests {
 
 	private final static String TASK_NAME_PREFIX = "Task-";
