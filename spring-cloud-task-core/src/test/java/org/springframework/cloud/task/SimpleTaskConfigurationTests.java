@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.LockRegistryAutoConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -67,7 +68,8 @@ public class SimpleTaskConfigurationTests {
 	@Test
 	public void testRepository() throws Exception {
 		this.context = new AnnotationConfigApplicationContext(SimpleTaskConfiguration.class,
-			PropertyPlaceholderAutoConfiguration.class);
+			PropertyPlaceholderAutoConfiguration.class,
+				LockRegistryAutoConfiguration.class);
 
 		TaskRepository taskRepository = this.context.getBean(TaskRepository.class);
 
@@ -81,8 +83,11 @@ public class SimpleTaskConfigurationTests {
 
 	@Test
 	public void testRepositoryInitialized() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(EmbeddedDataSourceConfiguration.class, SimpleTaskConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
+		this.context = new AnnotationConfigApplicationContext(
+				EmbeddedDataSourceConfiguration.class,
+				SimpleTaskConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				LockRegistryAutoConfiguration.class);
 
 		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
 
@@ -101,6 +106,7 @@ public class SimpleTaskConfigurationTests {
 		((AnnotationConfigApplicationContext)context).register(SimpleTaskConfiguration.class);
 		((AnnotationConfigApplicationContext)context).register(PropertyPlaceholderAutoConfiguration.class);
 		((AnnotationConfigApplicationContext)context).register(EmbeddedDataSourceConfiguration.class);
+		((AnnotationConfigApplicationContext)context).register(LockRegistryAutoConfiguration.class);
 		boolean wasExceptionThrown = false;
 		try {
 			this.context.refresh();

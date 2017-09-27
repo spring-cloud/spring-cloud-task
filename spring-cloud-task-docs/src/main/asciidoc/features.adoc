@@ -205,6 +205,34 @@ following property on the child task:
 
 ```
 spring.cloud.task.parent-execution-id=<parentExecutionTaskId>
+
+```
+[[features-single_instance_enabled]]
+=== Parent Task Id
+
+Spring Cloud Task allows a user to establish whether a task should execute if
+another task with the same `spring.cloud.task.name` is executing.  If
+`spring.cloud.task.single-instance-enabled` is set to true then the current
+task instance will check the datastore to see if a TaskExecution with
+the same `spring.cloud.task.name` has a task_lock associated with it.
+If so this Task instance will
+throw a `TaskExecutionException` prior to making any entries into the datastore.
+At the end of the task execution the lock is released.
+If `spring.cloud.task.single-instance-enabled`  is set to false (the default)
+then this check will not be performed and the task instance will be executed.
+To configure this feature add the following property on the task:
+```
+spring.cloud.task.single-instance-enabled=<true or false>
+```
+
+If Spring Cloud Task detects that a lock exists for a specific task name, it will
+also check the timestamp associated with this lock.   If the timestamp {plus}
+`spring.cloud.task.single-instance-lock-ttl` is before the current time,
+it will clear the old lock and create a new one.  The default for
+`spring.cloud.task.single-instance-lock-ttl` is `Integer.MAX_VALUE`.  To
+configure this feature add the following property on the task:
+```
+spring.cloud.task.single-instance-lock-ttl=<time in millis>
 ```
 
 [[features-task-configurer]]

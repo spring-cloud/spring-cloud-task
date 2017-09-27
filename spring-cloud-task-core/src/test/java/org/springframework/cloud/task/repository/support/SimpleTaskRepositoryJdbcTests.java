@@ -28,9 +28,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.cloud.task.configuration.LockRegistryAutoConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestDBUtils;
@@ -50,7 +50,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {EmbeddedDataSourceConfiguration.class,
 		SimpleTaskConfiguration.class,
-		PropertyPlaceholderAutoConfiguration.class})
+		PropertyPlaceholderAutoConfiguration.class,
+		LockRegistryAutoConfiguration.class})
 public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired
@@ -58,9 +59,6 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired
 	private DataSource dataSource;
-
-	@Autowired
-	private TaskExplorer taskExplorer;
 
 	@Test
 	@DirtiesContext

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,10 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -49,16 +51,20 @@ public class TaskProcessorApplicationTests {
 	@Autowired
 	protected MessageCollector collector;
 
-		@Test
-		public void test() throws InterruptedException{
-			channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
-			Map<String, String> properties = new HashMap();
-			properties.put("payload", DEFAULT_PAYLOAD);
-			TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
-					"maven://org.springframework.cloud.task.app:"
-					+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
-					null, null);
-			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
-		}
+	@MockBean
+	private TaskProperties taskProperties;
+
+	@Test
+	public void test() throws InterruptedException {
+		channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
+		Map<String, String> properties = new HashMap();
+		properties.put("payload", DEFAULT_PAYLOAD);
+		TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
+				"maven://org.springframework.cloud.task.app:"
+						+ "timestamp-task:jar:1.0.1.RELEASE",
+				null, properties,
+				null, null);
+		assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
+	}
 
 }

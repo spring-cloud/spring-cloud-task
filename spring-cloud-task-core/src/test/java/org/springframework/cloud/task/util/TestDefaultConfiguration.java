@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactory
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.support.locks.LockRegistry;
+import org.springframework.integration.support.locks.PassThruLockRegistry;
 
 /**
  * Initializes the beans needed to test default task behavior.
@@ -75,9 +77,14 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
+	public LockRegistry lockRegistry() {
+		return new PassThruLockRegistry();
+	}
+
+	@Bean
 	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer){
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
-				applicationArguments, taskExplorer, taskProperties);
+				applicationArguments, taskExplorer, taskProperties, lockRegistry());
 	}
 
 	@Override

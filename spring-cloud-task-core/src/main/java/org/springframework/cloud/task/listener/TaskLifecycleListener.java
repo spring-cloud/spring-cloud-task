@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +45,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.util.Assert;
 
 /**
@@ -64,6 +66,7 @@ import org.springframework.util.Assert;
  * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean {
 
@@ -95,23 +98,29 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
+	private final LockRegistry lockRegistry;
+
+	private Lock singleInstanceLock;
+
 	/**
 	 * @param taskRepository The repository to record executions in.
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,
 			ApplicationArguments applicationArguments, TaskExplorer taskExplorer,
-			TaskProperties taskProperties) {
+			TaskProperties taskProperties, LockRegistry lockRegistry) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
 		Assert.notNull(taskProperties, "TaskProperties is required");
+		Assert.notNull(lockRegistry, "a lockRegistry is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments;
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
+		this.lockRegistry = lockRegistry;
 	}
 
 	/**
@@ -150,6 +159,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private void doTaskEnd() {
 		if(this.started && !this.finished) {
+			if(this.taskProperties.getSingleInstanceEnabled()) {
+				this.singleInstanceLock.unlock();
+			}
 			this.taskExecution.setEndTime(new Date());
 
 			if(this.exitCodeEvent != null) {
@@ -194,6 +206,15 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 			if(this.applicationArguments != null) {
 				args = Arrays.asList(this.applicationArguments.getSourceArgs());
+			}
+
+			if(this.taskProperties.getSingleInstanceEnabled()  ) {
+				this.singleInstanceLock = this.lockRegistry.obtain(this.taskNameResolver.getTaskName());
+				if (!singleInstanceLock.tryLock()) {
+					throw new TaskExecutionException(String.format(
+							"Task with name \"%s\" is currently running.",
+							this.taskNameResolver.getTaskName()));
+				}
 			}
 			if(taskProperties.getExecutionid() != null) {
 				TaskExecution taskExecution = taskExplorer.getTaskExecution(taskProperties.getExecutionid());
