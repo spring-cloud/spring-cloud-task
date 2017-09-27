@@ -344,3 +344,30 @@ will be stored in the repo, else if a failure occurs then the `exitMessage` from
 the `onTaskFailed` will be stored.  Also if a user sets the `exitMessage` with a
 `onTaskEnd` listener then the `exitMessage` from the `onTaskEnd` will supersede
 the exit messages from both the `onTaskStartup` and `onTaskFailed`.
+
+=== Restricting Spring Cloud Task Instances
+
+Allows a user to establish that only one task with a given task name can be run
+at a time.  To do this the user establishes the <<features-task-name, task name>>
+and sets `spring.cloud.task.singleInstanceEnabled=true` for each task execution.
+While the first task execution is running, any other time user tries to run
+a task with the same <<features-task-name, task name>> and
+`spring.cloud.task.singleInstanceEnabled=true` the task will fail with the following
+error message `Task with name "application" is already running.`  The default
+for `spring.cloud.task.singleInstanceEnabled` is `false`.
+```
+ spring.cloud.task.singleInstanceEnabled=<true or false>
+```
+In order for this feature to be used you must include the following Spring
+Integration dependencies to your application:
+[source,xml]
+---
+<dependency>
+    <groupId>org.springframework.integration</groupId>
+    <artifactId>spring-integration-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.integration</groupId>
+    <artifactId>spring-integration-jdbc</artifactId>
+</dependency>
+---

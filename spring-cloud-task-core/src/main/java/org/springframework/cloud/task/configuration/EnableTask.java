@@ -59,6 +59,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(SimpleTaskConfiguration.class)
+@Import({ SimpleTaskConfiguration.class, SingleTaskConfiguration.class })
 public @interface EnableTask {
 }

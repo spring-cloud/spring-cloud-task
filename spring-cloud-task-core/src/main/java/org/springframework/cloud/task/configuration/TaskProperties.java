@@ -62,6 +62,28 @@ public class TaskProperties {
 	 */
 	private Boolean closecontextEnabled = false;
 
+	/**
+	 * When set to true it
+	 * will check to see if a task execution with the same task name is already
+	 * running.  If a task is still running then it will throw a
+	 * {@link org.springframework.cloud.task.listener.TaskExecutionException}.
+	 * When task execution ends the lock is released.
+	 */
+	private boolean singleInstanceEnabled = false;
+
+	/**
+	 * Declares the maximum amount of time (in millis) that a task execution can
+	 * hold a lock to prevent another task from executing with a specific task
+	 * name when the singleInstanceEnabled is set to true. Default time is: Integer.MAX_VALUE.
+	 */
+	private int singleInstanceLockTtl = Integer.MAX_VALUE;
+
+	/**
+	 * Declares the  time (in millis) that a task execution will wait between
+	 * checks. Default time is: 500 millis.
+	 */
+	private int singleInstanceLockCheckInterval = 500;
+
 	public String getExternalExecutionId() {
 		return externalExecutionId;
 	}
@@ -122,5 +144,29 @@ public class TaskProperties {
 
 	public void setParentExecutionId(Long parentExecutionId) {
 		this.parentExecutionId = parentExecutionId;
+	}
+
+	public boolean getSingleInstanceEnabled() {
+		return singleInstanceEnabled;
+	}
+
+	public void setSingleInstanceEnabled(boolean singleInstanceEnabled) {
+		this.singleInstanceEnabled = singleInstanceEnabled;
+	}
+
+	public int getSingleInstanceLockTtl() {
+		return singleInstanceLockTtl;
+	}
+
+	public void setSingleInstanceLockTtl(int singleInstanceLockTtl) {
+		this.singleInstanceLockTtl = singleInstanceLockTtl;
+	}
+
+	public int getSingleInstanceLockCheckInterval() {
+		return singleInstanceLockCheckInterval;
+	}
+
+	public void setSingleInstanceLockCheckInterval(int singleInstanceLockCheckInterval) {
+		this.singleInstanceLockCheckInterval = singleInstanceLockCheckInterval;
 	}
 }
