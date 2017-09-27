@@ -260,7 +260,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
-				for (TaskExecutionListener taskExecutionListener : this.taskExecutionListeners) {
+				List<TaskExecutionListener> starterList = new ArrayList<>(taskExecutionListeners);
+				Collections.reverse(starterList);
+				for (TaskExecutionListener taskExecutionListener : starterList) {
 					taskExecutionListener.onTaskStartup(listenerTaskExecution);
 				}
 			}

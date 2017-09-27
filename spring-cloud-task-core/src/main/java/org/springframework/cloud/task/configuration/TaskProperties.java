@@ -62,6 +62,23 @@ public class TaskProperties {
 	 */
 	private Boolean closecontextEnabled = false;
 
+	/**
+	 * When set to true the
+	 * {@link org.springframework.cloud.task.listener.TaskLifecycleListener#doTaskStart()}
+	 * will check to see if a task execution with the same task name is already
+	 * running.  If a task is still running then it will throw a
+	 * {@link org.springframework.cloud.task.listener.TaskExecutionException}.
+	 * When task execution ends the lock is released.
+	 */
+	private Boolean singleInstanceEnabled = false;
+
+	/**
+	 * Declares the maximum amount of time (in millis) that a task execution can
+	 * hold a lock to prevent another task from executing with a specific task
+	 * name when the singleInstanceEnabled is set to true. Default time is: Integer.MAX_VALUE.
+	 */
+	private int singleInstanceLockTtl = Integer.MAX_VALUE;
+
 	public String getExternalExecutionId() {
 		return externalExecutionId;
 	}
@@ -122,5 +139,21 @@ public class TaskProperties {
 
 	public void setParentExecutionId(Long parentExecutionId) {
 		this.parentExecutionId = parentExecutionId;
+	}
+
+	public Boolean getSingleInstanceEnabled() {
+		return singleInstanceEnabled;
+	}
+
+	public void setSingleInstanceEnabled(Boolean singleInstanceEnabled) {
+		this.singleInstanceEnabled = singleInstanceEnabled;
+	}
+
+	public int getSingleInstanceLockTtl() {
+		return singleInstanceLockTtl;
+	}
+
+	public void setSingleInstanceLockTtl(int singleInstanceLockTtl) {
+		this.singleInstanceLockTtl = singleInstanceLockTtl;
 	}
 }

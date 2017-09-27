@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.listener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +77,10 @@ public class TaskLifecycleListenerTests {
 		context = new AnnotationConfigApplicationContext();
 		context.setId("testTask");
 		context.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
+		TestListener.getStartupOrderList().clear();
+		TestListener.getFailOrderList().clear();
+		TestListener.getEndOrderList().clear();
+
 	}
 
 	@After
@@ -125,6 +130,9 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testTaskFailedWithExitCodeEvent() {
 		final int exitCode = 10;
+		context.register(TestListener.class);
+		context.register(TestListener2.class);
+
 		context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
 		SpringApplication application = new SpringApplication();
@@ -134,6 +142,18 @@ public class TaskLifecycleListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		verifyTaskExecution(0, true, exitCode, exception, null);
+		assertEquals(2, TestListener.getStartupOrderList().size());
+		assertEquals(Integer.valueOf(2), TestListener.getStartupOrderList().get(0));
+		assertEquals(Integer.valueOf(1), TestListener.getStartupOrderList().get(1));
+
+		assertEquals(2, TestListener.getEndOrderList().size());
+		assertEquals(Integer.valueOf(1), TestListener.getEndOrderList().get(0));
+		assertEquals(Integer.valueOf(2), TestListener.getEndOrderList().get(1));
+
+		assertEquals(2, TestListener.getFailOrderList().size());
+		assertEquals(Integer.valueOf(1), TestListener.getFailOrderList().get(0));
+		assertEquals(Integer.valueOf(2), TestListener.getFailOrderList().get(1));
+
 	}
 
 	@Test
@@ -298,6 +318,55 @@ public class TaskLifecycleListenerTests {
 		@Override
 		public List<String> getNonOptionArgs() {
 			throw new UnsupportedOperationException("Not supported at this time.");
+		}
+	}
+
+	private static class TestListener2 extends TestListener {
+
+	}
+
+	private static class TestListener implements TaskExecutionListener {
+
+		private static int currentCount = 0;
+
+		private int id = 0;
+
+		static List<Integer> startupOrderList = new ArrayList<>();
+
+		static List<Integer> endOrderList = new ArrayList<>();
+
+		static List<Integer> failOrderList = new ArrayList<>();
+
+		public TestListener() {
+			currentCount++;
+			id = currentCount;
+		}
+
+		@Override
+		public void onTaskStartup(TaskExecution taskExecution) {
+			startupOrderList.add(id);
+		}
+
+		@Override
+		public void onTaskEnd(TaskExecution taskExecution) {
+			endOrderList.add(id);
+		}
+
+		@Override
+		public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
+			failOrderList.add(id);
+		}
+
+		public static List<Integer> getStartupOrderList() {
+			return startupOrderList;
+		}
+
+		public static List<Integer> getEndOrderList() {
+			return endOrderList;
+		}
+
+		public static List<Integer> getFailOrderList() {
+			return failOrderList;
 		}
 	}
 }
