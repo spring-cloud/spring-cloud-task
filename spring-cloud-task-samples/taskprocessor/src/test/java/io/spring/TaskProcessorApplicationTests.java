@@ -54,16 +54,17 @@ public class TaskProcessorApplicationTests {
 	@MockBean
 	private TaskProperties taskProperties;
 
-		@Test
-		public void test() throws InterruptedException{
-			channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
-			Map<String, String> properties = new HashMap();
-			properties.put("payload", DEFAULT_PAYLOAD);
-			TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
-					"maven://org.springframework.cloud.task.app:"
-					+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
-					null, null);
-			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
-		}
+	@Test
+	public void test() throws InterruptedException {
+		channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
+		Map<String, String> properties = new HashMap();
+		properties.put("payload", DEFAULT_PAYLOAD);
+		TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
+				"maven://org.springframework.cloud.task.app:"
+						+ "timestamp-task:jar:1.0.1.RELEASE",
+				null, properties,
+				null, null);
+		assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
+	}
 
 }

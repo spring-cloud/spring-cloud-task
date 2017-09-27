@@ -216,7 +216,7 @@ another task with the same `spring.cloud.task.name` is executing.  If
 task instance will check the datastore to see if a TaskExecution with
 the same `spring.cloud.task.name` has a task_lock associated with it.
 If so this Task instance will
-throw a TaskExecutionException prior to making any entries into the datastore.
+throw a `TaskExecutionException` prior to making any entries into the datastore.
 At the end of the task execution the lock is released.
 If `spring.cloud.task.single-instance-enabled`  is set to false (the default)
 then this check will not be performed and the task instance will be executed.
