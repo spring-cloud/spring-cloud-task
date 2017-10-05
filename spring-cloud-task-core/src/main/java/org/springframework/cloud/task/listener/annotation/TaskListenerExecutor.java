@@ -87,8 +87,8 @@ public class TaskListenerExecutor implements TaskExecutionListener{
 				throw new TaskExecutionException("@BeforeTask and @AfterTask annotated methods must be public.", e);
 			}
 			catch (InvocationTargetException e) {
-				throw new TaskExecutionException("Failed to process @BeforeTask or @AfterTask" +
-						"annotation because: ", e);
+				throw new TaskExecutionException(String.format("Failed to process @BeforeTask or @AfterTask" +
+						" annotation because: %s", e.getTargetException().getMessage()), e);
 			}
 			catch (IllegalArgumentException e){
 				throw new TaskExecutionException("taskExecution parameter is required for @BeforeTask and @AfterTask annotated methods", e);
@@ -106,8 +106,8 @@ public class TaskListenerExecutor implements TaskExecutionListener{
 				throw new TaskExecutionException("@FailedTask annotated methods must be public.", e);
 			}
 			catch (InvocationTargetException e) {
-				throw new TaskExecutionException("Failed to process @FailedTask " +
-						"annotation because: ", e);
+				throw new TaskExecutionException(String.format("Failed to process @FailedTask " +
+						"annotation because: %s", e.getTargetException().getMessage()), e);
 			}
 			catch (IllegalArgumentException e){
 				throw new TaskExecutionException("taskExecution and throwable parameters "
