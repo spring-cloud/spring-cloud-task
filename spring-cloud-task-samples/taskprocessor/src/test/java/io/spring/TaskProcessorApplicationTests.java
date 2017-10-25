@@ -16,9 +16,11 @@
 
 package io.spring;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -49,8 +52,10 @@ public class TaskProcessorApplicationTests {
 	@Autowired
 	protected MessageCollector collector;
 
+	ObjectMapper mapper = new ObjectMapper();
+
 		@Test
-		public void test() throws InterruptedException{
+		public void test() throws InterruptedException, IOException {
 			channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
 			Map<String, String> properties = new HashMap();
 			properties.put("payload", DEFAULT_PAYLOAD);
@@ -58,7 +63,9 @@ public class TaskProcessorApplicationTests {
 					"maven://org.springframework.cloud.task.app:"
 					+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
 					null, null);
-			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
+			Message<String> result = (Message<String>)collector.forChannel(channels.output()).take();
+			TaskLaunchRequest tlq = mapper.readValue(result.getPayload(),TaskLaunchRequest.class);
+			assertThat(tlq, is(expectedRequest));
 		}
 
 }

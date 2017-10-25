@@ -44,7 +44,7 @@ public class TaskLaunchRequest implements Serializable{
 	private String applicationName;
 
 	/**
-	 * Constructor for the TaskLaunchRequest;
+	 * Constructor for the TaskLaunchRequest.
 	 * @param uri the URI to the task artifact to be launched.
 	 * @param commandlineArguments list of commandlineArguments to be used by the task
 	 * @param environmentProperties are the environment variables for this task.
@@ -64,6 +64,14 @@ public class TaskLaunchRequest implements Serializable{
 		this.environmentProperties = environmentProperties == null ? new HashMap<String, String>() : environmentProperties;
 		this.deploymentProperties = deploymentProperties == null ? new HashMap<String, String>() : deploymentProperties;
 		setApplicationName(applicationName);
+	}
+
+	/**
+	 * Constructor for the TaskLaunchRequest.
+	 *
+	 * @since 2.0.0
+	 */
+	public TaskLaunchRequest() {
 	}
 
 	/**
