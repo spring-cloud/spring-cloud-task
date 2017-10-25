@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.0.0.M2</version>
+		<version>2.0.0.M4</version>
 		<relativePath />
 	</parent>
 
@@ -117,11 +117,6 @@
 				<artifactId>spring-cloud-stream-test-support</artifactId>
 				<version>${spring-cloud-stream.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging-api</artifactId>
-				<version>${commons-logging.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -137,15 +132,15 @@
 	</modules>
 
 	<properties>
-		<spring-cloud-stream.version>2.0.0.M1</spring-cloud-stream.version>
+		<spring-cloud-stream.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-stream.version>
 		<spring-cloud-deployer-spi.version>2.0.0.M1</spring-cloud-deployer-spi.version>
 		<spring-cloud-deployer-local.version>2.0.0.M1</spring-cloud-deployer-local.version>
-		<spring-cloud-stream-binder-rabbit.version>2.0.0.M1</spring-cloud-stream-binder-rabbit.version>
+		<spring-cloud-stream-binder-rabbit.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-stream-binder-rabbit.version>
 		<spring-cloud-deployer-resource-support.version>2.0.0.M1</spring-cloud-deployer-resource-support.version>
 		<spring-cloud-deployer-resource-maven.version>2.0.0.M1</spring-cloud-deployer-resource-maven.version>
-		<spring-batch.version>4.0.0.M3</spring-batch.version>
+		<spring-batch.version>4.0.0.M5</spring-batch.version>
 		<commons-logging.version>1.1</commons-logging.version>
-		<java-ee-api.version>7.0</java-ee-api.version>
+		<java-ee-api.version>8.0</java-ee-api.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
