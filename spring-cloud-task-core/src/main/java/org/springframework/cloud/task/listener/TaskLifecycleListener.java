@@ -256,12 +256,12 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 					taskExecutionListener.onTaskStartup(listenerTaskExecution);
 				}
 			}
-			catch (Throwable listenerException) {
-				logger.warn(listenerException);
+			catch (Throwable currentListenerException) {
+				logger.warn(currentListenerException);
 				this.listenerFailed = true;
-				this.taskExecution.setErrorMessage(listenerException.getMessage());
-				this.listenerException = listenerException;
-				throw listenerException;
+				this.taskExecution.setErrorMessage(currentListenerException.getMessage());
+				this.listenerException = currentListenerException;
+				throw currentListenerException;
 			}
 		}
 		return listenerTaskExecution;
