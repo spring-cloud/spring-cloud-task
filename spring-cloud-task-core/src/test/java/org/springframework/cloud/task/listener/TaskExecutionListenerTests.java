@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -101,7 +102,7 @@ public class TaskExecutionListenerTests {
 		assertTrue("Exception should have fired", exceptionFired);
 		assertTrue("BeforeTask Listener should have executed", beforeTaskDidFireOnError);
 		assertTrue("EndTask Listener should have executed", endTaskDidFireOnError);
-		assertTrue("FailedTask Listener should have executed", failedTaskDidFireOnError);
+		assertFalse("FailedTask Listener should have executed", failedTaskDidFireOnError);
 	}
 
 	/**
@@ -118,7 +119,7 @@ public class TaskExecutionListenerTests {
 		}
 		assertTrue("Exception should have fired", exceptionFired);
 		assertTrue("EndTask Listener should have executed", endTaskDidFireOnError);
-		assertTrue("FailedTask Listener should have executed", failedTaskDidFireOnError);
+		assertFalse("FailedTask Listener should not have executed", failedTaskDidFireOnError);
 	}
 
 	/**
