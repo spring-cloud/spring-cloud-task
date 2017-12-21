@@ -41,7 +41,7 @@ import org.springframework.util.CollectionUtils;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
-@ConditionalOnProperty(prefix = "spring.cloud.task", name = "singleInstanceEnabled")
+@ConditionalOnProperty(prefix = "spring.cloud.task", name = "singleInstanceEnabled", havingValue = "true")
 public class SimpleSingleTaskConfiguration {
 
 	@Autowired(required = false)
@@ -59,29 +59,20 @@ public class SimpleSingleTaskConfiguration {
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
+	@Autowired
+	private TaskConfigurer taskConfigurer;
+
 
 	@Bean
 	public SingleInstanceTaskListener taskListener() {
-		if (CollectionUtils.isEmpty(this.dataSources)) {
+		if (taskConfigurer.getTaskDataSource() == null) {
 			return new SingleInstanceTaskListener(new PassThruLockRegistry(),
-					this.taskNameResolver, this.applicationEventPublisher);
+					this.taskNameResolver, this.taskProperties, this.applicationEventPublisher);
 		}
-		verifyEnvironment();
-		return new SingleInstanceTaskListener(dataSources.iterator().next(),
+
+		return new SingleInstanceTaskListener(taskConfigurer.getTaskDataSource(),
 				this.taskNameResolver,
 				this.taskProperties,
 				this.applicationEventPublisher);
 	}
-
-	private void verifyEnvironment(){
-		int dataSources = this.context.getBeanNamesForType(DataSource.class).length;
-
-		if( dataSources > 1) {
-			throw new IllegalStateException("To use the " +
-					"SimpleSingleTaskAutoConfigurer with DefaultLockRepository," +
-					" the context must contain no more than" +
-					" one DataSource, found " + dataSources);
-		}
-	}
-
 }

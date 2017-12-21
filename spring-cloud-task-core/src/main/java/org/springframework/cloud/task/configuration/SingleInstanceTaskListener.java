@@ -41,7 +41,8 @@ import org.springframework.integration.support.locks.LockRegistry;
 /**
  * When singleInstanceEnabled is set to true this listener will create a lock for the task
  * based on the spring.cloud.task.name. If a lock already exists this Listener will throw
- * a TaskExecutionException.
+ * a TaskExecutionException.  If this listener is added manually, then it should
+ * be added as the first listener in the chain.
  *
  * @author Glenn Renfro
  * @since 2.0.0
@@ -68,9 +69,11 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 
 	public SingleInstanceTaskListener(LockRegistry lockRegistry,
 			TaskNameResolver taskNameResolver,
+			TaskProperties taskProperties,
 			ApplicationEventPublisher applicationEventPublisher) {
 		this.lockRegistry = lockRegistry;
 		this.taskNameResolver = taskNameResolver;
+		this.taskProperties = taskProperties;
 		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(this.lockRegistry);
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
@@ -99,7 +102,7 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 		this.lockRegistryLeaderInitiator.start();
 		while (!this.lockReady) {
 			try {
-				Thread.sleep(500);
+				Thread.sleep(this.taskProperties.getSingleInstanceLockCheckInterval());
 			}
 			catch (InterruptedException ex) {
 				logger.warn("Thread Sleep Failed", ex);
