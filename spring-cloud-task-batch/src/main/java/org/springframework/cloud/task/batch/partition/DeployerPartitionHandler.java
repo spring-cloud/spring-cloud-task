@@ -221,8 +221,11 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		this.taskExecution = taskExecution;
 
 		if(this.commandLineArgsProvider == null) {
-			this.commandLineArgsProvider =
-					new SimpleCommandLineArgsProvider(this.taskExecution);
+			SimpleCommandLineArgsProvider provider = new
+					SimpleCommandLineArgsProvider();
+			provider.onTaskStartup(taskExecution);
+			this.commandLineArgsProvider = provider;
+
 		}
 	}
 
