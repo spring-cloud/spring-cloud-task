@@ -280,7 +280,7 @@ public class JobExecutionEventTests {
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},
-						new String[]{"--spring.cloud.task.closecontext_enable=false",
+						new String[]{"--spring.cloud.task.closecontext_enabled=false",
 								"--spring.main.web-environment=false",
 								"--spring.cloud.task.batch.events.chunk-order=5",
 								"--spring.cloud.task.batch.events.item-process-order=5",
@@ -304,7 +304,7 @@ public class JobExecutionEventTests {
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class},
-						new String[]{"--spring.cloud.task.closecontext_enable=false",
+						new String[]{"--spring.cloud.task.closecontext_enabled=false",
 								"--spring.main.web-environment=false",
 								disabledPropertyArg});
 

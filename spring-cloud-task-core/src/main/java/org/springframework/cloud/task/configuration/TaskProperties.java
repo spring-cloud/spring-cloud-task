@@ -100,28 +100,6 @@ public class TaskProperties {
 		this.executionid = executionid;
 	}
 
-	/**
-	 * 
-	 * @deprecated use getClosecontextEnabled()
-	 * @since 1.2.0
-	 */
-	@Deprecated
-	public Boolean getClosecontextEnable() {
-		return closecontextEnabled;
-	}
-
-
-	/**
-	 * 
-	 * @deprecated use setClosecontextEnabled()
-	 * @since 1.2.0
-	 */
-	@Deprecated
-	public void setClosecontextEnable(Boolean closecontextEnable) {
-		logger.warn("'closecontextEnable' is deprecated. Use 'closeContextEnabled.'");
-		this.closecontextEnabled = closecontextEnable;
-	}
-
 	public Boolean getClosecontextEnabled() {
 		return closecontextEnabled;
 	}

@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.cloud.task.listener.TaskExecutionListenerSupport;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.util.Assert;
 
 /**
@@ -28,6 +29,7 @@ import org.springframework.util.Assert;
  * appended with any additional arguments configured.
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  * @since 1.1.0
  */
 public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport implements CommandLineArgsProvider {
@@ -41,10 +43,7 @@ public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport 
 
 	/**
 	 * @param taskExecution task execution
-	 * @deprecated use the {@link org.springframework.cloud.task.listener.TaskExecutionListener}
-	 * functionality to obtain the {@link TaskExecution}
 	 */
-	@Deprecated
 	public SimpleCommandLineArgsProvider(TaskExecution taskExecution) {
 		Assert.notNull(taskExecution, "A taskExecution is required");
 

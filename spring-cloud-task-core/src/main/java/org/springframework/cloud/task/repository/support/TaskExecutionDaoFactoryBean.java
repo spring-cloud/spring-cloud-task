@@ -96,18 +96,6 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		return true;
 	}
 
-	/**
-	 * Indicates a prefix for all of the task repository's tables if the jdbc option is
-	 * used.
-	 *
-	 * @param tablePrefix the string prefix for the task table names
-	 * @deprecated Use the constructor to inject
-	 */
-	@Deprecated
-	public void setTablePrefix(String tablePrefix) {
-		this.tablePrefix = tablePrefix;
-	}
-
 	private void buildTaskExecutionDao(DataSource dataSource) {
 		DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
 		this.dao = new JdbcTaskExecutionDao(dataSource, this.tablePrefix);
