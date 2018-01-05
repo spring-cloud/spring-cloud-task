@@ -30,11 +30,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class SimpleCommandLineArgsProviderTests {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNullConstructorArg() {
-		new SimpleCommandLineArgsProvider(null);
-	}
-
 	@Test
 	public void test() {
 		TaskExecution taskExecution = new TaskExecution();
@@ -42,7 +37,7 @@ public class SimpleCommandLineArgsProviderTests {
 
 		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider();
 		provider.onTaskStartup(taskExecution);
-
+		
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
 		assertEquals("foo", commandLineArgs.get(0));

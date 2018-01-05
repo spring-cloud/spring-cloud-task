@@ -21,7 +21,6 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-		TaskPropertiesTests.CloseContextEnableTest.class,
 		TaskPropertiesTests.CloseContextEnabledTest.class,
 		
 })
@@ -34,12 +33,6 @@ public class TaskPropertiesTests {
 	@Test
 	public void test() {
 		assertThat(taskProperties.getClosecontextEnabled(), is(false));
-	}
-	
-	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes={TaskPropertiesTests.Config.class}, properties = { "spring.cloud.task.closecontextEnable=false" })
-	@DirtiesContext
-	public static class CloseContextEnableTest extends TaskPropertiesTests {
 	}
 
 	@RunWith(SpringRunner.class)

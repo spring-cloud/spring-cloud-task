@@ -39,18 +39,6 @@ public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport 
 	public SimpleCommandLineArgsProvider() {
 	}
 
-	/**
-	 * @param taskExecution task execution
-	 * @deprecated use the {@link org.springframework.cloud.task.listener.TaskExecutionListener}
-	 * functionality to obtain the {@link TaskExecution}
-	 */
-	@Deprecated
-	public SimpleCommandLineArgsProvider(TaskExecution taskExecution) {
-		Assert.notNull(taskExecution, "A taskExecution is required");
-
-		this.taskExecution = taskExecution;
-	}
-
 	@Override
 	public void onTaskStartup(TaskExecution taskExecution) {
 		this.taskExecution = taskExecution;
