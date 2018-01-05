@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
  * {@link org.springframework.cloud.task.repository.TaskRepository}
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class JdbcTaskBatchDao implements TaskBatchDao {
 
@@ -68,18 +69,6 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 		Assert.notNull(taskExecution, "A taskExecution is required");
 		Assert.notNull(jobExecution, "A jobExecution is required");
 		jdbcTemplate.update(getQuery(INSERT_STATEMENT), taskExecution.getExecutionId(), jobExecution.getId());
-	}
-
-	/**
-	 * The table prefix for the task batch table.
-	 *
-	 * @param tablePrefix defaults to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
-	 * @deprecated Use the constructor to inject this value
-	 */
-	@Deprecated
- 	public void setTablePrefix(String tablePrefix) {
-		Assert.notNull(tablePrefix, "Null is not allowed as a tablePrefix (use an empty string if you don't want a prefix at all).");
-		this.tablePrefix = tablePrefix;
 	}
 
 	private String getQuery(String base) {

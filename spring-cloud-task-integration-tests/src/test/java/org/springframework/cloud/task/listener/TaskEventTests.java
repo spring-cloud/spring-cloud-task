@@ -62,7 +62,7 @@ public class TaskEventTests {
 		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Class[] {TaskEventsConfiguration.class,
 				TaskEventAutoConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
-				RabbitServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext_enable=false",
+				RabbitServiceAutoConfiguration.class}).build().run(new String[] {"--spring.cloud.task.closecontext_enabled=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false",
 				"--spring.cloud.stream.defaultBinder=rabbit",
