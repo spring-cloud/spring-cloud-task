@@ -55,7 +55,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -139,7 +138,7 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
@@ -155,7 +154,7 @@ public class TaskStartTests {
 		getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());

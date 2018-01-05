@@ -171,7 +171,7 @@ public class SimpleTaskExplorerTests {
 					createTaskExecution(getSimpleTaskExecution());
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 
 		Page<TaskExecution> actualResults = taskExplorer.findRunningTaskExecutions(TASK_NAME, pageable);
 		assertEquals(String.format(
@@ -206,7 +206,7 @@ public class SimpleTaskExplorerTests {
 			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
 		}
 
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 		Page<TaskExecution> resultSet = taskExplorer.findTaskExecutionsByName(TASK_NAME, pageable);
 		assertEquals(String.format(
 				"Running task count for task name did not match expected result for testType %s",
@@ -239,25 +239,25 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void findAllExecutionsOffBoundry() {
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 103);
 	}
 
 	@Test
 	public void findAllExecutionsOffBoundryByOne() {
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 101);
 	}
 
 	@Test
 	public void findAllExecutionsOnBoundry() {
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 100);
 	}
 
 	@Test
 	public void findAllExecutionsNoResult() {
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 0);
 	}
 
@@ -285,7 +285,7 @@ public class SimpleTaskExplorerTests {
 				taskPage.getTotalElements());
 
 		//Verify pagination
-		Pageable actualPageable = new PageRequest(0, pageable.getPageSize());
+		Pageable actualPageable = PageRequest.of(0, pageable.getPageSize());
 		boolean hasMorePages = taskPage.hasContent();
 		int pageNumber = 0;
 		int elementCount = 0;

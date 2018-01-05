@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class SimpleCommandLineArgsProviderTests {
 
+	//TODO remove when SimpleCommandLineArgsProvider is removed.
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullConstructorArg() {
 		new SimpleCommandLineArgsProvider(null);
@@ -40,7 +41,8 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		CommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider();
+		provider.onTaskStartup(taskExecution);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
@@ -59,7 +61,8 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider();
+		provider.onTaskStartup(taskExecution);
 		provider.setAppendedArgs(appendedValues);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
@@ -78,7 +81,8 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider();
+		provider.onTaskStartup(taskExecution);
 		provider.setAppendedArgs(null);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);

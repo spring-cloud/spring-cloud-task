@@ -16,9 +16,6 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

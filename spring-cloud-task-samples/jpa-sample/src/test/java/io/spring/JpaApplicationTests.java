@@ -101,7 +101,7 @@ public class JpaApplicationTests {
 		assertTrue("Unable to find the insert message: " + output, output.contains(INSERT_MESSAGE));
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		Map<String, Object> result = template.queryForMap("Select * from TASK_RUN_OUTPUT");
-		assertThat(((Long) result.get("ID")), is(1L));
+		assertThat((result.get("ID")), is(1L));
 		assertThat(((String) result.get("OUTPUT")), containsString("Executed at"));
 	}
 

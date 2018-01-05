@@ -33,7 +33,7 @@ public class ExitStatus {
 	}
 
 	public ExitStatus(org.springframework.batch.core.ExitStatus exitStatus) {
-		Assert.notNull(exitStatus);
+		Assert.notNull(exitStatus, "exitStatus must not be null.");
 
 		this.exitCode = exitStatus.getExitCode();
 		this.exitDescription = exitStatus.getExitDescription();

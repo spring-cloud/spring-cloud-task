@@ -212,9 +212,9 @@ public class TaskLifecycleListenerTests {
 			Integer exitCode, Throwable exception, String externalExecutionId,
 			Long parentExecutionId) {
 
-		Sort sort = new Sort("id");
+		Sort sort = Sort.by("id");
 
-		PageRequest request = new PageRequest(0, Integer.MAX_VALUE, sort);
+		PageRequest request = PageRequest.of(0, Integer.MAX_VALUE, sort);
 
 		Page<TaskExecution> taskExecutionsByName = this.taskExplorer.findTaskExecutionsByName("testTask",
 				request);

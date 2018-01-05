@@ -28,7 +28,6 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
-import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;

@@ -99,7 +99,7 @@ public class TaskBatchExecutionListenerTests {
 	private void validateContext() {
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
@@ -117,7 +117,7 @@ public class TaskBatchExecutionListenerTests {
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", new PageRequest(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 

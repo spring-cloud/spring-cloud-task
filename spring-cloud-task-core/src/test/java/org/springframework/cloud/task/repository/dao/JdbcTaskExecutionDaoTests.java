@@ -138,7 +138,7 @@ public class JdbcTaskExecutionDaoTests {
 	@DirtiesContext
 	public void testFindAllPageableSort()  {
 		initializeRepositoryNotInOrder();
-		Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC,
+		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC,
 				"EXTERNAL_EXECUTION_ID"));
 		Iterator<TaskExecution> iter = getPageIterator(0, 2, sort);
 		TaskExecution taskExecution = iter.next();
@@ -202,8 +202,8 @@ public class JdbcTaskExecutionDaoTests {
 
 	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize, Sort sort) {
 		Pageable pageable = (sort == null) ?
-				new PageRequest(pageNum, pageSize) :
-				new PageRequest(pageNum, pageSize, sort);
+				PageRequest.of(pageNum, pageSize) :
+				PageRequest.of(pageNum, pageSize, sort);
 		Page<TaskExecution> page = dao.findAll(pageable);
 		assertEquals(3, page.getTotalElements());
 		assertEquals(2, page.getTotalPages());
