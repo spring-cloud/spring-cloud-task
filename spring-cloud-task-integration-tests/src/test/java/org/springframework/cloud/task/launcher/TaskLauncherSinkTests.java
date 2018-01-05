@@ -139,7 +139,7 @@ public class TaskLauncherSinkTests {
 		launchTask(URL);
 		assertTrue(waitForDBToBePopulated());
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());

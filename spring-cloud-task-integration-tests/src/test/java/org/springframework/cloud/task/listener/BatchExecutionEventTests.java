@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;

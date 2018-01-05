@@ -38,7 +38,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
@@ -97,7 +96,7 @@ public class TaskPartitionerTests {
 						"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 						"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
+		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		assertEquals("Five rows are expected", 5, taskExecutions.getTotalElements());
 		assertEquals("Only One master is expected", 1, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:master:0"));
 		assertEquals("4 partitions is expected", 4, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:worker:0"));

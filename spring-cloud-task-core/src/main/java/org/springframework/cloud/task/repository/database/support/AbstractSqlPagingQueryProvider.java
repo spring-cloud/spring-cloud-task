@@ -136,7 +136,7 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 
 	@Override
 	public void init(DataSource dataSource) throws Exception {
-		Assert.notNull(dataSource);
+		Assert.notNull(dataSource, "DataSource must not be null");
 		Assert.hasLength(selectClause, "selectClause must be specified");
 		Assert.hasLength(fromClause, "fromClause must be specified");
 		Assert.notEmpty(sortKeys, "sortKey must be specified");

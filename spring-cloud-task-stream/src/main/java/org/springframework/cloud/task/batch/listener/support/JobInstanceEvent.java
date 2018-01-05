@@ -36,7 +36,7 @@ public class JobInstanceEvent extends Entity {
 
 	public JobInstanceEvent(Long id, String jobName) {
 		super(id);
-		Assert.hasLength(jobName);
+		Assert.hasLength(jobName, "jobName must have length greater than zero.");
 		this.jobName = jobName;
 	}
 

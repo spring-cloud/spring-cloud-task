@@ -37,7 +37,7 @@ public class FindAllPagingQueryProviderTests {
 
 	private String databaseProductName;
 	private String expectedQuery;
-	private Pageable pageable = new PageRequest(0, 10);
+	private Pageable pageable = PageRequest.of(0, 10);
 
 	@Parameterized.Parameters
 	public static Collection<Object[]> data() {

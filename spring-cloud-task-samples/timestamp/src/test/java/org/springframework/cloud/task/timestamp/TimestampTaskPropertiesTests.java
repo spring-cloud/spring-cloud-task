@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,7 +32,8 @@ public class TimestampTaskPropertiesTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmptyFormat() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "format:");
+		TestPropertyValues testPropertyValues = TestPropertyValues.of("format:");
+		testPropertyValues.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);

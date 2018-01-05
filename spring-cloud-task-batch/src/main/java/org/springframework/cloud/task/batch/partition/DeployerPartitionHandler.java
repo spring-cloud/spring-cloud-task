@@ -200,7 +200,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 	/**
 	 * Map of deployment properties to be used by the {@link TaskLauncher}
 	 *
-	 * @param deploymentProperties properites to be used by the {@link TaskLauncher}
+	 * @param deploymentProperties properties to be used by the {@link TaskLauncher}
 	 */
 	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
 		this.deploymentProperties = deploymentProperties;
