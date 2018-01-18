@@ -299,3 +299,48 @@ marking the final state of the task.
 }
 ```
 
+[[features-task-execution-listener-Exceptions]]
+==== Exceptions Thrown by Task Execution Listener
+In the case that an exception is thrown by a `TaskExecutionListener` event handler,
+all  listener processing for that event handler will stop.  For example: if three
+`onTaskStartup` listeners have established and the first `onTaskStartup` event handler
+throws an exception then the other two `onTaskStartup` methods will not be called. However the
+other event handlers (onTaskEnd, onTaskFailed) for the
+`TaskExecutionListeners` will be called.
+
+The exit code returned when a exception is thrown by a `TaskExecutionListener`
+event handler will be the exit code that was reported by the https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ExitCodeEvent.html[ExitCodeEvent].  If
+no `ExitCodeEvent` is emitted then the Exception thrown will be evaluated to see
+if it is of type
+https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-application-exit[ExitCodeGenerator]
+, if so it will return the exit code from  the `ExitCodeGenerator` else one
+will be returned.
+
+
+
+[[features-task-execution-listener-exit-messages]]
+==== Exit Messages
+
+A user is allowed to set the exit message for a task programatically via a
+`TaskExecutionListener`.  This is done by setting the `TaskExecution's` `exitMessage`
+that is passed into the `TaskExecutionListener`.   For example if we want to use
+a method that is annotated with  @AfterTask `ExecutionListener` :
+```
+@AfterTask
+public void afterMe(TaskExecution taskExecution) {
+    taskExecution.setExitMessage("AFTER EXIT MESSAGE");
+}
+```
+Since a `ExitMessage` can be set at any of the listener events (onTaskStartup,
+onTaskFailed, and onTaskEnd) the order of precedence is:
+
+. onTaskEnd
+. onTaskFailed
+. onTaskStartup
+
+For example if a user sets a `exitMessage` for the `onTaskStartup` and `onTaskFailed`
+listeners and the task ends without failing then the `exitMessage` from the `onTaskStartup`
+will be stored in the repo, else if a failure occurs then the `exitMessage` from
+the `onTaskFailed` will be stored.  Also if a user sets the `exitMessage` with a
+`onTaskEnd` listener then the `exitMessage` from the `onTaskEnd` will supersede
+the exit messages from both the `onTaskStartup` and `onTaskFailed`.
