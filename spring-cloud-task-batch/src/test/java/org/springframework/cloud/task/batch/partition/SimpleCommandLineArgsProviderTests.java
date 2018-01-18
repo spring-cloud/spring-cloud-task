@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class SimpleCommandLineArgsProviderTests {
 
+	//TODO remove when SimpleCommandLineArgsProvider is removed.
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullConstructorArg() {
 		new SimpleCommandLineArgsProvider(null);
