@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,11 @@ public class TaskBatchAutoConfiguration {
 		@Autowired
 		private ApplicationContext context;
 
-		@Autowired
-		private TaskProperties taskProperties;
-
 		@Bean
 		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
 			TaskConfigurer taskConfigurer = null;
-			if(!context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
-				taskConfigurer = context.getBean(TaskConfigurer.class);
+			if(!this.context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
+				taskConfigurer = this.context.getBean(TaskConfigurer.class);
 			}
 			if(taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
 				return new TaskBatchExecutionListenerFactoryBean(
@@ -74,6 +71,5 @@ public class TaskBatchAutoConfiguration {
 				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
 			}
 		}
-
 	}
 }
