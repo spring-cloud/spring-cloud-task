@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,7 @@ import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -88,6 +90,15 @@ public class TaskStartTests {
 
 	private TaskRepository taskRepository;
 
+	private ConfigurableApplicationContext applicationContext;
+
+	@After
+	public void tearDown() {
+		if (this.applicationContext != null && this.applicationContext.isActive() ) {
+			this.applicationContext.close();
+		}
+	}
+
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -135,7 +146,7 @@ public class TaskStartTests {
 	public void testWithGeneratedTaskExecution() throws Exception {
 		taskRepository.createTaskExecution();
 		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
-		getTaskApplication(1).run(new String[0]);
+		this.applicationContext = getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
@@ -151,7 +162,7 @@ public class TaskStartTests {
 		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
 		assertEquals(TASK_EXECUTION_NAME, taskExplorer.getTaskExecution(1).getTaskName());
 
-		getTaskApplication(1).run(new String[0]);
+		this.applicationContext = getTaskApplication(1).run(new String[0]);
 		assertTrue(waitForDBToBePopulated());
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
@@ -163,7 +174,7 @@ public class TaskStartTests {
 
 	@Test(expected = ApplicationContextException.class)
 	public void testWithNoTaskExecution() throws Exception {
-		getTaskApplication(55).run(new String[0]);
+		this.applicationContext = getTaskApplication(55).run(new String[0]);
 	}
 
 	@Test(expected = ApplicationContextException.class)
@@ -171,7 +182,7 @@ public class TaskStartTests {
 		taskRepository.createTaskExecution();
 		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
 		taskRepository.completeTaskExecution(1, 0, new Date(),"");
-		getTaskApplication(1).run(new String[0]);
+		this.applicationContext = getTaskApplication(1).run(new String[0]);
 	}
 	private SpringApplication getTaskApplication(Integer executionId) {
 		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);

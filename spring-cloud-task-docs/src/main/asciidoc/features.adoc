@@ -47,10 +47,10 @@ Upon completion of all of the `*Runner#run` calls from Spring Boot or the failur
 `ApplicationContext` (indicated via a `ApplicationFailedEvent`), the task execution is
 updated in the repository with the results.
 
-NOTE: At the completion of a task (all `*Runner#run` methods are called and the task
-repository has been updated) the `ApplicationContext` will be closed by default.  This
-behavior can be overriden by setting the property `spring.cloud.task.closecontext_enable`
-to false.
+NOTE: If the application requires the `ApplicationContext` to be closed at the
+completion of a task (all `*Runner#run` methods are called and the task
+repository has been updated), set the property `spring.cloud.task.closecontext_enable`
+to true.
 
 [[features-task-execution-details]]
 === The TaskExecution
