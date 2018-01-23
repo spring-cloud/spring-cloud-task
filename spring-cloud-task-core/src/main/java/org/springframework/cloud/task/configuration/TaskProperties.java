@@ -60,7 +60,7 @@ public class TaskProperties {
 	 * When set to true the context is closed at the end of the task.  Else
 	 * the context remains open.
 	 */
-	private Boolean closecontextEnabled = true;
+	private Boolean closecontextEnabled = false;
 
 	public String getExternalExecutionId() {
 		return externalExecutionId;

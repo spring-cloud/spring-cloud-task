@@ -290,28 +290,3 @@ If you notice, there are three lines of interest in the above output:
 NOTE: A simple task application can be found in the samples module
 of the Spring Cloud Task Project
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/timestamp[here].
-
-
-=== Writing your test
-
-When writing your unit tests for a Spring Cloud Task application we have to keep
-in mind that Spring Cloud Task closes the context at the completion of the task
-as discussed <<features.adoc#features-lifecycle, here>>.  If you are using Spring
-Framework's testing functionality to manage the application context, you'll want to turn
-off Spring Cloud Task's auto-closing of the context.  Add the following
-line: `@TestPropertySource(properties = {"spring.cloud.task.closecontext_enable=false"})`
-to your tests will keep the context open.  For example:
-
-```
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@TestPropertySource(properties = {"spring.cloud.task.closecontext_enabled=false"})
-public class DemoApplicationTests {
-
-	@Test
-	public void contextLoads() {
-	//your test here
-	}
-
-}
-```
