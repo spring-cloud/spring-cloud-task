@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.cloud.task.listener.TaskExecutionListenerSupport;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.util.Assert;
 
@@ -28,19 +27,21 @@ import org.springframework.util.Assert;
  * appended with any additional arguments configured.
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  * @since 1.1.0
  */
-public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport implements CommandLineArgsProvider {
+public class SimpleCommandLineArgsProvider implements CommandLineArgsProvider {
 
 	private TaskExecution taskExecution;
 
 	private List<String> appendedArgs;
 
-	public SimpleCommandLineArgsProvider() {
-	}
+	/**
+	 * @param taskExecution task execution
+	 */
+	public SimpleCommandLineArgsProvider(TaskExecution taskExecution) {
+		Assert.notNull(taskExecution, "A taskExecution is required");
 
-	@Override
-	public void onTaskStartup(TaskExecution taskExecution) {
 		this.taskExecution = taskExecution;
 	}
 
