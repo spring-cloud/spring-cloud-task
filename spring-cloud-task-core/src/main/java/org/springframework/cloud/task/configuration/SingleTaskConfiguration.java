@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 the original author or authors.
+ *  Copyright 2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,19 +42,13 @@ import org.springframework.util.CollectionUtils;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @ConditionalOnProperty(prefix = "spring.cloud.task", name = "singleInstanceEnabled", havingValue = "true")
-public class SimpleSingleTaskConfiguration {
-
-	@Autowired(required = false)
-	Collection<DataSource> dataSources;
+public class SingleTaskConfiguration {
 
 	@Autowired
 	private TaskProperties taskProperties;
 
 	@Autowired
 	private SimpleTaskNameResolver taskNameResolver;
-
-	@Autowired
-	private ConfigurableApplicationContext context;
 
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;

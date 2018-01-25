@@ -19,15 +19,12 @@ package org.springframework.cloud.task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.task.configuration.SimpleSingleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.integration.support.locks.LockRegistry;
-import org.springframework.integration.support.locks.PassThruLockRegistry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -43,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
  * @since 2.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TaskProperties.class, SimpleTaskConfiguration.class, SimpleSingleTaskConfiguration.class})
+@ContextConfiguration(classes = {TaskProperties.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class})
 @TestPropertySource(properties = {
 		"spring.cloud.task.singleInstanceEnabled=true",
 })

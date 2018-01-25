@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 the original author or authors.
+ *  Copyright 2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import org.springframework.integration.support.leader.LockRegistryLeaderInitiato
 import org.springframework.integration.support.locks.LockRegistry;
 
 /**
- * When singleInstanceEnabled is set to true this listener will create a lock for the task
+ * When spring.cloud.task.singleInstanceEnabled is set to true this listener will create a lock for the task
  * based on the spring.cloud.task.name. If a lock already exists this Listener will throw
  * a TaskExecutionException.  If this listener is added manually, then it should
  * be added as the first listener in the chain.

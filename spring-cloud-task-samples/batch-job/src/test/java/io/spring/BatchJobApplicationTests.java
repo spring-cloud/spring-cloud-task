@@ -77,7 +77,7 @@ public class BatchJobApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 3, count);
+		assertEquals("The number of task titles did not match expected: ", 1, count);
 	}
 
 }

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
@@ -196,14 +198,14 @@ public class TaskStartTests {
 		try {
 			taskRepository.createTaskExecution();
 			assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
-			enableFooLock();
+			enableLock("foo");
 			getTaskApplication(1).run(params);
 		}
 		catch (ApplicationContextException taskException) {
 			assertEquals("Failed to start bean 'taskLifecycleListener'; nested " +
 							"exception is org.springframework.cloud.task." +
 							"listener.TaskExecutionException: Failed to process " +
-							"@BeforeTask or @AfterTaskannotation because: ",
+							"@BeforeTask or @AfterTask annotation because: Task with name \"foo\" is already running.",
 					taskException.getMessage());
 			testFailed = true;
 		}
@@ -216,11 +218,11 @@ public class TaskStartTests {
 	public void testDuplicateTaskExecutionWithSingleInstanceDisabled() throws Exception {
 		taskRepository.createTaskExecution();
 		TaskExecution execution = taskRepository.createTaskExecution();
-		taskRepository.startTaskExecution(execution.getExecutionId(), "foo",
+		taskRepository.startTaskExecution(execution.getExecutionId(), "bar",
 				new Date(), new ArrayList<>(), "");
-		String params[] = {"--spring.cloud.task.name=foo"};
-		enableFooLock();
-		getTaskApplication(1).run(params);
+		String params[] = {"--spring.cloud.task.name=bar"};
+		enableLock("bar");
+		this.applicationContext = getTaskApplication(1).run(params);
 		assertTrue(waitForDBToBePopulated());
 	}
 
@@ -257,12 +259,12 @@ public class TaskStartTests {
 		return isDbPopulated;
 	}
 
-	private void enableFooLock() {
+	private void enableLock(String lockKey) {
 		SimpleJdbcInsert taskLockInsert = new SimpleJdbcInsert(this.dataSource).withTableName("TASK_LOCK");
 		Map<String, Object> taskLockParams = new HashMap<>();
-		taskLockParams.put("LOCK_KEY", "acbd18db-4cc2-385c-adef-654fccc4a4d8");
+		taskLockParams.put("LOCK_KEY", UUID.nameUUIDFromBytes(lockKey.getBytes()).toString());
 		taskLockParams.put("REGION", "DEFAULT");
-		taskLockParams.put("CLIENT_ID", "ac39193d-4a24-4112-9d1b-5d79d6286921");
+		taskLockParams.put("CLIENT_ID", "aClientID");
 		taskLockParams.put("CREATED_DATE", new Date());
 		taskLockInsert.execute(taskLockParams);
 	}

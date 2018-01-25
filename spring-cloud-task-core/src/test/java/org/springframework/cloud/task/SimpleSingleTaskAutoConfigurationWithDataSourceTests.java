@@ -19,15 +19,12 @@ package org.springframework.cloud.task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.configuration.SimpleSingleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
-import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -44,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SimpleTaskConfiguration.class,
-		SimpleSingleTaskConfiguration.class,
+		SingleTaskConfiguration.class,
 		EmbeddedDataSourceConfiguration.class})
 @TestPropertySource(properties = {
 		"spring.cloud.task.singleInstanceEnabled=true",
