@@ -108,21 +108,7 @@ public class TaskLauncherSinkTests {
 		properties.put("spring.cloud.task.initialize.enable", "false");
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
-		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
-		template.execute("DROP TABLE IF EXISTS TASK_SEQ");
-		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION_PARAMS");
-		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION");
-		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ");
-		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_CONTEXT");
-		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_SEQ");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_PARAMS");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
-		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
-		template.execute("DROP SEQUENCE IF EXISTS TASK_SEQ");
-
+		template.execute("DROP ALL OBJECTS");
 
 		DataSourceInitializer initializer = new DataSourceInitializer();
 
