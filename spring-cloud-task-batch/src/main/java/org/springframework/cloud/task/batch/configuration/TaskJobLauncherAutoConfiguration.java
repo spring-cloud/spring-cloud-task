@@ -36,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnMissingBean(name = "taskJobLauncherCommandLineRunner")
 @ConditionalOnProperty(name = "spring.cloud.task.batch.command.line.runner.enabled", havingValue = "true", matchIfMissing = false)
 @EnableConfigurationProperties(TaskBatchProperties.class)
 public class TaskJobLauncherAutoConfiguration {
