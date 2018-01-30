@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.cloud.task.listener.TaskExecutionListenerSupport;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.util.Assert;
 
 /**
@@ -36,6 +37,9 @@ public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport 
 	private TaskExecution taskExecution;
 
 	private List<String> appendedArgs;
+
+	public SimpleCommandLineArgsProvider() {
+	}
 
 	/**
 	 * @param taskExecution task execution
