@@ -55,9 +55,13 @@ import org.springframework.util.StringUtils;
  * {@link CommandLineRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
  * jobs in the surrounding context by default and throw an exception upon the
  * first job that returns an {@link ExitStatus} of FAILED.
- * Can also be used to launch a specific job by providing a jobName.
+ * Can also be used to launch a specific job by providing a jobName. The
+ * TaskJobLaunchercommandLineRunner takes the place of the
+ * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}
+ * when it is in use.
  *
  * @author Glenn Renfro
+ * @since 2.0.0
  */
 public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Ordered, ApplicationEventPublisherAware{
 	/**

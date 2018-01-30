@@ -64,33 +64,8 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@Test
-	public void testTaskJobLauncherCLRSuccess() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.command.line.runner.enabled=true",
-				"--spring.cloud.task.closecontext_enable=false" };
-		this.applicationContext = SpringApplication
-				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						EmbeddedDataSourceConfiguration.class,
-						BatchAutoConfiguration.class,
-						TaskBatchAutoConfiguration.class,
-						TaskJobLauncherAutoConfiguration.class }, enabledArgs);
-		assertThat(applicationContext.getBean(TaskJobLauncherCommandLineRunner.class)).isNotNull();
-		boolean jobLauncherCLRDoesNotExist = false;
-		try {
-			applicationContext.getBean(JobLauncherCommandLineRunner.class);
-		}
-		catch (NoSuchBeanDefinitionException exception) {
-			jobLauncherCLRDoesNotExist = true;
-		}
-		assertThat(jobLauncherCLRDoesNotExist).isTrue();
-		validateContext();
-
-	}
-
-	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.command.line.runner.enabled=true",
-				"--spring.cloud.task.closecontext_enable=false" };
+		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.commandLineRunnerEnabled=true" };
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -110,8 +85,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.command.line.runner.enabled=true",
-				"--spring.cloud.task.closecontext_enable=false",
+				"--spring.cloud.task.batch.commandLineRunnerEnabled=true",
 				"--spring.cloud.task.batch.jobNames=jobSucceed" };
 		boolean isExceptionThrown = false;
 		try {
@@ -132,8 +106,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testCommandLineRunnerSetToFalse() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.command.line.runner.enabled=false",
-				"--spring.cloud.task.closecontext_enable=false" };
+		String[] enabledArgs = new String[] { "--spring.cloud.task.closecontext_enable=false" };
 		this.applicationContext = SpringApplication
 				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
@@ -213,10 +186,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 								ChunkContext chunkContext)
 								throws Exception {
 							System.out.println("Executed");
-							if (true) {
 								throw new IllegalStateException("WHOOPS");
-							}
-							return RepeatStatus.FINISHED;
 						}
 					}).build())
 					.build();

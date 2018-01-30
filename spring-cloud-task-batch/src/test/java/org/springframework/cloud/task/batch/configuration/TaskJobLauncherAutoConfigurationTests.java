@@ -48,8 +48,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	@Test
 	public void testAutobuiltDataSourceWithTaskJobLauncherCLR() {
 		String [] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.command.line.runner.enabled=true",
-				"--spring.cloud.task.closecontext_enable=false"};
+				"--spring.cloud.task.batch.commandLineRunnerEnabled=true"};
 		this.applicationContext = SpringApplication.run(new Class[]
 				{TaskBatchExecutionListenerTests.JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
@@ -69,7 +68,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 
 	@Test
 	public void testAutobuiltDataSourceWithTaskJobLauncherCLRDisabled() {
-		String [] enabledArgs = new String[] {"--spring.cloud.task.closecontext_enable=false"};
+		String [] enabledArgs = {};
 		this.applicationContext = SpringApplication.run(new Class[]
 				{TaskBatchExecutionListenerTests.JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
