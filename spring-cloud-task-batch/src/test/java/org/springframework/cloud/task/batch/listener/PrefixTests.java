@@ -16,12 +16,10 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.sql.SQLException;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.h2.tools.Server;
 import org.junit.After;
 import org.junit.Test;
 
@@ -43,8 +41,8 @@ import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,7 +80,7 @@ public class PrefixTests {
 	@Test
 	public void testPrefix() {
 		this.applicationContext = SpringApplication.run(new Class[] {
-				TaskDBConfiguration.class, JobConfiguration.class,
+				JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class }, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
@@ -92,68 +90,6 @@ public class PrefixTests {
 		Set<Long> jobIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(1);
 		assertThat(jobIds.size()).isEqualTo(1);
 		assertThat(jobIds.contains(1L));
-	}
-
-	@Configuration
-	public static class TaskDBConfiguration {
-
-		@Bean(destroyMethod = "stop")
-		public Server initH2TCPServer() {
-			Server server;
-			try {
-				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
-						String.valueOf(randomPort)).start();
-			}
-			catch (SQLException e) {
-				throw new IllegalStateException(e);
-			}
-			initializeDB();
-			return server;
-		}
-
-		private void initializeDB() {
-			JdbcTemplate template = new JdbcTemplate(dataSourceInit());
-			template.execute("CREATE SEQUENCE FOO_SEQ");
-			template.execute("CREATE TABLE FOO_EXECUTION  (" +
-					"TASK_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY ," +
-					"START_TIME TIMESTAMP DEFAULT NULL ," +
-					"END_TIME TIMESTAMP DEFAULT NULL ," +
-					"TASK_NAME  VARCHAR(100) ," +
-					"EXIT_CODE INTEGER ," +
-					"EXIT_MESSAGE VARCHAR(2500) ," +
-					"ERROR_MESSAGE VARCHAR(2500) ," +
-					"LAST_UPDATED TIMESTAMP," +
-					"EXTERNAL_EXECUTION_ID VARCHAR(255)," +
-					"PARENT_EXECUTION_ID BIGINT" +
-					")");
-			template.execute("CREATE TABLE FOO_EXECUTION_PARAMS  (" +
-					"TASK_EXECUTION_ID BIGINT NOT NULL ," +
-					"TASK_PARAM VARCHAR(2500) ," +
-					"constraint TASK_EXEC_PARAMS_FK foreign key (TASK_EXECUTION_ID)" +
-					"references FOO_EXECUTION(TASK_EXECUTION_ID)" +
-					")");
-			template.execute("CREATE TABLE FOO_TASK_BATCH (" +
-					"  TASK_EXECUTION_ID BIGINT NOT NULL ," +
-					"  JOB_EXECUTION_ID BIGINT NOT NULL ," +
-					"constraint TASK_EXEC_BATCH_FK foreign key (TASK_EXECUTION_ID)" +
-					"references FOO_EXECUTION(TASK_EXECUTION_ID)" +
-					")");
-		}
-
-		@Bean
-		public DataSource dataSource(Server server) {
-			return dataSourceInit();
-		}
-
-		public DataSource dataSourceInit() {
-			DriverManagerDataSource dataSource = new DriverManagerDataSource();
-			dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
-			dataSource.setUrl(DATASOURCE_URL);
-			dataSource.setUsername(DATASOURCE_USER_NAME);
-			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-			return dataSource;
-		}
-
 	}
 
 	@Configuration
@@ -178,6 +114,14 @@ public class PrefixTests {
 							return RepeatStatus.FINISHED;
 						}
 					}).build())
+					.build();
+		}
+
+		@Bean
+		public DataSource dataSource() {
+			return new EmbeddedDatabaseBuilder()
+					.addScript("classpath:schema-h2.sql")
+					.setType(EmbeddedDatabaseType.H2)
 					.build();
 		}
 	}
