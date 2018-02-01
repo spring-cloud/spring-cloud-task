@@ -32,11 +32,14 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Provides auto configuration for the {@link TaskBatchExecutionListener}.
  *
+ * The spring.cloud.task.batch.listener.enable is being deprecated,
+ * spring.cloud.task.batch.listener.enabled should be used.
+ *
  * @author Michael Minella
  */
 @Configuration
 @ConditionalOnBean({Job.class})
-@ConditionalOnProperty(name = "spring.cloud.task.batch.listener.enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = {"spring.cloud.task.batch.listener.enable", "spring.cloud.task.batch.listener.enabled"}, havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
 
 	@Bean

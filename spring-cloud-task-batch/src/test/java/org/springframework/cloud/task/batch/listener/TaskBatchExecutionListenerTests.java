@@ -86,6 +86,36 @@ public class TaskBatchExecutionListenerTests {
 		validateContext();
 	}
 
+	@Test(expected = AssertionError.class)
+	public void testNoAutoConfigurationEnabled() {
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				BatchAutoConfiguration.class,
+				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enabled=false"});
+		validateContext();
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testNoAutoConfigurationEnable() {
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				BatchAutoConfiguration.class,
+				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enable=false"});
+		validateContext();
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testNoAutoConfigurationBothDisabled() {
+		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				EmbeddedDataSourceConfiguration.class,
+				BatchAutoConfiguration.class,
+				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false"});
+		validateContext();
+	}
+
 	@Test
 	public void testFactoryBean() {
 		this.applicationContext = SpringApplication.run(new Class[]{JobFactoryBeanConfiguration.class,
