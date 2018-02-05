@@ -32,7 +32,7 @@ The lifecycle consists of a single task execution.  This is a physical execution
 Spring Boot application configured to be a task (annotated with the `@EnableTask`
 annotation).
 
-At the beginning of a task (before any `CommandLineRunner` or `ApplicationRunner`
+At the beginning of a task before any `CommandLineRunner` or `ApplicationRunner`
 implementations have been executed, an entry in the `TaskRepository` is created recording
 the start event. This event is triggered via `SmartLifecycle#start` being triggered by
 Spring Framework. This indicates to the system that all beans are ready for use and is
@@ -79,7 +79,7 @@ assumed to be 0.
 |The time the task was completed as indicated by the `ApplicationReadyEvent`.
 
 |`exitMessage`
-|Any information available at the time of exit.  This can programatically be set via a
+|Any information available at the time of exit.  This can programmatically be set via a
 `TaskExecutionListener`.
 
 |`errorMessage`
@@ -321,7 +321,7 @@ will be returned.
 [[features-task-execution-listener-exit-messages]]
 ==== Exit Messages
 
-A user is allowed to set the exit message for a task programatically via a
+A user is allowed to set the exit message for a task programmatically via a
 `TaskExecutionListener`.  This is done by setting the `TaskExecution's` `exitMessage`
 that is passed into the `TaskExecutionListener`.   For example if we want to use
 a method that is annotated with  @AfterTask `ExecutionListener` :
