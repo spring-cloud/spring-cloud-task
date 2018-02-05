@@ -159,7 +159,7 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testNoClosingOfContext() {
 		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Class[]{TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
-				new String[] {"--spring.cloud.task.closecontext_enable=false"});
+				new String[] {"--spring.cloud.task.closecontext_enabled=false"});
 
 		try {
 			assertTrue(applicationContext.isActive());
