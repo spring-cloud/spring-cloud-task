@@ -108,12 +108,6 @@ public class TaskLauncherSinkTests {
 		assertTrue(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX));
 	}
 
-	@Test(expected = MessageHandlingException.class)
-	public void testInvalidJar() {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTask(
-				INVALID_URL, null, null);
-	}
-
 	@Test
 	public void testNoRun() {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher =
