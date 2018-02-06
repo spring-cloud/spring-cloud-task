@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Provides auto configuration for the {@link TaskBatchExecutionListener}.
  *
- * The spring.cloud.task.batch.listener.enable is being deprecated,
+ * The spring.cloud.task.batch.listener.enable is deprecated,
  * spring.cloud.task.batch.listener.enabled should be used.
  *
  * @author Michael Minella
