@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.handler;
 
 import java.util.Set;
 
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;
 
@@ -36,11 +37,13 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -106,7 +109,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testCommandLineRunnerSetToFalse() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.closecontext_enable=false" };
+		String[] enabledArgs = new String[] { };
 		this.applicationContext = SpringApplication
 				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,

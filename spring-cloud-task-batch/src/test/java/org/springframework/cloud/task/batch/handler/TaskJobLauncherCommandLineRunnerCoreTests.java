@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.task.batch.handler;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -37,10 +37,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.listener.TaskException;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,12 +51,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Glenn Renfro
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class})
 public class TaskJobLauncherCommandLineRunnerCoreTests {
-	private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+	@Autowired
+	private JobRepository jobRepository;
+
+	@Autowired
+	private JobLauncher jobLauncher;
+
+	@Autowired
+	private JobExplorer jobExplorer;
+
+	@Autowired
+	PlatformTransactionManager transactionManager;
 
 	private TaskJobLauncherCommandLineRunner runner;
-
-	private JobExplorer jobExplorer;
 
 	private JobBuilderFactory jobs;
 
@@ -65,27 +79,16 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	@Before
 	public void init() {
-		this.context.register(BatchConfiguration.class);
-		this.context.refresh();
-		JobRepository jobRepository = this.context.getBean(JobRepository.class);
-		JobLauncher jobLauncher = this.context.getBean(JobLauncher.class);
-		this.jobs = new JobBuilderFactory(jobRepository);
-		PlatformTransactionManager transactionManager = this.context
-				.getBean(PlatformTransactionManager.class);
-		this.steps = new StepBuilderFactory(jobRepository, transactionManager);
+		this.jobs = new JobBuilderFactory(this.jobRepository);
+		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);
 		Tasklet tasklet = (contribution, chunkContext) -> null;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.jobExplorer = this.context.getBean(JobExplorer.class);
-		this.runner = new TaskJobLauncherCommandLineRunner(jobLauncher, this.jobExplorer);
-		this.context.getBean(BatchConfiguration.class).clear();
+		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer);
 	}
 
-	@After
-	public void closeContext() {
-		this.context.close();
-	}
 
+	@DirtiesContext
 	@Test
 	public void basicExecution() throws Exception {
 		this.runner.execute(this.job, new JobParameters());
@@ -95,6 +98,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
+	@DirtiesContext
 	@Test
 	public void incrementExistingExecution() throws Exception {
 		this.job = this.jobs.get("job").start(this.step)
@@ -104,6 +108,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
+	@DirtiesContext
 	@Test
 	public void retryFailedExecution() throws Exception {
 		this.job = this.jobs.get("job")
@@ -114,6 +119,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
 
+	@DirtiesContext
 	@Test
 	public void retryFailedExecutionOnNonRestartableJob() throws Exception {
 		this.job = this.jobs.get("job").preventRestart()
@@ -126,6 +132,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
+	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithNonIdentifyingParameters() throws Exception {
 		this.job = this.jobs.get("job")

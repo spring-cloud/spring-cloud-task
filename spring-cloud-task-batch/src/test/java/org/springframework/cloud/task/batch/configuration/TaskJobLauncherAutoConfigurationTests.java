@@ -16,18 +16,15 @@
 
 package org.springframework.cloud.task.batch.configuration;
 
-import org.junit.After;
 import org.junit.Test;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListenerTests;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,53 +33,28 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TaskJobLauncherAutoConfigurationTests {
 
-	private ConfigurableApplicationContext applicationContext;
+	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().
+			withUserConfiguration(TaskBatchExecutionListenerTests.JobConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class,
+					EmbeddedDataSourceConfiguration.class,
+					BatchAutoConfiguration.class,
+					TaskJobLauncherAutoConfiguration.class);
 
-	@After
-	public void tearDown() {
-		if(this.applicationContext != null) {
-			this.applicationContext.close();
-		}
+	@Test
+	public void testAutoBuiltDataSourceWithTaskJobLauncherCLR() {
+		this.contextRunner.
+				withPropertyValues("spring.cloud.task.batch.commandLineRunnerEnabled=true").
+				run(context -> {
+			assertThat(context).hasSingleBean(TaskJobLauncherCommandLineRunner.class);
+			assertThat(context).doesNotHaveBean(JobLauncherCommandLineRunner.class);
+		});
 	}
 
 	@Test
-	public void testAutobuiltDataSourceWithTaskJobLauncherCLR() {
-		String [] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.commandLineRunnerEnabled=true"};
-		this.applicationContext = SpringApplication.run(new Class[]
-				{TaskBatchExecutionListenerTests.JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskJobLauncherAutoConfiguration.class}, enabledArgs);
-		assertThat(this.applicationContext.getBean(TaskJobLauncherCommandLineRunner.class)).isNotNull();
-		boolean exceptionThrown = false;
-		try {
-			this.applicationContext.getBean(JobLauncherCommandLineRunner.class);
-		}
-		catch(NoSuchBeanDefinitionException exception) {
-			exceptionThrown = true;
-		}
-		assertThat(exceptionThrown).isTrue();
-	}
-
-	@Test
-	public void testAutobuiltDataSourceWithTaskJobLauncherCLRDisabled() {
-		String [] enabledArgs = {};
-		this.applicationContext = SpringApplication.run(new Class[]
-				{TaskBatchExecutionListenerTests.JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskJobLauncherAutoConfiguration.class}, enabledArgs);
-		assertThat(this.applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
-		boolean exceptionThrown = false;
-		try {
-			this.applicationContext.getBean(TaskJobLauncherCommandLineRunner.class);
-		}
-		catch(NoSuchBeanDefinitionException exception) {
-			exceptionThrown = true;
-		}
-		assertThat(exceptionThrown).isTrue();
+	public void testAutoBuiltDataSourceWithTaskJobLauncherCLRDisabled() {
+		this.contextRunner.run(context -> {
+			assertThat(context).hasSingleBean(JobLauncherCommandLineRunner.class);
+			assertThat(context).doesNotHaveBean(TaskJobLauncherCommandLineRunner.class);
+		});
 	}
 }

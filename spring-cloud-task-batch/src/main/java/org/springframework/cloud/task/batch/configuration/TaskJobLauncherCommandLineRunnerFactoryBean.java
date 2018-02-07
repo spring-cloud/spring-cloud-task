@@ -24,6 +24,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -48,6 +49,7 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 			JobRegistry jobRegistry) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
+		Assert.notEmpty(jobs, "jobs must not be null nor empty");
 		this.jobs = jobs;
 		this.jobNames = jobNames;
 		this.jobRegistry = jobRegistry;

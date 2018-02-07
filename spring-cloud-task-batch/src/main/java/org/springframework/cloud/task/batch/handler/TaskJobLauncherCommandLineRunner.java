@@ -108,7 +108,6 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 		this.publisher = publisher;
 	}
 
-	@Autowired(required = false)
 	public void setJobRegistry(JobRegistry jobRegistry) {
 		this.jobRegistry = jobRegistry;
 	}
@@ -117,12 +116,10 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 		this.jobNames = jobNames;
 	}
 
-	@Autowired(required = false)
 	public void setJobParametersConverter(JobParametersConverter converter) {
 		this.converter = converter;
 	}
 
-	@Autowired(required = false)
 	public void setJobs(Collection<Job> jobs) {
 		this.jobs = jobs;
 	}
