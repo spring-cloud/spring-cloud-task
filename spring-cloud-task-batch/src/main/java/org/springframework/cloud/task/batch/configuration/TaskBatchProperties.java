@@ -23,6 +23,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Spring Batch.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
+ *
+ * @since 2.0.0
  */
 @ConfigurationProperties(prefix = "spring.cloud.task.batch")
 public class TaskBatchProperties {
@@ -33,11 +36,26 @@ public class TaskBatchProperties {
 	 */
 	private String jobNames = "";
 
+	/**
+	 * The order for the {@coce CommandLineRunner} used to run batch jobs when
+	 * {@code spring.cloud.task.batch.failOnJobFailure=true}.  Defaults to 0 (same as the
+	 * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}).
+	 */
+	private int commandLineRunnerOrder = 0;
+
 	public String getJobNames() {
 		return this.jobNames;
 	}
 
 	public void setJobNames(String jobNames) {
 		this.jobNames = jobNames;
+	}
+
+	public int getCommandLineRunnerOrder() {
+		return commandLineRunnerOrder;
+	}
+
+	public void setCommandLineRunnerOrder(int commandLineRunnerOrder) {
+		this.commandLineRunnerOrder = commandLineRunnerOrder;
 	}
 }

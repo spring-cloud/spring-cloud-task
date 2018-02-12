@@ -44,6 +44,8 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 
 	private JobRegistry jobRegistry;
 
+	private Integer order = 0;
+
 	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs, String jobNames,
 			JobRegistry jobRegistry) {
@@ -55,6 +57,10 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 		this.jobRegistry = jobRegistry;
 	}
 
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	@Override
 	public TaskJobLauncherCommandLineRunner getObject() throws Exception {
 		TaskJobLauncherCommandLineRunner  taskJobLauncherCommandLineRunner =
@@ -64,6 +70,11 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 			taskJobLauncherCommandLineRunner.setJobNames(this.jobNames);
 		}
 		taskJobLauncherCommandLineRunner.setJobRegistry(this.jobRegistry);
+
+		if(this.order != null) {
+			taskJobLauncherCommandLineRunner.setOrder(this.order);
+		}
+
 		return taskJobLauncherCommandLineRunner;
 	}
 

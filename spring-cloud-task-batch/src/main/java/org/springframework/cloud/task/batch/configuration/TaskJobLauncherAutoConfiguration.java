@@ -23,7 +23,6 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.task.batch.commandLineRunnerEnabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.cloud.task.batch.failOnJobFailure", havingValue = "true", matchIfMissing = false)
 @EnableConfigurationProperties(TaskBatchProperties.class)
 public class TaskJobLauncherAutoConfiguration {
 
@@ -46,8 +45,15 @@ public class TaskJobLauncherAutoConfiguration {
 	@Bean
 	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs, JobRegistry jobRegistry) {
-		TaskJobLauncherCommandLineRunnerFactoryBean taskJobLauncherCommandLineRunner = new TaskJobLauncherCommandLineRunnerFactoryBean(
-				jobLauncher, jobExplorer, jobs, this.properties.getJobNames(), jobRegistry);
-		return taskJobLauncherCommandLineRunner;
+		TaskJobLauncherCommandLineRunnerFactoryBean taskJobLauncherCommandLineRunnerFactoryBean =
+				new TaskJobLauncherCommandLineRunnerFactoryBean(jobLauncher,
+						jobExplorer,
+						jobs,
+						this.properties.getJobNames(),
+						jobRegistry);
+
+		taskJobLauncherCommandLineRunnerFactoryBean.setOrder(this.properties.getCommandLineRunnerOrder());
+
+		return taskJobLauncherCommandLineRunnerFactoryBean;
 	}
 }

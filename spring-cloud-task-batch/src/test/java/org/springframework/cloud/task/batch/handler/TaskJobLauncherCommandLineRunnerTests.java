@@ -18,7 +18,6 @@ package org.springframework.cloud.task.batch.handler;
 
 import java.util.Set;
 
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;
 
@@ -37,13 +36,11 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +65,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.commandLineRunnerEnabled=true" };
+		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -88,7 +85,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.commandLineRunnerEnabled=true",
+				"--spring.cloud.task.batch.failOnJobFailure=true",
 				"--spring.cloud.task.batch.jobNames=jobSucceed" };
 		boolean isExceptionThrown = false;
 		try {

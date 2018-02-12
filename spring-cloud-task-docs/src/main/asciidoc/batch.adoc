@@ -251,7 +251,12 @@ To override this behavior and allow the task to return an exit code other than z
 https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html#boot-features-application-exit[ExitCodeGenerator]
 specified) upon a batch job returning an
 https://docs.spring.io/spring-batch/4.0.x/reference/html/step.html#conditionalFlow[ExitStatus]
-of "FAILED", set `spring.cloud.task.batch.commandLineRunnerEnabled` to true.
+of "FAILED", set `spring.cloud.task.batch.failOnJobFailure` to true.
+
+This functionality does utilize a new `CommandLineRunner` that replaces the one provided
+by Spring Boot.  By default it is configured with the same order.  However, if you'd like
+to customize what order the `CommandLineRunner` is executed in, you can set it's order via
+the `spring.cloud.task.batch.commandLineRunnerOrder` property.
 To have your task return the exit code based on the result of the batch job
 execution, you will need to write your own `CommandLineRunner`.
 

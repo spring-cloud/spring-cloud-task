@@ -65,7 +65,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	private JobExplorer jobExplorer;
 
 	@Autowired
-	PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager transactionManager;
 
 	private TaskJobLauncherCommandLineRunner runner;
 
