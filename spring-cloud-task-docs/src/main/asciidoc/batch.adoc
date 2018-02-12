@@ -243,8 +243,15 @@ is covered in detail in the section
 
 As discussed before Spring Cloud Task applications support the ability to record the exit code of a task execution.
 However in cases where a user is running a Spring Batch Job within a task, regardless of how the Batch Job
-Execution completes the result of the task will always be zero when using default Batch/Boot behavior.  Keep in mind
-that a task is a boot application and the exit code returned from the task is the same as a boot application.  So
-to have your task return the exit code based on the result of the batch job execution, you will need to write your
-own CommandLineRunner.
+Execution completes the result of the task will always be zero when using default Batch/Boot behavior.
+Keep in mind that a task is a boot application and the exit code returned from
+the task is the same as a boot application.
+To override this behavior and allow the task to return an exit code other than zero
+(either 1 `the default` or based on the
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html#boot-features-application-exit[ExitCodeGenerator]
+specified) upon a batch job returning an
+https://docs.spring.io/spring-batch/4.0.x/reference/html/step.html#conditionalFlow[ExitStatus]
+of "FAILED", set `spring.cloud.task.batch.commandLineRunnerEnabled` to true.
+To have your task return the exit code based on the result of the batch job
+execution, you will need to write your own `CommandLineRunner`.
 
