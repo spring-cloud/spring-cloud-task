@@ -68,10 +68,11 @@ public class TaskBatchAutoConfiguration {
 			if(taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
 				return new TaskBatchExecutionListenerFactoryBean(
 						taskConfigurer.getTaskDataSource(),
-						taskExplorer);
+						taskExplorer, taskProperties.getTablePrefix());
 			}
 			else {
-				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer);
+				return new TaskBatchExecutionListenerFactoryBean(null,
+						taskExplorer, taskProperties.getTablePrefix());
 			}
 		}
 
