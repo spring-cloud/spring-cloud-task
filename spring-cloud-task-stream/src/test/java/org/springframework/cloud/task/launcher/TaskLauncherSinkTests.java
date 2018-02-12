@@ -109,6 +109,13 @@ public class TaskLauncherSinkTests {
 		verifySuccessWithAppName(testTaskLauncher);
 	}
 
+	@Test
+	public void testInvalidJar() throws Exception{
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskTaskLaunchRequest(
+				INVALID_URL, null, APP_NAME);
+		verifySuccessWithAppName(testTaskLauncher);
+	}
+
 	private void verifySuccessWithAppName(TaskConfiguration.TestTaskLauncher testTaskLauncher) {
 		assertEquals(LaunchState.complete, testTaskLauncher.status(DEFAULT_STATUS).getState());
 		assertEquals(0, testTaskLauncher.getCommandlineArguments().size());
