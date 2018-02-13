@@ -56,6 +56,9 @@ public class TaskBatchAutoConfiguration {
 		@Autowired
 		private ApplicationContext context;
 
+		@Autowired
+		private TaskProperties taskProperties;
+
 		@Bean
 		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
 			TaskConfigurer taskConfigurer = null;

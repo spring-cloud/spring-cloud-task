@@ -17,19 +17,15 @@
 package org.springframework.cloud.task.batch.listener;
 
 import java.util.Set;
-
 import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Test;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -43,7 +39,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,22 +46,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  */
 public class PrefixTests {
-
-	private final static String DATASOURCE_URL;
-
-	private final static String DATASOURCE_USER_NAME = "SA";
-
-	private final static String DATASOURCE_USER_PASSWORD = "''";
-
-	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
-
-	private static int randomPort;
-
-	static {
-		randomPort = SocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
-	}
 
 	private ConfigurableApplicationContext applicationContext;
 
@@ -106,13 +85,10 @@ public class PrefixTests {
 		@Bean
 		public Job job() {
 			return jobBuilderFactory.get("job")
-					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-								throws Exception {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
+					.start(stepBuilderFactory.get("step1")
+							.tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
 					}).build())
 					.build();
 		}
