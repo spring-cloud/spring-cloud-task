@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.List;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.cloud.task.listener.TaskExecutionListenerSupport;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.util.Assert;
 
 /**

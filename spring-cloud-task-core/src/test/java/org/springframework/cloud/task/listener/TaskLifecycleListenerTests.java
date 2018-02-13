@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,14 +158,10 @@ public class TaskLifecycleListenerTests {
 
 	@Test
 	public void testNoClosingOfContext() {
-		ConfigurableApplicationContext applicationContext = SpringApplication.run(new Class[]{TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
-				new String[] {"--spring.cloud.task.closecontext_enabled=false"});
 
-		try {
+		try (ConfigurableApplicationContext applicationContext = SpringApplication.run(new Class[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
+				new String[] {"--spring.cloud.task.closecontext_enabled=false"})) {
 			assertTrue(applicationContext.isActive());
-		}
-		finally {
-			applicationContext.close();
 		}
 	}
 
@@ -173,7 +169,7 @@ public class TaskLifecycleListenerTests {
 	public void testInvalidTaskExecutionId() {
 		ConfigurableEnvironment environment = new StandardEnvironment();
 		MutablePropertySources propertySources = environment.getPropertySources();
-		Map myMap = new HashMap();
+		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.executionid", "55");
 		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		context.setEnvironment(environment);
@@ -195,7 +191,7 @@ public class TaskLifecycleListenerTests {
 	public void testExternalExecutionId() {
 		ConfigurableEnvironment environment = new StandardEnvironment();
 		MutablePropertySources propertySources = environment.getPropertySources();
-		Map myMap = new HashMap();
+		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.external-execution-id", "myid");
 		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		context.setEnvironment(environment);
@@ -209,7 +205,7 @@ public class TaskLifecycleListenerTests {
 	public void testParentExecutionId() {
 		ConfigurableEnvironment environment = new StandardEnvironment();
 		MutablePropertySources propertySources = environment.getPropertySources();
-		Map myMap = new HashMap();
+		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.parentExecutionId", 789);
 		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		context.setEnvironment(environment);

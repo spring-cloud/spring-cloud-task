@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 the original author or authors.
+ *  Copyright 2016-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,8 +58,8 @@ import static org.junit.Assert.assertTrue;
 public class JobExecutionEventTests {
 
 	private static final String JOB_NAME = "FOODJOB";
-	private static final Long JOB_INSTANCE_ID = 1l;
-	private static final Long JOB_EXECUTION_ID = 2l;
+	private static final Long JOB_INSTANCE_ID = 1L;
+	private static final Long JOB_EXECUTION_ID = 2L;
 	private static final String JOB_CONFIGURATION_NAME = "FOO_JOB_CONFIG";
 	private static final String[] LISTENER_BEAN_NAMES = {BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER,
 			BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER, BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER,
@@ -97,7 +97,7 @@ public class JobExecutionEventTests {
 		JobParameter[] PARAMETERS = {new JobParameter("FOO", true), new JobParameter(1L, true),
 				new JobParameter(1D, true), new JobParameter(testDate, false)};
 
-		Map jobParamMap = new LinkedHashMap<>();
+		Map<String, JobParameter> jobParamMap = new LinkedHashMap<>();
 		for (int paramCount = 0; paramCount < JOB_PARAM_KEYS.length; paramCount++) {
 			jobParamMap.put(JOB_PARAM_KEYS[paramCount], PARAMETERS[paramCount]);
 		}
@@ -296,7 +296,7 @@ public class JobExecutionEventTests {
 		}
 	}
 
-	public void testDisabledConfiguration(String property, String disabledListener) {
+	private void testDisabledConfiguration(String property, String disabledListener) {
 		boolean exceptionThrown = false;
 		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 		ConfigurableApplicationContext applicationContext =
