@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,17 +50,17 @@ public class TaskLauncherSink {
 
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
-	 * @param request is a TaskLaunchRequest containing the information required to launch
+	 * @param taskLaunchRequest is a TaskLaunchRequest containing the information required to launch
 	 * a task.
 	 */
 	@ServiceActivator(inputChannel = Sink.INPUT)
-	public void taskLauncherSink(TaskLaunchRequest request) {
-		launchTask(request);
+	public void taskLauncherSink(TaskLaunchRequest taskLaunchRequest) throws Exception{
+		launchTask(taskLaunchRequest);
 	}
 
 	private void launchTask(TaskLaunchRequest taskLaunchRequest) {
 		Assert.notNull(this.taskLauncher, "TaskLauncher has not been initialized");
-		logger.info("Launching Task for the following resource " + taskLaunchRequest);
+		logger.info("Launching Task for the following uri " + taskLaunchRequest.getUri());
 		Resource resource = this.resourceLoader.getResource(taskLaunchRequest.getUri());
 		AppDefinition definition = new AppDefinition(taskLaunchRequest.getApplicationName(), taskLaunchRequest.getEnvironmentProperties());
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, taskLaunchRequest.getDeploymentProperties(), taskLaunchRequest.getCommandlineArguments());
