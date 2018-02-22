@@ -20,7 +20,8 @@ $ ./mvnw clean install
 $ java -jar target/task-events-1.2.1.RELEASE.jar
 ----
 
-You can listen for the events on the task-events channel with a Spring Cloud Stream Sink like the log sink using the following:
+You can listen for the events on the task-events channel with a Spring Cloud Stream Sink
+like the log sink using the following:
 
 [source,shell,indent=2]
 ----

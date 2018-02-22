@@ -30,7 +30,8 @@ $ ./mvnw clean install
 $ java -jar target/batch-events-1.2.1.RELEASE.jar
 ----
 
-For example you can listen for specific job execution events on a specified channel with a Spring Cloud Stream Sink like the log sink using the following:
+For example you can listen for specific job execution events on a specified channel with a Spring Cloud Stream Sink
+like the log sink using the following:
 
 [source,shell,indent=2]
 ----
