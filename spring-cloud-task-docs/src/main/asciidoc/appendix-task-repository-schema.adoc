@@ -1,6 +1,5 @@
-
 [[appendix-task-repository-schema]]
-== Task repository schema
+== Task Repository Schema
 
 [[partintro]]
 --
@@ -8,4 +7,3 @@ This appendix provides an ERD for the database schema used in the task repositor
 --
 
 image::task_schema.png[]
-

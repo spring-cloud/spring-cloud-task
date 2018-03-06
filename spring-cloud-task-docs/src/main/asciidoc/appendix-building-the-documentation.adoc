@@ -1,6 +1,6 @@
 
 [[appendix-building-the-documentation]]
-== Building this documentation
+== Building This Documentation
 
-This project uses Maven to generate this documentation.  To generate it for yourself,
-execute the command: `$ ./mvnw clean package -P full`.
+This project uses Maven to generate this documentation. To generate it for yourself,
+run the following command: `$ ./mvnw clean package -P full`.

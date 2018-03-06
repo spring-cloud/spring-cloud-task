@@ -4,41 +4,41 @@
 [[task-documentation-about]]
 
 This section provides a brief overview of the Spring Cloud Task reference documentation.
-Think of it as a map for the rest of the document.  You can read this reference guide in a
-linear fashion, or you can skip sections if something doesn't interest you.
+Think of it as a map for the rest of the document. You can read this reference guide in a
+linear fashion or you can skip sections if something does not interest you.
 
 == About the documentation
-The Spring Cloud Task reference guide is available as {spring-cloud-task-docs}/html[html],
+The Spring Cloud Task reference guide is available in {spring-cloud-task-docs}/html[html],
 {spring-cloud-task-docs}/pdf/spring-cloud-task-reference.pdf[pdf]
-and {spring-cloud-task-docs}/epub/spring-cloud-task-reference.epub[epub] documents. The latest copy
-is available at {spring-cloud-task-docs-current}.
+and {spring-cloud-task-docs}/epub/spring-cloud-task-reference.epub[epub] formats. The
+latest copy is available at {spring-cloud-task-docs-current}.
 
-Copies of this document may be made for your own use and for
-distribution to others, provided that you do not charge any fee for such copies and
-further provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.
+Copies of this document may be made for your own use and for distribution to others,
+provided that you do not charge any fee for such copies and further provided that each
+copy contains this Copyright Notice, whether distributed in print or electronically.
 
 [[task-documentation-getting-help]]
 == Getting help
-Having trouble with Spring Cloud Task, We'd like to help!
+Having trouble with Spring Cloud Task? We would like to help!
 
-* Ask a question - we monitor http://stackoverflow.com[stackoverflow.com] for questions
-  tagged with http://stackoverflow.com/tags/spring-cloud-task[`spring-cloud-task`].
-* Report bugs with Spring Cloud Task at https://github.com/spring-cloud/spring-cloud-task/issues.
+* Ask a question. We monitor http://stackoverflow.com[stackoverflow.com] for questions
+tagged with http://stackoverflow.com/tags/spring-cloud-task[`spring-cloud-task`].
+* Report bugs with Spring Cloud Task at
+https://github.com/spring-cloud/spring-cloud-task/issues.
 
-NOTE: All of Spring Cloud Task is open source, including the documentation! If you find problems
-with the docs; or if you just want to improve them, please {github-code}[get involved].
+NOTE: All of Spring Cloud Task is open source, including the documentation. If you find
+a problem with the docs or if you just want to improve them, please {github-code}[get
+involved].
 
 [[task-documentation-first-steps]]
 == First Steps
-If you're just getting started with Spring Cloud Task, or 'Spring' in general,
-<<getting-started.adoc#getting-started, this is the place to start!>>
+If you are just getting started with Spring Cloud Task or with 'Spring' in general, we
+suggesting reading the <<getting-started.adoc#getting-started>> chapter.
 
-* *From scratch:*
-  <<getting-started.adoc#getting-started-introducing-spring-cloud-task, Overview>> |
-  <<getting-started.adoc#getting-started-system-requirements, Requirements>>
-* *Tutorial:*
-  <<getting-started.adoc#getting-started-developing-first-task, First application>>
-* *Running your example:*
-  <<getting-started.adoc#getting-started-running-the-example, Running your application>>
-
+To get started from scratch, read the following sections:
+* "`<<getting-started.adoc#getting-started-introducing-spring-cloud-task>>`"
+* "`<<getting-started.adoc#getting-started-system-requirements>>`"
+To follow the tutorial, read
+"`<<getting-started.adoc#getting-started-developing-first-task>>`"
+To run your example, read
+"`<<getting-started.adoc#getting-started-running-the-example>>`"
