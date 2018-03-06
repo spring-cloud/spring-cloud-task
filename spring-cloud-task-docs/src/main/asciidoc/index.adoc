@@ -1,5 +1,5 @@
 = Spring Cloud Task Reference Guide
-Michael Minella, Glenn Renfro
+Michael Minella, Glenn Renfro, Jay Bryant
 :doctype: book
 :toc:
 :toclevels: 4

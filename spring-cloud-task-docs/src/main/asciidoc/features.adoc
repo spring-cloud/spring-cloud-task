@@ -4,51 +4,55 @@
 
 [[partintro]]
 --
-This section goes into more detail about Spring Cloud Task.  How to use it, how to
-configure it, as well as the appropriate extension points are all covered in this section.
+This section goes into more detail about Spring Cloud Task, including how to use it, how
+to configure it, and the appropriate extension points.
 --
 
 [[features-lifecycle]]
 == The lifecycle of a Spring Cloud Task
 
 In most cases, the modern cloud environment is designed around the execution of processes
-that are not expected to end.  If they do, they are typically restarted.  While most
-platforms do have some method to execute a process that isn't restarted when it ends, the
- results of that execution are typically not maintained in a consumable way.  Spring Cloud
- Task brings the ability to execute short lived processes in an environment and record the
- results.  This allows for a microservices architecture around short lived processes as
- well as longer running services via the integration of tasks by messages.
+that are not expected to end. If they do end, they are typically restarted. While most
+platforms do have some way to run a process that is not restarted when it ends, the
+results of that run are typically not maintained in a consumable way. Spring Cloud
+Task offers the ability to execute short-lived processes in an environment and record the
+results. Doing so allows for a microservices architecture around short-lived processes as
+well as longer running services through the integration of tasks by messages.
 
 While this functionality is useful in a cloud environment, the same issues can arise in a
-traditional deployment model as well.  When executing Spring Boot applications via a
-scheduler like cron, it can be useful to be able to monitor the results of the application
-after it's completion.
+traditional deployment model as well. When running Spring Boot applications with a
+scheduler such as cron, it can be useful to be able to monitor the results of the
+application after its completion.
 
-A Spring Cloud Task takes the approach that a Spring Boot application can have a start and an
-end and still be successful.  Batch applications are just one example of where short lived
-processes can be helpful.  Spring Cloud Task records lifecycle events of a given task.
+Spring Cloud Task takes the approach that a Spring Boot application can have a start and
+an end and still be successful. Batch applications are one example of how processes that
+are expected to end (and that are often short-lived) can be helpful.
 
-The lifecycle consists of a single task execution.  This is a physical execution of a
-Spring Boot application configured to be a task (annotated with the `@EnableTask`
+Spring Cloud Task records the lifecycle events of a given task. Most long-running
+processes, typified by most web applications, do not save their lifecycle events. The
+tasks at the heart of Spring Cloud Task do.
+
+The lifecycle consists of a single task execution. This is a physical execution of a
+Spring Boot application configured to be a task (that is, it has the `@EnableTask`
 annotation).
 
-At the beginning of a task before any `CommandLineRunner` or `ApplicationRunner`
-implementations have been executed, an entry in the `TaskRepository` is created recording
-the start event. This event is triggered via `SmartLifecycle#start` being triggered by
-Spring Framework. This indicates to the system that all beans are ready for use and is
-before the execution of any of the `CommandLineRunner` or `ApplicationRunner`
-implementations provided by Spring Boot.
+At the beginning of a task, before any `CommandLineRunner` or `ApplicationRunner`
+implementations have been run, an entry in the `TaskRepository` that records the start
+event is created. This event is triggered through `SmartLifecycle#start` being triggered
+by the Spring Framework. This indicates to the system that all beans are ready for use and
+comes before running any of the `CommandLineRunner` or `ApplicationRunner` implementations
+provided by Spring Boot.
 
-NOTE: The recording of a task will only occur upon the successful bootstrapping of an
-`ApplicationContext`.  If the context fails to bootstrap at all, the task's execution will
-not be recorded.
+NOTE: The recording of a task only occurs upon the successful bootstrapping of an
+`ApplicationContext`. If the context fails to bootstrap at all, the task's run is not
+recorded.
 
 Upon completion of all of the `*Runner#run` calls from Spring Boot or the failure of an
-`ApplicationContext` (indicated via a `ApplicationFailedEvent`), the task execution is
+`ApplicationContext` (indicated by an `ApplicationFailedEvent`), the task execution is
 updated in the repository with the results.
 
 NOTE: If the application requires the `ApplicationContext` to be closed at the
-completion of a task (all `*Runner#run` methods are called and the task
+completion of a task (all `*Runner#run` methods have been called and the task
 repository has been updated), set the property `spring.cloud.task.closecontext_enable`
 to true.
 
@@ -62,161 +66,149 @@ consists of the following information:
 |Field |Description
 
 |`executionid`
-|The unique id for the task's execution.
+|The unique ID for the task's run.
 
 |`exitCode`
-|The exit code generated from an `ExitCodeExceptionMapper` implementation.  If there is no
-exit code generated, but an `ApplicationFailedEvent` is thrown, 1 is set.  Otherwise, it's
+|The exit code generated from an `ExitCodeExceptionMapper` implementation. If there is no
+exit code generated but an `ApplicationFailedEvent` is thrown, 1 is set.  Otherwise, it is
 assumed to be 0.
 
 |`taskName`
-|The name for the task as determined by the configured `TaskNameResolver`.
+|The name for the task, as determined by the configured `TaskNameResolver`.
 
 |`startTime`
-|The time the task was started as indicated by the `SmartLifecycle#start` call.
+|The time the task was started, as indicated by the `SmartLifecycle#start` call.
 
 |`endTime`
-|The time the task was completed as indicated by the `ApplicationReadyEvent`.
+|The time the task was completed, as indicated by the `ApplicationReadyEvent`.
 
 |`exitMessage`
-|Any information available at the time of exit.  This can programmatically be set via a
+|Any information available at the time of exit. This can programmatically be set by a
 `TaskExecutionListener`.
 
 |`errorMessage`
-|If an exception is the cause of the end of the task (as indicated via an
-`ApplicationFailedEvent`), the stack trace for that exception will be stored here.
+|If an exception is the cause of the end of the task (as indicated by an
+`ApplicationFailedEvent`), the stack trace for that exception is stored here.
 
 |`arguments`
-|A `List` of the string command line arguments as they were passed into the executable boot
-application.
+|A `List` of the string command line arguments as they were passed into the executable
+boot application.
 |===
 
 [[features-lifecycle-exit-codes]]
 === Mapping Exit Codes
 
-When a task completes, it will want to return an exit code to the OS.  If we take a look
-at our original example, we can see that we are not controlling that aspect of our
-application. So if an exception is thrown, the JVM will return a code that may or may not
-be of any use to you in the debugging of that.
+When a task completes, it tries to return an exit code to the OS. If we take a look
+at our <<getting-started-developing-first-task,original example>>, we can see that we are
+not controlling that aspect of our application. So, if an exception is thrown, the JVM
+returns a code that may or may not be of any use to you in debugging.
 
-As such, Spring Boot provides an interface, `ExitCodeExceptionMapper` that allows you to
-map uncaught exceptions to exit codes.  This allows you to be able to indicate at that
-level what went wrong.  Also, by mapping exit codes in this manner, Spring Cloud Task will
-record the exit code returned.
+Consequently, Spring Boot provides an interface, `ExitCodeExceptionMapper`, that lets you
+map uncaught exceptions to exit codes. Doing so lets you indicate, at the level of exit
+codes, what went wrong. Also, by mapping exit codes in this manner, Spring Cloud Task
+records the returned exit code.
 
-If the task is terminated with a SIG-INT or a SIG-TERM, the exit code will be zero unless
+If the task terminates with a SIG-INT or a SIG-TERM, the exit code is zero unless
 otherwise specified within the code.
 
-NOTE: While the task is running the exit code will be stored as a null in the repository.
-Once complete the appropriate exit code will be stored based on the guidelines enumerated
-above.
+NOTE: While the task is running, the exit code is stored as a null in the repository.
+Once the task completes, the appropriate exit code is stored based on the guidelines described
+earlier in this section.
 
 [[features-configuration]]
 == Configuration
 
-Spring Cloud Task provides an out of the box configuration as defined in the
- `DefaultTaskConfigurer` and `SimpleTaskConfiguration`.  This section will walk through
-the defaults as well as how to customize Spring Cloud Task for your needs
+Spring Cloud Task provides a ready-to-use configuration, as defined in the
+`DefaultTaskConfigurer` and `SimpleTaskConfiguration` classes. This section walks through
+the defaults and how to customize Spring Cloud Task for your needs.
 
 [[features-data-source]]
 === DataSource
 
-Spring Cloud Task utilizes a datasource for storing the results of task executions.  By
-default, we provide an in memory instance of H2 to provide a simple method of
-bootstrapping development.  However, in a production environment, you'll want to configure
-your own `DataSource`.
+Spring Cloud Task uses a datasource for storing the results of task executions. By
+default, we provide an in-memory instance of H2 to provide a simple method of
+bootstrapping development. However, in a production environment, you probably want to
+configure your own `DataSource`.
 
-If your application utilizes only a single `DataSource` and that will serve as both your
-business schema as well as the task repository, all you need to do is provide any
-`DataSource` (via Spring Boot's configuration conventions is the easiest way).  This will
-be automatically used by Spring Cloud Task for the repository.
+If your application uses only a single `DataSource` and that serves as both your business
+schema and the task repository, all you need to do is provide any `DataSource` (the
+easiest way to do so is through Spring Boot's configuration conventions).  This
+`DataSource` is automatically used by Spring Cloud Task for the repository.
 
-If your application utilizes more than one `DataSource`, you'll need to configure the
-task repository with the appropriate `DataSource`.  This customization can be done via an
-implementation of the `TaskConfigurer`.
+If your application uses more than one `DataSource`, you need to configure the task
+repository with the appropriate `DataSource`. This customization can be done through an
+implementation of  `TaskConfigurer`.
 
 [[features-table-prefix]]
 === Table Prefix
-One modifiable property of the TaskRepository is the table prefix for the
-task tables. By default they are all prefaced with `TASK_`.
-TASK_EXECUTION and TASK_EXECUTION_PARAMS are two examples. However, there are
-potential reasons to modify this prefix. If the schema names needs to be
-prepended to the table names, or if more than one set of task tables is
-needed within the same schema, then the table prefix will need to be changed.
-This is done by setting the `spring.cloud.task.tablePrefix` to the prefix
-that is required.
+One modifiable property of `TaskRepository` is the table prefix for the task tables. By
+default, they are all prefaced with `TASK_`. `TASK_EXECUTION` and `TASK_EXECUTION_PARAMS`
+are two examples. However, there are potential reasons to modify this prefix. If the
+schema name needs to be prepended to the table names or if more than one set of task
+tables is needed within the same schema, you must change the table prefix. You can do so
+by setting the `spring.cloud.task.tablePrefix` to the prefix you need, as follows:
 
-```
- spring.cloud.task.tablePrefix=<yourPrefix>
-```
+`spring.cloud.task.tablePrefix=yourPrefix`
 
 [[features-table-initialization]]
 === Enable/Disable table initialization
-In cases where you are creating the task tables and do not wish for
-Spring Cloud Task to create them at task startup set the
-`spring.cloud.task.initialize.enable` property to `false`.  It is currently
-defaulted to `true`.
+In cases where you are creating the task tables and do not wish for Spring Cloud Task to
+create them at task startup, set the `spring.cloud.task.initialize.enable` property to
+`false`, as follows:
 
-```
- spring.cloud.task.initialize.enable=<true or false>
-```
+`spring.cloud.task.initialize.enable=false`
+
+It defaults to `true`.
 
 [[features-generated_task_id]]
-=== Externally Generated Task Id
+=== Externally Generated Task ID
 
-In some cases a user wants to allow for the time difference between
-when a task is requested and when the infrastructure actually launches it.
-Spring Cloud Task allows a user to create a TaskExecution at the time the
-task is requested.   Then pass the execution ID of the generated TaskExecution
-to the task so that it can update the TaskExecution through the task's lifecycle.
+In some cases, you may want to allow for the time difference between when a task is
+requested and when the infrastructure actually launches it. Spring Cloud Task lets you
+create a `TaskExecution` when the task is requested. Then pass the execution ID of the
+generated `TaskExecution` to the task so that it can update the `TaskExecution` through
+the task's lifecycle.
 
-The TaskExecution can be created by calling the `createTaskExecution` method on
-an implementation of the TaskRepository that references the datastore storing
-the TaskExecutions.
+A `TaskExecution` can be created by calling the `createTaskExecution` method on an
+implementation of the `TaskRepository` that references the datastore that holds
+the `TaskExecution` objects.
 
-In order to configure your Task to use a generated TaskExecutionId add the
+In order to configure your Task to use a generated `TaskExecutionId`, add the
 following property:
 
-```
- spring.cloud.task.executionid=<yourtaskId>
-```
+`spring.cloud.task.executionid=yourtaskId`
 
 [[features-external_task_id]]
 === External Task Id
 
-Spring Cloud Task allows a user to store an external task Id for each
-TaskExecution.  An example of this would be a task id that is provided by
+Spring Cloud Task lets you store an external task ID for each
+`TaskExecution`. An example of this would be a task ID provided by
 Cloud Foundry when a task is launched on the platform.
-In order to configure your Task to use a generated TaskExecutionId add the
+In order to configure your Task to use a generated `TaskExecutionId`, add the
 following property:
 
-```
-spring.cloud.task.external-execution-id=<externalTaskId>
-```
+`spring.cloud.task.external-execution-id=<externalTaskId>`
 
 [[features-parent_task_id]]
 === Parent Task Id
 
-Spring Cloud Task allows a user to store an parent task Id for each
-TaskExecution.  An example of this would be a task that executes another task
-or tasks and the user would like to store what task launched the child tasks.
-In order to configure your Task to set a parent TaskExecutionId add the
-following property on the child task:
+Spring Cloud Task lets you store a parent task ID for each `TaskExecution`. An example of
+this would be a task that executes another task or tasks and you want to record which task
+launched each of the child tasks. In order to configure your Task to set a parent
+`TaskExecutionId` add the following property on the child task:
 
-```
-spring.cloud.task.parent-execution-id=<parentExecutionTaskId>
-```
+`spring.cloud.task.parent-execution-id=<parentExecutionTaskId>`
 
 [[features-task-configurer]]
 === TaskConfigurer
 
-The `TaskConfigurer` is a strategy interface allowing for users to customize the way
-components of Spring Cloud Task are configured.  By default, we provide the
-`DefaultTaskConfigurer` that provides logical defaults (`Map` based in memory components
-useful for development if no `DataSource` is provided and JDBC based components if there
-is a `DataSource` available.
+The `TaskConfigurer` is a strategy interface that lets you customize the way components of
+Spring Cloud Task are configured. By default, we provide the `DefaultTaskConfigurer` that
+provides logical defaults: `Map`-based in-memory components (useful for development if no
+`DataSource` is provided) and JDBC based components (useful if there is a `DataSource`
+available).
 
-The `TaskConfigurer` allows the configuration of three main components:
+The `TaskConfigurer` lets you configure three main components:
 
 |===
 |Component |Description |Default (provided by `DefaultTaskConfigurer`)
@@ -226,63 +218,66 @@ The `TaskConfigurer` allows the configuration of three main components:
 |`SimpleTaskRepository`
 
 |`TaskExplorer`
-|The implementation of the `TaskExplorer` (a component for read only access to the task
+|The implementation of the `TaskExplorer` (a component for read-only access to the task
 repository) to be used.
 |`SimpleTaskExplorer`
 
 |`PlatformTransactionManager`
-|A transaction manager to be used when executing updates for tasks.
-|`DataSourceTransactionManager` if a `DataSource` is used,
+|A transaction manager to be used when running updates for tasks.
+|`DataSourceTransactionManager` if a `DataSource` is used.
 `ResourcelessTransactionManager` if it is not.
 |===
 
-Customizing any of the above is accomplished via a custom implementation of the
-`TaskConfigurer` interface.  Typically, extending the `DefaultTaskConfigurer` (which is
-provided out of the box if a `TaskConfigurer` is not found) and overriding the
-required getter is sufficient, however, implementing your own from scratch may be
-required.
+You can customize any of the components described in the preceding table by creating a
+custom implementation of the `TaskConfigurer` interface. Typically, extending the
+`DefaultTaskConfigurer` (which is provided if a `TaskConfigurer` is not found) and
+overriding the required getter is sufficient. However, implementing your own from scratch
+may be required.
 
 [[features-task-name]]
 === Task Name
 
-In most cases, the name of the task will be the application name as configured via Spring
-Boot.  However, there are some cases, where you may want to map the run of a task to a
-different name.  Spring Data Flow is an example of this (where you want the task to be run
-with the name of the task definition).  Because of this, we offer the ability to customize
-how the task is named via the `TaskNameResolver` interface.
+In most cases, the name of the task is the application name as configured in Spring
+Boot. However, there are some cases where you may want to map the run of a task to a
+different name. Spring Cloud Data Flow is an example of this (because you probably want
+the task to be run with the name of the task definition). Because of this, we offer the
+ability to customize how the task is named, through the `TaskNameResolver` interface.
 
-By default, Spring Cloud Task provides the `SimpleTaskNameResolver` which will use the
+By default, Spring Cloud Task provides the `SimpleTaskNameResolver`, which uses the
 following options (in order of precedence):
 
-. A Spring Boot property (configured any of the ways Spring Boot allows)
+. A Spring Boot property (configured in any of the ways Spring Boot allows) called
 `spring.cloud.task.name`.
-. The application name as resolved using Spring Boot's rules (obtained via
+. The application name as resolved using Spring Boot's rules (obtained through
 `ApplicationContext#getId`).
 
 [[features-task-execution-listener]]
 === Task Execution Listener
 
-Allows a user to register listeners for specific events that occur during the task
-lifecycle.  This is done by creating a class that implements the TaskExecutionListener
-interface.  The class that implements the `TaskExecutionListener` interface will be
-notified for the following events:
+`TaskExecutionListener` lets you register listeners for specific events that occur during
+the task lifecycle. To do so, create a class that implements the
+`TaskExecutionListener` interface. The class that implements the `TaskExecutionListener`
+interface is notified of the following events:
 
-. `onTaskStartup` - prior to the storing the `TaskExecution` into the `TaskRepository`
-. `onTaskEnd` - prior to the updating of the `TaskExecution` entry in the `TaskRepository`
+* `onTaskStartup`: Prior to storing the `TaskExecution` into the `TaskRepository`.
+* `onTaskEnd`: Prior to updating the `TaskExecution` entry in the `TaskRepository` and
 marking the final state of the task.
-. `onTaskFailed` - prior to the `onTaskEnd` method being invoked when an unhandled
- exception is thrown by the task.
+* `onTaskFailed`: Prior to the `onTaskEnd` method being invoked when an unhandled
+exception is thrown by the task.
 
-Spring Cloud Task also allows a user add `TaskExecution` Listeners to methods within a bean
+Spring Cloud Task also lets you add `TaskExecution` Listeners to methods within a bean
 by using the following method annotations:
 
-. `@BeforeTask` - prior to the storing the `TaskExecution` into the `TaskRepository`
-. `@AfterTask` - prior to the updating of the `TaskExecution` entry in the `TaskRepository`
+* `@BeforeTask`: Prior to the storing the `TaskExecution` into the `TaskRepository`
+* `@AfterTask`: Prior to the updating of the `TaskExecution` entry in the `TaskRepository`
 marking the final state of the task.
-. `@FailedTask` - prior to the `@AfterTask` method being invoked when an unhandled
- exception is thrown by the task.
+* `@FailedTask`: Prior to the `@AfterTask` method being invoked when an unhandled
+exception is thrown by the task.
 
-```
+The following example shows the three annotations in use:
+
+[source,java]
+---
  public class MyBean {
 
 	@BeforeTask
@@ -297,69 +292,71 @@ marking the final state of the task.
 	public void methodC(TaskExecution taskExecution, Throwable throwable) {
 	}
 }
-```
+---
 
 [[features-task-execution-listener-Exceptions]]
 ==== Exceptions Thrown by Task Execution Listener
-In the case that an exception is thrown by a `TaskExecutionListener` event handler,
-all  listener processing for that event handler will stop.  For example: if three
-`onTaskStartup` listeners have established and the first `onTaskStartup` event handler
-throws an exception then the other two `onTaskStartup` methods will not be called. However the
-other event handlers (onTaskEnd, onTaskFailed) for the
-`TaskExecutionListeners` will be called.
+If an exception is thrown by a `TaskExecutionListener` event handler, all listener
+processing for that event handler stops.  For example, if three `onTaskStartup` listeners
+have started and the first `onTaskStartup` event handler throws an exception, the other
+two `onTaskStartup` methods are not called. However, the other event handlers (`onTaskEnd`
+and `onTaskFailed`) for the `TaskExecutionListeners` are called.
 
 The exit code returned when a exception is thrown by a `TaskExecutionListener`
-event handler will be the exit code that was reported by the https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ExitCodeEvent.html[ExitCodeEvent].  If
-no `ExitCodeEvent` is emitted then the Exception thrown will be evaluated to see
+event handler is the exit code that was reported by the
+https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ExitCodeEvent.html[ExitCodeEvent].
+If no `ExitCodeEvent` is emitted, the Exception thrown is evaluated to see
 if it is of type
-https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-application-exit[ExitCodeGenerator]
-, if so it will return the exit code from  the `ExitCodeGenerator` else one
-will be returned.
+https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-application-exit[ExitCodeGenerator].
+If so, it returns the exit code from  the `ExitCodeGenerator`. Otherwise, `1`
+is returned.
 
 
 
 [[features-task-execution-listener-exit-messages]]
 ==== Exit Messages
 
-A user is allowed to set the exit message for a task programmatically via a
-`TaskExecutionListener`.  This is done by setting the `TaskExecution's` `exitMessage`
-that is passed into the `TaskExecutionListener`.   For example if we want to use
-a method that is annotated with  @AfterTask `ExecutionListener` :
-```
+You can set the exit message for a task programmatically by using a
+`TaskExecutionListener`. This is done by setting the `TaskExecution's` `exitMessage`,
+which then gets passed into the `TaskExecutionListener`. The following example shows
+a method that is annotated with the `@AfterTask` `ExecutionListener` :
+
+[source,java]
 @AfterTask
 public void afterMe(TaskExecution taskExecution) {
     taskExecution.setExitMessage("AFTER EXIT MESSAGE");
 }
-```
-Since a `ExitMessage` can be set at any of the listener events (onTaskStartup,
-onTaskFailed, and onTaskEnd) the order of precedence is:
 
-. onTaskEnd
-. onTaskFailed
-. onTaskStartup
+An `ExitMessage` can be set at any of the listener events (`onTaskStartup`,
+`onTaskFailed`, and `onTaskEnd`). The order of precedence for the three listeners follows:
 
-For example if a user sets a `exitMessage` for the `onTaskStartup` and `onTaskFailed`
-listeners and the task ends without failing then the `exitMessage` from the `onTaskStartup`
-will be stored in the repo, else if a failure occurs then the `exitMessage` from
-the `onTaskFailed` will be stored.  Also if a user sets the `exitMessage` with a
-`onTaskEnd` listener then the `exitMessage` from the `onTaskEnd` will supersede
+. `onTaskEnd`
+. `onTaskFailed`
+. `onTaskStartup`
+
+For example, if you set an `exitMessage` for the `onTaskStartup` and `onTaskFailed`
+listeners and the task ends without failing, the `exitMessage` from the `onTaskStartup`
+is stored in the repository. Otherwise, if a failure occurs, the `exitMessage` from
+the `onTaskFailed` is stored. Also if you set the `exitMessage` with an
+`onTaskEnd` listener, the `exitMessage` from the `onTaskEnd` supersedes
 the exit messages from both the `onTaskStartup` and `onTaskFailed`.
 
 === Restricting Spring Cloud Task Instances
 
-Allows a user to establish that only one task with a given task name can be run
-at a time.  To do this the user establishes the <<features-task-name, task name>>
-and sets `spring.cloud.task.singleInstanceEnabled=true` for each task execution.
-While the first task execution is running, any other time user tries to run
-a task with the same <<features-task-name, task name>> and
-`spring.cloud.task.singleInstanceEnabled=true` the task will fail with the following
-error message `Task with name "application" is already running.`  The default
-for `spring.cloud.task.singleInstanceEnabled` is `false`.
-```
- spring.cloud.task.singleInstanceEnabled=<true or false>
-```
-In order for this feature to be used you must include the following Spring
-Integration dependencies to your application:
+Spring Cloud Task lets you establish that only one task with a given task name can be run
+at a time. To do so, you need to establish the <<features-task-name, task name>> and set
+`spring.cloud.task.singleInstanceEnabled=true` for each task execution. While the first
+task execution is running, any other time you try to run a task with the same
+<<features-task-name, task name>> and`spring.cloud.task.singleInstanceEnabled=true`, the
+task fails with the following error message: `Task with name "application" is already
+running.` The default value for `spring.cloud.task.singleInstanceEnabled` is `false`. The
+following example shows how to set `spring.cloud.task.singleInstanceEnabled` to `true`:
+
+`spring.cloud.task.singleInstanceEnabled=true or false`
+
+To use this feature, you must add the following Spring Integration dependencies to your
+application:
+
 [source,xml]
 ---
 <dependency>

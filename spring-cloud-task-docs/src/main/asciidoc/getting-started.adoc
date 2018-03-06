@@ -4,54 +4,56 @@
 
 [[partintro]]
 --
-If you're just getting started with Spring Cloud Task, this is the section
-for you! Here we answer the basic "`what?`", "`how?`" and "`why?`" questions. You'll
-find a gentle introduction to Spring Cloud Task.  We'll then build our first Spring Cloud
-Task application, discussing some core principles as we go.
+If you are just getting started with Spring Cloud Task, you should read this section.
+Here, we answer the basic "`what?`", "`how?`", and "`why?`" questions. We start with a
+gentle introduction to Spring Cloud Task. We then build a Spring Cloud Task application,
+discussing some core principles as we go.
 --
 
 [[getting-started-introducing-spring-cloud-task]]
 == Introducing Spring Cloud Task
 
-Spring Cloud Task makes it easy to create short lived microservices.  We provide
-capabilities that allow short lived JVM processes to be executed on demand in a production
+Spring Cloud Task makes it easy to create short-lived microservices. It provides
+capabilities that let short lived JVM processes be executed on demand in a production
 environment.
 
 [[getting-started-system-requirements]]
 == System Requirements
 
-You need Java installed (Java 7 or better, we recommend Java 8) and to build you need to have Maven installed as well.
+You need to have Java installed (Java 8 or better). To build, you need to have Maven
+installed as well.
 
 === Database Requirements
 
 Spring Cloud Task uses a relational database to store the results of an executed task.
 While you can begin developing a task without a database (the status of the task is logged
- as part of the task repository's updates), for production environments, you'll want to
-utilize a supported database.  Below is a list of the ones currently supported:
+as part of the task repository's updates), for production environments, you want to
+use a supported database. Spring Cloud Task currently supports the following databases:
 
-- DB2
-- H2
-- HSQLDB
-- MySql
-- Oracle
-- Postgres
-- SqlServer
+* DB2
+* H2
+* HSQLDB
+* MySql
+* Oracle
+* Postgres
+* SqlServer
 
 [[getting-started-developing-first-task]]
-== Developing your first Spring Cloud Task application
+== Developing Your First Spring Cloud Task Application
 
-A good place to start is with a simple "Hello World!" application so we'll create the
-Spring Cloud Task equivalent to highlight the features of the framework.  We'll use Apache
-Maven as a build tool for this project since most IDEs have good support for it.
+A good place to start is with a simple "`Hello, World!`" application, so we create the
+Spring Cloud Task equivalent to highlight the features of the framework. Most IDEs have
+good support for Apache Maven, so we use it as the build tool for this project.
 
-NOTE: The spring.io web site contains many “Getting Started” guides that use Spring Boot.
-If you’re looking to solve a specific problem; check there first.  You can shortcut the
-steps below by going to start.spring.io and creating a new project. This will
-automatically generate a new project structure so that you can start coding right the way.
-Check the documentation for more details.
+NOTE: The spring.io web site contains many https://spring.io/guides[“`Getting Started`”
+guides] that use Spring Boot. If you need to solve a specific problem, check there first.
+You can shortcut the following steps by going to the
+http://start.spring.io/[Spring Initializr] and creating a new project. Doing so
+automatically generates a new project structure so that you can start coding right away.
+We recommend experimenting with the Spring Initializr to become familiar with it.
 
 Before we begin, open a terminal to check that you have valid versions of Java and Maven
-installed.
+installed, as shown in the following two listings:
 
 [source]
 $ java -version
@@ -65,14 +67,15 @@ Apache Maven 3.2.3 (33f8c3e1027c3ddde99d3cdebad2656a31e8fdf4; 2014-08-11T15:58:1
 Maven home: /usr/local/Cellar/maven/3.2.3/libexec
 Java version: 1.8.0_31, vendor: Oracle Corporation
 
-NOTE: This sample needs to be created in its own folder.  Subsequent instructions assume
-you have created a suitable folder and that it is your "current directory".
+NOTE: This sample needs to be created in its own folder. Subsequent instructions assume
+you have created a suitable folder and that it is your "`current directory.`"
 
 [[getting-started-creating-the-pom]]
 === Creating the POM
 
-We need to start by creating a Maven `pom.xml` file.  The `pom.xml` is the recipe that
-will be used to build your project.  Open your favorite text editor and add the following:
+We need to start by creating a Maven `pom.xml` file. The `pom.xml` file contains the
+recipe that Maven uses to build your project. To create the pom.xml file, open your
+favorite text editor and add the following:
 
 [code,xml]
 ----
@@ -116,29 +119,30 @@ will be used to build your project.  Open your favorite text editor and add the 
 </project>
 ----
 
-This should give you a working build.  You can test it out by running `mvn package` (you
-can ignore the "jar will be empty - no content was marked for inclusion!" warning for
-now).
+Creating a `pom.xml` file with the preceding content should give you a working build. You
+can test it by running `mvn package` (for now, you can ignore the "jar will be empty - no
+content was marked for inclusion!" warning ).
 
-NOTE: At this point you could import the project into an IDE (most modern Java IDE's
-include built-in support for Maven).  For simplicity we will continue to use a plain text
+NOTE: At this point, you could import the project into an IDE (most modern Java IDE's
+include built-in support for Maven). For simplicity, we continue to use a plain text
 editor for this example.
 
 [[getting-started-adding-classpath-dependencies]]
 === Adding classpath dependencies
 
-A Spring Cloud Task is made up of a Spring Boot application that is expected to end.  In
-our POM above, we created the shell of a Spring Boot application from a dependency
-perspective by setting our parent to use the `spring-boot-starter-parent`.
+A Spring Cloud Task is made up of a Spring Boot application that is expected to end. In
+the `pom.xml` file we showed earlier, we created the shell of a Spring Boot application by
+setting our parent to use the `spring-boot-starter-parent`.
 
-Spring Boot provides a number of additional "Starter POMs".  Some of which are appropriate
-for use within tasks (`spring-boot-starter-batch`, `spring-boot-starter-jdbc`, etc) and
-some may not be ('spring-boot-starter-web` is probably not going to be used in a task).
-The indicator of if a starter makes sense or not comes down to if the resulting
-application will end (batch based applications typically end, the
-`spring-boot-starter-web` dependency bootstraps a servlet container which probably wont').
+Spring Boot provides a number of additional "`Starter POMs`". Some of them are appropriate
+for use within tasks (`spring-boot-starter-batch`, `spring-boot-starter-jdbc`, and
+others), and some may not be ('spring-boot-starter-web` is probably not going to be used
+in a task). The best indicator of which starter makes sense is whether the resulting
+application should end. Batch-based applications typically end. Conversely, the
+`spring-boot-starter-web` dependency bootstraps a servlet container, which better suits
+applications that continue.
 
-For this example, we'll only need to add a single additional dependency, the one for
+For this example, we need only to add a single additional dependency -- the one for
 Spring Cloud Task itself:
 
 [source,xml]
@@ -149,11 +153,12 @@ Spring Cloud Task itself:
 		</dependency>
 
 [[getting-started-writing-the-code]]
-=== Writing the code
+=== Writing the Code
 
-To finish our application, we need to create a single Java file.  Maven will compile the
-sources from `src/main/java` by default so you need to create that folder structure.  Then
-add a file named `src/main/java/com/example/SampleTask.java`:
+To finish our application, we need to create a single Java file. By default, Maven
+compiles the sources from `src/main/java`, so you need to create that folder structure.
+Then you need to add a file named `src/main/java/com/example/SampleTask.java`, as shown
+in the following example:
 
 [source,java]
 ----
@@ -181,20 +186,21 @@ public class SampleTask {
 
 		@Override
 		public void run(String... strings) throws Exception {
-			System.out.println("Hello World!");
+			System.out.println("Hello, World!");
 		}
 	}
 }
 ----
 
-While it may not look like much, quite a bit is going on.  To read more about the Spring
-Boot specifics, take a look at their reference documentation here:
-http://docs.spring.io/spring-boot/docs/current/reference/html/[http://docs.spring.io/spring-boot/docs/current/reference/html/]
+While it may seem small, quite a bit is going on. For more about Spring
+Boot specifics, see the
+http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
 
-We'll also need to create an `application.properties` in `src/main/resources`.  We'll
-configure two properties in it: the application name (which is translated to the task name)
-and we'll set the logging for spring cloud task to `DEBUG` so that we can see what's going
-on:
+We also need to create an `application.properties` file in `src/main/resources`. We need
+to configure two properties in `application.properties`: We need to set the application
+name (which is translated to the task name), and we need to set the logging for Spring
+Cloud Task to `DEBUG` so that we can see what's going on. The following example shows how
+to do both:
 
 [source]
 ----
@@ -205,23 +211,23 @@ spring.application.name=helloWorld
 [[getting-started-at-task]]
 ==== The @EnableTask annotation
 
-The first non boot annotation in our example is the `@EnableTask` annotation.  This class
-level annotation tells Spring Cloud Task to bootstrap it's functionality.  This occurs by
-importing an additional configuration class, `SimpleTaskConfiguration` by default.  This
+The first non-boot annotation in our example is the `@EnableTask` annotation. This
+class-level annotation tells Spring Cloud Task to bootstrap it's functionality. By
+default, it imports an additional configuration class (`SimpleTaskConfiguration`). This
 additional configuration registers the `TaskRepository` and the infrastructure for its
 use.
 
-Out of the box, the `TaskRepository` will use an in memory `Map` to record the results
-of a task.  Obviously this isn't a practical solution for a production environment since
-the `Map` goes away once the task ends.  However, for a quick getting started
-experience we use this as a default as well as echoing to the logs what is being updated
-in that repository.  Later in this documentation we'll cover how to customize the
-configuration of the pieces provided by Spring Cloud Task.
+Out of the box, the `TaskRepository` uses an in-memory `Map` to record the results
+of a task. A `Map` is not a practical solution for a production environment, since
+the `Map` goes away once the task ends. However, for a quick getting-started
+experience, we use this as a default as well as echoing to the logs what is being updated
+in that repository. In the <<features-configuration>> section (later in this
+documentation), we cover how to customize the configuration of the pieces provided by
+Spring Cloud Task.
 
-When our sample application is run, Spring Boot will launch our
-`HelloWorldCommandLineRunner` outputting our "Hello World!" message to standard out.  The
-`TaskLifecyceListener` will record the start of the task and the end of the task in the
-repository.
+When our sample application runs, Spring Boot launches our `HelloWorldCommandLineRunner`
+and outputs our "`Hello, World!`" message to standard out. The `TaskLifecyceListener`
+records the start of the task and the end of the task in the repository.
 
 [[getting-started-main-method]]
 ==== The main method
@@ -233,25 +239,25 @@ Spring Boot documentation.
 [[getting-started-clr]]
 ==== The CommandLineRunner
 
-In Spring, there are many ways to bootstrap an application's logic.  Spring Boot provides
-a convenient method of doing so in an organized manner via their `*Runner` interfaces
-(`CommandLineRunner` or `ApplicationRunner`).  A well behaved task will bootstrap any
-logic via one of these two runners.
+Spring includes many ways to bootstrap an application's logic. Spring Boot provides
+a convenient method of doing so in an organized manner through its `*Runner` interfaces
+(`CommandLineRunner` or `ApplicationRunner`). A well behaved task can bootstrap any
+logic by using one of these two runners.
 
 The lifecycle of a task is considered from before the `*Runner#run` methods are executed
-to once they are all complete.  Spring Boot allows an application to use multiple
-`*Runner` implementation and Spring Cloud Task doesn't attempt to impede on this convention.
+to once they are all complete. Spring Boot lets an application use multiple
+`*Runner` implementations, as does Spring Cloud Task.
 
 NOTE: Any processing bootstrapped from mechanisms other than a `CommandLineRunner` or
-`ApplicationRunner` (using `InitializingBean#afterPropertiesSet` for example) will not be
+`ApplicationRunner` (by using `InitializingBean#afterPropertiesSet` for example) is not
  recorded by Spring Cloud Task.
 
 [[getting-started-running-the-example]]
-=== Running the example
+=== Running the Example
 
-At this point, your application should work.  Since this application is Spring Boot based,
- we can run it from the command line via the command `$ mvn spring-boot:run` from the root
- of our applicaiton:
+At this point, our application should work.  Since this application is Spring Boot-based,
+we can run it from the command line by using `$ mvn spring-boot:run` from the root
+of our application, as shown (with its output) in the following example:
 
 [source]
 ----
@@ -274,19 +280,19 @@ $ mvn clean spring-boot:run
 2016-01-25 11:08:10.226  INFO 12943 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
 2016-01-25 11:08:11.051  INFO 12943 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
 2016-01-25 11:08:11.065  INFO 12943 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=null, statusCode='null', exitMessage='null', arguments=[]}
-Hello World!
+Hello, World!
 2016-01-25 11:08:11.071  INFO 12943 --- [           main] com.example.SampleTask                   : Started SampleTask in 1.095 seconds (JVM running for 3.826)
 2016-01-25 11:08:11.220  INFO 12943 --- [       Thread-1] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
 2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=Mon Jan 25 11:08:11 CST 2016, statusCode='null', exitMessage='null', arguments=[]}
 2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
 ----
 
-If you notice, there are three lines of interest in the above output:
+The preceding output has three lines that of interest to us here:
 
-* `SimpleTaskRepository` logged out the creation of the entry in the `TaskRepository`.
-* The execution of our `CommandLineRunner`, demonstrated by the "Hello World!" output.
-* `SimpleTaskRepository` logging the completion of the task in the `TaskRepository`.
+* `SimpleTaskRepository` logged the creation of the entry in the `TaskRepository`.
+* The execution of our `CommandLineRunner`, demonstrated by the "`Hello, World!`" output.
+* `SimpleTaskRepository` logs the completion of the task in the `TaskRepository`.
 
-NOTE: A simple task application can be found in the samples module
-of the Spring Cloud Task Project
+NOTE: A simple task application can be found in the samples module of the Spring Cloud
+Task Project
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/timestamp[here].
