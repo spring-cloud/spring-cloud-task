@@ -94,7 +94,8 @@ public class TaskPartitionerTests {
 		app.setAdditionalProfiles("master");
 		app.run("--server.port=0", "--spring.datasource.url=" + DATASOURCE_URL,
 						"--spring.datasource.username=" + DATASOURCE_USER_NAME,
-						"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
+						"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
+						"--spring.cloud.deployer.local.use-spring-application-json=false");
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
 		assertEquals("Five rows are expected", 5, taskExecutions.getTotalElements());
