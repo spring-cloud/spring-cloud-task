@@ -198,8 +198,8 @@ http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot refer
 
 We also need to create an `application.properties` file in `src/main/resources`. We need
 to configure two properties in `application.properties`: We need to set the application
-name (which is translated to the task name), and we need to set the logging for spring
-cloud task to `DEBUG` so that we can see what's going on. The following example shows how
+name (which is translated to the task name), and we need to set the logging for Spring
+Cloud Task to `DEBUG` so that we can see what's going on. The following example shows how
 to do both:
 
 [source]
