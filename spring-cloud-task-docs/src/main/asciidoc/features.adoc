@@ -239,9 +239,9 @@ may be required.
 
 In most cases, the name of the task is the application name as configured in Spring
 Boot. However, there are some cases where you may want to map the run of a task to a
-different name. Spring Data Flow is an example of this (because you probably want the task
-to be run with the name of the task definition). Because of this, we offer the ability to
-customize how the task is named, through the `TaskNameResolver` interface.
+different name. Spring Cloud Data Flow is an example of this (because you probably want
+the task to be run with the name of the task definition). Because of this, we offer the
+ability to customize how the task is named, through the `TaskNameResolver` interface.
 
 By default, Spring Cloud Task provides the `SimpleTaskNameResolver`, which uses the
 following options (in order of precedence):
@@ -343,15 +343,16 @@ the exit messages from both the `onTaskStartup` and `onTaskFailed`.
 
 === Restricting Spring Cloud Task Instances
 
-Spring Cloud Task Instances let you establish that only one task with a given task name
-can be run at a time. To do so, you need to establish the <<features-task-name, task
-name>> and set `spring.cloud.task.singleInstanceEnabled=true` for each task execution.
-While the first task execution is running, any other time you try to run a task with the
-same <<features-task-name, task name>> and`spring.cloud.task.singleInstanceEnabled=true`,
-the task fails with the following error message: `Task with name "application" is already
-running.` The default value for `spring.cloud.task.singleInstanceEnabled` is `false`.
+Spring Cloud Task lets you establish that only one task with a given task name can be run
+at a time. To do so, you need to establish the <<features-task-name, task name>> and set
+`spring.cloud.task.singleInstanceEnabled=true` for each task execution. While the first
+task execution is running, any other time you try to run a task with the same
+<<features-task-name, task name>> and`spring.cloud.task.singleInstanceEnabled=true`, the
+task fails with the following error message: `Task with name "application" is already
+running.` The default value for `spring.cloud.task.singleInstanceEnabled` is `false`. The
+following example shows how to set `spring.cloud.task.singleInstanceEnabled` to `true`:
 
-`spring.cloud.task.singleInstanceEnabled=<true or false>`
+`spring.cloud.task.singleInstanceEnabled=true or false`
 
 To use this feature, you must add the following Spring Integration dependencies to your
 application:

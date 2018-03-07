@@ -20,8 +20,8 @@ environment.
 [[getting-started-system-requirements]]
 == System Requirements
 
-You need to have Java installed (Java 7 or better -- we recommend Java 8). To build, you
-need to have Maven installed as well.
+You need to have Java installed (Java 8 or better). To build, you need to have Maven
+installed as well.
 
 === Database Requirements
 
@@ -43,15 +43,14 @@ use a supported database. Spring Cloud Task currently supports the following dat
 
 A good place to start is with a simple "`Hello, World!`" application, so we create the
 Spring Cloud Task equivalent to highlight the features of the framework. Most IDEs have
-good support for Apache Maven, so we use it as the build tool for this project since.
+good support for Apache Maven, so we use it as the build tool for this project.
 
 NOTE: The spring.io web site contains many https://spring.io/guides[“`Getting Started`”
 guides] that use Spring Boot. If you need to solve a specific problem, check there first.
 You can shortcut the following steps by going to the
 http://start.spring.io/[Spring Initializr] and creating a new project. Doing so
 automatically generates a new project structure so that you can start coding right away.
-Check the documentation for more details.
-// TODO: What documentation? The Spring Initalizr doesn't have any documentation links.
+We recommend experimenting with the Spring Initializr to become familiar with it.
 
 Before we begin, open a terminal to check that you have valid versions of Java and Maven
 installed, as shown in the following two listings:

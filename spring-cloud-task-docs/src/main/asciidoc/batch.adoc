@@ -30,7 +30,7 @@ that meet those conditions.
 === Overriding the TaskBatchExecutionListener
 
 To prevent the listener from being injected into any batch jobs within the current
-context, you can disagle the autoconfiguration by using standard Spring Boot mechanisms.
+context, you can disable the autoconfiguration by using standard Spring Boot mechanisms.
 
 To only have the listener injected into particular jobs within the context, override the
 `batchTaskExecutionListenerBeanPostProcessor` and provide a list of job bean IDs, as shown
@@ -48,7 +48,7 @@ public TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBea
 }
 ----
 
-NOTE: You can find a sample batch application in the samples module of the  Spring Cloud
+NOTE: You can find a sample batch application in the samples module of the Spring Cloud
 Task Project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/batch-job[here].
 
@@ -127,8 +127,8 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 }
 ----
 
-NOTE: You can find a sample remote partition application can be found in the samples module
-of the Spring Cloud Task Project,
+NOTE: You can find a sample remote partition application in the samples module of the
+Spring Cloud Task project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/partitioned-batch-job[here].
 
 === Notes on Developing a Batch-partitioned Application for the Yarn Platform
@@ -203,7 +203,7 @@ as `/` or `:` when launching the partition on Mesos, the partition fails to star
 === Notes on Developing a Batch-partitioned Application for the Cloud Foundry Platform
 
 * When deploying partitioned apps on the Cloud Foundry platform, you must use the
-following dependencies for the Spring Cloud Cloud Foundry Deployer:
+following dependencies for the Spring Cloud Foundry Deployer:
 +
 [source,xml]
 ----
@@ -276,7 +276,7 @@ can be 1 (the default) or be based on the
 https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html#boot-features-application-exit[specified
 `ExitCodeGenerator`])
 
-This functionality usee a new `CommandLineRunner` that replaces the one provided by Spring
+This functionality uses a new `CommandLineRunner` that replaces the one provided by Spring
 Boot. By default, it is configured with the same order. However, if you want to customize
 the order in which the `CommandLineRunner` is run, you can set its order by setting the
 `spring.cloud.task.batch.commandLineRunnerOrder` property. To have your task return the
