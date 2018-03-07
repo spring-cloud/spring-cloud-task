@@ -131,41 +131,6 @@ NOTE: You can find a sample remote partition application in the samples module o
 Spring Cloud Task project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/partitioned-batch-job[here].
 
-=== Notes on Developing a Batch-partitioned Application for the Yarn Platform
-
-* When deploying partitioned applications on the Yarn platform, you must use the
-following dependency for the Spring Cloud Yarn Deployer
-(with a version 1.0.2 or higher):
-+
-[source,xml]
-----
-<dependency>
-	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-starter-deployer-yarn</artifactId>
-</dependency>
-----
-* For a transient dependency required by Yarn, add the following dependency to the
-dependency management:
-+
-[source,xml]
-----
-<dependencyManagement>
-    <dependencies>
-...
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-    </dependencies>
-...
-</dependencyManagement>
-----
-* You should also add the following property to your application.properties:
-`spring.yarn.container.keepContextAlive=false`.
-* When setting up environment variables for the partitions in the PartitionHandler, we
-recommend that you do not copy the current working environment properties.
-
 === Notes on Developing a Batch-partitioned application for the Kubernetes Platform
 
 * When deploying partitioned apps on the Kubernetes platform, you must use the following
@@ -181,24 +146,6 @@ dependency for the Spring Cloud Kubernetes Deployer:
 * The application name for the task application and its partitions need to follow
 the following regex pattern: `[a-z0-9]([-a-z0-9]*[a-z0-9])`.
 Otherwise, an exception is thrown.
-
-=== Notes on Developing a Batch-partitioned Application for the Mesos Platform
-
-* When deploying partitioned apps on the Mesos platform, you must use the following
-dependency for the Spring Cloud Mesos Deployer:
-+
-[source,xml]
-----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-deployer-mesos</artifactId>
-</dependency>
-----
-
-* When configuring the partition handler, do not add any command line arguments to the
-`CommandLineArgsProvider`. You need to avoid adding arguments, because Chronos adds the
-command line args to the Mesos ID. If the command line arguments contains characters such
-as `/` or `:` when launching the partition on Mesos, the partition fails to start .
 
 === Notes on Developing a Batch-partitioned Application for the Cloud Foundry Platform
 
