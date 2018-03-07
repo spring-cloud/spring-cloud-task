@@ -18,15 +18,14 @@ $ ./mvnw clean install
 
 [source,shell,indent=2]
 ----
-$ export spring_datasource_url=jdbc:mysql://localhost:3306/<your database>
-$ export spring_datasource_username=<your username>
-$ export spring_datasource_password=<your password>
-$ export spring_datasource_driverClassName=org.mariadb.jdbc.Driver
+$ export SPRING_APPLICATION_JSON='{"spring":{"datasource":{"url":"jdbc:mysql://localhost:3306/<your database>","username":"<your username>","password":"<your password>","driverClassName":"org.mariadb.jdbc.Driver"}}}'
 $ java -jar target/partitioned-batch-job-1.2.1.RELEASE.jar
 ----
 
 NOTE: This example will use require a MySql RDBMS repository and currently uses the mariadb jdbc driver to connect.
 You can changes this another driver based on your needs.
+
+NOTE: Since this example uses the Spring Cloud Deployer Local to launch the partitions, you will need to establish the datasource settings using the SPRING_APPLICATION_JSON environment property as shown above.
 
 == Dependencies:
 
