@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,10 +114,9 @@ public class SimpleTaskConfiguration {
 	@Bean
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
 		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
-
-		if(!CollectionUtils.isEmpty(this.dataSources) && this.dataSources.size() == 1) {
-			DataSource next = this.dataSources.iterator().next();
-			taskRepositoryInitializer.setDataSource(next);
+		DataSource initializerDataSource = getDefaultConfigurer().getTaskDataSource();
+		if(initializerDataSource != null) {
+			taskRepositoryInitializer.setDataSource(initializerDataSource);
 		}
 
 		return taskRepositoryInitializer;
