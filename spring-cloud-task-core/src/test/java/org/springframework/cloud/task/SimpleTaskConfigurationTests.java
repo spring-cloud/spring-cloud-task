@@ -17,19 +17,26 @@
 package org.springframework.cloud.task;
 
 import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Test;
 
 import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
@@ -40,12 +47,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.PropertiesPropertySource;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Verifies that the beans created by the SimpleTaskConfiguration.
@@ -71,11 +74,11 @@ public class SimpleTaskConfigurationTests {
 
 		TaskRepository taskRepository = this.context.getBean(TaskRepository.class);
 
-		assertNotNull("testRepository should not be null", taskRepository);
+		assertThat(taskRepository).isNotNull();
 
 		Class<?> targetClass = AopProxyUtils.ultimateTargetClass(taskRepository);
 
-		assertEquals(targetClass, SimpleTaskRepository.class);
+		assertThat(targetClass).isEqualTo(SimpleTaskRepository.class);
 	}
 
 
@@ -86,7 +89,7 @@ public class SimpleTaskConfigurationTests {
 
 		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
 
-		assertThat(taskExplorer.getTaskExecutionCount(), is(equalTo(1l)));
+		assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1l);
 	}
 
 	@Test
@@ -108,7 +111,7 @@ public class SimpleTaskConfigurationTests {
 		catch (ApplicationContextException ex) {
 			wasExceptionThrown = true;
 		}
-		assertTrue("Expected ApplicationContextException to be thrown", wasExceptionThrown);
+		assertThat( wasExceptionThrown).isTrue();
 	}
 
 
@@ -116,6 +119,29 @@ public class SimpleTaskConfigurationTests {
 	public void testMultipleConfigurers() {
 		this.context = new AnnotationConfigApplicationContext(MultipleConfigurers.class,
 				PropertyPlaceholderAutoConfiguration.class);
+	}
+
+	@Test(expected = BeanCreationException.class)
+	public void testMultipleDataSources() {
+		this.context = new AnnotationConfigApplicationContext(
+				MultipleDataSources.class, SimpleTaskConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
+	}
+
+	/**
+	 * Verify that the verifyEnvironment method skips DataSource Proxy Beans
+	 * when determining the number of available dataSources.
+	 */
+	@Test
+	public void testWithDataSourceProxy() {
+		this.context = new AnnotationConfigApplicationContext(EmbeddedDataSourceConfiguration.class, TaskProperties.class,
+				PropertyPlaceholderAutoConfiguration.class,  DataSourceProxyConfiguration.class
+				);
+
+		assertThat(this.context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
+		SimpleTaskConfiguration taskConfiguration = this.context.getBean(SimpleTaskConfiguration.class);
+		assertThat(taskConfiguration).isNotNull();
+		assertThat(taskConfiguration.taskExplorer()).isNotNull();
 	}
 
 	@Configuration
@@ -131,6 +157,38 @@ public class SimpleTaskConfigurationTests {
 		public TaskConfigurer taskConfigurer2() {
 			return new DefaultTaskConfigurer((DataSource) null);
 		}
+	}
+
+	@Configuration
+	public static class MultipleDataSources {
+
+		@Bean
+		public DataSource dataSource() {
+			return mock(DataSource.class);
+		};
+
+		@Bean
+		public DataSource dataSource2() {
+			return mock(DataSource.class);
+		};
+
+	}
+
+	@Configuration
+	public static class DataSourceProxyConfiguration {
+
+		@Autowired
+		private ConfigurableApplicationContext context;
+
+		@Bean
+		public SimpleTaskConfiguration simpleTaskConfiguration() {
+			GenericBeanDefinition proxyBeanDefinition = new GenericBeanDefinition();
+			proxyBeanDefinition.setBeanClassName("javax.sql.DataSource");
+			BeanDefinitionHolder myDataSource = new BeanDefinitionHolder(proxyBeanDefinition,"dataSource2");
+			ScopedProxyUtils.createScopedProxy(myDataSource, (BeanDefinitionRegistry) this.context.getBeanFactory(), true);
+			return new SimpleTaskConfiguration();
+		}
+
 	}
 
 }
