@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.task.configuration;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -24,6 +26,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -175,9 +178,11 @@ public class SimpleTaskConfiguration {
 		}
 	}
 
-	private void verifyEnvironment(){
+	private void verifyEnvironment() {
 		int configurers = this.context.getBeanNamesForType(TaskConfigurer.class).length;
-		int dataSources = this.context.getBeanNamesForType(DataSource.class).length;
+		// retrieve the count of dataSources (without instantiating them) excluding DataSource proxy beans
+		long dataSources = Arrays.stream(this.context.getBeanNamesForType(DataSource.class))
+				.filter((name -> !ScopedProxyUtils.isScopedTarget(name))).collect(Collectors.counting());
 
 		if(configurers == 0 && dataSources > 1) {
 			throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +
