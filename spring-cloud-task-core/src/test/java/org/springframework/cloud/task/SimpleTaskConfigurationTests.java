@@ -48,12 +48,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.PropertiesPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -80,11 +74,11 @@ public class SimpleTaskConfigurationTests {
 
 		TaskRepository taskRepository = this.context.getBean(TaskRepository.class);
 
-		assertNotNull("testRepository should not be null", taskRepository);
+		assertThat(taskRepository).isNotNull();
 
 		Class<?> targetClass = AopProxyUtils.ultimateTargetClass(taskRepository);
 
-		assertEquals(targetClass, SimpleTaskRepository.class);
+		assertThat(targetClass).isEqualTo(SimpleTaskRepository.class);
 	}
 
 
@@ -95,7 +89,7 @@ public class SimpleTaskConfigurationTests {
 
 		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
 
-		assertThat(taskExplorer.getTaskExecutionCount(), is(equalTo(1l)));
+		assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1l);
 	}
 
 	@Test
@@ -117,7 +111,7 @@ public class SimpleTaskConfigurationTests {
 		catch (ApplicationContextException ex) {
 			wasExceptionThrown = true;
 		}
-		assertTrue("Expected ApplicationContextException to be thrown", wasExceptionThrown);
+		assertThat( wasExceptionThrown).isTrue();
 	}
 
 
