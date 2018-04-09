@@ -174,6 +174,7 @@ public class SimpleTaskConfigurationTests {
 
 	}
 
+	@Configuration
 	public static class DataSourceProxyConfiguration {
 
 		@Autowired
