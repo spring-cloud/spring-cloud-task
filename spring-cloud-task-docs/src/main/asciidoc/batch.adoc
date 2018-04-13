@@ -161,12 +161,12 @@ following dependencies for the Spring Cloud Foundry Deployer:
 <dependency>
     <groupId>io.projectreactor</groupId>
     <artifactId>reactor-core</artifactId>
-    <version>3.0.2.RELEASE</version>
+    <version>3.1.5.RELEASE</version>
 </dependency>
 <dependency>
     <groupId>io.projectreactor.ipc</groupId>
     <artifactId>reactor-netty</artifactId>
-    <version>0.5.1.RELEASE</version>
+    <version>0.7.5.RELEASE</version>
 </dependency>
 ----
 * When configuring the partition handler, Cloud Foundry Deployment
