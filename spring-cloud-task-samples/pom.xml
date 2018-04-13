@@ -28,6 +28,7 @@
 		<module>task-events</module>
 		<module>batch-events</module>
 		<module>jpa-sample</module>
+		<module>multiple-datasources</module>
 	</modules>
 
 	<dependencyManagement>
