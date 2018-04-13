@@ -1,0 +1,29 @@
+= Multiple DataSources Sample Task
+
+This is a Spring Boot application that utilizes two DataSources and explicitly configures
+which one to be used for the Spring Cloud Task repository.
+
+== Requirements:
+
+* Java 8 or Above
+
+== Classes:
+
+* `MultipleDataSourcesApplication` - the Spring Boot Main Application.
+* `SampleCommandLineRunner` - the `CommandLineRunner` implementation for this task.  It outputs the number of `DataSource` beans found in the context (should be 2).
+* `DataSourceConfiguration` - Configures two `DataSource` beans.
+* `CustomTaskConfigurer` - Uses a Spring `@Qualifier` to specify the correct `DataSource` to use.
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/multiple-datasources-2.0.0.RC1.jar
+----
