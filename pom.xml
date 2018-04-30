@@ -183,7 +183,7 @@
 					</execution>
 					<execution>
 						<id>aggregate</id>
-						<phase>site</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>aggregate</goal>
 						</goals>

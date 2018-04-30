@@ -277,7 +277,7 @@ exception is thrown by the task.
 The following example shows the three annotations in use:
 
 [source,java]
----
+----
  public class MyBean {
 
 	@BeforeTask
@@ -292,7 +292,8 @@ The following example shows the three annotations in use:
 	public void methodC(TaskExecution taskExecution, Throwable throwable) {
 	}
 }
----
+----
+
 
 [[features-task-execution-listener-Exceptions]]
 ==== Exceptions Thrown by Task Execution Listener
@@ -358,7 +359,6 @@ To use this feature, you must add the following Spring Integration dependencies 
 application:
 
 [source,xml]
----
 <dependency>
     <groupId>org.springframework.integration</groupId>
     <artifactId>spring-integration-core</artifactId>
@@ -367,4 +367,3 @@ application:
     <groupId>org.springframework.integration</groupId>
     <artifactId>spring-integration-jdbc</artifactId>
 </dependency>
----
