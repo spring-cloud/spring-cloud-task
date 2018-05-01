@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
@@ -58,13 +59,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class})
+@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class},
+	properties = {"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone-local"})
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 10000;
 	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:2.0.0.RC1";
+			+ "timestamp-task:jar:1.0.0.RC1";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "''";
@@ -155,6 +157,7 @@ public class TaskLauncherSinkTests {
 	}
 
 	private void launchTask(String artifactURL) {
+
 		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
 				this.properties, null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
