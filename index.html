@@ -1,82 +1,11 @@
----
-# The name of your project
-title: Spring Cloud Task
-
-badges:
-
-  # Specify your project's twitter handle, if any. Delete if none.
-  twitter: SpringCloudOSS
-
-  # Customize your project's badges. Delete any entries that do not apply.
-  custom:
-    - name: Source (GitHub)
-      url:  https://github.com/spring-cloud/spring-cloud-task
-      icon: github
-
-    - name: Issues (Waffle)
-      url:  https://waffle.io/spring-cloud/spring-cloud-task
-      icon: tracking
-
-    - name: CI (Bamboo)
-      url:  https://build.spring.io/browse/SCT
-      icon: ci  
-
-    - name: StackOverflow
-      url:  http://stackoverflow.com/questions/tagged/spring-cloud-task
-      icon: stackoverflow
----
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en-US">
-
-<!-- Specify the parent of this project (or delete if none) to influence the rendering of the breadcrumb -->
-{% capture parent_link %}
-[Spring Cloud]({{ site.projects_site_url }}/spring-cloud)
-{% endcapture %}
-
-
-{% capture billboard_description %}
-
-Spring Cloud Task allows a user to develop and run short lived microservices using Spring Cloud and run them locally, in the cloud, even on Spring Cloud Data Flow. Just add `@EnableTask` and run your app as a Spring Boot app (single application context).
-
-{% endcapture %}
-
-{% capture main_content %}
-
-<span id="quick-start"></span>
-## Quick Start
-
-{% include download_widget.md %}
-
-As long as Spring Cloud Task is on the classpath any Spring Boot application with `@EnableTask` will record the start and finish of the boot application as well as any uncaught exceptions in the configured task repository. Sample application:
-
-```java
-@SpringBootApplication
-@EnableTask
-public class ExampleApplication {
-
-	@Bean
-	public CommandLineRunner commandLineRunner() {
-		return strings ->
-				System.out.println("Executed at :" + 
-				      new SimpleDateFormat().format(new Date()));
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(ExampleApplication.class, args);
-	}
-}
-```
-{% endcapture %}
-
-{% capture related_resources %}
-
-### Related Projects
-
-* [Spring Batch](http://spring.io/spring-batch/)
-* [Spring Cloud Data Flow](http://cloud.spring.io/spring-cloud-dataflow/)
-
-{% endcapture %}
-
-
-{% include project_page.html %}
+<meta charset="utf-8">
+<title>Redirecting&hellip;</title>
+<link rel="canonical" href="http://spring.io/projects/spring-cloud-task">
+<meta http-equiv="refresh" content="0; url=http://spring.io/projects/spring-cloud-task">
+<meta name="robots" content="noindex">
+<h1>Redirecting&hellip;</h1>
+<a href="http://spring.io/projects/spring-cloud-task">Click here if you are not redirected.</a>
+<script>location="http://spring.io/projects/spring-cloud-task"</script>
 </html>
