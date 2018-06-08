@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,11 +34,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Stores Task Execution Information to a in-memory map.
  *
  * @author Glenn Renfro
+ * @author Gunnar Hillert
  */
 public class MapTaskExecutionDao implements TaskExecutionDao {
 
@@ -251,4 +254,72 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 				executionList.subList((int)pageable.getOffset(), (int)toIndex),
 				pageable, maxSize);
 	}
+
+	@Override
+	public List<TaskExecution> getLatestTaskExecutionsByTaskNames(String... taskNames) {
+
+		Assert.notEmpty(taskNames, "At least 1 task name must be provided.");
+
+		final List<String> taskNamesAsList = new ArrayList<>();
+
+		for (String taskName : taskNames) {
+			if (StringUtils.hasText(taskName)) {
+				taskNamesAsList.add(taskName);
+			}
+		}
+
+		Assert.isTrue(taskNamesAsList.size() == taskNames.length,
+			String.format("Task names must not contain any empty elements but %s of %s were empty or null.",
+					taskNames.length - taskNamesAsList.size(), taskNames.length));
+
+		final Map<String, TaskExecution> tempTaskExecutions = new HashMap<>();
+
+		for (Map.Entry<Long, TaskExecution> taskExecutionMapEntry : this.taskExecutions.entrySet()) {
+			if (!taskNamesAsList.contains(taskExecutionMapEntry.getValue().getTaskName())) {
+				continue;
+			}
+
+			final TaskExecution tempTaskExecution = tempTaskExecutions.get(taskExecutionMapEntry.getValue().getTaskName());
+			if (tempTaskExecution == null
+				|| tempTaskExecution.getStartTime().before(taskExecutionMapEntry.getValue().getStartTime())
+				|| (
+					tempTaskExecution.getStartTime().equals(taskExecutionMapEntry.getValue().getStartTime())
+						&& tempTaskExecution.getExecutionId() < taskExecutionMapEntry.getValue().getExecutionId()
+					)
+				) {
+				tempTaskExecutions.put(taskExecutionMapEntry.getValue().getTaskName(), taskExecutionMapEntry.getValue());
+			}
+		}
+		final List<TaskExecution> latestTaskExecutions = new ArrayList<>(tempTaskExecutions.values());
+		Collections.sort(latestTaskExecutions, new TaskExecutionComparator());
+		return latestTaskExecutions;
+	}
+
+	@Override
+	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
+		Assert.hasText(taskName, "The task name must not be empty.");
+		final List<TaskExecution> taskExecutions = this.getLatestTaskExecutionsByTaskNames(taskName);
+		if (taskExecutions.isEmpty()) {
+			return null;
+		}
+		else if (taskExecutions.size() == 1) {
+			return taskExecutions.get(0);
+		}
+		else {
+			throw new IllegalStateException("Only expected a single TaskExecution but received " + taskExecutions.size());
+		}
+	}
+
+	private class TaskExecutionComparator implements Comparator<TaskExecution> {
+		@Override
+		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {
+			if (firstTaskExecution.getStartTime().equals(secondTaskExecution.getStartTime())) {
+				return Long.compare(firstTaskExecution.getExecutionId(), secondTaskExecution.getExecutionId());
+			}
+			else {
+				return secondTaskExecution.getStartTime().compareTo(firstTaskExecution.getStartTime());
+			}
+		}
+	}
+
 }

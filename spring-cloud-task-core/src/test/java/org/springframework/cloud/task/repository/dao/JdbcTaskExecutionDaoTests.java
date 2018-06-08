@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
+
 import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -49,25 +49,25 @@ import static org.junit.Assert.assertEquals;
  * Executes unit tests on JdbcTaskExecutionDao.
  *
  * @author Glenn Renfro
+ * @author Gunnar Hillert
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class,
 		EmbeddedDataSourceConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class})
-public class JdbcTaskExecutionDaoTests {
+public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	@Autowired
 	private DataSource dataSource;
-
-	private JdbcTaskExecutionDao dao;
 
 	@Autowired
 	TaskRepository repository;
 
 	@Before
 	public void setup(){
-		dao = new JdbcTaskExecutionDao(dataSource);
+		final JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
 		dao.setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
+		super.dao = dao;
 	}
 
 	@Test
@@ -220,14 +220,5 @@ public class JdbcTaskExecutionDaoTests {
 		repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
 		repository.createTaskExecution(getTaskExecution("FOO2", "externalA"));
 		repository.createTaskExecution(getTaskExecution("FOO3", "externalB"));
-	}
-
-	private TaskExecution getTaskExecution(String taskName,
-			String externalExecutionId) {
-		TaskExecution taskExecution = new TaskExecution();
-		taskExecution.setTaskName(taskName);
-		taskExecution.setExternalExecutionId(externalExecutionId);
-		taskExecution.setStartTime(new Date());
-		return taskExecution;
 	}
 }
