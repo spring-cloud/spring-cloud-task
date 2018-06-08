@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 
@@ -37,15 +36,18 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Executes unit tests on MapTaskExecutionDaoTests.
+ *
  * @author Glenn Renfro
+ * @author Gunnar Hillert
  */
-public class MapTaskExecutionDaoTests {
+public class MapTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases{
 
-	private MapTaskExecutionDao dao;
+	private MapTaskExecutionDao mapTaskExecutionDao;
 
 	@Before
 	public void setUp() {
-		this.dao = new MapTaskExecutionDao();
+		this.mapTaskExecutionDao = new MapTaskExecutionDao();
+		super.dao = this.mapTaskExecutionDao;
 	}
 
 	@Test
@@ -59,7 +61,7 @@ public class MapTaskExecutionDaoTests {
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
@@ -70,7 +72,7 @@ public class MapTaskExecutionDaoTests {
 		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
 				new ArrayList<String>(0), null);
 
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
 	}
@@ -89,7 +91,7 @@ public class MapTaskExecutionDaoTests {
 		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
@@ -104,7 +106,7 @@ public class MapTaskExecutionDaoTests {
 		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		assertNotNull("taskExecutionMap must not be null", taskExecutionMap);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
@@ -124,10 +126,10 @@ public class MapTaskExecutionDaoTests {
 					expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 					expectedTaskExecution.getExitMessage());
 		}
-		Set jobIds = new HashSet<Long>(2);
+		Set<Long> jobIds = new HashSet<>(2);
 		jobIds.add(123L);
 		jobIds.add(456L);
-		this.dao.getBatchJobAssociations().put(
+		this.mapTaskExecutionDao.getBatchJobAssociations().put(
 				expectedTaskExecutionList.get(0).getExecutionId(), jobIds);
 
 		assertEquals(Long.valueOf(expectedTaskExecutionList.get(0).getExecutionId()),
@@ -141,7 +143,7 @@ public class MapTaskExecutionDaoTests {
 	public void testStartExecutionWithNullExternalExecutionIdExisting(){
 		TaskExecution expectedTaskExecution =
 				initializeTaskExecutionWithExternalExecutionId();
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				null);
@@ -153,7 +155,7 @@ public class MapTaskExecutionDaoTests {
 	public void testStartExecutionWithNullExternalExecutionIdNonExisting(){
 		TaskExecution expectedTaskExecution =
 				initializeTaskExecutionWithExternalExecutionId();
-		Map<Long, TaskExecution> taskExecutionMap = this.dao.getTaskExecutions();
+		Map<Long, TaskExecution> taskExecutionMap = this.mapTaskExecutionDao.getTaskExecutions();
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				"BAR");
@@ -167,4 +169,5 @@ public class MapTaskExecutionDaoTests {
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				"FOO1");
 	}
+
 }
