@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.springframework.util.Assert;
  *
  * @author Glenn Renfro
  * @author Michael Minella
+ * @author Gunnar Hillert
  */
 public class SimpleTaskExplorer implements TaskExplorer {
 
@@ -90,6 +91,16 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	@Override
 	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
 		return taskExecutionDao.getJobExecutionIdsByTaskExecutionId(taskExecutionId);
+	}
+
+	@Override
+	public List<TaskExecution> getLatestTaskExecutionsByTaskNames(String... taskNames) {
+		return taskExecutionDao.getLatestTaskExecutionsByTaskNames(taskNames);
+	}
+
+	@Override
+	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
+		return taskExecutionDao.getLatestTaskExecutionForTaskName(taskName);
 	}
 
 }
