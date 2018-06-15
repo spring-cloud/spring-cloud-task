@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -59,6 +58,7 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * @author Glenn Renfro
+ * @author Gunnar Hillert
  */
 @RunWith(Parameterized.class)
 public class SimpleTaskExplorerTests {
@@ -124,7 +124,7 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void taskExecutionNotFound() {
-		Map< Long, TaskExecution> expectedResults = createSampleDataSet(5);
+		createSampleDataSet(5);
 
 		TaskExecution actualTaskExecution =
 				taskExplorer.getTaskExecution(-5);
@@ -147,7 +147,7 @@ public class SimpleTaskExplorerTests {
 
 	@Test
 	public void getTaskCount() {
-		Map<Long, TaskExecution> expectedResults = createSampleDataSet(33);
+		createSampleDataSet(33);
 		assertEquals(String.format(
 				"task count did not match expected result for test Type %s",
 				testType),
@@ -192,7 +192,6 @@ public class SimpleTaskExplorerTests {
 	public void findTasksByName() {
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
-		Random randomGenerator = new Random();
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
 		//Store completed jobs
@@ -271,12 +270,50 @@ public class SimpleTaskExplorerTests {
 		assertEquals(0, taskExplorer.getJobExecutionIdsByTaskExecutionId(555555L).size());
 	}
 
+	@Test
+	public void getLatestTaskExecutionForTaskName() {
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
+		for (Map.Entry<Long, TaskExecution> taskExecutionMapEntry: expectedResults.entrySet()) {
+			TaskExecution latestTaskExecution =
+					taskExplorer.getLatestTaskExecutionForTaskName(taskExecutionMapEntry.getValue().getTaskName());
+			assertNotNull(String.format(
+					"expected a taskExecution but got null for test type %s", testType),
+					latestTaskExecution);
+			TestVerifierUtils.verifyTaskExecution(
+					expectedResults.get(latestTaskExecution.getExecutionId()),
+					latestTaskExecution);
+		}
+	}
+
+	@Test
+	public void getLatestTaskExecutionsByTaskNames() {
+		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
+
+		final List<String> taskNamesAsList = new ArrayList<>();
+
+		for (TaskExecution taskExecution : expectedResults.values()) {
+			taskNamesAsList.add(taskExecution.getTaskName());
+		}
+
+		final List<TaskExecution> latestTaskExecutions = taskExplorer.getLatestTaskExecutionsByTaskNames(
+				taskNamesAsList.toArray(new String[taskNamesAsList.size()]));
+
+		for (TaskExecution latestTaskExecution : latestTaskExecutions) {
+			assertNotNull(String.format(
+					"expected a taskExecution but got null for test type %s", testType),
+					latestTaskExecution);
+			TestVerifierUtils.verifyTaskExecution(
+					expectedResults.get(latestTaskExecution.getExecutionId()),
+					latestTaskExecution);
+		}
+	}
+
 	private void verifyPageResults(Pageable pageable, int totalNumberOfExecs) {
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(totalNumberOfExecs);
 		List<Long> sortedExecIds = getSortedOfTaskExecIds(expectedResults);
 		Iterator<Long> expectedTaskExecutionIter = sortedExecIds.iterator();
 		//Verify pageable totals
-		Page taskPage = taskExplorer.findAll(pageable);
+		Page<TaskExecution> taskPage = taskExplorer.findAll(pageable);
 		int pagesExpected = (int) Math.ceil(totalNumberOfExecs / ((double) pageable.getPageSize()));
 		assertEquals("actual page count return was not the expected total",
 				pagesExpected,
@@ -356,7 +393,7 @@ public class SimpleTaskExplorerTests {
 
 	private List<Long> getSortedOfTaskExecIds(Map<Long, TaskExecution> taskExecutionMap){
 		List<Long> sortedExecIds = new ArrayList<>(taskExecutionMap.size());
-		TreeSet sortedSet = getTreeSet();
+		TreeSet<TaskExecution> sortedSet = getTreeSet();
 		sortedSet.addAll(taskExecutionMap.values());
 		Iterator <TaskExecution> iterator = sortedSet.descendingIterator();
 		while(iterator.hasNext()){
@@ -365,7 +402,7 @@ public class SimpleTaskExplorerTests {
 		return sortedExecIds;
 	}
 
-	private TreeSet getTreeSet(){
+	private TreeSet<TaskExecution> getTreeSet(){
 		return new TreeSet<TaskExecution>(new Comparator<TaskExecution>() {
 			@Override
 			public int compare(TaskExecution e1, TaskExecution e2) {
