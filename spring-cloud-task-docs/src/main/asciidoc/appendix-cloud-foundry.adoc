@@ -1,0 +1,34 @@
+
+[[appendix-cloud-foundry]]
+== Running a Task App on Cloud Foundry
+
+This section will discuss how to deploy a Spring Cloud Task application onto
+the Cloud Foundry platform.
+
+There are 3 steps to deploying your Spring Cloud Task application:
+
+. We must push your application to the platform using the `cf push command`.
+This command pushes your jar to the Cloud Foundry platform.
+
+. We need to stop the application from running once the push is complete.
+Cloud Foundry has to run the application to stage it.  But when Cloud Foundry
+runs the application at this time it is treating the application as a LRP (Long Running Process)
+which means once the task is complete it will restart it.  This is not the desired
+behavior for our task, thus we must stop it from running.  To stop the LRP execution,
+we will use the `cf stop` command.
+
+. We now need to launch our application as a task to do this we will use
+the `cf run-task` command.
+
+NOTE: When using the run-task command you have to specify build pack to be used
+and that is specified in the `command string` enumerated below.
+
+[source,bash]
+```
+$ cf push --health-check-type none -p <location of your jar> <name of your app> --no-route
+$ cf stop <name of your app>
+$ cf run-task <name of your app> <command string>
+```
+
+For further examples and how to's on using the Cloud Foundry CLI click
+https://docs.cloudfoundry.org/cf-cli/getting-started.html[here].
