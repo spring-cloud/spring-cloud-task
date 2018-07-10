@@ -136,6 +136,14 @@ public interface TaskExecutionDao {
 	long getRunningTaskExecutionCountByTaskName(String taskName);
 
 	/**
+	 * Retrieves current number of task executions with an endTime of null.
+	 *
+	 * @return current number of task executions.
+	 */
+	long getRunningTaskExecutionCount();
+
+
+	/**
 	 * Retrieves current number of task executions.
 	 *
 	 * @return current number of task executions.

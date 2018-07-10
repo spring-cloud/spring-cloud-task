@@ -140,6 +140,17 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
+	public long getRunningTaskExecutionCount() {
+		int count = 0;
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
+			if ( entry.getValue().getEndTime() == null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
 	public long getTaskExecutionCount() {
 		return taskExecutions.size();
 	}

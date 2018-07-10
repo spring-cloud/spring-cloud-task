@@ -239,6 +239,15 @@ public class BaseTaskExecutionDaoTestCases {
 		assertEquals(9 + executionIdOffset, latestTaskExecution.getExecutionId());
 	}
 
+	@Test
+	@DirtiesContext
+	public void getRunningTaskExecutions() {
+		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
+		assertEquals(dao.getTaskExecutionCount(), dao.getRunningTaskExecutionCount());
+		dao.completeTaskExecution(1, 0, new Date(), "c'est fini!" );
+		assertEquals(dao.getTaskExecutionCount() - 1, dao.getRunningTaskExecutionCount());
+	}
+
 	protected long initializeRepositoryNotInOrderWithMultipleTaskExecutions() {
 
 		final TaskExecution foo1_0 = getTaskExecution("FOO1", "externalC");
