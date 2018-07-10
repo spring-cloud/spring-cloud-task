@@ -41,6 +41,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author David Turanski
  */
 public class MapTaskExecutionDao implements TaskExecutionDao {
 
@@ -133,6 +134,17 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName) &&
 					entry.getValue().getEndTime() == null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public long getRunningTaskExecutionCount() {
+		long count = 0;
+		for (Map.Entry<Long, TaskExecution> entry : taskExecutions.entrySet()) {
+			if ( entry.getValue().getEndTime() == null) {
 				count++;
 			}
 		}

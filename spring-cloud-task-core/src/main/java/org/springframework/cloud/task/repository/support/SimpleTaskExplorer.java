@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Michael Minella
  * @author Gunnar Hillert
+ * @author David Turanski
  */
 public class SimpleTaskExplorer implements TaskExplorer {
 
@@ -71,6 +72,11 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	@Override
 	public long getTaskExecutionCount() {
 		return taskExecutionDao.getTaskExecutionCount();
+	}
+
+	@Override
+	public long getRunningTaskExecutionCount() {
+		return taskExecutionDao.getRunningTaskExecutionCount();
 	}
 
 	@Override
