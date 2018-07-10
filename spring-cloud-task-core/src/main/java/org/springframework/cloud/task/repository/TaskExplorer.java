@@ -72,6 +72,13 @@ public interface TaskExplorer {
 	long getTaskExecutionCount();
 
 	/**
+	 * Retrieves current number of running task executions.
+	 *
+	 * @return current number of running task executions.
+	 */
+	long getRunningTaskExecutionCount();
+
+	/**
 	 * Get a collection/page of executions
 	 *
 	 * @param taskName the name of the task to be searched

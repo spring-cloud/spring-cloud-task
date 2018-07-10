@@ -155,6 +155,15 @@ public class SimpleTaskExplorerTests {
 	}
 
 	@Test
+	public void getRunningTaskCount() {
+		createSampleDataSet(33);
+		assertEquals(String.format(
+			"task count did not match expected result for test Type %s",
+			testType),
+			33, taskExplorer.getRunningTaskExecutionCount());
+	}
+
+	@Test
 	public void findRunningTasks() {
 		final int TEST_COUNT = 2;
 		final int COMPLETE_COUNT = 5;

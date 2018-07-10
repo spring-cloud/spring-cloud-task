@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author David Turanski
  *
  */
 public interface TaskExecutionDao {
@@ -134,6 +135,14 @@ public interface TaskExecutionDao {
 	 * @return current number of task executions for the taskName.
 	 */
 	long getRunningTaskExecutionCountByTaskName(String taskName);
+
+	/**
+	 * Retrieves current number of task executions with an endTime of null.
+	 *
+	 * @return current number of task executions.
+	 */
+	long getRunningTaskExecutionCount();
+
 
 	/**
 	 * Retrieves current number of task executions.
