@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author David Turanski
  *
  */
 public interface TaskExecutionDao {

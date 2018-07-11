@@ -57,6 +57,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author David Turanski
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
