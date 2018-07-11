@@ -46,6 +46,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -56,6 +57,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author David Turanski
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
@@ -114,6 +116,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String RUNNING_TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM " +
 			"%PREFIX%EXECUTION where TASK_NAME = :taskName AND END_TIME IS NULL ";
+
+	private static final String RUNNING_TASK_EXECUTION_COUNT = "SELECT COUNT(*) FROM " +
+		"%PREFIX%EXECUTION where END_TIME IS NULL ";
 
 	private static final String LAST_TASK_EXECUTIONS_BY_TASK_NAMES =
 	"select TE2.* from (" +
@@ -307,6 +312,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		try {
 			return jdbcTemplate.queryForObject(
 					getQuery(RUNNING_TASK_EXECUTION_COUNT_BY_NAME), queryParameters, Long.class);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return 0;
+		}
+	}
+
+	@Override
+	public long getRunningTaskExecutionCount() {
+
+		try {
+			return jdbcTemplate.queryForObject(
+				getQuery(RUNNING_TASK_EXECUTION_COUNT), (SqlParameterSource)null, Long.class);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
