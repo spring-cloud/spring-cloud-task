@@ -70,108 +70,39 @@ Java version: 1.8.0_31, vendor: Oracle Corporation
 NOTE: This sample needs to be created in its own folder. Subsequent instructions assume
 you have created a suitable folder and that it is your "`current directory.`"
 
-[[getting-started-creating-the-pom]]
-=== Creating the POM
+[[getting-started-creating-project]]
+=== Creating the Spring Task Project using Spring initializer
+Now let's create and test an application that prints `Hello, World!` to the console.
 
-We need to start by creating a Maven `pom.xml` file. The `pom.xml` file contains the
-recipe that Maven uses to build your project. To create the pom.xml file, open your
-favorite text editor and add the following:
 
-[code,xml]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+To do so:
 
-	<modelVersion>4.0.0</modelVersion>
+. Visit the link:https://start.spring.io/[Spring Initialzr] site.
+.. Create a new Maven project with a *Group* name of `io.spring.demo` and an *Artifact* name of `helloworld`.
+.. In the Dependencies text box, type `task` to select the Spring Cloud Task dependency.
+.. In the Dependencies text box, type `jdbc`.
+.. In the Dependencies text box, type `h2`. (or your favorite database)
+.. Click the *Generate Project* button
+. Unzip the project and import the project into your favorite IDE.
 
-	<groupId>com.example</groupId>
-	<artifactId>myproject</artifactId>
-	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.2.RELEASE</version>
-	</parent>
-
-	<properties>
-		<start-class>com.example.SampleTask</start-class>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-</project>
-----
-
-Creating a `pom.xml` file with the preceding content should give you a working build. You
-can test it by running `mvn package` (for now, you can ignore the "jar will be empty - no
-content was marked for inclusion!" warning ).
-
-NOTE: At this point, you could import the project into an IDE (most modern Java IDE's
-include built-in support for Maven). For simplicity, we continue to use a plain text
-editor for this example.
-
-[[getting-started-adding-classpath-dependencies]]
-=== Adding classpath dependencies
-
-A Spring Cloud Task is made up of a Spring Boot application that is expected to end. In
-the `pom.xml` file we showed earlier, we created the shell of a Spring Boot application by
-setting our parent to use the `spring-boot-starter-parent`.
-
-Spring Boot provides a number of additional "`Starter POMs`". Some of them are appropriate
-for use within tasks (`spring-boot-starter-batch`, `spring-boot-starter-jdbc`, and
-others), and some may not be ('spring-boot-starter-web` is probably not going to be used
-in a task). The best indicator of which starter makes sense is whether the resulting
-application should end. Batch-based applications typically end. Conversely, the
-`spring-boot-starter-web` dependency bootstraps a servlet container, which better suits
-applications that continue.
-
-For this example, we need only to add a single additional dependency -- the one for
-Spring Cloud Task itself:
-
-[source,xml]
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-task</artifactId>
-			<version>1.2.3.RELEASE</version>
-		</dependency>
 
 [[getting-started-writing-the-code]]
 === Writing the Code
 
-To finish our application, we need to create a single Java file. By default, Maven
-compiles the sources from `src/main/java`, so you need to create that folder structure.
-Then you need to add a file named `src/main/java/com/example/SampleTask.java`, as shown
-in the following example:
-
+To finish our application, we need to update the generated `HelloworldApplication` with the following contents so that it will launch a Task.
 [source,java]
 ----
-package com.example;
+package io.spring.demo.helloworld;
 
-import org.springframework.boot.*;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableTask
-public class SampleTask {
+public class HelloworldApplication {
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
@@ -179,7 +110,7 @@ public class SampleTask {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleTask.class, args);
+		SpringApplication.run(HelloworldApplication.class, args);
 	}
 
 	public static class HelloWorldCommandLineRunner implements CommandLineRunner {
@@ -196,7 +127,7 @@ While it may seem small, quite a bit is going on. For more about Spring
 Boot specifics, see the
 http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
 
-We also need to create an `application.properties` file in `src/main/resources`. We need
+Now let's open the `application.properties` file in `src/main/resources`. We need
 to configure two properties in `application.properties`: We need to set the application
 name (which is translated to the task name), and we need to set the logging for Spring
 Cloud Task to `DEBUG` so that we can see what's going on. The following example shows how
@@ -217,16 +148,16 @@ default, it imports an additional configuration class (`SimpleTaskConfiguration`
 additional configuration registers the `TaskRepository` and the infrastructure for its
 use.
 
-Out of the box, the `TaskRepository` uses an in-memory `Map` to record the results
-of a task. A `Map` is not a practical solution for a production environment, since
-the `Map` goes away once the task ends. However, for a quick getting-started
-experience, we use this as a default as well as echoing to the logs what is being updated
+In our demo, the `TaskRepository` uses an embedded H2 database to record the results
+of a task. This H2 embedded database is not a practical solution for a production environment, since
+the H2 DB goes away once the task ends. However, for a quick getting-started
+experience, we will use this in our example as well as echoing to the logs what is being updated
 in that repository. In the <<features-configuration>> section (later in this
 documentation), we cover how to customize the configuration of the pieces provided by
 Spring Cloud Task.
 
 When our sample application runs, Spring Boot launches our `HelloWorldCommandLineRunner`
-and outputs our "`Hello, World!`" message to standard out. The `TaskLifecyceListener`
+and outputs our "`Hello, World!`" message to standard out. The `TaskLifecycleListener`
 records the start of the task and the end of the task in the repository.
 
 [[getting-started-main-method]]
@@ -266,25 +197,32 @@ $ mvn clean spring-boot:run
 ....... . . . (Maven log output here)
 ....... . . .
 
-
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::        (v1.3.3.RELEASE)
+ :: Spring Boot ::        (v2.0.3.RELEASE)
 
-2016-01-25 11:08:10.183  INFO 12943 --- [           main] com.example.SampleTask                   : Starting SampleTask on Michaels-MacBook-Pro-2.local with PID 12943 (/Users/mminella/Documents/IntelliJWorkspace/spring-cloud-task-example/target/classes started by mminella in /Users/mminella/Documents/IntelliJWorkspace/spring-cloud-task-example)
-2016-01-25 11:08:10.185  INFO 12943 --- [           main] com.example.SampleTask                   : No active profile set, falling back to default profiles: default
-2016-01-25 11:08:10.226  INFO 12943 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
-2016-01-25 11:08:11.051  INFO 12943 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
-2016-01-25 11:08:11.065  INFO 12943 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=null, statusCode='null', exitMessage='null', arguments=[]}
+2018-07-23 17:44:34.426  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : Starting HelloworldApplication on Glenns-MBP-2.attlocal.net with PID 1978 (/Users/glennrenfro/project/crap/helloworld/target/classes started by glennrenfro in /Users/glennrenfro/project/crap/helloworld)
+2018-07-23 17:44:34.430  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : No active profile set, falling back to default profiles: default
+2018-07-23 17:44:34.472  INFO 1978 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@1d24f32d: startup date [Mon Jul 23 17:44:34 EDT 2018]; root of context hierarchy
+2018-07-23 17:44:35.280  INFO 1978 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2018-07-23 17:44:35.410  INFO 1978 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2018-07-23 17:44:35.419 DEBUG 1978 --- [           main] o.s.c.t.c.SimpleTaskConfiguration        : Using org.springframework.cloud.task.configuration.DefaultTaskConfigurer TaskConfigurer
+2018-07-23 17:44:35.420 DEBUG 1978 --- [           main] o.s.c.t.c.DefaultTaskConfigurer          : No EntityManager was found, using DataSourceTransactionManager
+2018-07-23 17:44:35.522 DEBUG 1978 --- [           main] o.s.c.t.r.s.TaskRepositoryInitializer    : Initializing task schema for h2 database
+2018-07-23 17:44:35.525  INFO 1978 --- [           main] o.s.jdbc.datasource.init.ScriptUtils     : Executing SQL script from class path resource [org/springframework/cloud/task/schema-h2.sql]
+2018-07-23 17:44:35.558  INFO 1978 --- [           main] o.s.jdbc.datasource.init.ScriptUtils     : Executed SQL script from class path resource [org/springframework/cloud/task/schema-h2.sql] in 33 ms.
+2018-07-23 17:44:35.728  INFO 1978 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2018-07-23 17:44:35.730  INFO 1978 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'dataSource' has been autodetected for JMX exposure
+2018-07-23 17:44:35.733  INFO 1978 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2018-07-23 17:44:35.738  INFO 1978 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
+2018-07-23 17:44:35.762 DEBUG 1978 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Creating: TaskExecution{executionId=0, parentExecutionId=null, exitCode=null, taskName='application', startTime=Mon Jul 23 17:44:35 EDT 2018, endTime=null, exitMessage='null', externalExecutionId='null', errorMessage='null', arguments=[]}
+2018-07-23 17:44:35.772  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : Started HelloworldApplication in 1.625 seconds (JVM running for 4.764)
 Hello, World!
-2016-01-25 11:08:11.071  INFO 12943 --- [           main] com.example.SampleTask                   : Started SampleTask in 1.095 seconds (JVM running for 3.826)
-2016-01-25 11:08:11.220  INFO 12943 --- [       Thread-1] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@2a2c3676: startup date [Mon Jan 25 11:08:10 CST 2016]; root of context hierarchy
-2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution{executionId=0, externalExecutionID='null', exitCode=0, taskName='application', startTime=Mon Jan 25 11:08:11 CST 2016, endTime=Mon Jan 25 11:08:11 CST 2016, statusCode='null', exitMessage='null', arguments=[]}
-2016-01-25 11:08:11.222  INFO 12943 --- [       Thread-1] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2018-07-23 17:44:35.782 DEBUG 1978 --- [           main] o.s.c.t.r.support.SimpleTaskRepository   : Updating: TaskExecution with executionId=1 with the following {exitCode=0, endTime=Mon Jul 23 17:44:35 EDT 2018, exitMessage='null', errorMessage='null'}
 ----
 
 The preceding output has three lines that of interest to us here:
