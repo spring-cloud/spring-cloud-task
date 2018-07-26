@@ -52,39 +52,19 @@ http://start.spring.io/[Spring Initializr] and creating a new project. Doing so
 automatically generates a new project structure so that you can start coding right away.
 We recommend experimenting with the Spring Initializr to become familiar with it.
 
-Before we begin, open a terminal to check that you have valid versions of Java and Maven
-installed, as shown in the following two listings:
-
-[source]
-$ java -version
-java version "1.8.0_31"
-Java(TM) SE Runtime Environment (build 1.8.0_31-b13)
-Java HotSpot(TM) 64-Bit Server VM (build 25.31-b07, mixed mode)
-
-[source]
-$ mvn -v
-Apache Maven 3.2.3 (33f8c3e1027c3ddde99d3cdebad2656a31e8fdf4; 2014-08-11T15:58:10-05:00)
-Maven home: /usr/local/Cellar/maven/3.2.3/libexec
-Java version: 1.8.0_31, vendor: Oracle Corporation
-
-NOTE: This sample needs to be created in its own folder. Subsequent instructions assume
-you have created a suitable folder and that it is your "`current directory.`"
-
 [[getting-started-creating-project]]
-=== Creating the Spring Task Project using Spring initializer
+=== Creating the Spring Task Project using Spring Initializr
 Now let's create and test an application that prints `Hello, World!` to the console.
-
 
 To do so:
 
 . Visit the link:https://start.spring.io/[Spring Initialzr] site.
 .. Create a new Maven project with a *Group* name of `io.spring.demo` and an *Artifact* name of `helloworld`.
-.. In the Dependencies text box, type `task` to select the Spring Cloud Task dependency.
-.. In the Dependencies text box, type `jdbc`.
-.. In the Dependencies text box, type `h2`. (or your favorite database)
+.. In the Dependencies text box, type `task` to select the `Cloud Task` dependency.
+.. In the Dependencies text box, type `jdbc` then select the `JDBC` dependency.
+.. In the Dependencies text box, type `h2` then select the `H2`. (or your favorite database)
 .. Click the *Generate Project* button
-. Unzip the project and import the project into your favorite IDE.
-
+. Unzip the timestamp.zip file and import the project into your favorite IDE.
 
 [[getting-started-writing-the-code]]
 === Writing the Code
@@ -127,11 +107,15 @@ While it may seem small, quite a bit is going on. For more about Spring
 Boot specifics, see the
 http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
 
-Now let's open the `application.properties` file in `src/main/resources`. We need
-to configure two properties in `application.properties`: We need to set the application
-name (which is translated to the task name), and we need to set the logging for Spring
-Cloud Task to `DEBUG` so that we can see what's going on. The following example shows how
-to do both:
+Now let's open the `application.properties` file in `src/main/resources`.
+We need to configure two properties in `application.properties`:
+
+. `application.name` to set the application name (which is translated to the task name)
+. `logging.level` to set the logging for Spring Cloud Task to `DEBUG` in order to
+get a view of what's going on.
+
+The following example shows how to do both:
+
 
 [source]
 ----
@@ -164,8 +148,7 @@ records the start of the task and the end of the task in the repository.
 ==== The main method
 
 The main method serves as the entry point to any java application.  Our main method
-delegates to Spring Boot's `SpringApplication` class.  You can read more about it in the
-Spring Boot documentation.
+delegates to Spring Boot's https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html[SpringApplication] class.
 
 [[getting-started-clr]]
 ==== The CommandLineRunner
@@ -205,7 +188,7 @@ $ mvn clean spring-boot:run
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::        (v2.0.3.RELEASE)
 
-2018-07-23 17:44:34.426  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : Starting HelloworldApplication on Glenns-MBP-2.attlocal.net with PID 1978 (/Users/glennrenfro/project/crap/helloworld/target/classes started by glennrenfro in /Users/glennrenfro/project/crap/helloworld)
+2018-07-23 17:44:34.426  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : Starting HelloworldApplication on Glenns-MBP-2.attlocal.net with PID 1978 (/Users/glennrenfro/project/helloworld/target/classes started by glennrenfro in /Users/glennrenfro/project/helloworld)
 2018-07-23 17:44:34.430  INFO 1978 --- [           main] i.s.d.helloworld.HelloworldApplication   : No active profile set, falling back to default profiles: default
 2018-07-23 17:44:34.472  INFO 1978 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@1d24f32d: startup date [Mon Jul 23 17:44:34 EDT 2018]; root of context hierarchy
 2018-07-23 17:44:35.280  INFO 1978 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
