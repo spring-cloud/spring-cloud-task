@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 the original author or authors.
+ *  Copyright 2016-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,12 +50,14 @@ public class BatchEventsApplicationTests {
 			context.close();
 		}
 	}
-	
+
 	@Test
 	public void testExecution() throws Exception {
 		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.web-environment=false");
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
-				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup");
+				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
+				"--spring.jmx.default-domain=fakedomain",
+				"--spring.main.webEnvironment=false");
 		Assert.assertTrue("The latch did not count down to zero before timeout",
 				jobExecutionLatch.await(60, TimeUnit.SECONDS));
 	}

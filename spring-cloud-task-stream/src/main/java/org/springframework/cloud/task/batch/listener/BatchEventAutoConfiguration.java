@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,6 +34,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListenerBeanPostProcessor;
 import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +62,7 @@ import org.springframework.messaging.MessageChannel;
 @ConditionalOnClass(Job.class)
 @ConditionalOnBean(value = { Job.class, TaskLifecycleListener.class })
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true", matchIfMissing = true)
+@AutoConfigureAfter(SimpleTaskAutoConfiguration.class)
 public class BatchEventAutoConfiguration {
 
 	public final static String JOB_EXECUTION_EVENTS_LISTENER = "jobExecutionEventsListener";

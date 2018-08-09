@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 the original author or authors.
+ *  Copyright 2017-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,13 @@
 package org.springframework.cloud.task;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
-import org.springframework.cloud.task.configuration.TaskProperties;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,24 +35,23 @@ import static org.junit.Assert.assertNotNull;
  * @author Glenn Renfro
  * @since 2.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TaskProperties.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class})
-@TestPropertySource(properties = {
-		"spring.cloud.task.single-instance-enabled=true",
-})
 public class SimpleSingleTaskAutoConfigurationTests {
-	@Autowired
-	private ConfigurableApplicationContext context;
 
 	@Test
 	public void testConfiguration() throws Exception {
 
-		SingleInstanceTaskListener singleInstanceTaskListener = this.context.getBean(SingleInstanceTaskListener.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withPropertyValues("spring.cloud.task.singleInstanceEnabled=true");
+		applicationContextRunner.run((context) -> {
+			SingleInstanceTaskListener singleInstanceTaskListener = context.getBean(SingleInstanceTaskListener.class);
 
-		assertNotNull("singleInstanceTaskListener should not be null", singleInstanceTaskListener);
+			assertNotNull("singleInstanceTaskListener should not be null", singleInstanceTaskListener);
 
-		assertEquals(singleInstanceTaskListener.getClass(), SingleInstanceTaskListener.class);
-
+			assertEquals(singleInstanceTaskListener.getClass(), SingleInstanceTaskListener.class); });
 	}
 
 }
