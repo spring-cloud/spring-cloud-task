@@ -93,7 +93,6 @@ event on the `task-events` channel (at both the start and the end of the task):
 [source, java]
 ----
 @SpringBootApplication
-@EnableTask
 public class TaskEventsApplication {
 
 	public static void main(String[] args) {

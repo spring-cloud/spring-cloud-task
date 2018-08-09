@@ -77,12 +77,11 @@ package io.spring.demo.helloworld;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableTask
 public class HelloworldApplication {
+public class SampleTask {
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
@@ -124,13 +123,10 @@ spring.application.name=helloWorld
 ----
 
 [[getting-started-at-task]]
-==== The @EnableTask annotation
+==== Task Auto Configuration
 
-The first non-boot annotation in our example is the `@EnableTask` annotation. This
-class-level annotation tells Spring Cloud Task to bootstrap it's functionality. By
-default, it imports an additional configuration class (`SimpleTaskConfiguration`). This
-additional configuration registers the `TaskRepository` and the infrastructure for its
-use.
+When including Spring Cloud Task Starter dependency, Task auto configures all beans to bootstrap it's functionality.
+Part of this configuration registers the `TaskRepository` and the infrastructure for its use.
 
 In our demo, the `TaskRepository` uses an embedded H2 database to record the results
 of a task. This H2 embedded database is not a practical solution for a production environment, since

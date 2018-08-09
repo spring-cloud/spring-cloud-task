@@ -33,8 +33,7 @@ processes, typified by most web applications, do not save their lifecycle events
 tasks at the heart of Spring Cloud Task do.
 
 The lifecycle consists of a single task execution. This is a physical execution of a
-Spring Boot application configured to be a task (that is, it has the `@EnableTask`
-annotation).
+Spring Boot application configured to be a task (that is, it has the Sprint Cloud Task dependencies).
 
 At the beginning of a task, before any `CommandLineRunner` or `ApplicationRunner`
 implementations have been run, an entry in the `TaskRepository` that records the start
@@ -367,3 +366,14 @@ application:
     <groupId>org.springframework.integration</groupId>
     <artifactId>spring-integration-jdbc</artifactId>
 </dependency>
+
+=== Disabling Spring Cloud Task Auto Configuration
+
+In cases where Spring Cloud Task should not be auto configured for an implementation, you can disable Task's auto configuration.
+This can be done either by adding the following annotation to your Task application:
+```
+@EnableAutoConfiguration(exclude={SimpleTaskAutoConfiguration.class})
+```
+You may also disable Task auto configuration by setting the `spring.cloud.task.autoconfiguration.enabled` property to `false`.
+
+

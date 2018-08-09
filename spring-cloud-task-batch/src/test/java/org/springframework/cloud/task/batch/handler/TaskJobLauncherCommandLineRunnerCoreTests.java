@@ -16,11 +16,16 @@
 
 package org.springframework.cloud.task.batch.handler;
 
+
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
@@ -34,10 +39,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
@@ -47,6 +54,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Glenn Renfro
@@ -65,6 +73,9 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	private JobExplorer jobExplorer;
 
 	@Autowired
+	private BatchConfiguration batchConfigurer;
+
+	@Autowired
 	private PlatformTransactionManager transactionManager;
 
 	private TaskJobLauncherCommandLineRunner runner;
@@ -79,12 +90,14 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	@Before
 	public void init() {
+		batchConfigurer.clear();
 		this.jobs = new JobBuilderFactory(this.jobRepository);
 		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);
 		Tasklet tasklet = (contribution, chunkContext) -> null;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer);
+		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, jobRepository, new TaskBatchProperties());
+
 	}
 
 
@@ -115,9 +128,26 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
 				.incrementer(new RunIdIncrementer()).build();
 		runFailedJob(new JobParameters());
-		runFailedJob(new JobParameters());
+		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
+
+	@Test
+	public void runDifferentInstances() throws Exception {
+		this.job = this.jobs.get("job")
+				.start(this.steps.get("step").tasklet(throwingTasklet()).build()).build();
+		// start a job instance
+		JobParameters jobParameters = new JobParametersBuilder().addString("name", "foo")
+				.toJobParameters();
+		runFailedJob(jobParameters);
+		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
+		// start a different job instance
+		JobParameters otherJobParameters = new JobParametersBuilder()
+				.addString("name", "bar").toJobParameters();
+		runFailedJob(otherJobParameters);
+		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
+	}
+
 
 	@DirtiesContext
 	@Test
@@ -130,6 +160,15 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		// A failed job that is not restartable does not re-use the job params of
 		// the last execution, but creates a new job instance when running it again.
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
+
+		// try to re-run a failed execution
+		Executable executable = () -> {
+			this.runner.execute(this.job,
+					new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
+		};
+		Throwable exception = assertThrows(JobRestartException.class, executable);
+		AssertionsForClassTypes.assertThat(exception.getMessage())
+				.isEqualTo("JobInstance already exists and is not restartable");
 	}
 
 	@DirtiesContext
@@ -140,10 +179,46 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 				.incrementer(new RunIdIncrementer()).build();
 		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false)
 				.addLong("foo", 2L, false).toJobParameters();
-		runFailedJob(new JobParameters());
-		runFailedJob(new JobParameters());
+		runFailedJob(jobParameters);
+		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
+		runFailedJob(new JobParametersBuilder(jobParameters)
+				.addLong("run.id", 1L).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
+
+
+	@Test
+	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution()
+			throws Exception {
+		this.job = this.jobs.get("job")
+				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
+				.incrementer(new RunIdIncrementer()).build();
+		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false)
+				.addLong("foo", 2L, false).toJobParameters();
+		runFailedJob(jobParameters);
+		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
+		// try to re-run a failed execution with non identifying parameters
+		runFailedJob( new JobParametersBuilder().addLong("run.id", 1L)
+				.addLong("id", 2L, false).addLong("foo", 3L, false).toJobParameters());
+		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
+		JobInstance jobInstance = this.jobExplorer.getJobInstance(0L);
+		assertThat(this.jobExplorer.getJobExecutions(jobInstance)).hasSize(2);
+		// first execution
+		JobExecution firstJobExecution = this.jobExplorer.getJobExecution(0L);
+		JobParameters parameters = firstJobExecution.getJobParameters();
+		assertThat(parameters.getLong("run.id")).isEqualTo(1L);
+		assertThat(parameters.getLong("id")).isEqualTo(1L);
+		assertThat(parameters.getLong("foo")).isEqualTo(2L);
+		// second execution
+		JobExecution secondJobExecution = this.jobExplorer.getJobExecution(1L);
+		parameters = secondJobExecution.getJobParameters();
+		// identifying parameters should be the same as previous execution
+		assertThat(parameters.getLong("run.id")).isEqualTo(1L);
+		// non-identifying parameters should be the newly specified ones
+		assertThat(parameters.getLong("id")).isEqualTo(2L);
+		assertThat(parameters.getLong("foo")).isEqualTo(3L);
+	}
+
 
 	private Tasklet throwingTasklet() {
 		return (contribution, chunkContext) -> {
@@ -154,7 +229,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	private void runFailedJob(JobParameters jobParameters) throws Exception {
 		boolean isExceptionThrown = false;
 		try {
-			this.runner.execute(this.job, new JobParameters());
+			this.runner.execute(this.job, jobParameters);
 		}
 		catch (TaskException taskException) {
 			isExceptionThrown = true;

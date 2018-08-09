@@ -22,18 +22,22 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
+import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -59,21 +63,26 @@ public class TaskEventTests {
 
 	@Test
 	public void testTaskEventListener() throws Exception {
-		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Class[] {TaskEventsConfiguration.class,
-				TaskEventAutoConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				RabbitServiceAutoConfiguration.class}).build().run("--spring.cloud.task.closecontext_enabled=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
-				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=rabbit",
-				"--spring.cloud.stream.bindings.task-events.destination=test");
-		assertNotNull(applicationContext.getBean("taskEventListener"));
-		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(TaskEventsConfiguration.class,
+						TaskEventAutoConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class,
+						RabbitServiceAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
+						BindingServiceConfiguration.class))
+				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
+						"--spring.cloud.task.name=" + TASK_NAME,
+						"--spring.main.web-environment=false",
+						"--spring.cloud.stream.defaultBinder=rabbit",
+						"--spring.cloud.stream.bindings.task-events.destination=test");
+		applicationContextRunner.run((context) -> {
+			assertNotNull(context.getBean("taskEventListener"));
+			assertNotNull(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
+		});
 		assertTrue(latch.await(1, TimeUnit.SECONDS));
 	}
 
 	@Configuration
-	@EnableTask
 	public static class TaskEventsConfiguration {
 	}
 
@@ -86,6 +95,16 @@ public class TaskEventTests {
 		public void receive(TaskExecution execution) {
 			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
 			latch.countDown();
+		}
+
+		@Bean
+		public CommandLineRunner commandLineRunner(){
+			return new CommandLineRunner() {
+				@Override
+				public void run(String... args) throws Exception {
+					System.out.println("Hello World");
+				}
+			};
 		}
 	}
 }

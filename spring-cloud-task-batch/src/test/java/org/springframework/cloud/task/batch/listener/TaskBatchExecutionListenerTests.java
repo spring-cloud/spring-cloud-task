@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -43,15 +44,16 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerBeanPostProcessor;
+import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
-import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,6 +64,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class TaskBatchExecutionListenerTests {
 
@@ -78,71 +81,50 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testAutobuiltDataSource() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
+				ARGS);
 		validateContext();
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationEnabled() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enabled=false"});
+		this.applicationContext = SpringApplication.run(JobConfiguration.class,
+				new String[] {"--spring.cloud.task.batch.listener.enabled=false"});
 		validateContext();
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationEnable() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enable=false"});
+		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
+				new String[] {"--spring.cloud.task.batch.listener.enable=false"});
 		validateContext();
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationBothDisabled() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false"});
+		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
+				new String[] {"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false"});
 		validateContext();
 	}
 
 	@Test
 	public void testAutoConfigurationEnable() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enable=true"});
+		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
+				new String[] {"--spring.cloud.task.batch.listener.enable=true"});
 		validateContext();
 	}
 
 	@Test
 	public void testAutoConfigurationEnabled() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, new String[] {"--spring.cloud.task.batch.listener.enabled=true"});
+		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
+				new String[] {"--spring.cloud.task.batch.listener.enabled=true"});
 		validateContext();
 	}
 
 	@Test
 	public void testFactoryBean() {
-		this.applicationContext = SpringApplication.run(new Class[]{JobFactoryBeanConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(JobFactoryBeanConfiguration.class,
+				ARGS);
 		validateContext();
 	}
 
@@ -159,11 +141,7 @@ public class TaskBatchExecutionListenerTests {
 	}
 	@Test
 	public void testMultipleDataSources() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfigurationMultipleDataSources.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(JobConfigurationMultipleDataSources.class, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -177,11 +155,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testAutobuiltDataSourceNoJob() {
-		this.applicationContext = SpringApplication.run(new Class[] {NoJobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(NoJobConfiguration.class, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -194,10 +168,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testMapBased() {
-		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(JobConfiguration.class, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -211,10 +182,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testMultipleJobs() {
-		this.applicationContext = SpringApplication.run(new Class[] {EmbeddedDataSourceConfiguration.class, MultipleJobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+		this.applicationContext = SpringApplication.run(MultipleJobConfiguration.class, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -267,7 +235,9 @@ public class TaskBatchExecutionListenerTests {
 		this.applicationContext = SpringApplication.run(new Class[] {JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class}, ARGS);
+				TaskBatchAutoConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
+				SingleTaskConfiguration.class }, ARGS);
 
 		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
 				this.applicationContext.getBean(
@@ -277,16 +247,16 @@ public class TaskBatchExecutionListenerTests {
 		return beanPostProcessor;
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class NoJobConfiguration {
 
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
 		@Autowired
@@ -309,9 +279,9 @@ public class TaskBatchExecutionListenerTests {
 		}
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobFactoryBeanConfiguration {
 
 		@Autowired
@@ -349,9 +319,9 @@ public class TaskBatchExecutionListenerTests {
 		}
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfigurationMultipleDataSources {
 
 		@Autowired
@@ -397,23 +367,14 @@ public class TaskBatchExecutionListenerTests {
 		}
 
 		@Bean
-		public TaskRepositoryInitializer taskRepositoryInitializer() {
-			TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
-
-			taskRepositoryInitializer.setDataSource(myDataSource());
-
-			return taskRepositoryInitializer;
-		}
-
-		@Bean
 		public DefaultBatchConfigurer batchConfigurer() {
 			return new DefaultBatchConfigurer(myDataSource());
 		}
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class MultipleJobConfiguration {
 
 		@Autowired

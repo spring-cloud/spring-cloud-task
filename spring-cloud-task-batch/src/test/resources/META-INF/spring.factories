@@ -1,0 +1,6 @@
+org.springframework.cloud.task.batch.configuration.TaskBatchTest=\
+org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration,\
+org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
+org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
+org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration,\
+org.springframework.cloud.task.configuration.SingleTaskConfiguration

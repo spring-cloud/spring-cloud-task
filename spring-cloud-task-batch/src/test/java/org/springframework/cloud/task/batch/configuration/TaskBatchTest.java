@@ -14,20 +14,25 @@
  *  limitations under the License.
  */
 
-package io.spring;
+package org.springframework.cloud.task.batch.configuration;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 
 /**
- * @author Michael Minella
+ * Contains the common configurations to run a unit test for the task batch features of
+ * SCT.
+ *
+ * @author Glenn Renfro
  */
-@SpringBootApplication
-public class MultipleDataSourcesApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(MultipleDataSourcesApplication.class, args);
-	}
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@ImportAutoConfiguration
+public @interface TaskBatchTest {
 }

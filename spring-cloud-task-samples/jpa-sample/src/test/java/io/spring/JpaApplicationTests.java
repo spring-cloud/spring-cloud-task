@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 the original author or authors.
+ *  Copyright 2017-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class JpaApplicationTests {
 		assertTrue("Unable to find the insert message: " + output, output.contains(INSERT_MESSAGE));
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		Map<String, Object> result = template.queryForMap("Select * from TASK_RUN_OUTPUT");
-		assertThat((result.get("ID")), is(1L));
+		assertThat((Long)(result.get("ID")), is(1L));
 		assertThat(((String) result.get("OUTPUT")), containsString("Executed at"));
 	}
 
