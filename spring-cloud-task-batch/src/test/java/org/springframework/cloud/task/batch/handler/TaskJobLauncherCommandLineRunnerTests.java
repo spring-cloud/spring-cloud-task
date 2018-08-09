@@ -32,18 +32,20 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
-import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -65,16 +67,13 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.batch.job.enabled=false"};// batch job enabled is turned to false so that we can use Task's JobLauncher
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
-					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
-							PropertyPlaceholderAutoConfiguration.class,
-							EmbeddedDataSourceConfiguration.class,
-							BatchAutoConfiguration.class,
-							TaskBatchAutoConfiguration.class,
-							TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class}, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -86,16 +85,12 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.jobNames=jobSucceed" };
+				"--spring.cloud.task.batch.jobNames=jobSucceed",
+				"--spring.batch.job.enabled=false" }; // batch job enabled is turned to false so that we can use Task's JobLauncher
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
-					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
-							PropertyPlaceholderAutoConfiguration.class,
-							EmbeddedDataSourceConfiguration.class,
-							BatchAutoConfiguration.class,
-							TaskBatchAutoConfiguration.class,
-							TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class }, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -108,12 +103,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testCommandLineRunnerSetToFalse() {
 		String[] enabledArgs = new String[] { };
 		this.applicationContext = SpringApplication
-				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						EmbeddedDataSourceConfiguration.class,
-						BatchAutoConfiguration.class,
-						TaskBatchAutoConfiguration.class,
-						TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class }, enabledArgs);
 		validateContext();
 		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
 		boolean exceptionThrown = false;
@@ -140,9 +130,15 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@ImportAutoConfiguration({
+			PropertyPlaceholderAutoConfiguration.class,
+			BatchAutoConfiguration.class,
+			TaskBatchAutoConfiguration.class,
+			TaskJobLauncherAutoConfiguration.class,
+			SingleTaskConfiguration.class,
+			SimpleTaskAutoConfiguration.class })
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
 		@Autowired
@@ -166,9 +162,15 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		}
 	}
 
-	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@ImportAutoConfiguration({
+			PropertyPlaceholderAutoConfiguration.class,
+			BatchAutoConfiguration.class,
+			TaskBatchAutoConfiguration.class,
+			TaskJobLauncherAutoConfiguration.class,
+			SingleTaskConfiguration.class,
+			SimpleTaskAutoConfiguration.class })
+	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobWithFailureConfiguration {
 
 		@Autowired

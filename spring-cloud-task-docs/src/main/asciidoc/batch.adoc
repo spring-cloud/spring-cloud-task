@@ -218,7 +218,7 @@ returned from the task is the same as a boot application.
 To override this behavior and allow the task to return an exit code other than zero when a
 batch job returns an
 https://docs.spring.io/spring-batch/4.0.x/reference/html/step.html#conditionalFlow[ExitStatus]
-of `FAILED`, set `spring.cloud.task.batch.failOnJobFailure` to `true`. Then the exit code
+of `FAILED`, set `spring.cloud.task.batch.failOnJobFailure` to `true` and `spring.batch.job.enabled` to `false`. Then the exit code
 can be 1 (the default) or be based on the
 https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html#boot-features-application-exit[specified
 `ExitCodeGenerator`])

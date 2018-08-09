@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.TestConfiguration;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -89,7 +89,7 @@ public class TaskDatabaseInitializerTests {
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleDataSourcesContext() throws Exception {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register( SimpleTaskConfiguration.class,
+		this.context.register( SimpleTaskAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		DataSource dataSource = mock(DataSource.class);

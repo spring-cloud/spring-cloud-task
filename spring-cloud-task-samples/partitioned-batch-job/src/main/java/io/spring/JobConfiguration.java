@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,15 +80,6 @@ public class JobConfiguration {
 	private Environment environment;
 
 	private static final int GRID_SIZE = 4;
-
-	@Bean
-	public JobExplorerFactoryBean jobExplorer() {
-		JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
-
-		jobExplorerFactoryBean.setDataSource(this.dataSource);
-
-		return jobExplorerFactoryBean;
-	}
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {

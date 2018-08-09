@@ -29,10 +29,12 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
-import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -58,11 +60,8 @@ public class PrefixTests {
 
 	@Test
 	public void testPrefix() {
-		this.applicationContext = SpringApplication.run(new Class[] {
-				JobConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class,
-				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class }, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
+		this.applicationContext = SpringApplication.run(
+				JobConfiguration.class, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -73,7 +72,11 @@ public class PrefixTests {
 
 	@Configuration
 	@EnableBatchProcessing
-	@EnableTask
+	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
+			BatchAutoConfiguration.class,
+			TaskBatchAutoConfiguration.class,
+			SimpleTaskAutoConfiguration.class,
+			SingleTaskConfiguration.class })
 	public static class JobConfiguration {
 
 		@Autowired

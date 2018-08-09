@@ -29,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
@@ -55,9 +57,10 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 @EnableTransactionManagement
 @EnableConfigurationProperties(TaskProperties.class)
-public class SimpleTaskConfiguration {
+@ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class SimpleTaskAutoConfiguration {
 
-	protected static final Log logger = LogFactory.getLog(SimpleTaskConfiguration.class);
+	protected static final Log logger = LogFactory.getLog(SimpleTaskAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private Collection<DataSource> dataSources;
@@ -100,6 +103,7 @@ public class SimpleTaskConfiguration {
 	}
 	
 	@Bean
+	@ConditionalOnMissingBean
 	public PlatformTransactionManager transactionManager() {
 		return this.platformTransactionManager;
 	}
