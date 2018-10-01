@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorObjectProvider;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -75,9 +76,14 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
+	public TaskListenerExecutorObjectProvider taskListenerExecutorObjectProvider(ConfigurableApplicationContext context) {
+		return new TaskListenerExecutorObjectProvider(context);
+	}
+
+	@Bean
 	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer){
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
-				applicationArguments, taskExplorer, taskProperties);
+				applicationArguments, taskExplorer, taskProperties, taskListenerExecutorObjectProvider(context));
 	}
 
 	@Override
