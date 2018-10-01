@@ -29,11 +29,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
 import org.springframework.cloud.task.util.TestListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -290,12 +288,6 @@ public class TaskExecutionListenerTests {
 			return new AnnotatedTaskListener();
 		}
 
-		@Bean
-		public TaskListenerExecutorFactoryBean taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
-		{
-			return new TaskListenerExecutorFactoryBean(context);
-		}
-
 		public static class AnnotatedTaskListener extends TestListener {
 
 			@BeforeTask
@@ -331,12 +323,6 @@ public class TaskExecutionListenerTests {
 			return new AnnotatedTaskListener();
 		}
 
-		@Bean
-		public TaskListenerExecutorFactoryBean taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
-		{
-			return new TaskListenerExecutorFactoryBean(context);
-		}
-
 		public static class AnnotatedTaskListener {
 
 			@BeforeTask
@@ -365,11 +351,6 @@ public class TaskExecutionListenerTests {
 			return new AnnotatedTaskListener();
 		}
 
-		@Bean
-		public TaskListenerExecutorFactoryBean taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
-		{
-			return new TaskListenerExecutorFactoryBean(context);
-		}
 
 		public static class AnnotatedTaskListener {
 
@@ -398,12 +379,6 @@ public class TaskExecutionListenerTests {
 		@Bean
 		public AnnotatedTaskListener annotatedTaskListener() {
 			return new AnnotatedTaskListener();
-		}
-
-		@Bean
-		public TaskListenerExecutorFactoryBean taskListenerExecutor(ConfigurableApplicationContext context) throws Exception
-		{
-			return new TaskListenerExecutorFactoryBean(context);
 		}
 
 		public static class AnnotatedTaskListener extends TestListener{

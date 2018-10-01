@@ -29,9 +29,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorFactoryBean;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorObjectProvider;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -77,8 +78,6 @@ public class SimpleTaskConfiguration {
 
 	private TaskLifecycleListener taskLifecycleListener;
 
-	private TaskListenerExecutorFactoryBean taskListenerExecutorFactoryBean;
-
 	private PlatformTransactionManager platformTransactionManager;
 
 	private TaskExplorer taskExplorer;
@@ -94,13 +93,8 @@ public class SimpleTaskConfiguration {
 	}
 
 	@Bean
-	public TaskListenerExecutorFactoryBean taskListenerExecutor()
-			throws Exception {
-		return this.taskListenerExecutorFactoryBean;
-	}
-	
-	@Bean
-	public PlatformTransactionManager transactionManager() {
+	@ConditionalOnMissingBean
+		public PlatformTransactionManager transactionManager() {
 		return this.platformTransactionManager;
 	}
 
@@ -140,12 +134,11 @@ public class SimpleTaskConfiguration {
 				taskConfigurer.getClass().getName()));
 
 		this.taskRepository = taskConfigurer.getTaskRepository();
-		this.taskListenerExecutorFactoryBean = new TaskListenerExecutorFactoryBean(context);
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
 
 		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
-				this.applicationArguments, taskExplorer, taskProperties);
+				this.applicationArguments, taskExplorer, taskProperties, new TaskListenerExecutorObjectProvider(context));
 
 		initialized = true;
 	}

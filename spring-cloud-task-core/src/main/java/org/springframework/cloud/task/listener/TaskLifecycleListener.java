@@ -36,6 +36,7 @@ import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.task.configuration.TaskProperties;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorObjectProvider;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -74,13 +75,19 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private ConfigurableApplicationContext context;
 
 	@Autowired(required = false)
-	private Collection<TaskExecutionListener> taskExecutionListeners;
+	private Collection<TaskExecutionListener> taskExecutionListenersFromContext;
+
+	private List<TaskExecutionListener> taskExecutionListeners;
+
+	private boolean isTaskExecutionListenersInitialized;
 
 	private final static Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
 	private final TaskRepository taskRepository;
 
 	private final TaskExplorer taskExplorer;
+
+	private final TaskListenerExecutorObjectProvider taskListenerExecutorObjectProvider;
 
 	private TaskExecution taskExecution;
 
@@ -108,17 +115,20 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,
 			ApplicationArguments applicationArguments, TaskExplorer taskExplorer,
-			TaskProperties taskProperties) {
+			TaskProperties taskProperties,
+			TaskListenerExecutorObjectProvider taskListenerExecutorObjectProvider) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
 		Assert.notNull(taskProperties, "TaskProperties is required");
+		Assert.notNull(taskListenerExecutorObjectProvider, "A TaskListenerExecutorObjectFactory is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments;
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
+		this.taskListenerExecutorObjectProvider = taskListenerExecutorObjectProvider;
 	}
 
 	/**
@@ -223,6 +233,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private void doTaskStart() {
 
 		if(!this.started) {
+			getTaskExecutionListeners();
 			List<String> args = new ArrayList<>(0);
 
 			if(this.applicationArguments != null) {
@@ -258,11 +269,11 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution){
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
-		if (this.taskExecutionListeners != null) {
+		List<TaskExecutionListener> startupListenerList = new ArrayList<>(this.taskExecutionListeners);
+		if (startupListenerList != null) {
 			try {
-				List<TaskExecutionListener> starterList = new ArrayList<>(taskExecutionListeners);
-				Collections.reverse(starterList);
-				for (TaskExecutionListener taskExecutionListener : starterList) {
+				Collections.reverse(startupListenerList);
+				for (TaskExecutionListener taskExecutionListener : startupListenerList) {
 					taskExecutionListener.onTaskStartup(listenerTaskExecution);
 				}
 			}
@@ -300,7 +311,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution, Throwable throwable){
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
-		if (taskExecutionListeners != null) {
+		if (this.taskExecutionListeners != null) {
 			try {
 				for (TaskExecutionListener taskExecutionListener : this.taskExecutionListeners) {
 					taskExecutionListener.onTaskFailed(listenerTaskExecution, throwable);
@@ -373,5 +384,14 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void destroy() throws Exception {
 		this.doTaskEnd();
+	}
+
+	private void getTaskExecutionListeners() {
+		this.taskExecutionListeners = new ArrayList<>();
+		this.taskListenerExecutorObjectProvider.getObject();
+		if(this.taskExecutionListenersFromContext != null) {
+			 this.taskExecutionListeners.addAll(this.taskExecutionListenersFromContext);
+		}
+		this.taskExecutionListeners.add(this.taskListenerExecutorObjectProvider.getObject());
 	}
 }
