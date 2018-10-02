@@ -52,6 +52,7 @@ public class TaskLauncherSink {
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
 	 * @param taskLaunchRequest is a TaskLaunchRequest containing the information required to launch
 	 * a task.
+	 * @throws Exception if error occurs during task launch.
 	 */
 	@ServiceActivator(inputChannel = Sink.INPUT)
 	public void taskLauncherSink(TaskLaunchRequest taskLaunchRequest) throws Exception{

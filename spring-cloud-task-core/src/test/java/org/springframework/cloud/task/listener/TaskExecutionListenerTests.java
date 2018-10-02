@@ -101,7 +101,7 @@ public class TaskExecutionListenerTests {
 		assertTrue("Exception should have fired", exceptionFired);
 		assertTrue("BeforeTask Listener should have executed", beforeTaskDidFireOnError);
 		assertTrue("EndTask Listener should have executed", endTaskDidFireOnError);
-		assertFalse("FailedTask Listener should have executed", failedTaskDidFireOnError);
+		assertTrue("FailedTask Listener should have executed", failedTaskDidFireOnError);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class TaskExecutionListenerTests {
 		}
 		assertTrue("Exception should have fired", exceptionFired);
 		assertTrue("EndTask Listener should have executed", endTaskDidFireOnError);
-		assertFalse("FailedTask Listener should not have executed", failedTaskDidFireOnError);
+		assertTrue("FailedTask Listener should not have executed", failedTaskDidFireOnError);
 	}
 
 	/**

@@ -153,14 +153,14 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * @param exitStatus
+	 * @param exitStatus the exit status for the job.
 	 */
 	public void setExitStatus(ExitStatus exitStatus) {
 		this.exitStatus = exitStatus;
 	}
 
 	/**
-	 * @return the exitCode
+	 * @return the exitCode for the job.
 	 */
 	public ExitStatus getExitStatus() {
 		return this.exitStatus;
@@ -230,9 +230,9 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Set the last time this JobExecution was updated.
+	 * Set the last time this {@link JobExecution} was updated.
 	 *
-	 * @param lastUpdated
+	 * @param lastUpdated The date the {@link JobExecution} was updated.
 	 */
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
@@ -245,7 +245,7 @@ public class JobExecutionEvent extends Entity {
 	/**
 	 * Add the provided throwable to the failure exception list.
 	 *
-	 * @param t
+	 * @param t a {@link Throwable} to be added to the exception list.
 	 */
 	public synchronized void addFailureException(Throwable t) {
 		this.failureExceptions.add(t);

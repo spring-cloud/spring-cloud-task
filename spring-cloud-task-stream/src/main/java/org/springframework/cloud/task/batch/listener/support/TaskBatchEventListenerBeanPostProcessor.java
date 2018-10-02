@@ -41,20 +41,20 @@ import org.springframework.util.ReflectionUtils;
 /**
  * Attaches the listeners to the job and its steps.
  * Based on the type of bean that is being processed will determine what listener is attached.
- * <p>
  *     <ul>
  *         <li>If the bean is of type AbstactJob then the JobExecutionListener is registered with this bean.</li>
  *         <li>If the bean is of type AbstactStep then the StepExecutionListener is registered with this bean.</li>
  *         <li>If the bean is of type TaskletStep then the ChunkEventListener is registered with this bean.</li>
  *         <li>If the tasklet for the TaskletStep is of type ChunkOrientedTasklet the following listeners will be registered. </li>
+ *         <li>
  *         <ul>
  *             <li>ItemReadListener with the ChunkProvider.</li>
  *             <li>ItemProcessListener with the ChunkProcessor.</li>
  *             <li>ItemWriteEventsListener with the ChunkProcessor.</li>
  *             <li>SkipEventsListener with the ChunkProcessor.</li>
  *         </ul>
+ *         </li>
  *     </ul>
- * </p>
  * @author Michael Minella
  * @author Glenn Renfro
  */

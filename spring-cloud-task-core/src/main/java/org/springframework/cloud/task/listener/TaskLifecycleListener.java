@@ -103,12 +103,17 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ApplicationArguments applicationArguments;
 
-	private ApplicationFailedEvent applicationFailedEvent;
+	private Throwable applicationFailedException;
 
 	private ExitCodeEvent exitCodeEvent;
 
 	/**
-	 * @param taskRepository The repository to record executions in.
+	 * @param taskRepository {@link TaskRepository} to record executions.
+	 * @param taskNameResolver {@link TaskNameResolver} used to determine task name for task execution.
+	 * @param applicationArguments {@link ApplicationArguments} to be used for task execution.
+	 * @param taskExplorer {@link TaskExplorer} to be used for task execution.
+	 * @param taskProperties {@link TaskProperties} to be used for the task execution.
+	 * @param taskListenerExecutorObjectFactory {@link TaskListenerExecutorObjectFactory} to initialize TaskListenerExecutor for a task
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,
@@ -143,7 +148,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
 		if(applicationEvent instanceof ApplicationFailedEvent) {
-			this.applicationFailedEvent = (ApplicationFailedEvent) applicationEvent;
+			this.applicationFailedException = ((ApplicationFailedEvent) applicationEvent).getException();
 			doTaskEnd();
 		}
 		else if(applicationEvent instanceof ExitCodeEvent){
@@ -167,13 +172,13 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		if((this.listenerFailed || this.started) && !this.finished) {
 			this.taskExecution.setEndTime(new Date());
 
-			if(this.applicationFailedEvent != null) {
-				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedEvent.getException()));
+			if(this.applicationFailedException != null) {
+				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedException));
 			}
 
 			this.taskExecution.setExitCode(calcExitStatus());
-			if (this.applicationFailedEvent != null) {
-				setExitMessage(invokeOnTaskError(this.taskExecution, this.applicationFailedEvent.getException()));
+			if (this.applicationFailedException != null) {
+				setExitMessage(invokeOnTaskError(this.taskExecution, this.applicationFailedException));
 			}
 
 			setExitMessage(invokeOnTaskEnd(this.taskExecution));
@@ -204,7 +209,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		if (this.exitCodeEvent != null) {
 			exitCode = this.exitCodeEvent.getExitCode();
 		}
-		else if (this.listenerFailed || this.applicationFailedEvent != null) {
+		else if (this.listenerFailed || this.applicationFailedException != null) {
 			Throwable exception = this.listenerException;
 			if (exception instanceof TaskExecutionException) {
 				TaskExecutionException taskExecutionException = (TaskExecutionException) exception;
@@ -273,7 +278,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		}
 		catch (Throwable t) {
 			// This scenario will result in a context that was not startup.
-
+			this.applicationFailedException = t;
 			this.doTaskEnd();
 			throw t;
 		}

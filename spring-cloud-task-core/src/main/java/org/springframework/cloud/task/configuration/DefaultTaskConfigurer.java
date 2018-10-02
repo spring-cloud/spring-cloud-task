@@ -98,6 +98,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * production use.
 	 * @param tablePrefix the prefix to apply to the task table names used by
 	 * task infrastructure.
+	 * @param context the context to be used.
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
 		this.dataSource = dataSource;

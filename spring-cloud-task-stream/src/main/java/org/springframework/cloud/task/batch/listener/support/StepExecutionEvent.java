@@ -229,6 +229,7 @@ public class StepExecutionEvent extends Entity {
 
 	/**
 	 * Setter for number of rollbacks for this execution
+	 * @param rollbackCount the number of rollbacks for this execution
 	 */
 	public void setRollbackCount(int rollbackCount) {
 		this.rollbackCount = rollbackCount;
@@ -281,7 +282,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * @param exitStatus
+	 * @param exitStatus the {@link ExitStatus} for the step.
 	 */
 	public void setExitStatus(ExitStatus exitStatus) {
 		this.exitStatus = exitStatus;
@@ -340,7 +341,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * Set the number of records skipped on read
 	 *
-	 * @param readSkipCount
+	 * @param readSkipCount the number of records to be skipped on read.
 	 */
 	public void setReadSkipCount(int readSkipCount) {
 		this.readSkipCount = readSkipCount;
@@ -349,7 +350,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * Set the number of records skipped on write
 	 *
-	 * @param writeSkipCount
+	 * @param writeSkipCount the number of records to be skipped on write.
 	 */
 	public void setWriteSkipCount(int writeSkipCount) {
 		this.writeSkipCount = writeSkipCount;
@@ -365,7 +366,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * Set the number of records skipped during processing.
 	 *
-	 * @param processSkipCount
+	 * @param processSkipCount the number of records skip during processing.
 	 */
 	public void setProcessSkipCount(int processSkipCount) {
 		this.processSkipCount = processSkipCount;
@@ -381,7 +382,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * Set the time when the StepExecution was last updated before persisting
 	 *
-	 * @param lastUpdated
+	 * @param lastUpdated the {@link Date} the StepExecution was last updated.
 	 */
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;

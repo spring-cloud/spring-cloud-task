@@ -16,6 +16,7 @@
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ItemProcessListener;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.core.Ordered;
@@ -30,7 +31,7 @@ import org.springframework.util.Assert;
  * was filtered ({@link ItemProcessor} returned null), if the result of the processor was
  * equal to the input (via <code>.equals</code>), or if they were not equal.
  * {@link ItemProcessListener#onProcessError(Object, Exception)} provides the exception
- * via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
+ * via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
  *
  * @author Michael Minella
  * @author Glenn Renfro

@@ -60,13 +60,13 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class},
-	properties = {"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone-local"})
+	properties = {"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone"})
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 10000;
-	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.0.0.RC1";
+	private final static String URL = "maven://org.springframework.cloud.task.app:"
+			+ "timestamp-task:2.0.0.RELEASE";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "''";

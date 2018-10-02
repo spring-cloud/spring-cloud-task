@@ -33,6 +33,7 @@ public interface PagingQueryProvider {
 	 * Initialize the query provider using the provided {@link DataSource} if necessary.
 	 *
 	 * @param dataSource DataSource to use for any initialization
+	 * @throws Exception throws {@link Exception} if query provider initialize fails.
 	 */
 	void init(DataSource dataSource) throws Exception;
 
