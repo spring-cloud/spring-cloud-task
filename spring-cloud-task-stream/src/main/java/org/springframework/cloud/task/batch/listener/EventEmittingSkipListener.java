@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * Setups up the SkipProcessListener to emit events to the spring cloud stream output channel.
  *
  * This listener emits the exception's message via the
- * {@link BatchJobHeaders.BATCH_EXCEPTION} message header for each method.  For
+ * {@link BatchJobHeaders#BATCH_EXCEPTION} message header for each method.  For
  * {@link SkipListener#onSkipInProcess(Object, Throwable)} and
  * {@link SkipListener#onSkipInWrite(Object, Throwable)} the body of the message consists
  * of the item that caused the error.

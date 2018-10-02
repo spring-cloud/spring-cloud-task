@@ -25,8 +25,8 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.util.Assert;
 
 /**
- * Map implementation of the {@link TaskBatchDao}.  <note>This is intended for testing
- * purposes only!</note>
+ * Map implementation of the {@link TaskBatchDao}.  <p> This is intended for
+ * testing purposes only!</p>
  *
  * @author Michael Minella
  */

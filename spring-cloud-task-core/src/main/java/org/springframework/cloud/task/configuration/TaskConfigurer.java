@@ -53,9 +53,10 @@ public interface TaskConfigurer {
 	TaskExplorer getTaskExplorer();
 
 	/**
-	 * Retrieves the DataSource that will be used for task operations.  If a
+	 * Retrieves the {@link DataSource} that will be used for task operations.  If a
 	 * DataSource is not being used for the implemented TaskConfigurer this
 	 * method will return null.
+	 * @return {@link DataSource} that will be used for task operations.
 	 */
 	DataSource getTaskDataSource();
 }

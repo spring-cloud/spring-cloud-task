@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
  *
  *  Each method provides an informational message.
  *  {@link ItemWriteListener#onWriteError(Exception, List)} provides a message as well as
- *  the exception's message via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
+ *  the exception's message via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
  * @author Ali Shahbour

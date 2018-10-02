@@ -68,6 +68,7 @@ public interface TaskExecutionDao {
 	 * @param startTime the time task began.
 	 * @param arguments list of key/value pairs that configure the task.
 	 * @param externalExecutionId id assigned to the task by the platform
+	 * @return A TaskExecution containing the information available at task execution start.
 	 * @since 1.1.0
 	 */
 	TaskExecution startTaskExecution(long executionId, String taskName,
@@ -82,6 +83,7 @@ public interface TaskExecutionDao {
 	 * @param arguments list of key/value pairs that configure the task.
 	 * @param externalExecutionId id assigned to the task by the platform
 	 * @param parentExecutionId the parent task execution id.
+	 * @return A TaskExecution containing the information available at task execution start.
 	 * @since 1.2.0
 	 */
 	TaskExecution startTaskExecution(long executionId, String taskName,

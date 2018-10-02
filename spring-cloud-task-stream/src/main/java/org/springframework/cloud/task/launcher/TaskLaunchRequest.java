@@ -50,8 +50,8 @@ public class TaskLaunchRequest implements Serializable{
 	 * @param environmentProperties are the environment variables for this task.
 	 * @param deploymentProperties are the variables used to setup task on the platform.
 	 * @param applicationName name to be applied to the launched task.   If set
-	 * 	to null then the launched task name will be "Task-<hash code of the
-	 * 	TaskLaunchRequest>.
+	 * 	to null then the launched task name will be "Task-`hash code of the
+	 * 	TaskLaunchRequest`.
 	 */
 	public TaskLaunchRequest(String uri, List<String> commandlineArguments,
 							Map<String, String> environmentProperties,
@@ -75,14 +75,14 @@ public class TaskLaunchRequest implements Serializable{
 	}
 
 	/**
-	 * Returns the current uri to the artifact for this launch request.
+	 * @return  the current uri to the artifact for this launch request.
 	 */
 	public String getUri() {
 		return uri;
 	}
 
 	/**
-	 * Returns an unmodifiable list of arguments that will be used for the task execution
+	 * @return  an unmodifiable list of arguments that will be used for the task execution
 	 */
 	public List<String> getCommandlineArguments() {
 		return  Collections.unmodifiableList(commandlineArguments);
@@ -117,7 +117,7 @@ public class TaskLaunchRequest implements Serializable{
 
 	/**
 	 * Sets the name to be applied to the launched task.   If set
-	 * 	to null then the launched task name will be "Task-<unique id>".
+	 * 	to null then the launched task name will be "Task-`unique id`".
 	 *
 	 * @param applicationName the name to be
 	 */

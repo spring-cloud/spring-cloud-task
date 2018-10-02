@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.core.ItemReadListener;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.core.Ordered;
@@ -32,7 +33,7 @@ import org.springframework.util.Assert;
  *  The {@link ItemReadListener#beforeRead()} and
  *  {@link ItemReadListener#afterRead(Object)} are both no-ops in this implementation.
  *  {@link ItemReadListener#onReadError(Exception)} provides the exception
- * via the {@link BatchJobHeaders.BATCH_EXCEPTION} message header.
+ * via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
  * @author Ali Shahbour

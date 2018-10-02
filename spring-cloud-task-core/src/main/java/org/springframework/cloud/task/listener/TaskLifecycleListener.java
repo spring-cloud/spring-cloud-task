@@ -110,7 +110,12 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private ExitCodeEvent exitCodeEvent;
 
 	/**
-	 * @param taskRepository The repository to record executions in.
+	 * @param taskRepository {@link TaskRepository} to record executions.
+	 * @param taskNameResolver {@link TaskNameResolver} used to determine task name for task execution.
+	 * @param applicationArguments {@link ApplicationArguments} to be used for task execution.
+	 * @param taskExplorer {@link TaskExplorer} to be used for task execution.
+	 * @param taskProperties {@link TaskProperties} to be used for the task execution.
+	 * @param taskListenerExecutorObjectProvider {@link TaskListenerExecutorObjectProvider} to initialize TaskListenerExecutor for a task
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver,

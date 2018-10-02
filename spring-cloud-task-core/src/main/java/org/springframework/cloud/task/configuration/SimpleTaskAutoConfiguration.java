@@ -123,6 +123,7 @@ public class SimpleTaskAutoConfiguration {
 
 	/**
 	 * Determines the {@link TaskConfigurer} to use.
+	 * @throws Exception throws {@link Exception} if initialization fails.
 	 */
 	@PostConstruct
 	protected void initialize() throws Exception {

@@ -46,9 +46,10 @@ public interface TaskRepository {
 	 * Notifies the repository that a taskExecution has completed.
 	 *
 	 * @param executionId to the task execution to be updated.
-	 * @param exitCode to be stored for this task.
+	 * @param exitCode to be stored for this task execution.
 	 * @param endTime designated when the task completed.
-	 * @param exitMessage to be stored for the task.
+	 * @param exitMessage to be stored for the task execution.
+	 * @param errorMessage to be stored for the task execution.
 	 * @return the updated {@link TaskExecution}
 	 * @since 1.1.0
 	 */
@@ -127,7 +128,8 @@ public interface TaskRepository {
 	 * @param externalExecutionId id assigned to the task by the platform.
 	 * @param parentExecutionId the parent task execution id.
 
-	 * @return
+	 * @return A TaskExecution that contains the information available at the
+	 * beginning of a TaskExecution.
 	 */
 	@Transactional
 	TaskExecution startTaskExecution(long executionid, String taskName,
