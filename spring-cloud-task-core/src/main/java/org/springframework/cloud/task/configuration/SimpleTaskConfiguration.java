@@ -115,9 +115,11 @@ public class SimpleTaskConfiguration {
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
 		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
 
-		if(!CollectionUtils.isEmpty(this.dataSources) && this.dataSources.size() == 1) {
-			DataSource next = this.dataSources.iterator().next();
-			taskRepositoryInitializer.setDataSource(next);
+
+		DataSource initializerDataSource = getDefaultConfigurer().getTaskDataSource();
+
+		if(initializerDataSource != null) {
+			taskRepositoryInitializer.setDataSource(initializerDataSource);
 		}
 
 		return taskRepositoryInitializer;
