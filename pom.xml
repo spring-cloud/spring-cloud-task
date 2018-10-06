@@ -146,6 +146,7 @@
 		<spring-batch.version>3.0.8.RELEASE</spring-batch.version>
 		<commons-logging.version>1.1</commons-logging.version>
 		<java-ee-api.version>7.0</java-ee-api.version>
+		<assertj.version>3.11.0</assertj.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
