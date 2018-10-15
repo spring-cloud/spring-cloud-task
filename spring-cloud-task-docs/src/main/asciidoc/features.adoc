@@ -374,7 +374,6 @@ This can be done either by adding the following annotation to your Task applicat
 ```
 @EnableAutoConfiguration(exclude={SimpleTaskAutoConfiguration.class})
 ```
-There is more information on this topic https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-auto-configuration.html#using-boot-disabling-specific-auto-configuration[here].
 You may also disable Task auto configuration by setting the `spring.cloud.task.autoconfiguration.enabled` property to `false`.
 
 

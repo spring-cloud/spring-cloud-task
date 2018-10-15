@@ -25,6 +25,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -66,9 +67,29 @@ public class TaskCoreTests {
 	public void successfulTaskTest() {
 		this.applicationContext = SpringApplication.run( TaskConfiguration.class,
 				new String[] {
-						"spring.cloud.task.closecontext.enable=false",
-						"spring.cloud.task.name=" + TASK_NAME,
-						"spring.main.web-environment=false" });
+						"--spring.cloud.task.closecontext.enable=false",
+						"--spring.cloud.task.name=" + TASK_NAME,
+						"--spring.main.web-environment=false" });
+
+		String output = this.outputCapture.toString();
+		assertTrue("Test results do not show create task message: " + output,
+				output.contains(CREATE_TASK_MESSAGE));
+		assertTrue("Test results do not show success message: " + output,
+				output.contains(UPDATE_TASK_MESSAGE));
+		assertTrue("Test results have incorrect exit code: " + output,
+				output.contains(SUCCESS_EXIT_CODE_MESSAGE));
+	}
+
+	/**
+	 * Test to verify that deprecated annotation does not affect task execution.
+	 */
+	@Test
+	public void successfulTaskTestWithAnnotation() {
+		this.applicationContext = SpringApplication.run( TaskConfigurationWithAnotation.class,
+				new String[] {
+						"--spring.cloud.task.closecontext.enable=false",
+						"--spring.cloud.task.name=" + TASK_NAME,
+						"--spring.main.web-environment=false" });
 
 		String output = this.outputCapture.toString();
 		assertTrue("Test results do not show create task message: " + output,
@@ -85,9 +106,9 @@ public class TaskCoreTests {
 		try {
 			this.applicationContext = SpringApplication.run( TaskExceptionConfiguration.class,
 					new String[] {
-							"spring.cloud.task.closecontext.enable=false",
-							"spring.cloud.task.name=" + TASK_NAME,
-							"spring.main.web-environment=false" });
+							"--spring.cloud.task.closecontext.enable=false",
+							"--spring.cloud.task.name=" + TASK_NAME,
+							"--spring.main.web-environment=false" });
 		}
 		catch (IllegalStateException exception) {
 			exceptionFired = true;
@@ -130,6 +151,20 @@ public class TaskCoreTests {
 
 	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
 	public static class TaskConfiguration {
+
+		@Bean
+		public CommandLineRunner commandLineRunner() {
+			return new CommandLineRunner() {
+				@Override
+				public void run(String... strings) throws Exception {
+				}
+			};
+		}
+	}
+
+	@EnableTask
+	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
+	public static class TaskConfigurationWithAnotation {
 
 		@Bean
 		public CommandLineRunner commandLineRunner() {

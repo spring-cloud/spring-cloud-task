@@ -39,7 +39,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -248,22 +247,14 @@ public class TaskBatchExecutionListenerTests {
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class })
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class NoJobConfiguration {
 
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class })
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
@@ -288,11 +279,7 @@ public class TaskBatchExecutionListenerTests {
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration( { PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class } )
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobFactoryBeanConfiguration {
 
@@ -332,11 +319,7 @@ public class TaskBatchExecutionListenerTests {
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class })
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfigurationMultipleDataSources {
 
@@ -389,11 +372,7 @@ public class TaskBatchExecutionListenerTests {
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class })
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class MultipleJobConfiguration {
 

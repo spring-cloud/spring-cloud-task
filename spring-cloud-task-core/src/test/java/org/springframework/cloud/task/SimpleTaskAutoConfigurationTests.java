@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.scope.ScopedProxyUtils;
@@ -46,11 +47,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
- * Verifies that the beans created by the SimpleTaskConfiguration.
+ * Verifies that the beans created by the SimpleTaskAutoConfiguration.
  *
  * @author Glenn Renfro
  * @author Michael Minella
@@ -61,7 +62,7 @@ public class SimpleTaskAutoConfigurationTests {
 
 	@After
 	public void tearDown() {
-		if(this.context != null) {
+		if (this.context != null) {
 			this.context.close();
 		}
 	}
@@ -81,7 +82,8 @@ public class SimpleTaskAutoConfigurationTests {
 			assertThat(targetClass).isEqualTo(SimpleTaskRepository.class);
 		});
 	}
-	@Test(expected = NoSuchBeanDefinitionException.class)
+
+	@Test
 	public void testAutoConfigurationDisabled() throws Exception {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
@@ -89,9 +91,14 @@ public class SimpleTaskAutoConfigurationTests {
 						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withPropertyValues("spring.cloud.task.autoconfiguration.enabled=false");
-		applicationContextRunner.run((context) -> {
-			context.getBean(TaskRepository.class);
-		});
+		Executable executable = () -> {
+			applicationContextRunner.run((context) -> {
+				context.getBean(TaskRepository.class);
+			});
+		};
+		verifyExceptionThrown(NoSuchBeanDefinitionException.class, "No qualifying " +
+				"bean of type 'org.springframework.cloud.task.repository.TaskRepository' " +
+				"available", executable);
 	}
 
 	@Test
@@ -107,7 +114,7 @@ public class SimpleTaskAutoConfigurationTests {
 		});
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testRepositoryNotInitialized() throws Exception {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
@@ -115,16 +122,17 @@ public class SimpleTaskAutoConfigurationTests {
 						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
-		applicationContextRunner.run((context) -> {
-			Throwable expectedException = context.getStartupFailure();
-			assertNotNull(expectedException);
-			throw expectedException;
-		});
 
+		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class, "Failed to start " +
+				"bean 'taskLifecycleListener'; nested exception is " +
+				"org.springframework.dao.DataAccessResourceFailureException: " +
+				"Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLException: " +
+				"Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL \"; " +
+				"expected \"identifier\"; SQL statement:\n" +
+				"select foobarlessSEQ.nextval from dual [42001-197]", applicationContextRunner);
 	}
 
-
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testMultipleConfigurers() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
@@ -132,25 +140,44 @@ public class SimpleTaskAutoConfigurationTests {
 						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(MultipleConfigurers.class);
-		applicationContextRunner.run((context) -> {
-			Throwable expectedException = context.getStartupFailure();
-			assertNotNull(expectedException);
-			throw expectedException;
-		});
+
+		verifyExceptionThrownDefaultExecutable(BeanCreationException.class, "Error creating bean " +
+				"with name 'simpleTaskAutoConfiguration': Invocation of init " +
+				"method failed; nested exception is java.lang.IllegalStateException:" +
+				" Expected one TaskConfigurer but found 2", applicationContextRunner);
 	}
 
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testMultipleDataSources() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(MultipleDataSources.class);
-		applicationContextRunner.run((context) -> {
-			Throwable expectedException = context.getStartupFailure();
-			assertNotNull(expectedException);
-			throw expectedException;
-		});
+
+		verifyExceptionThrownDefaultExecutable(BeanCreationException.class, "Error creating bean " +
+				"with name 'simpleTaskAutoConfiguration': Invocation of init method " +
+				"failed; nested exception is java.lang.IllegalStateException: To use " +
+				"the default TaskConfigurer the context must contain no more than " +
+				"one DataSource, found 2", applicationContextRunner);
+
+	}
+
+	public void verifyExceptionThrownDefaultExecutable(Class classToCheck, String message,
+			ApplicationContextRunner applicationContextRunner) {
+		Executable executable = () -> {
+			applicationContextRunner.run((context) -> {
+				Throwable expectedException = context.getStartupFailure();
+				assertThat(expectedException).isNotNull();
+				throw expectedException;
+			});
+		};
+		verifyExceptionThrown(classToCheck, message, executable);
+	}
+
+	public void verifyExceptionThrown(Class classToCheck, String message, Executable executable) {
+		Throwable exception = assertThrows(classToCheck, executable);
+		assertThat(exception.getMessage()).isEqualTo(message);
 	}
 
 	/**
@@ -167,7 +194,6 @@ public class SimpleTaskAutoConfigurationTests {
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(DataSourceProxyConfiguration.class);
 		applicationContextRunner.run((context) -> {
-
 			assertThat(context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
 			SimpleTaskAutoConfiguration taskConfiguration = context.getBean(SimpleTaskAutoConfiguration.class);
 			assertThat(taskConfiguration).isNotNull();
@@ -214,8 +240,9 @@ public class SimpleTaskAutoConfigurationTests {
 		public BeanDefinitionHolder proxyDataSource() {
 			GenericBeanDefinition proxyBeanDefinition = new GenericBeanDefinition();
 			proxyBeanDefinition.setBeanClassName("javax.sql.DataSource");
-			BeanDefinitionHolder myDataSource = new BeanDefinitionHolder(proxyBeanDefinition,"dataSource2");
-			ScopedProxyUtils.createScopedProxy(myDataSource, (BeanDefinitionRegistry) this.context.getBeanFactory(), true);
+			BeanDefinitionHolder myDataSource = new BeanDefinitionHolder(proxyBeanDefinition, "dataSource2");
+			ScopedProxyUtils.createScopedProxy(myDataSource, (BeanDefinitionRegistry) this.context.getBeanFactory(),
+					true);
 			return myDataSource;
 		}
 

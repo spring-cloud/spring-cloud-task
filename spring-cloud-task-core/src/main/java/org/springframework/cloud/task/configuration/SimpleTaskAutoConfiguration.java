@@ -33,7 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
-import org.springframework.cloud.task.listener.annotation.TaskListenerExecutorObjectProvider;
+import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -140,7 +140,7 @@ public class SimpleTaskAutoConfiguration {
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
 
 		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
-				this.applicationArguments, taskExplorer, taskProperties, new TaskListenerExecutorObjectProvider(context));
+				this.applicationArguments, taskExplorer, taskProperties, new TaskListenerExecutorObjectFactory(context));
 
 		initialized = true;
 	}

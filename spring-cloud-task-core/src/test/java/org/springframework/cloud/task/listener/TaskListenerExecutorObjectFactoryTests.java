@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.task.listener.annotation;
+package org.springframework.cloud.task.listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.task.listener.annotation.AfterTask;
+import org.springframework.cloud.task.listener.annotation.BeforeTask;
+import org.springframework.cloud.task.listener.annotation.FailedTask;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,15 +38,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that the {@link TaskListenerExecutorObjectProvider} retrieves the
+ * Verifies that the {@link TaskListenerExecutorObjectFactory} retrieves the
  * {@link TaskListenerExecutor}.
  *
  * @author Glenn Renfro
  * @since 2.1.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { TaskListenerExecutorObjectProviderTests.TaskExecutionListenerConfiguration.class })
-public class TaskListenerExecutorObjectProviderTests {
+@ContextConfiguration(classes = { TaskListenerExecutorObjectFactoryTests.TaskExecutionListenerConfiguration.class })
+public class TaskListenerExecutorObjectFactoryTests {
 
 	public static final String BEFORE_LISTENER = "BEFORE LISTENER";
 
@@ -57,13 +61,13 @@ public class TaskListenerExecutorObjectProviderTests {
 
 	private TaskListenerExecutor taskListenerExecutor;
 
-	private TaskListenerExecutorObjectProvider taskListenerExecutorObjectProvider;
+	private TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory;
 
 	@Before
 	public void setup() {
 		taskExecutionListenerResults.clear();
-		this.taskListenerExecutorObjectProvider = new TaskListenerExecutorObjectProvider(this.context);
-		this.taskListenerExecutor = this.taskListenerExecutorObjectProvider.getObject();
+		this.taskListenerExecutorObjectFactory = new TaskListenerExecutorObjectFactory(this.context);
+		this.taskListenerExecutor = this.taskListenerExecutorObjectFactory.getObject();
 	}
 
 	@Test
@@ -97,26 +101,6 @@ public class TaskListenerExecutorObjectProviderTests {
 		assertThat(taskExecutionListenerResults.get(2).getTaskName()).isEqualTo(AFTER_LISTENER);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void verifyGetObjectArgs() {
-		this.taskListenerExecutorObjectProvider.getObject("foo");
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void verifyGetIfAvailable() {
-		this.taskListenerExecutorObjectProvider.getIfAvailable();
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void verifyGetIfUnique() {
-		this.taskListenerExecutorObjectProvider.getIfUnique();
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void verifyGetIfUniqueParameter() {
-		this.taskListenerExecutorObjectProvider.getIfUnique(null);
-	}
-
 	private TaskExecution createSampleTaskExecution(String taskName) {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName(taskName);
@@ -141,17 +125,17 @@ public class TaskListenerExecutorObjectProviderTests {
 
 		@BeforeTask
 		public void initBeforeListener(TaskExecution taskExecution) {
-			TaskListenerExecutorObjectProviderTests.taskExecutionListenerResults.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 
 		@AfterTask
 		public void initAfterListener(TaskExecution taskExecution) {
-			TaskListenerExecutorObjectProviderTests.taskExecutionListenerResults.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 
 		@FailedTask
 		public void initFailedListener(TaskExecution taskExecution, Throwable exception) {
-			TaskListenerExecutorObjectProviderTests.taskExecutionListenerResults.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 	}
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.task.listener.annotation;
+package org.springframework.cloud.task.listener;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -32,9 +32,14 @@ import org.springframework.aop.scope.ScopedObject;
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.cloud.task.listener.TaskExecutionListener;
+import org.springframework.cloud.task.listener.annotation.AfterTask;
+import org.springframework.cloud.task.listener.annotation.BeforeTask;
+import org.springframework.cloud.task.listener.annotation.FailedTask;
+import org.springframework.cloud.task.listener.annotation.TaskListenerExecutor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -45,7 +50,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  * @author Glenn Renfro
  * @since 2.1.0
  */
-public class TaskListenerExecutorObjectProvider implements ObjectProvider<TaskExecutionListener> {
+public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExecutionListener> {
 
 	private final static Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
@@ -60,7 +65,7 @@ public class TaskListenerExecutorObjectProvider implements ObjectProvider<TaskEx
 
 	private Map<Method, Object> failedTaskInstances;
 
-	public TaskListenerExecutorObjectProvider(ConfigurableApplicationContext context){
+	public TaskListenerExecutorObjectFactory(ConfigurableApplicationContext context){
 		this.context = context;
 	}
 
@@ -143,21 +148,6 @@ public class TaskListenerExecutorObjectProvider implements ObjectProvider<TaskEx
 				}
 			}
 		}
-	}
-
-	@Override
-	public TaskExecutionListener getObject(Object... args) throws BeansException {
-		throw new UnsupportedOperationException("the getObject(Object... args) method is not supported.");
-	}
-
-	@Override
-	public TaskExecutionListener getIfAvailable() throws BeansException {
-		throw new UnsupportedOperationException("the getIfAvailable() method is not supported.");
-	}
-
-	@Override
-	public TaskExecutionListener getIfUnique() throws BeansException {
-		throw new UnsupportedOperationException("the getIfUnique() method is not supported.");
 	}
 
 	private static class MethodGetter<T extends Annotation> {

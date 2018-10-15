@@ -72,11 +72,7 @@ public class PrefixTests {
 
 	@Configuration
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			SimpleTaskAutoConfiguration.class,
-			SingleTaskConfiguration.class })
+	@TaskBatchTest
 	public static class JobConfiguration {
 
 		@Autowired

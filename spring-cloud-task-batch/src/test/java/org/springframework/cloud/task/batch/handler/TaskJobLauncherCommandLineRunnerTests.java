@@ -39,6 +39,8 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
+import org.springframework.cloud.task.batch.listener.TaskBatchTest;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -74,6 +76,26 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		try {
 			this.applicationContext = SpringApplication
 					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class}, enabledArgs);
+		}
+		catch (IllegalStateException exception) {
+			isExceptionThrown = true;
+		}
+		assertThat(isExceptionThrown).isTrue();
+	}
+
+	/**
+	 * Verifies that the task will return an exit code other than zero if the
+	 * job fails with the deprecated EnableTask annotation.
+	 */
+	@Test
+	public void testTaskJobLauncherCLRSuccessFailWithAnnotation() {
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.batch.job.enabled=false"};// batch job enabled is turned to false so that we can use Task's JobLauncher
+		boolean isExceptionThrown = false;
+		try {
+			this.applicationContext = SpringApplication
+					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class}, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -131,13 +153,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({
-			PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			TaskJobLauncherAutoConfiguration.class,
-			SingleTaskConfiguration.class,
-			SimpleTaskAutoConfiguration.class })
+	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
@@ -209,4 +225,21 @@ public class TaskJobLauncherCommandLineRunnerTests {
 					.build();
 		}
 	}
+
+	@EnableTask
+	@EnableBatchProcessing
+	@ImportAutoConfiguration({
+			PropertyPlaceholderAutoConfiguration.class,
+			BatchAutoConfiguration.class,
+			TaskBatchAutoConfiguration.class,
+			TaskJobLauncherAutoConfiguration.class,
+			SingleTaskConfiguration.class,
+			SimpleTaskAutoConfiguration.class })
+	@Import(EmbeddedDataSourceConfiguration.class)
+	public static class JobWithFailureAnnotatedConfiguration extends JobWithFailureConfiguration{
+
+	}
+
+
+
 }
