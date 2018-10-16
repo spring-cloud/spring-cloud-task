@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
 		SingleTaskConfiguration.class,
 		EmbeddedDataSourceConfiguration.class})
 @TestPropertySource(properties = {
-		"spring.cloud.task.singleInstanceEnabled=true",
+		"spring.cloud.task.single-instance-enabled=true",
 })
 public class SimpleSingleTaskAutoConfigurationWithDataSourceTests {
 

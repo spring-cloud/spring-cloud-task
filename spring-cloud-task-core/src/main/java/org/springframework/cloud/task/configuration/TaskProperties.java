@@ -74,7 +74,7 @@ public class TaskProperties {
 	/**
 	 * Declares the maximum amount of time (in millis) that a task execution can
 	 * hold a lock to prevent another task from executing with a specific task
-	 * name when the singleInstanceEnabled is set to true. Default time is: Integer.MAX_VALUE.
+	 * name when the single-instance-enabled is set to true. Default time is: Integer.MAX_VALUE.
 	 */
 	private int singleInstanceLockTtl = Integer.MAX_VALUE;
 

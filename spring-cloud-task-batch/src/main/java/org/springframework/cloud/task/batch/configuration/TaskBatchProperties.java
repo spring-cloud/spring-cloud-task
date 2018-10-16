@@ -38,7 +38,7 @@ public class TaskBatchProperties {
 
 	/**
 	 * The order for the {@coce CommandLineRunner} used to run batch jobs when
-	 * {@code spring.cloud.task.batch.failOnJobFailure=true}.  Defaults to 0 (same as the
+	 * {@code spring.cloud.task.batch.fail-on-job-failure=true}.  Defaults to 0 (same as the
 	 * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}).
 	 */
 	private int commandLineRunnerOrder = 0;
