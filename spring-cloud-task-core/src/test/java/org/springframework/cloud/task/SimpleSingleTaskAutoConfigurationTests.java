@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TaskProperties.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class})
 @TestPropertySource(properties = {
-		"spring.cloud.task.singleInstanceEnabled=true",
+		"spring.cloud.task.single-instance-enabled=true",
 })
 public class SimpleSingleTaskAutoConfigurationTests {
 	@Autowired

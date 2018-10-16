@@ -192,7 +192,7 @@ public class TaskStartTests {
 
 	@Test
 	public void testDuplicateTaskExecutionWithSingleInstanceEnabled() throws Exception {
-		String params[] = {"--spring.cloud.task.singleInstanceEnabled=true",
+		String params[] = {"--spring.cloud.task.single-instance-enabled=true",
 				"--spring.cloud.task.name=foo"};
 		boolean testFailed = false;
 		try {
@@ -210,7 +210,7 @@ public class TaskStartTests {
 			testFailed = true;
 		}
 		assertTrue("Expected TaskExecutionException for because  of " +
-				"singleInstanceEnabled is enabled", testFailed);
+				"single-instance-enabled is enabled", testFailed);
 
 	}
 

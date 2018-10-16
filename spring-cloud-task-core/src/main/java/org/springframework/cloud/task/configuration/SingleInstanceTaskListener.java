@@ -39,7 +39,7 @@ import org.springframework.integration.support.leader.LockRegistryLeaderInitiato
 import org.springframework.integration.support.locks.LockRegistry;
 
 /**
- * When spring.cloud.task.singleInstanceEnabled is set to true this listener will create a lock for the task
+ * When spring.cloud.task.single-instance-enabled is set to true this listener will create a lock for the task
  * based on the spring.cloud.task.name. If a lock already exists this Listener will throw
  * a TaskExecutionException.  If this listener is added manually, then it should
  * be added as the first listener in the chain.

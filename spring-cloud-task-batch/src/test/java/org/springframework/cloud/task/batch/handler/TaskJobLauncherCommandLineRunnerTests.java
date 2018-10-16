@@ -65,7 +65,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
+		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.fail-on-job-failure=true" };
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -85,7 +85,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.cloud.task.batch.fail-on-job-failure=true",
 				"--spring.cloud.task.batch.jobNames=jobSucceed" };
 		boolean isExceptionThrown = false;
 		try {

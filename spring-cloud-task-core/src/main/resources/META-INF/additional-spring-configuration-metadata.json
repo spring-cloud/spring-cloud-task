@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": "false",
+      "name": "spring.cloud.task.single-instance-enabled",
+      "description": "This property is used to determine if a task will execute if another task with the same app name is running.",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

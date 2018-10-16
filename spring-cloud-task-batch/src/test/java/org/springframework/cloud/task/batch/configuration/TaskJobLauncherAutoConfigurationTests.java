@@ -43,7 +43,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLR() {
 		this.contextRunner.
-				withPropertyValues("spring.cloud.task.batch.failOnJobFailure=true").
+				withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true").
 				run(context -> {
 			assertThat(context).hasSingleBean(TaskJobLauncherCommandLineRunner.class);
 			assertThat(context).doesNotHaveBean(JobLauncherCommandLineRunner.class);
@@ -56,7 +56,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLROrder() {
 		this.contextRunner.
-				withPropertyValues("spring.cloud.task.batch.failOnJobFailure=true",
+				withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
 						"spring.cloud.task.batch.commandLineRunnerOrder=100").
 				run(context -> {
 					assertThat(context.getBean(TaskJobLauncherCommandLineRunner.class)
