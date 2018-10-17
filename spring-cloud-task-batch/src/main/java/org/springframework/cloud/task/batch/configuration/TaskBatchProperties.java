@@ -43,6 +43,21 @@ public class TaskBatchProperties {
 	 */
 	private int commandLineRunnerOrder = 0;
 
+	/**
+	 * Maximum wait time that Spring Cloud task will wait for tasks to complete
+	 * when spring.cloud.task.batch.failOnJobFailure is set to true.  Defaults
+	 * to 0.  0 indicates no wait time is enforced.
+	 */
+	private long failOnJobFailurewaitTimeInMillis = 0;
+
+	/**
+	 * Fixed delay that Spring Cloud Task will wait when checking if
+	 * {@link org.springframework.batch.core.JobExecution}s have completed,
+	 * when spring.cloud.task.batch.failOnJobFailure is set to true.  Defaults
+	 * to 5000.
+	 */
+	private long failOnJobFailurePollIntervalInMillis = 5000l;
+
 	public String getJobNames() {
 		return this.jobNames;
 	}
@@ -57,5 +72,21 @@ public class TaskBatchProperties {
 
 	public void setCommandLineRunnerOrder(int commandLineRunnerOrder) {
 		this.commandLineRunnerOrder = commandLineRunnerOrder;
+	}
+
+	public long getFailOnJobFailurewaitTimeInMillis() {
+		return failOnJobFailurewaitTimeInMillis;
+	}
+
+	public void setFailOnJobFailurewaitTimeInMillis(long failOnJobFailurewaitTimeInMillis) {
+		this.failOnJobFailurewaitTimeInMillis = failOnJobFailurewaitTimeInMillis;
+	}
+
+	public long getFailOnJobFailurePollIntervalInMillis() {
+		return failOnJobFailurePollIntervalInMillis;
+	}
+
+	public void setFailOnJobFailurePollIntervalInMillis(long failOnJobFailurePollIntervalInMillis) {
+		this.failOnJobFailurePollIntervalInMillis = failOnJobFailurePollIntervalInMillis;
 	}
 }

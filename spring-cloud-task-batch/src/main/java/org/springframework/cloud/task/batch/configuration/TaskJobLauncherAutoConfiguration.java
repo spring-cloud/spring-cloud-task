@@ -23,6 +23,8 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure", havingValue = "true", matchIfMissing = false)
 @EnableConfigurationProperties(TaskBatchProperties.class)
+@AutoConfigureBefore(BatchAutoConfiguration.class)
 public class TaskJobLauncherAutoConfiguration {
 
 	@Autowired
@@ -49,10 +52,8 @@ public class TaskJobLauncherAutoConfiguration {
 				new TaskJobLauncherCommandLineRunnerFactoryBean(jobLauncher,
 						jobExplorer,
 						jobs,
-						this.properties.getJobNames(),
+						this.properties,
 						jobRegistry);
-
-		taskJobLauncherCommandLineRunnerFactoryBean.setOrder(this.properties.getCommandLineRunnerOrder());
 
 		return taskJobLauncherCommandLineRunnerFactoryBean;
 	}

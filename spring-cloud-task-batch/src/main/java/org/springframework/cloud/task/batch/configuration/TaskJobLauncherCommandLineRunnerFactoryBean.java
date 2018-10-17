@@ -46,6 +46,21 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 
 	private Integer order = 0;
 
+	/**
+	 * Maximum wait time that Spring Cloud task will wait for tasks to complete
+	 * when spring.cloud.task.batch.failOnJobFailure is set to true.  Defaults
+	 * to 0.  0 indicates no wait time is enforced.
+	 */
+	private long failOnJobFailurewaitTimeInMillis = 0;
+
+	/**
+	 * Fixed delay that Spring Cloud Task will wait when checking if
+	 * {@link org.springframework.batch.core.JobExecution}s have completed,
+	 * when spring.cloud.task.batch.failOnJobFailure is set to true.  Defaults
+	 * to 5000.
+	 */
+	private long failOnJobFailurePollIntervalInMillis = 5000l;
+
 	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs, String jobNames,
 			JobRegistry jobRegistry) {
@@ -55,6 +70,21 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 		this.jobs = jobs;
 		this.jobNames = jobNames;
 		this.jobRegistry = jobRegistry;
+	}
+
+	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
+			JobExplorer jobExplorer, List<Job> jobs, TaskBatchProperties properties,
+			JobRegistry jobRegistry) {
+		Assert.notNull(properties, "properties must not be null");
+		this.jobLauncher = jobLauncher;
+		this.jobExplorer = jobExplorer;
+		Assert.notEmpty(jobs, "jobs must not be null nor empty");
+		this.jobs = jobs;
+		this.jobNames = properties.getJobNames();
+		this.jobRegistry = jobRegistry;
+		this.failOnJobFailurePollIntervalInMillis = properties.getFailOnJobFailurePollIntervalInMillis();
+		this.failOnJobFailurewaitTimeInMillis = properties.getFailOnJobFailurewaitTimeInMillis();
+		this.order = properties.getCommandLineRunnerOrder();
 	}
 
 	public void setOrder(int order) {
@@ -74,12 +104,29 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 		if(this.order != null) {
 			taskJobLauncherCommandLineRunner.setOrder(this.order);
 		}
-
+		taskJobLauncherCommandLineRunner.setFailOnJobFailurePollIntervalInMillis(this.failOnJobFailurePollIntervalInMillis);
+		taskJobLauncherCommandLineRunner.setFailOnJobFailurewaitTimeInMillis(this.failOnJobFailurewaitTimeInMillis);
 		return taskJobLauncherCommandLineRunner;
 	}
 
 	@Override
 	public Class<?> getObjectType() {
 		return TaskJobLauncherCommandLineRunner.class;
+	}
+
+	public long getFailOnJobFailurewaitTimeInMillis() {
+		return failOnJobFailurewaitTimeInMillis;
+	}
+
+	public void setFailOnJobFailurewaitTimeInMillis(long failOnJobFailurewaitTimeInMillis) {
+		this.failOnJobFailurewaitTimeInMillis = failOnJobFailurewaitTimeInMillis;
+	}
+
+	public long getFailOnJobFailurePollIntervalInMillis() {
+		return failOnJobFailurePollIntervalInMillis;
+	}
+
+	public void setFailOnJobFailurePollIntervalInMillis(long failOnJobFailurePollIntervalInMillis) {
+		this.failOnJobFailurePollIntervalInMillis = failOnJobFailurePollIntervalInMillis;
 	}
 }

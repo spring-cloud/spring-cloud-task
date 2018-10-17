@@ -18,14 +18,21 @@ package org.springframework.cloud.task.batch.handler;
 
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -50,8 +57,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Glenn Renfro
@@ -59,6 +68,9 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 public class TaskJobLauncherCommandLineRunnerTests {
 
 	private ConfigurableApplicationContext applicationContext;
+
+	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n" +
+			"Job jobA failed during execution for jobId 1 with jobExecutionId of 1 \n";
 
 	@After
 	public void tearDown() {
@@ -70,17 +82,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.fail-on-job-failure=true",
-				"--spring.batch.job.enabled=false"};// batch job enabled is turned to false so that we can use Task's JobLauncher
-		boolean isExceptionThrown = false;
-		try {
-			this.applicationContext = SpringApplication
-					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class}, enabledArgs);
-		}
-		catch (IllegalStateException exception) {
-			isExceptionThrown = true;
-		}
-		assertThat(isExceptionThrown).isTrue();
+				"--spring.cloud.task.batch.failOnJobFailure=true"};
+		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
+				enabledArgs);
 	}
 
 	/**
@@ -90,25 +94,38 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherCLRSuccessFailWithAnnotation() {
 		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true"};
+		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class,
+				enabledArgs);
+	}
+
+	@Test
+	public void testTaskJobLauncherCLRSuccessFailWithTaskExecutor() {
+		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.batch.job.enabled=false"};// batch job enabled is turned to false so that we can use Task's JobLauncher
-		boolean isExceptionThrown = false;
-		try {
-			this.applicationContext = SpringApplication
-					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class}, enabledArgs);
-		}
-		catch (IllegalStateException exception) {
-			isExceptionThrown = true;
-		}
-		assertThat(isExceptionThrown).isTrue();
+				"--spring.cloud.task.batch.failOnJobFailurePollIntervalInMillis=500"};
+		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
+				enabledArgs);
+	}
+
+
+	@Test
+	public void testTaskJobLauncherCLRSuccessWithLongWaitTaskExecutor() {
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.cloud.task.batch.failOnJobFailurePollIntervalInMillis=500",
+				"--spring.cloud.task.batch.failOnJobFailurewaitTimeInMillis=1000"
+		};
+		validateForFail("Not all jobs were completed within the time specified by spring.cloud.task.batch.failOnJobFailurewaitTimeInMillis.",
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorLongWaitConfiguration.class,
+				enabledArgs);
 	}
 
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.fail-on-job-failure=true",
-				"--spring.cloud.task.batch.jobNames=jobSucceed",
-				"--spring.batch.job.enabled=false" }; // batch job enabled is turned to false so that we can use Task's JobLauncher
+				"--spring.cloud.task.batch.jobNames=jobSucceed"};
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -123,19 +140,18 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testCommandLineRunnerSetToFalse() {
-		String[] enabledArgs = new String[] { };
+		String[] enabledArgs = new String[] {};
 		this.applicationContext = SpringApplication
 				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class }, enabledArgs);
 		validateContext();
 		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
-		boolean exceptionThrown = false;
-		try {
+
+		Executable executable = () -> {
 			applicationContext.getBean(TaskJobLauncherCommandLineRunner.class);
-		}
-		catch (NoSuchBeanDefinitionException exception) {
-			exceptionThrown = true;
-		}
-		assertThat(exceptionThrown).isTrue();
+		};
+		Throwable exception = assertThrows(NoSuchBeanDefinitionException.class, executable);
+		assertThat(exception.getMessage()).isEqualTo("No qualifying bean of type " +
+				"'org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner' available");
 		validateContext();
 	}
 
@@ -149,8 +165,16 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
-
 	}
+
+	private void validateForFail(String errorMessage, Class clazz, String [] enabledArgs) {
+		Executable executable = () -> {
+			this.applicationContext = SpringApplication
+					.run(new Class[] { clazz}, enabledArgs);};
+		Throwable exception = assertThrows(IllegalStateException.class, executable);
+		assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
+	}
+
 
 	@EnableBatchProcessing
 	@TaskBatchTest
@@ -168,8 +192,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 			return jobBuilderFactory.get("job")
 					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-								throws Exception {
+						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
@@ -216,8 +239,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 					.start(stepBuilderFactory.get("step1Succeed").tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext)
-								throws Exception {
+								ChunkContext chunkContext) {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
@@ -227,6 +249,18 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@EnableTask
+	public static class JobWithFailureAnnotatedConfiguration extends JobWithFailureConfiguration{
+
+	}
+
+	public static class JobWithFailureTaskExecutorConfiguration extends JobWithFailureConfiguration{
+		@Bean
+		public BatchConfigurer batchConfigurer(DataSource dataSource) {
+			return new TestBatchConfigurer(dataSource);
+		}
+	}
+
+
 	@EnableBatchProcessing
 	@ImportAutoConfiguration({
 			PropertyPlaceholderAutoConfiguration.class,
@@ -236,10 +270,60 @@ public class TaskJobLauncherCommandLineRunnerTests {
 			SingleTaskConfiguration.class,
 			SimpleTaskAutoConfiguration.class })
 	@Import(EmbeddedDataSourceConfiguration.class)
-	public static class JobWithFailureAnnotatedConfiguration extends JobWithFailureConfiguration{
+	public static class JobWithFailureTaskExecutorLongWaitConfiguration {
 
+		@Autowired
+		private JobBuilderFactory jobBuilderFactory;
+
+		@Autowired
+		private StepBuilderFactory stepBuilderFactory;
+		@Bean
+		public BatchConfigurer batchConfigurer(DataSource dataSource) {
+			return new TestBatchConfigurer(dataSource);
+		}
+
+		@Bean
+		public Job jobShortRunner() {
+			return jobBuilderFactory.get("jobSucceedShort")
+					.start(stepBuilderFactory.get("step1SucceedSort").tasklet(new Tasklet() {
+						@Override
+						public RepeatStatus execute(StepContribution contribution,
+								ChunkContext chunkContext)
+								throws Exception {
+							System.out.println("Executed Short Runner");
+							return RepeatStatus.FINISHED;
+						}
+					}).build())
+					.build();
+		}
+
+		@Bean
+		public Job jobLongRunner() {
+			return jobBuilderFactory.get("jobSucceedLong")
+					.start(stepBuilderFactory.get("step1SucceedLong").tasklet(new Tasklet() {
+						@Override
+						public RepeatStatus execute(StepContribution contribution,
+								ChunkContext chunkContext)
+								throws Exception {
+							System.out.println("Executed Long Runner");
+							Thread.sleep(5000);
+							return RepeatStatus.FINISHED;
+						}
+					}).build())
+					.build();
+		}
 	}
 
-
-
+	private static class TestBatchConfigurer extends DefaultBatchConfigurer{
+		public TestBatchConfigurer(DataSource dataSource) {
+			super(dataSource);
+		}
+		protected JobLauncher createJobLauncher() throws Exception {
+			SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+			jobLauncher.setJobRepository(getJobRepository());
+			jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor());
+			jobLauncher.afterPropertiesSet();
+			return jobLauncher;
+		}
+	}
 }
