@@ -108,7 +108,7 @@ public class TaskLifecycleListenerTests {
 
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
-		verifyTaskExecution(0, true);
+		verifyTaskExecution(0, true, 0);
 	}
 
 	@Test
@@ -183,7 +183,7 @@ public class TaskLifecycleListenerTests {
 		context.refresh();
 		this.taskExplorer = context.getBean(TaskExplorer.class);
 
-		verifyTaskExecution(0, false, 0, null, "myid");
+		verifyTaskExecution(0, false, null, null, "myid");
 	}
 
 	@Test
@@ -197,12 +197,17 @@ public class TaskLifecycleListenerTests {
 		context.refresh();
 		this.taskExplorer = context.getBean(TaskExplorer.class);
 
-		verifyTaskExecution(0, false, 0, null, null, 789L);
+		verifyTaskExecution(0, false, null, null, null, 789L);
+	}
+
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode) {
+		verifyTaskExecution(numberOfParams, update, exitCode, null, null);
 	}
 
 	private void verifyTaskExecution(int numberOfParams, boolean update) {
-		verifyTaskExecution(numberOfParams, update, 0, null, null);
+		verifyTaskExecution(numberOfParams, update, null, null, null);
 	}
+
 	private void verifyTaskExecution(int numberOfParams, boolean update,
 			Integer exitCode, Throwable exception, String externalExecutionId) {
 		verifyTaskExecution(numberOfParams, update, exitCode, exception,
@@ -240,7 +245,7 @@ public class TaskLifecycleListenerTests {
 		}
 		else {
 			assertNull(taskExecution.getEndTime());
-			assertTrue(taskExecution.getExitCode() == 0);
+			assertTrue(taskExecution.getExitCode() == null);
 		}
 
 		assertEquals("testTask", taskExecution.getTaskName());
