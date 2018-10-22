@@ -34,7 +34,9 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * Tests for the SimpleTaskRepository that uses Map as a datastore.
- * @author Glenn Renfro.
+ *
+ * @author Glenn Renfro
+ * @author Ilayaperumal Gopinathan
  */
 public class SimpleTaskRepositoryMapTests {
 
@@ -158,7 +160,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution =
 				TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setEndTime(new Date());
-
+		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(taskRepository, expectedTaskExecution);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}

@@ -58,6 +58,7 @@ import org.springframework.util.StringUtils;
  * @author Glenn Renfro
  * @author Gunnar Hillert
  * @author David Turanski
+ * @author Ilayaperumal Gopinathan
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
@@ -75,8 +76,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = :taskName ";
 
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
-			+ "(TASK_EXECUTION_ID, START_TIME, TASK_NAME, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID)"
-			+ "values (:taskExecutionId, :startTime, :taskName, :lastUpdated, :externalExecutionId, :parentExecutionId)";
+			+ "(TASK_EXECUTION_ID, EXIT_CODE, START_TIME, TASK_NAME, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID)"
+			+ "values (:taskExecutionId, :exitCode, :startTime, :taskName, :lastUpdated, :externalExecutionId, :parentExecutionId)";
 
 	private static final String CREATE_TASK_ARGUMENT = "INSERT into "
 			+ "%PREFIX%EXECUTION_PARAMS(TASK_EXECUTION_ID, TASK_PARAM ) values (:taskExecutionId, :taskParam)";
@@ -192,6 +193,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
 			.addValue("taskExecutionId", nextExecutionId,  Types.BIGINT)
+			.addValue("exitCode", null, Types.INTEGER)
 			.addValue("startTime", startTime, Types.TIMESTAMP)
 			.addValue("taskName", taskName, Types.VARCHAR)
 			.addValue("lastUpdated", new Date(), Types.TIMESTAMP)
@@ -222,6 +224,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
 			.addValue("startTime", startTime, Types.TIMESTAMP)
+			.addValue("exitCode", null, Types.INTEGER)
 			.addValue("taskName", taskName, Types.VARCHAR)
 			.addValue("lastUpdated", new Date(), Types.TIMESTAMP)
 			.addValue("parentExecutionId", parentExecutionId, Types.BIGINT)
