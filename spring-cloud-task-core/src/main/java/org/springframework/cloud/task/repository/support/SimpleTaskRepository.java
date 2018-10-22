@@ -84,7 +84,7 @@ public class SimpleTaskRepository implements TaskRepository {
 			String exitMessage, String errorMessage) {
 		initialize();
 
-		validateExitInformation(executionId, exitCode, endTime);
+		validateCompletedTaskExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimMessage(exitMessage, this.maxExitMessageSize);
 		errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
 		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
@@ -189,7 +189,7 @@ public class SimpleTaskRepository implements TaskRepository {
 		}
 	}
 
-	private void validateExitInformation(long executionId, Integer exitCode,  Date endTime){
+	private void validateCompletedTaskExitInformation(long executionId, Integer exitCode,  Date endTime){
 		Assert.notNull(exitCode, "exitCode should not be null");
 		Assert.isTrue(exitCode >= 0, "exit code must be greater than or equal to zero");
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");

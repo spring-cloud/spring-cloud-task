@@ -27,6 +27,7 @@ import org.springframework.util.Assert;
  *
  * @author Glenn Renfro
  * @author Michael Minella
+ * @author Ilayaperumal Gopinathan
  */
 
 public class TaskExecution {
@@ -122,7 +123,7 @@ public class TaskExecution {
 	}
 
 	public Integer getExitCode() {
-		return (exitCode == null) ? 0 : exitCode;
+		return this.exitCode;
 	}
 
 	public void setExitCode(Integer exitCode) {

@@ -128,8 +128,8 @@ public class TaskLauncherSinkTests {
 		assertTrue(waitForDBToBePopulated());
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
-		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
+		assertTrue(waitForTaskToComplete());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
 	}
 
@@ -155,6 +155,19 @@ public class TaskLauncherSinkTests {
 		}
 		return isDbPopulated;
 	}
+
+		private boolean waitForTaskToComplete() throws Exception {
+			boolean istTaskComplete = false;
+			for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
+				Thread.sleep(WAIT_INTERVAL);
+				TaskExecution taskExecution = taskExplorer.getTaskExecution(1);
+				if (taskExecution.getExitCode() != null) {
+					istTaskComplete = true;
+					break;
+				}
+			}
+			return istTaskComplete;
+		}
 
 	private void launchTask(String artifactURL) {
 

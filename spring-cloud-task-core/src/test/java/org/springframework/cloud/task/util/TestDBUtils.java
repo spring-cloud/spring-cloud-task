@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.util.StringUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.when;
  * relational database.
  *
  * @author Glenn Renfro
+ * @author Ilayaperumal Gopinathan
  */
 public class TestDBUtils {
 
@@ -68,7 +70,7 @@ public class TestDBUtils {
 			@Override
 			public TaskExecution mapRow(ResultSet rs, int rownumber) throws SQLException {
 				TaskExecution taskExecution=new TaskExecution(rs.getLong("TASK_EXECUTION_ID"),
-						rs.getInt("EXIT_CODE"),
+						StringUtils.hasText(rs.getString("EXIT_CODE")) ? Integer.valueOf(rs.getString("EXIT_CODE")) : null,
 						rs.getString("TASK_NAME"),
 						rs.getTimestamp("START_TIME"),
 						rs.getTimestamp("END_TIME"),

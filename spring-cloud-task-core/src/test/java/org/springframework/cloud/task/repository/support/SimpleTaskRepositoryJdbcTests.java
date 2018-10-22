@@ -44,6 +44,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Glenn Renfro.
  * @author Michael Minella
+ * @author Ilayaperumal Gopinathan
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {EmbeddedDataSourceConfiguration.class,
@@ -195,6 +196,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE+1]));
 		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
 		assertEquals(SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE, actualTaskExecution.getExitMessage().length());
 	}
@@ -207,6 +209,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, simpleTaskRepository);
 		assertEquals(5, actualTaskExecution.getExitMessage().length());
 	}
@@ -217,6 +220,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(taskRepository);
 		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE+1]));
 		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
 		assertEquals(SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE, actualTaskExecution.getErrorMessage().length());
 	}
@@ -229,6 +233,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
 		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, simpleTaskRepository);
 		assertEquals(5, actualTaskExecution.getErrorMessage().length());
 	}
@@ -316,6 +321,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		expectedTaskExecution.setErrorMessage(new String(new char[maxErrorMessage+ 1]));
 		expectedTaskExecution.setExitMessage(new String(new char[maxExitMessage + 1]));
 		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setExitCode(0);
 
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, taskRepository);
 		assertEquals(maxErrorMessage.intValue(), actualTaskExecution.getErrorMessage().length());

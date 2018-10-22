@@ -89,7 +89,7 @@ public class TestVerifierUtils {
 		long executionId = randomGenerator.nextLong();
 		String taskName = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, 0, taskName,
+		return new TaskExecution(executionId, null, taskName,
 				startTime, null, null, new ArrayList<String>(), null, null);
 	}
 
