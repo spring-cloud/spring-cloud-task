@@ -63,8 +63,8 @@ public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 10000;
-	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.1.0.RELEASE";
+	private final static String URL = "maven://org.springframework.cloud.task.app:"
+			+ "timestamp-task:jar:1.3.0.RELEASE";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
@@ -140,8 +140,8 @@ public class TaskLauncherSinkTests {
 		assertTrue(waitForDBToBePopulated());
 
 		Page<TaskExecution> taskExecutions = taskExplorer.findAll(new PageRequest(0, 10));
-		TaskExecution te = taskExecutions.iterator().next();
 		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
+		assertTrue(waitForTaskToComplete());
 		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
 	}
 
@@ -167,6 +167,19 @@ public class TaskLauncherSinkTests {
 		}
 		return isDbPopulated;
 	}
+
+		private boolean waitForTaskToComplete() throws Exception {
+			boolean istTaskComplete = false;
+			for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
+				Thread.sleep(WAIT_INTERVAL);
+				TaskExecution taskExecution = taskExplorer.getTaskExecution(1);
+				if (taskExecution.getExitCode() != null) {
+					istTaskComplete = true;
+					break;
+				}
+			}
+			return istTaskComplete;
+		}
 
 	private void launchTask(String artifactURL) {
 		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
