@@ -56,7 +56,7 @@ import org.springframework.util.StringUtils;
  * The following events are used to identify the start and end of a task:
  *
  * <ul>
- *     <li>{@link ContextRefreshedEvent} - Used to identify the start of a task.  A task
+ *     <li>{@link SmartLifecycle#start()}  - Used to identify the start of a task.  A task
  *     is expected to contain a single application context.</li>
  *     <li>{@link ApplicationReadyEvent} - Used to identify the successful end of a task.</li>
  *     <li>{@link ApplicationFailedEvent} - Used to identify the failure of a task.</li>
@@ -135,10 +135,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	/**
-	 * Utilizes {@link ApplicationEvent}s to determine the start, end, and failure of a
+	 * Utilizes {@link ApplicationEvent}s to determine the end and failure of a
 	 * task.  Specifically:
 	 * <ul>
-	 *     <li>{@link ContextRefreshedEvent} - Start of a task</li>
 	 *     <li>{@link ApplicationReadyEvent} - Successful end of a task</li>
 	 *     <li>{@link ApplicationFailedEvent} - Failure of a task</li>
 	 * </ul>
@@ -378,6 +377,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		callback.run();
 	}
 
+	/**
+	 * Executes task initialization when {@link SmartLifecycle#start()} is called.
+	 */
 	@Override
 	public void start() {
 		doTaskStart();
