@@ -54,22 +54,22 @@ We recommend experimenting with the Spring Initializr to become familiar with it
 
 [[getting-started-creating-project]]
 === Creating the Spring Task Project using Spring Initializr
-Now let's create and test an application that prints `Hello, World!` to the console.
+Now we can create and test an application that prints `Hello, World!` to the console.
 
 To do so:
 
 . Visit the link:https://start.spring.io/[Spring Initialzr] site.
 .. Create a new Maven project with a *Group* name of `io.spring.demo` and an *Artifact* name of `helloworld`.
-.. In the Dependencies text box, type `task` to select the `Cloud Task` dependency.
-.. In the Dependencies text box, type `jdbc` then select the `JDBC` dependency.
-.. In the Dependencies text box, type `h2` then select the `H2`. (or your favorite database)
+.. In the Dependencies text box, type `task` and then select the `Cloud Task` dependency.
+.. In the Dependencies text box, type `jdbc` and then select the `JDBC` dependency.
+.. In the Dependencies text box, type `h2` and then select the `H2`. (or your favorite database)
 .. Click the *Generate Project* button
 . Unzip the timestamp.zip file and import the project into your favorite IDE.
 
 [[getting-started-writing-the-code]]
 === Writing the Code
 
-To finish our application, we need to update the generated `HelloworldApplication` with the following contents so that it will launch a Task.
+To finish our application, we need to update the generated `HelloworldApplication` with the following contents so that it launches a Task.
 [source,java]
 ----
 package io.spring.demo.helloworld;
@@ -107,12 +107,12 @@ While it may seem small, quite a bit is going on. For more about Spring
 Boot specifics, see the
 http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
 
-Now let's open the `application.properties` file in `src/main/resources`.
+Now we can open the `application.properties` file in `src/main/resources`.
 We need to configure two properties in `application.properties`:
 
-. `application.name` to set the application name (which is translated to the task name)
-. `logging.level` to set the logging for Spring Cloud Task to `DEBUG` in order to
-get a view of what's going on.
+* `application.name`: To set the application name (which is translated to the task name)
+* `logging.level`: To set the logging for Spring Cloud Task to `DEBUG` in order to
+get a view of what is going on.
 
 The following example shows how to do both:
 
@@ -135,7 +135,7 @@ use.
 In our demo, the `TaskRepository` uses an embedded H2 database to record the results
 of a task. This H2 embedded database is not a practical solution for a production environment, since
 the H2 DB goes away once the task ends. However, for a quick getting-started
-experience, we will use this in our example as well as echoing to the logs what is being updated
+experience, we can use this in our example as well as echoing to the logs what is being updated
 in that repository. In the <<features-configuration>> section (later in this
 documentation), we cover how to customize the configuration of the pieces provided by
 Spring Cloud Task.
