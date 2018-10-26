@@ -38,6 +38,7 @@ import org.springframework.batch.core.repository.support.MapJobRepositoryFactory
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
@@ -84,7 +85,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		Tasklet tasklet = (contribution, chunkContext) -> null;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer);
+		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, new TaskBatchProperties());
 	}
 
 

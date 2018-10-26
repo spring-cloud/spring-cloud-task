@@ -29,12 +29,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
-import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
-import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
-import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
+import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;

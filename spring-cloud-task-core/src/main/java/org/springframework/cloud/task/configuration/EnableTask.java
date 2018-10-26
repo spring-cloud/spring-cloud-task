@@ -55,7 +55,7 @@ import org.springframework.context.annotation.Import;
  * @author Glenn Renfro
  *
  * @deprecated The EnableTask annotation is no longer be required to initialize
- * Spring Cloud Task.  This will be handled by Spring Boot AutoConfiguration.
+ * Spring Cloud Task.  This will be handled by AutoConfiguration provided by Spring Cloud Task.
  */
 @Deprecated
 @Target(ElementType.TYPE)

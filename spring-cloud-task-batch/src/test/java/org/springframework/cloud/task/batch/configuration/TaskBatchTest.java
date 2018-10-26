@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.springframework.cloud.task.batch.listener;
+package org.springframework.cloud.task.batch.configuration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -71,9 +71,9 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 
 	@Override
 	public TaskListenerExecutor getObject() {
-		beforeTaskInstances = new HashMap<>();
-		afterTaskInstances = new HashMap<>();
-		failedTaskInstances = new HashMap<>();
+		this.beforeTaskInstances = new HashMap<>();
+		this.afterTaskInstances = new HashMap<>();
+		this.failedTaskInstances = new HashMap<>();
 		initializeExecutor();
 		return new TaskListenerExecutor(beforeTaskInstances, afterTaskInstances, failedTaskInstances);
 	}

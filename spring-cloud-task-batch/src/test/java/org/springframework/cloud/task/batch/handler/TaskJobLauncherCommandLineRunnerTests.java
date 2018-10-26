@@ -46,7 +46,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
-import org.springframework.cloud.task.batch.listener.TaskBatchTest;
+import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
@@ -103,7 +103,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherCLRSuccessFailWithTaskExecutor() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.failOnJobFailurePollIntervalInMillis=500"};
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500"};
 		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
 				enabledArgs);
 	}
@@ -113,10 +113,10 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherCLRSuccessWithLongWaitTaskExecutor() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.failOnJobFailurePollIntervalInMillis=500",
-				"--spring.cloud.task.batch.failOnJobFailurewaitTimeInMillis=1000"
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
+				"--spring.cloud.task.batch.failOnJobFailurewaitTime=1000"
 		};
-		validateForFail("Not all jobs were completed within the time specified by spring.cloud.task.batch.failOnJobFailurewaitTimeInMillis.",
+		validateForFail("Not all jobs were completed within the time specified by spring.cloud.task.batch.failOnJobFailurewaitTime.",
 				TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorLongWaitConfiguration.class,
 				enabledArgs);
 	}
@@ -170,7 +170,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	private void validateForFail(String errorMessage, Class clazz, String [] enabledArgs) {
 		Executable executable = () -> {
 			this.applicationContext = SpringApplication
-					.run(new Class[] { clazz}, enabledArgs);};
+					.run(new Class[] { clazz,PropertyPlaceholderAutoConfiguration.class}, enabledArgs);};
 		Throwable exception = assertThrows(IllegalStateException.class, executable);
 		assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
 	}

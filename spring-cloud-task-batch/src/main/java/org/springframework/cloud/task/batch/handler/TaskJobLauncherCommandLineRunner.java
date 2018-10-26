@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionException;
@@ -44,6 +44,7 @@ import org.springframework.batch.repeat.support.RepeatTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.batch.JobExecutionEvent;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
+import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.TaskExecutor;
@@ -51,12 +52,13 @@ import org.springframework.util.StringUtils;
 
 /**
  * {@link CommandLineRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
- * jobs in the surrounding context by default and throw an exception upon the first job
- * that returns an {@link ExitStatus} of FAILED if a {@link TaskExecutor} is not
- * specified. If a {@link TaskExecutor} is specified then all Jobs are launched and an
- * exception is thrown if one or more of the jobs has an {@link ExitStatus} of failed. Can
- * also be used to launch a specific job by providing a jobName. The
- * TaskJobLaunchercommandLineRunner takes the place of the
+ * jobs in the surrounding context by default and throws an exception upon the first job
+ * that returns an {@link BatchStatus} of FAILED if a {@link TaskExecutor} in the
+ * {@link JobLauncher} is not specified. If a {@link TaskExecutor} is specified
+ * in the {@link JobLauncher} then all Jobs are launched and an
+ * exception is thrown if one or more of the jobs has an {@link BatchStatus} of FAILED.
+ * TaskJobLauncherCommandLineRunner can also be used to launch a specific job by
+ * providing a jobName. The TaskJobLaunchercommandLineRunner takes the place of the
  * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner} when
  * it is in use.
  *
@@ -76,25 +78,14 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 
 	private ApplicationEventPublisher taskApplicationEventPublisher;
 
-	/**
-	 * Maximum wait time that Spring Cloud task will wait for tasks to complete when
-	 * spring.cloud.task.batch.failOnJobFailure is set to true. Defaults to 0. 0 indicates no
-	 * wait time is enforced.
-	 */
-	private long failOnJobFailurewaitTimeInMillis = 0;
-
-	/**
-	 * Fixed delay that Spring Cloud Task will wait when checking if
-	 * {@link org.springframework.batch.core.JobExecution}s have completed, when
-	 * spring.cloud.task.batch.failOnJobFailure is set to true. Defaults to 5000.
-	 */
-	private long failOnJobFailurePollIntervalInMillis = 5000l;
+	private TaskBatchProperties taskBatchProperties;
 
 	public TaskJobLauncherCommandLineRunner(JobLauncher jobLauncher,
-			JobExplorer jobExplorer) {
+			JobExplorer jobExplorer, TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer);
 		this.taskJobLauncher = jobLauncher;
 		this.taskJobExplorer = jobExplorer;
+		this.taskBatchProperties = taskBatchProperties;
 	}
 
 	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
@@ -119,7 +110,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
 		}
 		this.jobExecutionList.add(execution);
-		if (execution.getExitStatus().getExitCode().equals(ExitStatus.FAILED.getExitCode())) {
+		if (execution.getStatus().equals(BatchStatus.FAILED)) {
 			throwJobFailedException(Collections.singletonList(execution));
 		}
 	}
@@ -136,26 +127,24 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 				RepeatStatus repeatStatus = RepeatStatus.FINISHED;
 				for (JobExecution jobExecution : jobExecutionList) {
 					JobExecution currentJobExecution = taskJobExplorer.getJobExecution(jobExecution.getId());
-					String exitStatus = currentJobExecution.getExitStatus().getExitCode();
-					if (!exitStatus.equals(ExitStatus.FAILED.getExitCode()) &&
-							!exitStatus.equals(ExitStatus.COMPLETED.getExitCode()) &&
-							!exitStatus.equals(ExitStatus.STOPPED.getExitCode())) {
+					BatchStatus batchStatus = currentJobExecution.getStatus();
+					if (batchStatus.isRunning()) {
 						repeatStatus = RepeatStatus.CONTINUABLE;
 					}
-					if (exitStatus.equals(ExitStatus.FAILED.getExitCode())) {
+					if (batchStatus.equals(BatchStatus.FAILED)) {
 						failedJobExecutions.add(jobExecution);
 					}
 				}
-				Thread.sleep(failOnJobFailurePollIntervalInMillis);
+				Thread.sleep(taskBatchProperties.getFailOnJobFailurePollInterval());
 
 				if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
 					throwJobFailedException(failedJobExecutions);
 				}
-				if (repeatStatus.isContinuable() && failOnJobFailurewaitTimeInMillis != 0
-						&& (new Date()).getTime() - startDate.getTime() > failOnJobFailurewaitTimeInMillis) {
+				if (repeatStatus.isContinuable() && taskBatchProperties.getFailOnJobFailurewaitTime() != 0
+						&& (new Date()).getTime() - startDate.getTime() > taskBatchProperties.getFailOnJobFailurewaitTime()) {
 					throw new IllegalStateException("Not all jobs were completed " +
 							"within the time specified by spring.cloud.task.batch." +
-							"failOnJobFailurewaitTimeInMillis.");
+							"failOnJobFailurewaitTime.");
 				}
 				return repeatStatus;
 			}
@@ -176,19 +165,4 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 
 	}
 
-	public long getFailOnJobFailurewaitTimeInMillis() {
-		return this.failOnJobFailurewaitTimeInMillis;
-	}
-
-	public void setFailOnJobFailurewaitTimeInMillis(long failOnJobFailurewaitTimeInMillis) {
-		this.failOnJobFailurewaitTimeInMillis = failOnJobFailurewaitTimeInMillis;
-	}
-
-	public long getFailOnJobFailurePollIntervalInMillis() {
-		return this.failOnJobFailurePollIntervalInMillis;
-	}
-
-	public void setFailOnJobFailurePollIntervalInMillis(long failOnJobFailurePollIntervalInMillis) {
-		this.failOnJobFailurePollIntervalInMillis = failOnJobFailurePollIntervalInMillis;
-	}
 }
