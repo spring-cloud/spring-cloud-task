@@ -142,6 +142,7 @@
 		<commons-logging.version>1.1</commons-logging.version>
 		<java-ee-api.version>8.0</java-ee-api.version>
 		<junit.version>5.3.1</junit.version>
+		<spring-boot.version>2.1.0.BUILD-SNAPSHOT</spring-boot.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>

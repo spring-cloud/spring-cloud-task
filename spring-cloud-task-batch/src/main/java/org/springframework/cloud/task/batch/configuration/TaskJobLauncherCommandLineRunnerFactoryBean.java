@@ -22,6 +22,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.util.Assert;
@@ -48,9 +49,11 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 
 	private TaskBatchProperties taskBatchProperties;
 
+	private JobRepository jobRepository;
+
 	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs, TaskBatchProperties taskBatchProperties,
-			JobRegistry jobRegistry) {
+			JobRegistry jobRegistry, JobRepository jobRepository) {
 		Assert.notNull(taskBatchProperties, "properties must not be null");
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
@@ -60,6 +63,7 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 		this.jobRegistry = jobRegistry;
 		this.taskBatchProperties = taskBatchProperties;
 		this.order = taskBatchProperties.getCommandLineRunnerOrder();
+		this.jobRepository = jobRepository;
 	}
 
 	public void setOrder(int order) {
@@ -69,7 +73,7 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 	@Override
 	public TaskJobLauncherCommandLineRunner getObject() {
 		TaskJobLauncherCommandLineRunner  taskJobLauncherCommandLineRunner =
-				new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, this.taskBatchProperties);
+				new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, this.jobRepository, this.taskBatchProperties);
 		taskJobLauncherCommandLineRunner.setJobs(this.jobs);
 		if(StringUtils.hasText(this.jobNames)) {
 			taskJobLauncherCommandLineRunner.setJobNames(this.jobNames);
