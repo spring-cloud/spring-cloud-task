@@ -22,6 +22,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.util.Assert;
@@ -44,17 +45,20 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 
 	private JobRegistry jobRegistry;
 
+	private JobRepository jobRepository;
+
 	private Integer order = 0;
 
 	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs, String jobNames,
-			JobRegistry jobRegistry) {
+			JobRegistry jobRegistry, JobRepository jobRepository) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		Assert.notEmpty(jobs, "jobs must not be null nor empty");
 		this.jobs = jobs;
 		this.jobNames = jobNames;
 		this.jobRegistry = jobRegistry;
+		this.jobRepository = jobRepository;
 	}
 
 	public void setOrder(int order) {
@@ -64,7 +68,8 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean implements FactoryBean<
 	@Override
 	public TaskJobLauncherCommandLineRunner getObject() throws Exception {
 		TaskJobLauncherCommandLineRunner  taskJobLauncherCommandLineRunner =
-				new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer);
+				new TaskJobLauncherCommandLineRunner(this.jobLauncher,
+						this.jobExplorer, this.jobRepository);
 		taskJobLauncherCommandLineRunner.setJobs(this.jobs);
 		if(StringUtils.hasText(this.jobNames)) {
 			taskJobLauncherCommandLineRunner.setJobNames(this.jobNames);

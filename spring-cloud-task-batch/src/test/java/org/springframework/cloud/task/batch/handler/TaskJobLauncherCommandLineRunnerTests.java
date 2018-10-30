@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -63,6 +64,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		}
 	}
 
+	@DirtiesContext
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
@@ -82,6 +84,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		assertThat(isExceptionThrown).isTrue();
 	}
 
+	@DirtiesContext
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
@@ -104,6 +107,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		validateContext();
 	}
 
+	@DirtiesContext
 	@Test
 	public void testCommandLineRunnerSetToFalse() {
 		String[] enabledArgs = new String[] { };

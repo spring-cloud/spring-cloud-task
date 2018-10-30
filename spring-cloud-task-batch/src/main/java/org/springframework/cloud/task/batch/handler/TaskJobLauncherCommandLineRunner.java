@@ -19,17 +19,22 @@ package org.springframework.cloud.task.batch.handler;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
@@ -40,6 +45,7 @@ import org.springframework.batch.core.launch.JobParametersNotFoundException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -80,6 +86,8 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 
 	private JobExplorer jobExplorer;
 
+	private JobRepository jobRepository;
+
 	private String jobNames;
 
 	private Collection<Job> jobs = Collections.emptySet();
@@ -88,10 +96,18 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 
 	private ApplicationEventPublisher publisher;
 
+	/**
+	 * Create a new {@link TaskJobLauncherCommandLineRunner}.
+	 * @param jobLauncher to launch jobs
+	 * @param jobExplorer to check the job repository for previous executions
+	 * @param jobRepository to check if a job instance exists with the given parameters
+	 * when running a job
+	 */
 	public TaskJobLauncherCommandLineRunner(JobLauncher jobLauncher,
-			JobExplorer jobExplorer) {
+			JobExplorer jobExplorer, JobRepository jobRepository) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
+		this.jobRepository = jobRepository;
 	}
 
 	public void setOrder(int order) {
@@ -160,9 +176,39 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 			throws JobExecutionAlreadyRunningException, JobRestartException,
 			JobInstanceAlreadyCompleteException, JobParametersInvalidException,
 			JobParametersNotFoundException {
-		JobParameters nextParameters = new JobParametersBuilder(jobParameters,
-				this.jobExplorer).getNextJobParameters(job).toJobParameters();
-		JobExecution execution = this.jobLauncher.run(job, nextParameters);
+		String jobName = job.getName();
+		JobParameters parameters = jobParameters;
+		boolean jobInstanceExists = this.jobRepository.isJobInstanceExists(jobName,
+				parameters);
+		if (jobInstanceExists) {
+			JobExecution lastJobExecution = this.jobRepository
+					.getLastJobExecution(jobName, jobParameters);
+			if (lastJobExecution != null && isStoppedOrFailed(lastJobExecution)
+					&& job.isRestartable()) {
+				// Retry a failed or stopped execution with previous parameters
+				JobParameters previousParameters = lastJobExecution.getJobParameters();
+				/*
+				 * remove Non-identifying parameters from the previous execution's
+				 * parameters since there is no way to remove them programmatically. If
+				 * they are required (or need to be modified) on a restart, they need to
+				 * be (re)specified.
+				 */
+				JobParameters previousIdentifyingParameters = removeNonIdentifying(
+						previousParameters);
+				// merge additional parameters with previous ones (overriding those with
+				// the same key)
+				parameters = merge(previousIdentifyingParameters, jobParameters);
+			}
+		}
+		else {
+			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
+			if (incrementer != null) {
+				JobParameters nextParameters = new JobParametersBuilder(jobParameters,
+						this.jobExplorer).getNextJobParameters(job).toJobParameters();
+				parameters = merge(nextParameters, jobParameters);
+			}
+		}
+		JobExecution execution = this.jobLauncher.run(job, parameters);
 		if (this.publisher != null) {
 			this.publisher.publishEvent(new JobExecutionEvent(execution));
 		}
@@ -188,5 +234,26 @@ public class TaskJobLauncherCommandLineRunner implements CommandLineRunner, Orde
 			}
 			execute(job, jobParameters);
 		}
+	}
+
+	private JobParameters removeNonIdentifying(JobParameters parameters) {
+		Map<String, JobParameter> parameterMap = parameters.getParameters();
+		HashMap<String, JobParameter> copy = new HashMap<>(parameterMap);
+		for (Map.Entry<String, JobParameter> parameter : copy.entrySet()) {
+			if (!parameter.getValue().isIdentifying()) {
+				parameterMap.remove(parameter.getKey());
+			}
+		}
+		return new JobParameters(parameterMap);
+	}
+	private boolean isStoppedOrFailed(JobExecution execution) {
+		BatchStatus status = execution.getStatus();
+		return (status == BatchStatus.STOPPED || status == BatchStatus.FAILED);
+	}
+	private JobParameters merge(JobParameters parameters, JobParameters additionals) {
+		Map<String, JobParameter> merged = new HashMap<>();
+		merged.putAll(parameters.getParameters());
+		merged.putAll(additionals.getParameters());
+		return new JobParameters(merged);
 	}
 }
