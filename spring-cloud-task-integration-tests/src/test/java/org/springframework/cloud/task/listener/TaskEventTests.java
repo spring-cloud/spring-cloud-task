@@ -22,6 +22,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -36,6 +37,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -67,7 +69,6 @@ public class TaskEventTests {
 						PropertyPlaceholderAutoConfiguration.class,
 						RabbitServiceAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class,
 						BindingServiceConfiguration.class))
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
 						"--spring.cloud.task.name=" + TASK_NAME,
@@ -94,6 +95,16 @@ public class TaskEventTests {
 		public void receive(TaskExecution execution) {
 			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
 			latch.countDown();
+		}
+
+		@Bean
+		public CommandLineRunner commandLineRunner(){
+			return new CommandLineRunner() {
+				@Override
+				public void run(String... args) throws Exception {
+					System.out.println("Hello World");
+				}
+			};
 		}
 	}
 }
