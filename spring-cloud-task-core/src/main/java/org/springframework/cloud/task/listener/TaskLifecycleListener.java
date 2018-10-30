@@ -361,7 +361,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void stop(Runnable callback) {
 		Assert.notNull(callback, "A callback is required");
-
+		stop();
 		callback.run();
 	}
 
@@ -373,6 +373,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	@Override
 	public void stop() {
+		this.doTaskEnd();
 	}
 
 	@Override
