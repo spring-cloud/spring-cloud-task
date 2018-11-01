@@ -53,7 +53,7 @@ public class TaskRepositoryInitializerNoDataSourceTaskConfigurerTests {
 	private DataSource dataSource;
 
 	@Test
-	public void testNoTablesCreated() throws Exception {
+	public void testNoTablesCreated() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		List<Map<String, Object>> rows= jdbcTemplate.queryForList("SHOW TABLES");
 		assertThat(rows.size()).isEqualTo(0);

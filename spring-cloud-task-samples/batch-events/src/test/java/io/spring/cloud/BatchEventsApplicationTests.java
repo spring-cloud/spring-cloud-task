@@ -19,7 +19,6 @@ package io.spring.cloud;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,7 +29,6 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -41,15 +39,6 @@ public class BatchEventsApplicationTests {
 
 	// Count for two job execution events per task
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
-
-	private ConfigurableApplicationContext context;
-
-	@After
-	public void cleanup() {
-		if(context != null && context.isActive()) {
-			context.close();
-		}
-	}
 
 	@Test
 	public void testExecution() throws Exception {
@@ -69,7 +58,7 @@ public class BatchEventsApplicationTests {
 
 		@StreamListener(Sink.INPUT)
 		public void receive(JobExecutionEvent execution) {
-			Assert.assertEquals(String.format("Job name should be job"), "job", execution.getJobInstance().getJobName());
+			Assert.assertEquals("Job name should be job", "job", execution.getJobInstance().getJobName());
 			jobExecutionLatch.countDown();
 		}
 	}

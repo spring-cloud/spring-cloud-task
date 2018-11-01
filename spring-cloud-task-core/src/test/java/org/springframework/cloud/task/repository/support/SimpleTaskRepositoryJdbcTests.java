@@ -19,7 +19,6 @@ package org.springframework.cloud.task.repository.support;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -30,7 +29,6 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestDBUtils;
@@ -58,9 +56,6 @@ public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired
 	private DataSource dataSource;
-
-	@Autowired
-	private TaskExplorer taskExplorer;
 
 	@Test
 	@DirtiesContext

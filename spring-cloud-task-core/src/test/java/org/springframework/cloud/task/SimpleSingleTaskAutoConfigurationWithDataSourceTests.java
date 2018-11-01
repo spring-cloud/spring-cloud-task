@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 public class SimpleSingleTaskAutoConfigurationWithDataSourceTests {
 
 	@Test
-	public void testConfiguration() throws Exception {
+	public void testConfiguration() {
 
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(

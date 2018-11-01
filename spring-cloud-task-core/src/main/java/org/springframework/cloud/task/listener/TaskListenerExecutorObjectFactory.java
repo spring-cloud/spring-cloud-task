@@ -30,12 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.aop.scope.ScopedObject;
 import org.springframework.aop.scope.ScopedProxyUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.cloud.task.listener.TaskExecutionListener;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
@@ -55,7 +52,7 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 	private final static Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
 	private final Set<Class<?>> nonAnnotatedClasses =
-			Collections.newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>());
+			Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	private ConfigurableApplicationContext context;
 
@@ -153,12 +150,7 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 	private static class MethodGetter<T extends Annotation> {
 		public Map<Method, T> getMethods(final Class<?> type, final Class<T> annotationClass){
 			return MethodIntrospector.selectMethods(type,
-					new MethodIntrospector.MetadataLookup<T>() {
-						@Override
-						public T inspect(Method method) {
-							return AnnotationUtils.findAnnotation(method, annotationClass);
-						}
-					});
+					(MethodIntrospector.MetadataLookup<T>) method -> AnnotationUtils.findAnnotation(method, annotationClass));
 		}
 	}
 }

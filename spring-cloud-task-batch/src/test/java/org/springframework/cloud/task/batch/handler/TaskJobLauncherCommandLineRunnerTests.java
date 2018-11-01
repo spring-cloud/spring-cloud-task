@@ -70,7 +70,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	private ConfigurableApplicationContext applicationContext;
 
 	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n" +
-			"Job jobA failed during execution for jobId 1 with jobExecutionId of 1 \n";
+			"Job jobA failed during execution for job instance id 1 with jobExecutionId of 1 \n";
 
 	@After
 	public void tearDown() {
@@ -146,9 +146,8 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		validateContext();
 		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
 
-		Executable executable = () -> {
-			applicationContext.getBean(TaskJobLauncherCommandLineRunner.class);
-		};
+		Executable executable = () -> applicationContext.getBean(TaskJobLauncherCommandLineRunner.class);
+
 		Throwable exception = assertThrows(NoSuchBeanDefinitionException.class, executable);
 		assertThat(exception.getMessage()).isEqualTo("No qualifying bean of type " +
 				"'org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner' available");
@@ -168,9 +167,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	private void validateForFail(String errorMessage, Class clazz, String [] enabledArgs) {
-		Executable executable = () -> {
-			this.applicationContext = SpringApplication
-					.run(new Class[] { clazz,PropertyPlaceholderAutoConfiguration.class}, enabledArgs);};
+		Executable executable = () -> this.applicationContext = SpringApplication
+				.run(new Class[] { clazz,PropertyPlaceholderAutoConfiguration.class}, enabledArgs);
+
 		Throwable exception = assertThrows(IllegalStateException.class, executable);
 		assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
 	}

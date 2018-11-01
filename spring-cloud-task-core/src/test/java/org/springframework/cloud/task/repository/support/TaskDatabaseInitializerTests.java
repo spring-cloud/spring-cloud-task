@@ -57,7 +57,7 @@ public class TaskDatabaseInitializerTests {
 	}
 
 	@Test
-	public void testDefaultContext() throws Exception {
+	public void testDefaultContext() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.register( TestConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
@@ -68,7 +68,7 @@ public class TaskDatabaseInitializerTests {
 	}
 
 	@Test
-	public void testNoDatabase() throws Exception {
+	public void testNoDatabase() {
 		this.context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
 		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
 		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
@@ -77,7 +77,7 @@ public class TaskDatabaseInitializerTests {
 	}
 
 	@Test
-	public void testNoTaskConfiguration() throws Exception {
+	public void testNoTaskConfiguration() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.register(EmptyConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
@@ -87,7 +87,7 @@ public class TaskDatabaseInitializerTests {
 	}
 
 	@Test(expected = BeanCreationException.class)
-	public void testMultipleDataSourcesContext() throws Exception {
+	public void testMultipleDataSourcesContext() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.register( SimpleTaskAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,

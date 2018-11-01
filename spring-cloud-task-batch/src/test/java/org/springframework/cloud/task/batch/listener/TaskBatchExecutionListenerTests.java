@@ -68,7 +68,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TaskBatchExecutionListenerTests {
 
-	public static final String[] ARGS = new String[] {};
+	private static final String[] ARGS = new String[] {};
 
 	private ConfigurableApplicationContext applicationContext;
 
@@ -89,35 +89,35 @@ public class TaskBatchExecutionListenerTests {
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationEnabled() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class,
-				new String[] {"--spring.cloud.task.batch.listener.enabled=false"});
+				"--spring.cloud.task.batch.listener.enabled=false");
 		validateContext();
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationEnable() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
-				new String[] {"--spring.cloud.task.batch.listener.enable=false"});
+				"--spring.cloud.task.batch.listener.enable=false");
 		validateContext();
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testNoAutoConfigurationBothDisabled() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
-				new String[] {"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false"});
+				"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false");
 		validateContext();
 	}
 
 	@Test
 	public void testAutoConfigurationEnable() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
-				new String[] {"--spring.cloud.task.batch.listener.enable=true"});
+				"--spring.cloud.task.batch.listener.enable=true");
 		validateContext();
 	}
 
 	@Test
 	public void testAutoConfigurationEnabled() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class ,
-				new String[] {"--spring.cloud.task.batch.listener.enabled=true"});
+				"--spring.cloud.task.batch.listener.enabled=true");
 		validateContext();
 	}
 
@@ -198,7 +198,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testBatchExecutionListenerBeanPostProcessorWithJobNames() {
-		List jobNames = new ArrayList<String>(3);
+		List<String> jobNames = new ArrayList<>(3);
 		jobNames.add("job1");
 		jobNames.add("job2");
 		jobNames.add("TESTOBJECT");
@@ -215,7 +215,7 @@ public class TaskBatchExecutionListenerTests {
 	@Test
 	public void testBatchExecutionListenerBeanPostProcessorWithEmptyJobNames() {
 		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
-				beanPostProcessor(Collections.<String>emptyList());
+				beanPostProcessor(Collections.emptyList());
 
 		SimpleJob testObject = new SimpleJob();
 		SimpleJob bean = (SimpleJob) beanPostProcessor.
@@ -226,8 +226,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBatchExecutionListenerBeanPostProcessorNullJobNames() {
-		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =
-				beanPostProcessor(null);
+		beanPostProcessor(null);
 	}
 
 	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(

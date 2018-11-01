@@ -42,8 +42,6 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.repeat.RepeatCallback;
-import org.springframework.batch.repeat.RepeatContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.repeat.support.RepeatTemplate;
 import org.springframework.boot.CommandLineRunner;
@@ -113,7 +111,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 	public void run(String... args) throws JobExecutionException {
 		logger.info("Running default command line with: " + Arrays.asList(args));
 		launchJobFromProperties(StringUtils.splitArrayElementsIntoProperties(args, "="));
-		validateJobExecutions();
+		monitorJobExecutions();
 	}
 
 	protected void execute(Job job, JobParameters jobParameters)
@@ -161,69 +159,72 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 		}
 	}
 
-	private void validateJobExecutions() {
+	private void monitorJobExecutions() {
 		RepeatTemplate template = new RepeatTemplate();
 
 		Date startDate = new Date();
 
-		template.iterate(new RepeatCallback() {
+		template.iterate(context -> {
 
-			public RepeatStatus doInIteration(RepeatContext context) throws InterruptedException {
-				List<JobExecution> failedJobExecutions = new ArrayList<>();
-				RepeatStatus repeatStatus = RepeatStatus.FINISHED;
-				for (JobExecution jobExecution : jobExecutionList) {
-					JobExecution currentJobExecution = taskJobExplorer.getJobExecution(jobExecution.getId());
-					BatchStatus batchStatus = currentJobExecution.getStatus();
-					if (batchStatus.isRunning()) {
-						repeatStatus = RepeatStatus.CONTINUABLE;
-					}
-					if (batchStatus.equals(BatchStatus.FAILED)) {
-						failedJobExecutions.add(jobExecution);
-					}
+			List<JobExecution> failedJobExecutions = new ArrayList<>();
+			RepeatStatus repeatStatus = RepeatStatus.FINISHED;
+			for (JobExecution jobExecution : jobExecutionList) {
+				JobExecution currentJobExecution = taskJobExplorer.getJobExecution(jobExecution.getId());
+				BatchStatus batchStatus = currentJobExecution.getStatus();
+				if (batchStatus.isRunning()) {
+					repeatStatus = RepeatStatus.CONTINUABLE;
 				}
-				Thread.sleep(taskBatchProperties.getFailOnJobFailurePollInterval());
-
-				if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
-					throwJobFailedException(failedJobExecutions);
+				if (batchStatus.equals(BatchStatus.FAILED)) {
+					failedJobExecutions.add(jobExecution);
 				}
-				if (repeatStatus.isContinuable() && taskBatchProperties.getFailOnJobFailurewaitTime() != 0
-						&& (new Date()).getTime() - startDate.getTime() > taskBatchProperties.getFailOnJobFailurewaitTime()) {
-					throw new IllegalStateException("Not all jobs were completed " +
-							"within the time specified by spring.cloud.task.batch." +
-							"failOnJobFailurewaitTime.");
-				}
-				return repeatStatus;
 			}
+			Thread.sleep(taskBatchProperties.getFailOnJobFailurePollInterval());
 
+			if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
+				throwJobFailedException(failedJobExecutions);
+			}
+			if (repeatStatus.isContinuable() && taskBatchProperties.getFailOnJobFailurewaitTime() != 0
+					&& (new Date()).getTime() - startDate.getTime() > taskBatchProperties.getFailOnJobFailurewaitTime()) {
+				throw new IllegalStateException("Not all jobs were completed " +
+						"within the time specified by spring.cloud.task.batch." +
+						"failOnJobFailurewaitTime.");
+			}
+			return repeatStatus;
 		});
 	}
 
-	public void throwJobFailedException(List<JobExecution> failedJobExecutions) {
-		String message = "The following Jobs have failed: \n";
+	private void throwJobFailedException(List<JobExecution> failedJobExecutions) {
+		StringBuilder message = new StringBuilder("The following Jobs have failed: \n");
 		for (JobExecution failedJobExecution : failedJobExecutions) {
-			message += String.format("Job %s failed during " +
-					"execution for jobId %s with jobExecutionId of %s \n",
+			message.append(String.format("Job %s failed during " +
+					"execution for job instance id %s with jobExecutionId of %s \n",
 					failedJobExecution.getJobInstance().getJobName(),
-					failedJobExecution.getJobId(), failedJobExecution.getId());
+					failedJobExecution.getJobId(), failedJobExecution.getId()));
 		}
+
 		logger.error(message);
-		throw new TaskException(message);
+
+		throw new TaskException(message.toString());
 
 	}
 	private JobParameters removeNonIdentifying(JobParameters parameters) {
 		Map<String, JobParameter> parameterMap = parameters.getParameters();
 		HashMap<String, JobParameter> copy = new HashMap<>(parameterMap);
+
 		for (Map.Entry<String, JobParameter> parameter : copy.entrySet()) {
 			if (!parameter.getValue().isIdentifying()) {
 				parameterMap.remove(parameter.getKey());
 			}
 		}
+
 		return new JobParameters(parameterMap);
 	}
+
 	private boolean isStoppedOrFailed(JobExecution execution) {
 		BatchStatus status = execution.getStatus();
 		return (status == BatchStatus.STOPPED || status == BatchStatus.FAILED);
 	}
+
 	private JobParameters merge(JobParameters parameters, JobParameters additionals) {
 		Map<String, JobParameter> merged = new HashMap<>();
 		merged.putAll(parameters.getParameters());

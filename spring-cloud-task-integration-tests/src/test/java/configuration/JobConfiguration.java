@@ -72,7 +72,7 @@ public class JobConfiguration {
 				.processor(new ItemProcessor<String, String>() {
 					@Override
 					public String process(String item) throws Exception {
-						return String.valueOf(Integer.parseInt((String) item) * -1);
+						return String.valueOf(Integer.parseInt(item) * -1);
 					}
 				})
 				.writer(new ItemWriter<String>() {

@@ -42,6 +42,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
@@ -73,9 +74,6 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	private JobExplorer jobExplorer;
 
 	@Autowired
-	private BatchConfiguration batchConfigurer;
-
-	@Autowired
 	private PlatformTransactionManager transactionManager;
 
 	private TaskJobLauncherCommandLineRunner runner;
@@ -90,10 +88,9 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	@Before
 	public void init() {
-		batchConfigurer.clear();
 		this.jobs = new JobBuilderFactory(this.jobRepository);
 		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);
-		Tasklet tasklet = (contribution, chunkContext) -> null;
+		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
 		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, jobRepository, new TaskBatchProperties());
@@ -132,6 +129,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
 
+	@DirtiesContext
 	@Test
 	public void runDifferentInstances() throws Exception {
 		this.job = this.jobs.get("job")
@@ -162,10 +160,8 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 
 		// try to re-run a failed execution
-		Executable executable = () -> {
-			this.runner.execute(this.job,
-					new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
-		};
+		Executable executable = () -> this.runner.execute(this.job,
+				new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
 		Throwable exception = assertThrows(JobRestartException.class, executable);
 		AssertionsForClassTypes.assertThat(exception.getMessage())
 				.isEqualTo("JobInstance already exists and is not restartable");
@@ -187,6 +183,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	}
 
 
+	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution()
 			throws Exception {
@@ -252,10 +249,6 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 		public BatchConfiguration() throws Exception {
 			this.jobRepository = this.jobRepositoryFactory.getObject();
-		}
-
-		public void clear() {
-			this.jobRepositoryFactory.clear();
 		}
 
 		@Override

@@ -18,8 +18,6 @@ package org.springframework.cloud.task.configuration;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
@@ -125,7 +123,7 @@ public class SimpleTaskAutoConfiguration {
 	 * Determines the {@link TaskConfigurer} to use.
 	 */
 	@PostConstruct
-	protected void initialize() throws Exception {
+	protected void initialize() {
 		if (initialized) {
 			return;
 		}
@@ -177,7 +175,7 @@ public class SimpleTaskAutoConfiguration {
 		int configurers = this.context.getBeanNamesForType(TaskConfigurer.class).length;
 		// retrieve the count of dataSources (without instantiating them) excluding DataSource proxy beans
 		long dataSources = Arrays.stream(this.context.getBeanNamesForType(DataSource.class))
-				.filter((name -> !ScopedProxyUtils.isScopedTarget(name))).collect(Collectors.counting());
+				.filter((name -> !ScopedProxyUtils.isScopedTarget(name))).count();
 
 		if(configurers == 0 && dataSources > 1) {
 			throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than" +

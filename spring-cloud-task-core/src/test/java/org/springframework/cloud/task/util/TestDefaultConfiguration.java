@@ -66,7 +66,7 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskExplorer taskExplorer() throws Exception {
+	public TaskExplorer taskExplorer() {
 		return new SimpleTaskExplorer(this.factoryBean);
 	}
 

@@ -43,22 +43,13 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure", havingValue = "true")
 @EnableConfigurationProperties(TaskBatchProperties.class)
 @AutoConfigureBefore(BatchAutoConfiguration.class)
 public class TaskJobLauncherAutoConfiguration {
 
 	@Autowired
 	private TaskBatchProperties properties;
-
-
-	@Bean
-	@ConditionalOnMissingBean(JobRepository.class)
-	public JobRepository jobRepository(DataSource dataSource) throws Exception{
-		JobRepositoryFactoryBean factoryBean = new JobRepositoryFactoryBean();
-		factoryBean.setDataSource(dataSource);
-		return factoryBean.getObject();
-	}
 
 	@Bean
 	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(JobLauncher jobLauncher,

@@ -39,8 +39,6 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TaskEventTests {
 
-	private static final String TASK_NAME = "taskEventTest";
-
 	@Test
 	public void testDefaultConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()

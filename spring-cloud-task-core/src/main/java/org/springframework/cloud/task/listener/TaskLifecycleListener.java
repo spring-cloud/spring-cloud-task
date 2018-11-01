@@ -206,7 +206,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		}
 		else if (this.listenerFailed || this.applicationFailedEvent != null) {
 			Throwable exception = this.listenerException;
-			if (exception != null && exception instanceof TaskExecutionException) {
+			if (exception instanceof TaskExecutionException) {
 				TaskExecutionException taskExecutionException = (TaskExecutionException) exception;
 				if (taskExecutionException.getCause() instanceof InvocationTargetException) {
 					InvocationTargetException invocationTargetException = (InvocationTargetException) taskExecutionException
@@ -217,7 +217,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				}
 			}
 
-			if (exception != null && exception instanceof ExitCodeGenerator) {
+			if (exception instanceof ExitCodeGenerator) {
 				exitCode = ((ExitCodeGenerator) exception).getExitCode();
 			}
 			else {
@@ -229,46 +229,54 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private void doTaskStart() {
+		try {
+			if(!this.started) {
+				this.taskExecutionListeners = new ArrayList<>();
+				this.taskListenerExecutorObjectFactory.getObject();
+				if(!CollectionUtils.isEmpty(this.taskExecutionListenersFromContext)) {
+					this.taskExecutionListeners.addAll(this.taskExecutionListenersFromContext);
+				}
+				this.taskExecutionListeners.add(this.taskListenerExecutorObjectFactory.getObject());
 
-		if(!this.started) {
-			this.taskExecutionListeners = new ArrayList<>();
-			this.taskListenerExecutorObjectFactory.getObject();
-			if(!CollectionUtils.isEmpty(this.taskExecutionListenersFromContext)) {
-				this.taskExecutionListeners.addAll(this.taskExecutionListenersFromContext);
-			}
-			this.taskExecutionListeners.add(this.taskListenerExecutorObjectFactory.getObject());
+				List<String> args = new ArrayList<>(0);
 
-			List<String> args = new ArrayList<>(0);
-
-			if(this.applicationArguments != null) {
-				args = Arrays.asList(this.applicationArguments.getSourceArgs());
-			}
-			if(this.taskProperties.getExecutionid() != null) {
-				TaskExecution taskExecution = this.taskExplorer.getTaskExecution(this.taskProperties.getExecutionid());
-				Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found", this.taskProperties.getExecutionid()));
-				Assert.isNull(taskExecution.getEndTime(), String.format(
-						"Invalid TaskExecution, ID %s task is already complete", this.taskProperties.getExecutionid()));
-				this.taskExecution = this.taskRepository.startTaskExecution(this.taskProperties.getExecutionid(),
-						this.taskNameResolver.getTaskName(), new Date(), args,
-						this.taskProperties.getExternalExecutionId(),
-						this.taskProperties.getParentExecutionId());
+				if(this.applicationArguments != null) {
+					args = Arrays.asList(this.applicationArguments.getSourceArgs());
+				}
+				if(this.taskProperties.getExecutionid() != null) {
+					TaskExecution taskExecution = this.taskExplorer.getTaskExecution(this.taskProperties.getExecutionid());
+					Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found", this.taskProperties.getExecutionid()));
+					Assert.isNull(taskExecution.getEndTime(), String.format(
+							"Invalid TaskExecution, ID %s task is already complete", this.taskProperties.getExecutionid()));
+					this.taskExecution = this.taskRepository.startTaskExecution(this.taskProperties.getExecutionid(),
+							this.taskNameResolver.getTaskName(), new Date(), args,
+							this.taskProperties.getExternalExecutionId(),
+							this.taskProperties.getParentExecutionId());
+				}
+				else {
+					TaskExecution taskExecution = new TaskExecution();
+					taskExecution.setTaskName(this.taskNameResolver.getTaskName());
+					taskExecution.setStartTime(new Date());
+					taskExecution.setArguments(args);
+					taskExecution.setExternalExecutionId(this.taskProperties.getExternalExecutionId());
+					taskExecution.setParentExecutionId(this.taskProperties.getParentExecutionId());
+					this.taskExecution = this.taskRepository.createTaskExecution(
+							taskExecution);
+				}
 			}
 			else {
-				TaskExecution taskExecution = new TaskExecution();
-				taskExecution.setTaskName(this.taskNameResolver.getTaskName());
-				taskExecution.setStartTime(new Date());
-				taskExecution.setArguments(args);
-				taskExecution.setExternalExecutionId(this.taskProperties.getExternalExecutionId());
-				taskExecution.setParentExecutionId(this.taskProperties.getParentExecutionId());
-				this.taskExecution = this.taskRepository.createTaskExecution(
-						taskExecution);
+				logger.error("Multiple start events have been received.  The first one was " +
+						"recorded.");
 			}
+
+			setExitMessage(invokeOnTaskStartup(this.taskExecution));
 		}
-		else {
-			logger.error("Multiple start events have been received.  The first one was " +
-					"recorded.");
+		catch (Throwable t) {
+			// This scenario will result in a context that was not startup.
+
+			this.doTaskEnd();
+			throw t;
 		}
-		setExitMessage(invokeOnTaskStartup(this.taskExecution));
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution){
@@ -388,7 +396,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	@Override
 	public void destroy() throws Exception {
-		this.doTaskEnd();
 	}
 
 }

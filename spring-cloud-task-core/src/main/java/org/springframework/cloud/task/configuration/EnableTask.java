@@ -24,7 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.context.annotation.Import;
 
 /**
  * <p>
@@ -62,6 +61,5 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({ })
 public @interface EnableTask {
 }

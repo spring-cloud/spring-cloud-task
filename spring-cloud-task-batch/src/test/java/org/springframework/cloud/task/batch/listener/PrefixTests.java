@@ -56,7 +56,7 @@ public class PrefixTests {
 	@Test
 	public void testPrefix() {
 		this.applicationContext = SpringApplication.run(
-				JobConfiguration.class, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
+				JobConfiguration.class, "--spring.cloud.task.tablePrefix=FOO_");
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 

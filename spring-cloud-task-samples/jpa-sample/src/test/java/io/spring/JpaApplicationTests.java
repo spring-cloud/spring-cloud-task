@@ -91,7 +91,7 @@ public class JpaApplicationTests {
 	public OutputCapture outputCapture = new OutputCapture();
 
 	@Test
-	public void testBatchJobApp() throws Exception {
+	public void testBatchJobApp() {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
 		SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
@@ -101,7 +101,7 @@ public class JpaApplicationTests {
 		assertTrue("Unable to find the insert message: " + output, output.contains(INSERT_MESSAGE));
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		Map<String, Object> result = template.queryForMap("Select * from TASK_RUN_OUTPUT");
-		assertThat((Long)(result.get("ID")), is(1L));
+		assertThat(result.get("ID"), is(1L));
 		assertThat(((String) result.get("OUTPUT")), containsString("Executed at"));
 	}
 

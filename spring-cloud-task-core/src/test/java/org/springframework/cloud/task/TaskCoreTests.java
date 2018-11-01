@@ -66,10 +66,9 @@ public class TaskCoreTests {
 	@Test
 	public void successfulTaskTest() {
 		this.applicationContext = SpringApplication.run( TaskConfiguration.class,
-				new String[] {
-						"--spring.cloud.task.closecontext.enable=false",
-						"--spring.cloud.task.name=" + TASK_NAME,
-						"--spring.main.web-environment=false" });
+				"--spring.cloud.task.closecontext.enable=false",
+				"--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.main.web-environment=false");
 
 		String output = this.outputCapture.toString();
 		assertTrue("Test results do not show create task message: " + output,
@@ -86,10 +85,9 @@ public class TaskCoreTests {
 	@Test
 	public void successfulTaskTestWithAnnotation() {
 		this.applicationContext = SpringApplication.run( TaskConfigurationWithAnotation.class,
-				new String[] {
-						"--spring.cloud.task.closecontext.enable=false",
-						"--spring.cloud.task.name=" + TASK_NAME,
-						"--spring.main.web-environment=false" });
+				"--spring.cloud.task.closecontext.enable=false",
+				"--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.main.web-environment=false");
 
 		String output = this.outputCapture.toString();
 		assertTrue("Test results do not show create task message: " + output,
@@ -105,10 +103,9 @@ public class TaskCoreTests {
 		boolean exceptionFired = false;
 		try {
 			this.applicationContext = SpringApplication.run( TaskExceptionConfiguration.class,
-					new String[] {
-							"--spring.cloud.task.closecontext.enable=false",
-							"--spring.cloud.task.name=" + TASK_NAME,
-							"--spring.main.web-environment=false" });
+					"--spring.cloud.task.closecontext.enable=false",
+					"--spring.cloud.task.name=" + TASK_NAME,
+					"--spring.main.web-environment=false");
 		}
 		catch (IllegalStateException exception) {
 			exceptionFired = true;
@@ -132,12 +129,11 @@ public class TaskCoreTests {
 	public void invalidExecutionId() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = this.applicationContext = SpringApplication.run(
-							TaskExceptionConfiguration.class, new String[]{
-					"--spring.cloud.task.closecontext.enable=false",
+			this.applicationContext = SpringApplication.run(
+							TaskExceptionConfiguration.class, "--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false",
-					"--spring.cloud.task.executionid=55"});
+					"--spring.cloud.task.executionid=55");
 		}
 		catch (ApplicationContextException exception) {
 			exceptionFired = true;

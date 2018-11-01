@@ -68,7 +68,7 @@ public class SimpleTaskAutoConfigurationTests {
 	}
 
 	@Test
-	public void testRepository() throws Exception {
+	public void testRepository() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 						PropertyPlaceholderAutoConfiguration.class,
@@ -84,7 +84,7 @@ public class SimpleTaskAutoConfigurationTests {
 	}
 
 	@Test
-	public void testAutoConfigurationDisabled() throws Exception {
+	public void testAutoConfigurationDisabled() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 						PropertyPlaceholderAutoConfiguration.class,
@@ -102,7 +102,7 @@ public class SimpleTaskAutoConfigurationTests {
 	}
 
 	@Test
-	public void testRepositoryInitialized() throws Exception {
+	public void testRepositoryInitialized() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
@@ -115,7 +115,7 @@ public class SimpleTaskAutoConfigurationTests {
 	}
 
 	@Test
-	public void testRepositoryNotInitialized() throws Exception {
+	public void testRepositoryNotInitialized() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
@@ -221,12 +221,12 @@ public class SimpleTaskAutoConfigurationTests {
 		@Bean
 		public DataSource dataSource() {
 			return mock(DataSource.class);
-		};
+		}
 
 		@Bean
 		public DataSource dataSource2() {
 			return mock(DataSource.class);
-		};
+		}
 
 	}
 

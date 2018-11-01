@@ -22,6 +22,7 @@ import java.util.Date;
 import org.junit.After;
 import org.junit.Test;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -53,9 +54,9 @@ public class TaskExecutionListenerTests {
 
 	private static final String EXCEPTION_MESSAGE = "This was expected";
 
-	public static boolean beforeTaskDidFireOnError = false;
-	public static boolean endTaskDidFireOnError = false;
-	public static boolean failedTaskDidFireOnError = false;
+	private static boolean beforeTaskDidFireOnError = false;
+	private static boolean endTaskDidFireOnError = false;
+	private static boolean failedTaskDidFireOnError = false;
 
 	@BeforeTask
 	public void setup() {
@@ -81,8 +82,8 @@ public class TaskExecutionListenerTests {
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener =
 				context.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
 		TaskExecution taskExecution = new TaskExecution(0, null, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, false, false, taskExecution,taskExecutionListener);
+				new Date(), new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(false, false, taskExecution,taskExecutionListener);
 	}
 
 	/**
@@ -130,8 +131,8 @@ public class TaskExecutionListenerTests {
 				context.getBean(AfterTaskErrorAnnotationConfiguration.AnnotatedTaskListener.class);
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
-		assertEquals(true,taskExecutionListener.isTaskStartup());
-		assertEquals(true,taskExecutionListener.isTaskEnd());
+		assertTrue(taskExecutionListener.isTaskStartup());
+		assertTrue(taskExecutionListener.isTaskEnd());
 		assertEquals(TestListener.END_MESSAGE, taskExecutionListener.getTaskExecution().getExitMessage());
 		assertTrue(taskExecutionListener.getTaskExecution().getErrorMessage().contains("Failed to process @BeforeTask or @AfterTask annotation because: AfterTaskFailure"));
 		assertNull(taskExecutionListener.getThrowable());
@@ -149,8 +150,8 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, true, false, taskExecution,taskExecutionListener);
+				new Date(), new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(true, false, taskExecution,taskExecutionListener);
 	}
 
 	/**
@@ -168,8 +169,8 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
-				new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, true, true, taskExecution,taskExecutionListener);
+				new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(true, true, taskExecution,taskExecutionListener);
 	}
 
 	/**
@@ -177,13 +178,13 @@ public class TaskExecutionListenerTests {
 	 * method is called.
 	 */
 	@Test
-	public void testAnnotationCreate() throws Exception {
+	public void testAnnotationCreate() {
 		setupContextForAnnotatedListener();
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener =
 				context.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
 		TaskExecution taskExecution = new TaskExecution(0, null, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, false, false, taskExecution,annotatedListener);
+				new Date(), new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(false, false, taskExecution,annotatedListener);
 	}
 
 	/**
@@ -198,8 +199,8 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat",
-				new Date(), new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, true, false, taskExecution,annotatedListener);
+				new Date(), new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(true, false, taskExecution,annotatedListener);
 	}
 
 	/**
@@ -217,14 +218,14 @@ public class TaskExecutionListenerTests {
 		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
-				new Date(), null, new ArrayList<String>(), null, null);
-		verifyListenerResults(true, true, true, taskExecution,annotatedListener);
+				new Date(), null, new ArrayList<>(), null, null);
+		verifyListenerResults(true, true, taskExecution,annotatedListener);
 	}
 
-	private void verifyListenerResults (boolean isTaskStartup, boolean isTaskEnd,
-				boolean isTaskFailed, TaskExecution taskExecution,
-				TestListener actualListener){
-		assertEquals(isTaskStartup,actualListener.isTaskStartup());
+	private void verifyListenerResults(boolean isTaskEnd,
+			boolean isTaskFailed, TaskExecution taskExecution,
+			TestListener actualListener){
+		assertTrue(actualListener.isTaskStartup());
 		assertEquals(isTaskEnd,actualListener.isTaskEnd());
 		assertEquals(isTaskFailed,actualListener.isTaskFailed());
 		if(isTaskFailed){
@@ -321,6 +322,11 @@ public class TaskExecutionListenerTests {
 		@Bean
 		public AnnotatedTaskListener annotatedTaskListener() {
 			return new AnnotatedTaskListener();
+		}
+
+		@Bean
+		public CommandLineRunner commandLineRunner() {
+			return args -> System.out.println("I was run");
 		}
 
 		public static class AnnotatedTaskListener {
