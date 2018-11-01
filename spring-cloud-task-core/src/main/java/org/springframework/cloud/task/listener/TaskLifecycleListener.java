@@ -65,6 +65,7 @@ import org.springframework.util.StringUtils;
  * <b>Note:</b> By default, the context will be closed at the completion of a task (once
  * the task repository has been updated).  This behavior can be configured via the
  * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
+ * Also if the context did not start the FailedTask and TaskEnd may not have all the dependencies met.
  *
  * @author Michael Minella
  * @author Glenn Renfro
@@ -377,9 +378,6 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		callback.run();
 	}
 
-	/**
-	 * Executes task initialization when {@link SmartLifecycle#start()} is called.
-	 */
 	@Override
 	public void start() {
 		doTaskStart();
