@@ -64,7 +64,7 @@ import static org.junit.Assert.assertTrue;
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
-	private final static int MAX_WAIT_TIME = 10000;
+	private final static int MAX_WAIT_TIME = 120000;
 	private final static String URL = "maven://org.springframework.cloud.task.app:"
 			+ "timestamp-task:2.0.0.RELEASE";
 	private final static String DATASOURCE_URL;
