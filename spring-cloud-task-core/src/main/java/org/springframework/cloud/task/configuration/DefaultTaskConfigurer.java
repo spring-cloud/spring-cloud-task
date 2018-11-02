@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,8 +58,6 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private PlatformTransactionManager transactionManager;
 
-	private TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
-
 	private DataSource dataSource;
 
 	private ApplicationContext context;
@@ -104,15 +102,18 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		this.dataSource = dataSource;
 		this.context = context;
 
+		TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
+
 		if(this.dataSource != null) {
-			this.taskExecutionDaoFactoryBean = new
+			taskExecutionDaoFactoryBean = new
 					TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
 		}
 		else {
-			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
+			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
 		}
-		this.taskRepository = new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
-		this.taskExplorer = new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
+
+		this.taskRepository = new SimpleTaskRepository(taskExecutionDaoFactoryBean);
+		this.taskExplorer = new SimpleTaskExplorer(taskExecutionDaoFactoryBean);
 	}
 
 	@Override

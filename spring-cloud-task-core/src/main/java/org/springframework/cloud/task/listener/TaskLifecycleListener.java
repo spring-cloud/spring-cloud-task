@@ -287,7 +287,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution){
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(this.taskExecutionListeners);
-		if (startupListenerList != null) {
+		if (!CollectionUtils.isEmpty(startupListenerList)) {
 			try {
 				Collections.reverse(startupListenerList);
 				for (TaskExecutionListener taskExecutionListener : startupListenerList) {
@@ -400,7 +400,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	@Override
-	public void destroy() throws Exception {
+	public void destroy() {
 	}
 
 }
