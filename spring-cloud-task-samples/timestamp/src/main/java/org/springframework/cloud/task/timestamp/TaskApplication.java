@@ -52,7 +52,7 @@ public class TaskApplication {
 	/**
 	 * A commandline runner that prints a timestamp.
 	 */
-	public class TimestampTask implements CommandLineRunner {
+	public static class TimestampTask implements CommandLineRunner {
 
 		@Autowired
 		private TimestampTaskProperties config;

@@ -111,7 +111,7 @@ public class DeployerPartitionHandlerTests {
 		Collection<StepExecution> results = handler.handle(this.splitter, stepExecution);
 
 		verify(this.taskLauncher, never()).launch((AppDeploymentRequest) any());
-		assertNull(results);
+		assertTrue(results.isEmpty());
 	}
 
 	@Test

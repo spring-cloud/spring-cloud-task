@@ -55,7 +55,7 @@ public class JobExecutionEvent extends Entity {
 
 	private Date lastUpdated = null;
 
-	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN", null));
+	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN"));
 
 	private ExecutionContext executionContext = new ExecutionContext();
 

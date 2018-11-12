@@ -325,8 +325,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public long getRunningTaskExecutionCount() {
 
 		try {
+			final MapSqlParameterSource queryParameters = new MapSqlParameterSource();
 			return jdbcTemplate.queryForObject(
-				getQuery(RUNNING_TASK_EXECUTION_COUNT), (SqlParameterSource)null, Long.class);
+				getQuery(RUNNING_TASK_EXECUTION_COUNT), queryParameters, Long.class);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;

@@ -17,6 +17,7 @@ package org.springframework.cloud.task.batch.partition;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -246,7 +247,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 		final Set<StepExecution> executed = new HashSet<>(candidates.size());
 
 		if (CollectionUtils.isEmpty(candidates)) {
-			return null;
+			return Collections.emptySet();
 		}
 
 		launchWorkers(candidates, executed);

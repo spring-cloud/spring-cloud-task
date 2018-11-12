@@ -322,7 +322,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		}
 	}
 
-	private class TaskExecutionComparator implements Comparator<TaskExecution> {
+	private static class TaskExecutionComparator implements Comparator<TaskExecution> {
 		@Override
 		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {
 			if (firstTaskExecution.getStartTime().equals(secondTaskExecution.getStartTime())) {
