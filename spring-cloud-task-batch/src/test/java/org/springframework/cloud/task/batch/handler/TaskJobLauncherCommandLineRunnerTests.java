@@ -45,8 +45,8 @@ import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
-import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
+import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
@@ -74,7 +74,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@After
 	public void tearDown() {
-		if (this.applicationContext != null) {
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
 		}
 	}
@@ -105,19 +105,6 @@ public class TaskJobLauncherCommandLineRunnerTests {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
 				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500"};
 		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
-				enabledArgs);
-	}
-
-
-	@Test
-	public void testTaskJobLauncherCLRSuccessWithLongWaitTaskExecutor() {
-		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
-				"--spring.cloud.task.batch.failOnJobFailurewaitTime=1000"
-		};
-		validateForFail("Not all jobs were completed within the time specified by spring.cloud.task.batch.failOnJobFailurewaitTime.",
-				TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorLongWaitConfiguration.class,
 				enabledArgs);
 	}
 
@@ -256,60 +243,6 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		@Bean
 		public BatchConfigurer batchConfigurer(DataSource dataSource) {
 			return new TestBatchConfigurer(dataSource);
-		}
-	}
-
-
-	@EnableBatchProcessing
-	@ImportAutoConfiguration({
-			PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			TaskJobLauncherAutoConfiguration.class,
-			SingleTaskConfiguration.class,
-			SimpleTaskAutoConfiguration.class })
-	@Import(EmbeddedDataSourceConfiguration.class)
-	public static class JobWithFailureTaskExecutorLongWaitConfiguration {
-
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
-		@Bean
-		public BatchConfigurer batchConfigurer(DataSource dataSource) {
-			return new TestBatchConfigurer(dataSource);
-		}
-
-		@Bean
-		public Job jobShortRunner() {
-			return jobBuilderFactory.get("jobSucceedShort")
-					.start(stepBuilderFactory.get("step1SucceedSort").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext)
-								throws Exception {
-							System.out.println("Executed Short Runner");
-							return RepeatStatus.FINISHED;
-						}
-					}).build())
-					.build();
-		}
-
-		@Bean
-		public Job jobLongRunner() {
-			return jobBuilderFactory.get("jobSucceedLong")
-					.start(stepBuilderFactory.get("step1SucceedLong").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext)
-								throws Exception {
-							System.out.println("Executed Long Runner");
-							Thread.sleep(5000);
-							return RepeatStatus.FINISHED;
-						}
-					}).build())
-					.build();
 		}
 	}
 

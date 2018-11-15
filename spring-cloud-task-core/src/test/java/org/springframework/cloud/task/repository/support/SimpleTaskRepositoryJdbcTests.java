@@ -19,6 +19,7 @@ package org.springframework.cloud.task.repository.support;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
+
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -35,7 +36,7 @@ import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,10 +47,11 @@ import static org.junit.Assert.assertEquals;
  * @author Michael Minella
  * @author Ilayaperumal Gopinathan
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {EmbeddedDataSourceConfiguration.class,
 		SimpleTaskAutoConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class})
+@DirtiesContext
 public class SimpleTaskRepositoryJdbcTests {
 
 	@Autowired

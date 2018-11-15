@@ -74,7 +74,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@After
 	public void tearDown() {
-		if(this.applicationContext != null) {
+		if(this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
 		}
 	}

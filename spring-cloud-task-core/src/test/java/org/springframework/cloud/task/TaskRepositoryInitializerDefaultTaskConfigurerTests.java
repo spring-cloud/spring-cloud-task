@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -44,6 +45,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SimpleTaskAutoConfiguration.class,
 		EmbeddedDataSourceConfiguration.class})
+@DirtiesContext
 public class TaskRepositoryInitializerDefaultTaskConfigurerTests {
 
 	@Autowired

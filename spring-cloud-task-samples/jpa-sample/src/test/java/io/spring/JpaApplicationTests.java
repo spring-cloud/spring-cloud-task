@@ -29,14 +29,15 @@ import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.util.SocketUtils;
 
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Verifies that a JPA Application can write its data to a repository.
@@ -54,6 +55,8 @@ public class JpaApplicationTests {
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
 
 	private static int randomPort;
+
+	private ConfigurableApplicationContext context;
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
@@ -84,6 +87,9 @@ public class JpaApplicationTests {
 
 	@After
 	public void tearDown() {
+		if(this.context != null && this.context.isActive()) {
+			this.context.close();
+		}
 		this.server.stop();
 	}
 
@@ -93,7 +99,7 @@ public class JpaApplicationTests {
 	@Test
 	public void testBatchJobApp() {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
-		SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
+		this.context = SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 				"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
 				"--spring.jpa.database-platform=org.hibernate.dialect.H2Dialect");
