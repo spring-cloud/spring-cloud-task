@@ -183,12 +183,6 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 			if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
 				throwJobFailedException(failedJobExecutions);
 			}
-			if (repeatStatus.isContinuable() && taskBatchProperties.getFailOnJobFailurewaitTime() != 0
-					&& (new Date()).getTime() - startDate.getTime() > taskBatchProperties.getFailOnJobFailurewaitTime()) {
-				throw new IllegalStateException("Not all jobs were completed " +
-						"within the time specified by spring.cloud.task.batch." +
-						"failOnJobFailurewaitTime.");
-			}
 			return repeatStatus;
 		});
 	}
