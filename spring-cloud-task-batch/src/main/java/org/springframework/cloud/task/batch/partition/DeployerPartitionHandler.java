@@ -68,6 +68,8 @@ import org.springframework.util.StringUtils;
  */
 public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware, InitializingBean {
 
+	private static final long DEFAULT_POLL_INTERVAL = 10000;
+
 	public static final String SPRING_CLOUD_TASK_JOB_EXECUTION_ID =
 			"spring.cloud.task.job-execution-id";
 
@@ -100,7 +102,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private Log logger = LogFactory.getLog(DeployerPartitionHandler.class);
 
-	private long pollInterval = 10000;
+	private long pollInterval = DEFAULT_POLL_INTERVAL;
 
 	private long timeout = -1;
 
@@ -352,7 +354,8 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 						StepExecution partitionStepExecution =
 								jobExplorer.getStepExecution(masterStepExecution.getJobExecutionId(), curStepExecution.getId());
 
-						if (isComplete(partitionStepExecution.getStatus())) {
+						BatchStatus batchStatus = partitionStepExecution.getStatus();
+						if (batchStatus != null && isComplete(batchStatus)) {
 							result.add(partitionStepExecution);
 							currentWorkers--;
 

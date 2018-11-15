@@ -41,6 +41,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableBatchProcessing
 public class JobConfiguration {
+
+	private static final int DEFAULT_CHUNK_COUNT = 3;
+
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 
@@ -67,7 +70,7 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step2() {
-		return stepBuilderFactory.get("step2").<String, String>chunk(3)
+		return stepBuilderFactory.get("step2").<String, String>chunk(DEFAULT_CHUNK_COUNT)
 				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
 				.processor(new ItemProcessor<String, String>() {
 					@Override

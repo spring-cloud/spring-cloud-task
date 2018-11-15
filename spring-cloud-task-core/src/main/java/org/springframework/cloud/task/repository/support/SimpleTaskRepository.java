@@ -39,7 +39,7 @@ public class SimpleTaskRepository implements TaskRepository {
 	public static final int MAX_TASK_NAME_SIZE = 100;
 	public static final int MAX_ERROR_MESSAGE_SIZE = 2500;
 
-	private final static Log logger = LogFactory.getLog(SimpleTaskRepository.class);
+	private static final  Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
 	private TaskExecutionDao taskExecutionDao;
 

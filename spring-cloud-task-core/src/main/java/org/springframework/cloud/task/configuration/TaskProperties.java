@@ -31,6 +31,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spring.cloud.task")
 public class TaskProperties {
+
+	private static final int DEFAULT_CHECK_INTERVAL = 500;
+
 	private static final Log logger = LogFactory.getLog(TaskProperties.class);
 	
 	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
@@ -82,7 +85,7 @@ public class TaskProperties {
 	 * Declares the  time (in millis) that a task execution will wait between
 	 * checks. Default time is: 500 millis.
 	 */
-	private int singleInstanceLockCheckInterval = 500;
+	private int singleInstanceLockCheckInterval = DEFAULT_CHECK_INTERVAL;
 
 	public String getExternalExecutionId() {
 		return externalExecutionId;

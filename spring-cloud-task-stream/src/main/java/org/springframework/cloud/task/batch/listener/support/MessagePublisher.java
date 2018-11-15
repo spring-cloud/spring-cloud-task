@@ -43,7 +43,7 @@ public class MessagePublisher<P>{
 		}
 	}
 
-	private final void publishMessage(Message<?> message) {
+	private void publishMessage(Message<?> message) {
 		this.listenerEventsChannel.send(message);
 	}
 

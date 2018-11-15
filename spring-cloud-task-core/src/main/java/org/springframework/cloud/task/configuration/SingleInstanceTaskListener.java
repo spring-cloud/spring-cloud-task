@@ -49,7 +49,7 @@ import org.springframework.integration.support.locks.LockRegistry;
  */
 public class SingleInstanceTaskListener implements ApplicationListener<ApplicationEvent> {
 
-	private final static Log logger = LogFactory.getLog(SingleInstanceTaskListener.class);
+	private static final Log logger = LogFactory.getLog(SingleInstanceTaskListener.class);
 
 	private LockRegistry lockRegistry;
 

@@ -46,7 +46,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -568,7 +567,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 */
 	private final class TaskExecutionRowMapper implements RowMapper<TaskExecution> {
 
-		public TaskExecutionRowMapper() {
+		private TaskExecutionRowMapper() {
 		}
 
 		@Override

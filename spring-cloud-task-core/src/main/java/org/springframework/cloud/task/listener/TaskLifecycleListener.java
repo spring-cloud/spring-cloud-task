@@ -85,7 +85,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private List<TaskExecutionListener> taskExecutionListeners;
 
-	private final static Log logger = LogFactory.getLog(TaskLifecycleListener.class);
+	private static final  Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
 	private final TaskRepository taskRepository;
 
