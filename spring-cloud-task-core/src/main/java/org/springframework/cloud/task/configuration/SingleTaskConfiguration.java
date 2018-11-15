@@ -16,21 +16,15 @@
 
 package org.springframework.cloud.task.configuration;
 
-import java.util.Collection;
-
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.integration.support.locks.PassThruLockRegistry;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Autoconfiguration of {@link SingleInstanceTaskListener}.

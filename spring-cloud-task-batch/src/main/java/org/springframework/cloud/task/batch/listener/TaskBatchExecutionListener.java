@@ -35,7 +35,7 @@ public class TaskBatchExecutionListener extends JobExecutionListenerSupport {
 
 	private TaskBatchDao taskBatchDao;
 
-	private final static Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
+	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
 
 	/**
 	 * @param taskBatchDao dao used to persist the relationship.  Must not be null

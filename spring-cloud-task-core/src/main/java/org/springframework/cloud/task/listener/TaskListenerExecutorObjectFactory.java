@@ -49,7 +49,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  */
 public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExecutionListener> {
 
-	private final static Log logger = LogFactory.getLog(TaskListenerExecutor.class);
+	private static final Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
 	private final Set<Class<?>> nonAnnotatedClasses =
 			Collections.newSetFromMap(new ConcurrentHashMap<>());

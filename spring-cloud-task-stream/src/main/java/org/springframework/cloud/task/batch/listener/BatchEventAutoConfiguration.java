@@ -65,13 +65,13 @@ import org.springframework.messaging.MessageChannel;
 @AutoConfigureAfter(SimpleTaskAutoConfiguration.class)
 public class BatchEventAutoConfiguration {
 
-	public final static String JOB_EXECUTION_EVENTS_LISTENER = "jobExecutionEventsListener";
-	public final static String CHUNK_EVENTS_LISTENER = "chunkEventsListener";
-	public final static String STEP_EXECUTION_EVENTS_LISTENER = "stepExecutionEventsListener";
-	public final static String ITEM_READ_EVENTS_LISTENER = "itemReadEventsListener";
-	public final static String ITEM_WRITE_EVENTS_LISTENER = "itemWriteEventsListener";
-	public final static String ITEM_PROCESS_EVENTS_LISTENER = "itemProcessEventsListener";
-	public final static String SKIP_EVENTS_LISTENER = "skipEventsListener";
+	public static final String JOB_EXECUTION_EVENTS_LISTENER = "jobExecutionEventsListener";
+	public static final String CHUNK_EVENTS_LISTENER = "chunkEventsListener";
+	public static final String STEP_EXECUTION_EVENTS_LISTENER = "stepExecutionEventsListener";
+	public static final String ITEM_READ_EVENTS_LISTENER = "itemReadEventsListener";
+	public static final String ITEM_WRITE_EVENTS_LISTENER = "itemWriteEventsListener";
+	public static final String ITEM_PROCESS_EVENTS_LISTENER = "itemProcessEventsListener";
+	public static final String SKIP_EVENTS_LISTENER = "skipEventsListener";
 
 	@Bean
 	@ConditionalOnMissingBean

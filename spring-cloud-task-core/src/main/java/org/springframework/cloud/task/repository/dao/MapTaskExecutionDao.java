@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -322,7 +323,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		}
 	}
 
-	private static class TaskExecutionComparator implements Comparator<TaskExecution> {
+	private static class TaskExecutionComparator implements Comparator<TaskExecution>, Serializable {
 		@Override
 		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {
 			if (firstTaskExecution.getStartTime().equals(secondTaskExecution.getStartTime())) {

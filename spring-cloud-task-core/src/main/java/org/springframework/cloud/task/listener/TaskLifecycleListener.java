@@ -44,7 +44,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -80,7 +79,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private List<TaskExecutionListener> taskExecutionListeners;
 
-	private final static Log logger = LogFactory.getLog(TaskLifecycleListener.class);
+	private static final  Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
 	private final TaskRepository taskRepository;
 

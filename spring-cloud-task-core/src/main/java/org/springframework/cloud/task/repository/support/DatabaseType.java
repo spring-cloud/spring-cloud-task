@@ -50,7 +50,7 @@ public enum DatabaseType {
 
 	private final String productName;
 
-	private DatabaseType(String productName) {
+	DatabaseType(String productName) {
 		this.productName = productName;
 	}
 

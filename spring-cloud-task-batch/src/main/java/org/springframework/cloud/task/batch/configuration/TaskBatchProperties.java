@@ -30,6 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.cloud.task.batch")
 public class TaskBatchProperties {
 
+	private static final long DEFAULT_POLL_INTERVAL = 5000L;
 	/**
 	 * Comma-separated list of job names to execute on startup (for instance,
 	 * `job1,job2`). By default, all Jobs found in the context are executed.
@@ -56,7 +57,7 @@ public class TaskBatchProperties {
 	 * when spring.cloud.task.batch.failOnJobFailure is set to true.  Defaults
 	 * to 5000.
 	 */
-	private long failOnJobFailurePollInterval = 5000l;
+	private long failOnJobFailurePollInterval = DEFAULT_POLL_INTERVAL;
 
 	public String getJobNames() {
 		return this.jobNames;

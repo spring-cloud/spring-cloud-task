@@ -29,14 +29,14 @@ public interface TaskExecutionListener {
 	 * Invoked after the {@link TaskExecution} has been stored in the {@link TaskRepository}.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
-	public void onTaskStartup(TaskExecution taskExecution);
+	void onTaskStartup(TaskExecution taskExecution);
 
 	/**
 	 * Invoked before the {@link TaskExecution} has been updated in the {@link TaskRepository}
 	 * upon task end.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
-	public void onTaskEnd(TaskExecution taskExecution);
+	void onTaskEnd(TaskExecution taskExecution);
 
 	/**
 	 * Invoked if an uncaught exception occurs during a task execution.  This invocation
@@ -45,5 +45,5 @@ public interface TaskExecutionListener {
 	 * @param taskExecution instance containing the information about the current task.
 	 * @param throwable the uncaught exception that was thrown during task execution.
 	 */
-	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
+	void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
 }
