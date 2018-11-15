@@ -45,8 +45,8 @@ import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
-import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
+import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
@@ -74,7 +74,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@After
 	public void tearDown() {
-		if (this.applicationContext != null) {
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
 		}
 	}
@@ -305,7 +305,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 								ChunkContext chunkContext)
 								throws Exception {
 							System.out.println("Executed Long Runner");
-							Thread.sleep(5000);
+							Thread.sleep(1000);
 							return RepeatStatus.FINISHED;
 						}
 					}).build())
