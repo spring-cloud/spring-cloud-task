@@ -44,7 +44,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -60,12 +59,18 @@ import org.springframework.util.StringUtils;
  *     is expected to contain a single application context.</li>
  *     <li>{@link ApplicationReadyEvent} - Used to identify the successful end of a task.</li>
  *     <li>{@link ApplicationFailedEvent} - Used to identify the failure of a task.</li>
+ *     <li>{@link SmartLifecycle#stop()} - Used to identify the end of a task,
+ *     if the {@link ApplicationReadyEvent} or {@link ApplicationFailedEvent}
+ *     is not emitted. This can occur if an error occurs while executing a BeforeTask.
+ *     </li>
  * </ul>
  *
- * <b>Note:</b> By default, the context will be closed at the completion of a task (once
- * the task repository has been updated).  This behavior can be configured via the
- * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
- * Also if the context did not start the FailedTask and TaskEnd may not have all the dependencies met.
+ * <b>Note:</b> By default, the context will close at the completion of the task unless other non-daemon
+ * threads keep it running.  Programatic closing of the context can be configured via the
+ * property <code>spring.cloud.task.closecontext.enable</code> (defaults to false).
+ * If the <code>spring.cloud.task.closecontext.enable</code> is set to true,
+ * then the context will be closed upon task completion regardless if non-daemon threads are still running.
+ * Also if the context did not start, the FailedTask and TaskEnd may not have all the dependencies met.
  *
  * @author Michael Minella
  * @author Glenn Renfro
