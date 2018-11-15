@@ -60,12 +60,14 @@ import org.springframework.util.StringUtils;
  *     is expected to contain a single application context.</li>
  *     <li>{@link ApplicationReadyEvent} - Used to identify the successful end of a task.</li>
  *     <li>{@link ApplicationFailedEvent} - Used to identify the failure of a task.</li>
+ *     <li>{@link SmartLifecycle#stop()} - Used to identify the end of a task, if the {@link ApplicationReadyEvent} or {@link ApplicationFailedEvent} is not emitted. This can occur if an error occurs while executing a BeforeTask. </li>
  * </ul>
  *
- * <b>Note:</b> By default, the context will be closed at the completion of a task (once
+ * <b>Note:</b> By default, the context will not be closed at the completion of a task (once
  * the task repository has been updated).  This behavior can be configured via the
- * property <code>spring.cloud.task.closecontext.enable</code> (defaults to true).
+ * property <code>spring.cloud.task.closecontext.enable</code> (defaults to false).
  * Also if the context did not start the FailedTask and TaskEnd may not have all the dependencies met.
+ *
  *
  * @author Michael Minella
  * @author Glenn Renfro
