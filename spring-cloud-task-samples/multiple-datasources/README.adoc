@@ -25,5 +25,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/multiple-datasources-2.0.0.RC1.jar
+$ java -jar target/multiple-datasources-2.1.0.M2.jar
 ----
