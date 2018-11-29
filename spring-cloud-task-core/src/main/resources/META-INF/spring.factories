@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.springframework.cloud.task.configuration.SingleTaskConfiguration,\
-org.springframework.cloud.task.configuration.ResourceLoadingAutoConfiguration,\
 org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration\
 
