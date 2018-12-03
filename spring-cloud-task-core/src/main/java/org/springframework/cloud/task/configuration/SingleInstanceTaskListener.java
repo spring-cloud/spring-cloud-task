@@ -128,7 +128,7 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 	}
 
 	@FailedTask
-	public void unlockTaskOnError(TaskExecution taskExecution) throws Exception {
+	public void unlockTaskOnError(TaskExecution taskExecution, Throwable throwable) throws Exception {
 		this.lockRegistryLeaderInitiator.destroy();
 	}
 
