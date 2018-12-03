@@ -233,6 +233,10 @@ custom implementation of the `TaskConfigurer` interface. Typically, extending th
 overriding the required getter is sufficient. However, implementing your own from scratch
 may be required.
 
+NOTE: Users should not directly use getter methods from a TaskConfigurer directly
+unless they are using it to supply beans in a class annotated with
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html[Configuration].
+
 [[features-task-name]]
 === Task Name
 
@@ -376,13 +380,4 @@ This can be done either by adding the following annotation to your Task applicat
 ```
 You may also disable Task auto configuration by setting the `spring.cloud.task.autoconfiguration.enabled` property to `false`.
 
-=== Configuring your application to use Task Features
-
-In some cases you will want to use beans instantiated by Spring Cloud Task, for example the
-https://docs.spring.io/spring-cloud-task/docs/current/apidocs/org/springframework/cloud/task/repository/TaskExplorer.html[TaskExplorer].
-In such cases remember that you should resolve those references at the appropriate
-time during the Spring Boot lifecycle.  This means you may wish to autowire those
-Spring Cloud Task beans where they are needed instead of attempting to resolve
-them in your @Configuration classes (because AutoConfiguration bean resolution
-occurs after Configuration bean resolution).
 
