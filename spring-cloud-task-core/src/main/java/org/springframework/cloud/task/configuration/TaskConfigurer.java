@@ -24,7 +24,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Provides a strategy interface for providing configuration
- * customization to the task system.
+ * customization to the task system.  Users should not directly use getter methods
+ * from a TaskConfigurer directly unless they are using it to supply beans in a
+ * class annotated with:
+ * {@link org.springframework.context.annotation.Configuration}.
  *
  * @author Glenn Renfro
  */
