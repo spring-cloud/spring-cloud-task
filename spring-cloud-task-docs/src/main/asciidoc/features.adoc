@@ -233,9 +233,8 @@ custom implementation of the `TaskConfigurer` interface. Typically, extending th
 overriding the required getter is sufficient. However, implementing your own from scratch
 may be required.
 
-NOTE: Users should not directly use getter methods from a TaskConfigurer directly
-unless they are using it to supply beans in a class annotated with
-https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html[Configuration].
+NOTE: Users should not directly use getter methods from a `TaskConfigurer` directly
+unless they are using it to supply implementations to be exposed as Spring Beans.
 
 [[features-task-name]]
 === Task Name
