@@ -165,6 +165,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@EnableBatchProcessing
 	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
+	@EnableTask
 	public static class JobConfiguration {
 
 		@Autowired
@@ -196,6 +197,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 			SingleTaskConfiguration.class,
 			SimpleTaskAutoConfiguration.class })
 	@Import(EmbeddedDataSourceConfiguration.class)
+	@EnableTask
 	public static class JobWithFailureConfiguration {
 
 		@Autowired

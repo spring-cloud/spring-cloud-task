@@ -18,6 +18,7 @@ package org.springframework.cloud.task.configuration;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
@@ -30,8 +31,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.task.listener.TaskLifecycleListener;
-import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -76,8 +75,6 @@ public class SimpleTaskAutoConfiguration {
 
 	private TaskRepository taskRepository;
 
-	private TaskLifecycleListener taskLifecycleListener;
-
 	private PlatformTransactionManager platformTransactionManager;
 
 	private TaskExplorer taskExplorer;
@@ -85,11 +82,6 @@ public class SimpleTaskAutoConfiguration {
 	@Bean
 	public TaskRepository taskRepository(){
 		return this.taskRepository;
-	}
-
-	@Bean
-	public TaskLifecycleListener taskLifecycleListener() {
-		return this.taskLifecycleListener;
 	}
 
 	@Bean
@@ -136,10 +128,6 @@ public class SimpleTaskAutoConfiguration {
 		this.taskRepository = taskConfigurer.getTaskRepository();
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
-
-		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, taskNameResolver(),
-				this.applicationArguments, taskExplorer, taskProperties, new TaskListenerExecutorObjectFactory(context));
-
 		initialized = true;
 	}
 

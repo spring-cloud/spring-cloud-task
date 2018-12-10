@@ -18,7 +18,7 @@ package org.springframework.cloud.task.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +42,6 @@ public class SingleTaskConfiguration {
 	private TaskProperties taskProperties;
 
 	@Autowired
-	private SimpleTaskNameResolver taskNameResolver;
-
-	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
@@ -52,14 +49,14 @@ public class SingleTaskConfiguration {
 
 
 	@Bean
-	public SingleInstanceTaskListener taskListener() {
+	public SingleInstanceTaskListener taskListener(TaskNameResolver resolver) {
 		if (taskConfigurer.getTaskDataSource() == null) {
 			return new SingleInstanceTaskListener(new PassThruLockRegistry(),
-					this.taskNameResolver, this.taskProperties, this.applicationEventPublisher);
+					resolver, this.taskProperties, this.applicationEventPublisher);
 		}
 
 		return new SingleInstanceTaskListener(taskConfigurer.getTaskDataSource(),
-				this.taskNameResolver,
+				resolver,
 				this.taskProperties,
 				this.applicationEventPublisher);
 	}

@@ -145,6 +145,7 @@ public class TaskCoreTests {
 				output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID));
 	}
 
+	@EnableTask
 	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
 	public static class TaskConfiguration {
 
@@ -172,6 +173,7 @@ public class TaskCoreTests {
 		}
 	}
 
+	@EnableTask
 	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
 	public static class TaskExceptionConfiguration {
 

@@ -46,6 +46,7 @@ import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfigura
 import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerBeanPostProcessor;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
@@ -249,12 +250,14 @@ public class TaskBatchExecutionListenerTests {
 	@EnableBatchProcessing
 	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
+	@EnableTask
 	public static class NoJobConfiguration {
 
 	}
 
 	@EnableBatchProcessing
 	@TaskBatchTest
+	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
@@ -280,6 +283,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@EnableBatchProcessing
 	@TaskBatchTest
+	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobFactoryBeanConfiguration {
 
@@ -320,6 +324,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@EnableBatchProcessing
 	@TaskBatchTest
+	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfigurationMultipleDataSources {
 
@@ -373,6 +378,7 @@ public class TaskBatchExecutionListenerTests {
 
 	@EnableBatchProcessing
 	@TaskBatchTest
+	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class MultipleJobConfiguration {
 

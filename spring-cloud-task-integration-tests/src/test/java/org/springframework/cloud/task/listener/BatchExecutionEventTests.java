@@ -37,6 +37,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 
@@ -157,6 +158,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/job-execution-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class ListenerBinding {
 
 		@StreamListener(Sink.INPUT)
@@ -169,6 +171,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/step-execution-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class StepListenerBinding {
 
 		@StreamListener(Sink.INPUT)
@@ -187,6 +190,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/item-process-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class ItemProcessListenerBinding {
 
 		@StreamListener(Sink.INPUT)
@@ -198,6 +202,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/chunk-events-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class ChunkEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)
@@ -209,6 +214,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/item-read-events-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class ItemReadEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)
@@ -220,6 +226,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/skip-events-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class SkipEventsListenerBinding {
 		private static final String SKIPPING_READ_MESSAGE = "Skipped when reading.";
 		private static final String SKIPPING_WRITE_CONTENT = "-1";
@@ -238,6 +245,7 @@ public class BatchExecutionEventTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:/org/springframework/cloud/task/listener/item-write-events-sink-channel.properties")
 	@EnableAutoConfiguration
+	@EnableTask
 	public static class ItemWriteEventsListenerBinding {
 
 		@StreamListener(Sink.INPUT)

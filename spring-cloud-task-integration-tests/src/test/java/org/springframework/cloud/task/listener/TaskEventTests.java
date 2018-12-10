@@ -34,6 +34,7 @@ import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoCo
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -64,12 +65,13 @@ public class TaskEventTests {
 	@Test
 	public void testTaskEventListener() throws Exception {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(TaskEventsConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(
 						TaskEventAutoConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						RabbitServiceAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
 						BindingServiceConfiguration.class))
+				.withUserConfiguration(TaskEventsConfiguration.class)
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
 						"--spring.cloud.task.name=" + TASK_NAME,
 						"--spring.main.web-environment=false",
@@ -82,6 +84,7 @@ public class TaskEventTests {
 		assertTrue(latch.await(1, TimeUnit.SECONDS));
 	}
 
+	@EnableTask
 	@Configuration
 	public static class TaskEventsConfiguration {
 	}

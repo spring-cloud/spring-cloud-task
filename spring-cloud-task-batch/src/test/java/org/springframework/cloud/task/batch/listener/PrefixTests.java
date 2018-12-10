@@ -30,6 +30,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -68,6 +69,7 @@ public class PrefixTests {
 	@Configuration
 	@EnableBatchProcessing
 	@TaskBatchTest
+	@EnableTask
 	public static class JobConfiguration {
 
 		@Autowired

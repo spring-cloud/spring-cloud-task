@@ -18,11 +18,13 @@ package io.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.task.configuration.EnableTask;
 
 
 /**
  * @author Michael Minella
  */
+@EnableTask
 @SpringBootApplication
 public class MultipleDataSourcesApplication {
 

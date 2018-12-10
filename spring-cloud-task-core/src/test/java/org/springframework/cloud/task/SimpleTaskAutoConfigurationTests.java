@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
@@ -107,7 +108,8 @@ public class SimpleTaskAutoConfigurationTests {
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class));
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
 		applicationContextRunner.run((context) -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
 			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1l);
@@ -121,6 +123,7 @@ public class SimpleTaskAutoConfigurationTests {
 						PropertyPlaceholderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
+				.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class, "Failed to start " +
@@ -245,6 +248,12 @@ public class SimpleTaskAutoConfigurationTests {
 					true);
 			return myDataSource;
 		}
+
+	}
+
+	@EnableTask
+	@Configuration
+	public static class TaskLifecycleListenerConfiguration {
 
 	}
 
