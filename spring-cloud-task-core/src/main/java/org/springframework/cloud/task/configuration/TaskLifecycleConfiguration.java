@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
@@ -36,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * Configuration for a {@link TaskLifecycleListener}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.1
  */
 @Configuration
@@ -43,27 +45,37 @@ public class TaskLifecycleConfiguration {
 
 	protected static final Log logger = LogFactory.getLog(TaskLifecycleConfiguration.class);
 
-	@Autowired
 	private TaskProperties taskProperties;
 
-	@Autowired
 	private ConfigurableApplicationContext context;
 
-	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
 
-	@Autowired
 	private TaskRepository taskRepository;
 
-	@Autowired
 	private TaskExplorer taskExplorer;
 
-	@Autowired
 	private TaskNameResolver taskNameResolver;
 
 	private TaskLifecycleListener taskLifecycleListener;
 
 	private boolean initialized = false;
+
+	@Autowired
+	public TaskLifecycleConfiguration(TaskProperties taskProperties,
+			ConfigurableApplicationContext context,
+			TaskRepository taskRepository,
+			TaskExplorer taskExplorer,
+			TaskNameResolver taskNameResolver,
+			ObjectProvider<ApplicationArguments> applicationArguments) {
+
+		this.taskProperties = taskProperties;
+		this.context = context;
+		this.taskRepository = taskRepository;
+		this.taskExplorer = taskExplorer;
+		this.taskNameResolver = taskNameResolver;
+		this.applicationArguments = applicationArguments.getIfAvailable();
+	}
 
 	@Bean
 	public TaskLifecycleListener taskLifecycleListener() {
@@ -75,14 +87,16 @@ public class TaskLifecycleConfiguration {
 	 */
 	@PostConstruct
 	protected void initialize() {
-		if (this.initialized) {
-			return;
+		if (!this.initialized) {
+			this.taskLifecycleListener =
+					new TaskLifecycleListener(this.taskRepository,
+							this.taskNameResolver,
+							this.applicationArguments,
+							this.taskExplorer,
+							this.taskProperties,
+							new TaskListenerExecutorObjectFactory(context));
+
+			this.initialized = true;
 		}
-
-		this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, this.taskNameResolver,
-				this.applicationArguments, this.taskExplorer, this.taskProperties, new TaskListenerExecutorObjectFactory(context));
-
-		this.initialized = true;
 	}
-
 }
