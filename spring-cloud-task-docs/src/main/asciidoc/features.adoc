@@ -314,6 +314,13 @@ https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-featu
 If so, it returns the exit code from  the `ExitCodeGenerator`. Otherwise, `1`
 is returned.
 
+In the case that an exception is thrown in an `onTaskStartup` method, the exit code for the application will be `1`.
+If an exception is thrown in either a `onTaskEnd` or `onTaskFailed`
+method, the exit code for the application will be the one established using the rules enumerated above.
+
+NOTE: In the case of an exception being thrown in a `onTaskStartup`, `onTaskEnd`, or `onTaskFailed`
+you can not override the exit code for the application using `ExitCodeExceptionMapper`.
+
 
 
 [[features-task-execution-listener-exit-messages]]
@@ -369,6 +376,9 @@ application:
     <groupId>org.springframework.integration</groupId>
     <artifactId>spring-integration-jdbc</artifactId>
 </dependency>
+
+NOTE: The exit code for the application will be 1 if the task fails because this feature
+is enabled and another task is running with the same task name.
 
 === Disabling Spring Cloud Task Auto Configuration
 
