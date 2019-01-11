@@ -52,7 +52,7 @@ updated in the repository with the results.
 
 NOTE: If the application requires the `ApplicationContext` to be closed at the
 completion of a task (all `*Runner#run` methods have been called and the task
-repository has been updated), set the property `spring.cloud.task.closecontext_enable`
+repository has been updated), set the property `spring.cloud.task.closecontext_enabled`
 to true.
 
 [[features-task-execution-details]]
