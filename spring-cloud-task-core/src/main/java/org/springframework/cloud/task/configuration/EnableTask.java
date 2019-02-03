@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.annotation.Import;
 
 /**
  * <p>
- * Enables the {@link org.springframework.cloud.task.listener.TaskLifecycleListener}
- * so that the features of Spring Cloud Task will be applied.
+ * Enables the {@link org.springframework.cloud.task.listener.TaskLifecycleListener} so
+ * that the features of Spring Cloud Task will be applied.
  *
  * <pre class="code">
  * &#064;Configuration
@@ -39,13 +38,14 @@ import org.springframework.context.annotation.Import;
  * 	&#064;Bean
  * 	public MyCommandLineRunner myCommandLineRunner() {
  * 		return new MyCommandLineRunner()
- * 	}
+ *    }
  * }
  * </pre>
  *
- * Note that only one of your configuration classes needs to have the <code>&#064;EnableTask</code>
- * annotation. Once you have an <code>&#064;EnableTask</code> class in your configuration
- * the task will have the Spring Cloud Task features available.
+ * Note that only one of your configuration classes needs to have the
+ * <code>&#064;EnableTask</code> annotation. Once you have an
+ * <code>&#064;EnableTask</code> class in your configuration the task will have the Spring
+ * Cloud Task features available.
  *
  * @author Glenn Renfro
  *
@@ -56,4 +56,5 @@ import org.springframework.context.annotation.Import;
 @Inherited
 @Import(TaskLifecycleConfiguration.class)
 public @interface EnableTask {
+
 }

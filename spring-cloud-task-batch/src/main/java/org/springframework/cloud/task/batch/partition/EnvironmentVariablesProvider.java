@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.Map;
@@ -24,19 +25,18 @@ import org.springframework.batch.item.ExecutionContext;
  * each worker in a partitioned job.
  *
  * @author Michael Minella
- *
  * @since 1.0.2
  */
 public interface EnvironmentVariablesProvider {
 
 	/**
-	 * Provides a {@link Map} of Strings to be used as environment variables.  This method
-	 * will be called for each worker step.  For example, if there are 5 partitions, this
+	 * Provides a {@link Map} of Strings to be used as environment variables. This method
+	 * will be called for each worker step. For example, if there are 5 partitions, this
 	 * method will be called 5 times.
-	 *
 	 * @param executionContext the {@link ExecutionContext} associated with the worker's
-	 * 			step
+	 * step
 	 * @return A {@link Map} of values to be used as environment variables
 	 */
 	Map<String, String> getEnvironmentVariables(ExecutionContext executionContext);
+
 }

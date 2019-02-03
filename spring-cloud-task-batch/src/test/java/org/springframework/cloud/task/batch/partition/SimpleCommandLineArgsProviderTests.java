@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import org.junit.Test;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -35,13 +36,14 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
+				taskExecution);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
-		assertEquals("foo", commandLineArgs.get(0));
-		assertEquals("bar", commandLineArgs.get(1));
-		assertEquals("baz", commandLineArgs.get(2));
+		assertThat(commandLineArgs.get(0)).isEqualTo("foo");
+		assertThat(commandLineArgs.get(1)).isEqualTo("bar");
+		assertThat(commandLineArgs.get(2)).isEqualTo("baz");
 	}
 
 	@Test
@@ -54,17 +56,18 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
+				taskExecution);
 		provider.setAppendedArgs(appendedValues);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
-		assertEquals("foo", commandLineArgs.get(0));
-		assertEquals("bar", commandLineArgs.get(1));
-		assertEquals("baz", commandLineArgs.get(2));
-		assertEquals("one", commandLineArgs.get(3));
-		assertEquals("two", commandLineArgs.get(4));
-		assertEquals("three", commandLineArgs.get(5));
+		assertThat(commandLineArgs.get(0)).isEqualTo("foo");
+		assertThat(commandLineArgs.get(1)).isEqualTo("bar");
+		assertThat(commandLineArgs.get(2)).isEqualTo("baz");
+		assertThat(commandLineArgs.get(3)).isEqualTo("one");
+		assertThat(commandLineArgs.get(4)).isEqualTo("two");
+		assertThat(commandLineArgs.get(5)).isEqualTo("three");
 	}
 
 	@Test
@@ -73,14 +76,16 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
+				taskExecution);
 		provider.setAppendedArgs(null);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
-		assertEquals(3, commandLineArgs.size());
-		assertEquals("foo", commandLineArgs.get(0));
-		assertEquals("bar", commandLineArgs.get(1));
-		assertEquals("baz", commandLineArgs.get(2));
+		assertThat(commandLineArgs.size()).isEqualTo(3);
+		assertThat(commandLineArgs.get(0)).isEqualTo("foo");
+		assertThat(commandLineArgs.get(1)).isEqualTo("bar");
+		assertThat(commandLineArgs.get(2)).isEqualTo("baz");
 	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.Order;
@@ -40,7 +41,7 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.StringUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,28 +61,29 @@ public class TestDBUtils {
 	 * @return taskExecution retrieved from the database.
 	 */
 	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource,
-													   long taskExecutionId) {
-		String sql = "SELECT * FROM TASK_EXECUTION WHERE "
-				+ "TASK_EXECUTION_ID = '"
+			long taskExecutionId) {
+		String sql = "SELECT * FROM TASK_EXECUTION WHERE " + "TASK_EXECUTION_ID = '"
 				+ taskExecutionId + "'";
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<TaskExecution> rows = jdbcTemplate.query(sql, new RowMapper<TaskExecution>(){
-			@Override
-			public TaskExecution mapRow(ResultSet rs, int rownumber) throws SQLException {
-				TaskExecution taskExecution=new TaskExecution(rs.getLong("TASK_EXECUTION_ID"),
-						StringUtils.hasText(rs.getString("EXIT_CODE")) ? Integer.valueOf(rs.getString("EXIT_CODE")) : null,
-						rs.getString("TASK_NAME"),
-						rs.getTimestamp("START_TIME"),
-						rs.getTimestamp("END_TIME"),
-						rs.getString("EXIT_MESSAGE"),
-						new ArrayList<String>(0),
-						rs.getString("ERROR_MESSAGE"),
-						rs.getString("EXTERNAL_EXECUTION_ID"));
-				return taskExecution;
-			}
-		});
-		assertEquals("only one row should be returned", 1, rows.size());
+		List<TaskExecution> rows = jdbcTemplate.query(sql,
+				new RowMapper<TaskExecution>() {
+					@Override
+					public TaskExecution mapRow(ResultSet rs, int rownumber)
+							throws SQLException {
+						TaskExecution taskExecution = new TaskExecution(
+								rs.getLong("TASK_EXECUTION_ID"),
+								StringUtils.hasText(rs.getString("EXIT_CODE"))
+										? Integer.valueOf(rs.getString("EXIT_CODE"))
+										: null,
+								rs.getString("TASK_NAME"), rs.getTimestamp("START_TIME"),
+								rs.getTimestamp("END_TIME"), rs.getString("EXIT_MESSAGE"),
+								new ArrayList<>(0), rs.getString("ERROR_MESSAGE"),
+								rs.getString("EXTERNAL_EXECUTION_ID"));
+						return taskExecution;
+					}
+				});
+		assertThat(rows.size()).as("only one row should be returned").isEqualTo(1);
 		TaskExecution taskExecution = rows.get(0);
 
 		populateParamsToDB(dataSource, taskExecution);
@@ -92,21 +94,23 @@ public class TestDBUtils {
 	 * Create a pagingQueryProvider specific database type with a findAll.
 	 * @param databaseProductName of the database.
 	 * @return a PagingQueryPovider that will return all the requested information.
-	 * @throws Exception
+	 * @throws Exception exception
 	 */
-	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName) throws Exception{
+	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName)
+			throws Exception {
 		return getPagingQueryProvider(databaseProductName, null);
 	}
 
 	/**
-	 * Create a pagingQueryProvider specific database type with a query containing a where clause.
+	 * Create a pagingQueryProvider specific database type with a query containing a where
+	 * clause.
 	 * @param databaseProductName of the database.
-	 * @param whereClause  to be applied to the query.
+	 * @param whereClause to be applied to the query.
 	 * @return a PagingQueryProvider that will return the requested information.
-	 * @throws Exception
+	 * @throws Exception exception
 	 */
 	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName,
-															 String whereClause) throws Exception{
+			String whereClause) throws Exception {
 		DataSource dataSource = getMockDataSource(databaseProductName);
 		Map<String, Order> orderMap = new TreeMap<>();
 		orderMap.put("START_TIME", Order.DESCENDING);
@@ -114,7 +118,7 @@ public class TestDBUtils {
 		SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
 		factoryBean.setSelectClause(JdbcTaskExecutionDao.SELECT_CLAUSE);
 		factoryBean.setFromClause(JdbcTaskExecutionDao.FROM_CLAUSE);
-		if(whereClause != null){
+		if (whereClause != null) {
 			factoryBean.setWhereClause(whereClause);
 		}
 		factoryBean.setSortKeys(orderMap);
@@ -134,9 +138,10 @@ public class TestDBUtils {
 	 * Creates a mock DataSource for use in testing.
 	 * @param databaseProductName the name of the database type to mock.
 	 * @return a mock DataSource.
-	 * @throws Exception
+	 * @throws Exception exception
 	 */
-	public static DataSource getMockDataSource(String databaseProductName) throws Exception {
+	public static DataSource getMockDataSource(String databaseProductName)
+			throws Exception {
 		DatabaseMetaData dmd = mock(DatabaseMetaData.class);
 		DataSource ds = mock(DataSource.class);
 		Connection con = mock(Connection.class);
@@ -148,12 +153,13 @@ public class TestDBUtils {
 
 	/**
 	 * Creates a incrementer for the DataSource.
-	 * @param dataSource the datasource that the incrementer will use to record current id.
+	 * @param dataSource the datasource that the incrementer will use to record current
+	 * id.
 	 * @return a DataFieldMaxValueIncrementer object.
 	 */
-	public static DataFieldMaxValueIncrementer getIncrementer(DataSource dataSource){
-		DataFieldMaxValueIncrementerFactory incrementerFactory =
-				new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
+	public static DataFieldMaxValueIncrementer getIncrementer(DataSource dataSource) {
+		DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(
+				dataSource);
 		String databaseType = null;
 		try {
 			databaseType = DatabaseType.fromMetaData(dataSource).name();
@@ -161,11 +167,11 @@ public class TestDBUtils {
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		return incrementerFactory.getIncrementer(databaseType,
-				"TASK_SEQ");
+		return incrementerFactory.getIncrementer(databaseType, "TASK_SEQ");
 	}
 
-	private static void populateParamsToDB(DataSource dataSource, TaskExecution taskExecution) {
+	private static void populateParamsToDB(DataSource dataSource,
+			TaskExecution taskExecution) {
 		String sql = "SELECT * FROM TASK_EXECUTION_PARAMS WHERE TASK_EXECUTION_ID = '"
 				+ taskExecution.getExecutionId() + "'";
 
@@ -177,4 +183,5 @@ public class TestDBUtils {
 		}
 		taskExecution.setArguments(arguments);
 	}
+
 }

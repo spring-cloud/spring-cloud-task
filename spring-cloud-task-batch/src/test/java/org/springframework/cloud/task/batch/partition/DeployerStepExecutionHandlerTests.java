@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import org.junit.Before;
@@ -35,7 +36,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -70,7 +71,8 @@ public class DeployerStepExecutionHandlerTests {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		this.handler = new DeployerStepExecutionHandler(this.beanFactory, this.jobExplorer, this.jobRepository);
+		this.handler = new DeployerStepExecutionHandler(this.beanFactory,
+				this.jobExplorer, this.jobRepository);
 
 		ReflectionTestUtils.setField(this.handler, "environment", this.environment);
 	}
@@ -78,69 +80,116 @@ public class DeployerStepExecutionHandlerTests {
 	@Test
 	public void testConstructorValidation() {
 		validateConstructorValidation(null, null, null, "A beanFactory is required");
-		validateConstructorValidation(this.beanFactory, null, null, "A jobExplorer is required");
-		validateConstructorValidation(this.beanFactory, this.jobExplorer, null, "A jobRepository is required");
+		validateConstructorValidation(this.beanFactory, null, null,
+				"A jobExplorer is required");
+		validateConstructorValidation(this.beanFactory, this.jobExplorer, null,
+				"A jobRepository is required");
 
-		new DeployerStepExecutionHandler(this.beanFactory, this.jobExplorer, this.jobRepository);
+		new DeployerStepExecutionHandler(this.beanFactory, this.jobExplorer,
+				this.jobRepository);
 	}
 
 	@Test
 	public void testValidationOfRequestValuesExist() throws Exception {
 		validateEnvironmentConfiguration("A job execution id is required", new String[0]);
-		validateEnvironmentConfiguration("A step execution id is required", new String[] {DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID});
-		validateEnvironmentConfiguration("A step name is required", new String[] {DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID});
+		validateEnvironmentConfiguration("A step execution id is required", new String[] {
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID });
+		validateEnvironmentConfiguration("A step name is required",
+				new String[] {
+						DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
+						DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID });
 	}
 
 	@Test
 	public void testValidationOfRequestStepFound() throws Exception {
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("foo");
-		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] {"bar", "baz"});
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment
+				.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn(true);
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("foo");
+		when(this.beanFactory.getBeanNamesForType(Step.class))
+				.thenReturn(new String[] { "bar", "baz" });
 
 		try {
 			this.handler.run();
 		}
 		catch (IllegalArgumentException iae) {
-			assertEquals("The step requested cannot be found in the provided BeanFactory", iae.getMessage());
+			assertThat(iae.getMessage()).isEqualTo(
+					"The step requested cannot be found in the provided BeanFactory");
 		}
 	}
 
 	@Test
 	public void testMissingStepExecution() throws Exception {
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("foo");
-		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] {"foo", "bar", "baz"});
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn("2");
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn("1");
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment
+				.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn(true);
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("foo");
+		when(this.beanFactory.getBeanNamesForType(Step.class))
+				.thenReturn(new String[] { "foo", "bar", "baz" });
+		when(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn("2");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn("1");
 
 		try {
 			this.handler.run();
 		}
 		catch (NoSuchStepException nsse) {
-			assertEquals("No StepExecution could be located for step execution id 2 within job execution 1", nsse.getMessage());
+			assertThat(nsse.getMessage()).isEqualTo(
+					"No StepExecution could be located for step execution id 2 within job execution 1");
 		}
 	}
 
 	@Test
 	public void testRunSuccessful() throws Exception {
-		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L), 2L);
+		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L),
+				2L);
 
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
-		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] {"workerStep", "foo", "bar"});
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn("2");
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn("1");
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment
+				.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn(true);
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
+		when(this.beanFactory.getBeanNamesForType(Step.class))
+				.thenReturn(new String[] { "workerStep", "foo", "bar" });
+		when(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn("2");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn("1");
 		when(this.jobExplorer.getStepExecution(1L, 2L)).thenReturn(workerStep);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
 		when(this.beanFactory.getBean("workerStep", Step.class)).thenReturn(this.step);
 
-		handler.run();
+		this.handler.run();
 
 		verify(this.step).execute(workerStep);
 		verifyZeroInteractions(this.jobRepository);
@@ -148,51 +197,87 @@ public class DeployerStepExecutionHandlerTests {
 
 	@Test
 	public void testJobInterruptedException() throws Exception {
-		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L), 2L);
+		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L),
+				2L);
 
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
-		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] {"workerStep", "foo", "bar"});
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn("2");
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn("1");
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment
+				.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn(true);
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
+		when(this.beanFactory.getBeanNamesForType(Step.class))
+				.thenReturn(new String[] { "workerStep", "foo", "bar" });
+		when(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn("2");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn("1");
 		when(this.jobExplorer.getStepExecution(1L, 2L)).thenReturn(workerStep);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
 		when(this.beanFactory.getBean("workerStep", Step.class)).thenReturn(this.step);
-		doThrow(new JobInterruptedException("expected")).when(this.step).execute(workerStep);
+		doThrow(new JobInterruptedException("expected")).when(this.step)
+				.execute(workerStep);
 
-		handler.run();
+		this.handler.run();
 
 		verify(this.jobRepository).update(this.stepExecutionArgumentCaptor.capture());
 
-		assertEquals(BatchStatus.STOPPED, this.stepExecutionArgumentCaptor.getValue().getStatus());
+		assertThat(this.stepExecutionArgumentCaptor.getValue().getStatus())
+				.isEqualTo(BatchStatus.STOPPED);
 	}
 
 	@Test
 	public void testRuntimeException() throws Exception {
-		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L), 2L);
+		StepExecution workerStep = new StepExecution("workerStep", new JobExecution(1L),
+				2L);
 
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn(true);
-		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
-		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] {"workerStep", "foo", "bar"});
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).thenReturn("2");
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn("1");
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment.containsProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn(true);
+		when(this.environment
+				.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn(true);
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
+		when(this.beanFactory.getBeanNamesForType(Step.class))
+				.thenReturn(new String[] { "workerStep", "foo", "bar" });
+		when(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
+						.thenReturn("2");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
+						.thenReturn("1");
 		when(this.jobExplorer.getStepExecution(1L, 2L)).thenReturn(workerStep);
-		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("workerStep");
+		when(this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+						.thenReturn("workerStep");
 		when(this.beanFactory.getBean("workerStep", Step.class)).thenReturn(this.step);
 		doThrow(new RuntimeException("expected")).when(this.step).execute(workerStep);
 
-		handler.run();
+		this.handler.run();
 
 		verify(this.jobRepository).update(this.stepExecutionArgumentCaptor.capture());
 
-		assertEquals(BatchStatus.FAILED, this.stepExecutionArgumentCaptor.getValue().getStatus());
+		assertThat(this.stepExecutionArgumentCaptor.getValue().getStatus())
+				.isEqualTo(BatchStatus.FAILED);
 	}
 
-	private void validateEnvironmentConfiguration(String errorMessage, String[] properties) throws Exception {
+	private void validateEnvironmentConfiguration(String errorMessage,
+			String[] properties) throws Exception {
 
 		for (String property : properties) {
 			when(this.environment.containsProperty(property)).thenReturn(true);
@@ -202,17 +287,18 @@ public class DeployerStepExecutionHandlerTests {
 			this.handler.run();
 		}
 		catch (IllegalArgumentException iae) {
-			assertEquals(errorMessage, iae.getMessage());
+			assertThat(iae.getMessage()).isEqualTo(errorMessage);
 		}
 	}
 
-
-	private void validateConstructorValidation(BeanFactory beanFactory, JobExplorer jobExplorer, JobRepository jobRepository, String message) {
+	private void validateConstructorValidation(BeanFactory beanFactory,
+			JobExplorer jobExplorer, JobRepository jobRepository, String message) {
 		try {
 			new DeployerStepExecutionHandler(beanFactory, jobExplorer, jobRepository);
 		}
 		catch (IllegalArgumentException iae) {
-			assertEquals(message, iae.getMessage());
+			assertThat(iae.getMessage()).isEqualTo(message);
 		}
 	}
+
 }

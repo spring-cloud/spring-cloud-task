@@ -1,17 +1,17 @@
 /*
- *  Copyright 2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.spring.configuration;
@@ -24,7 +24,7 @@ import javax.persistence.Table;
 
 /**
  * Entity for the id and output to be written to the data store.
- * 
+ *
  * @author Pas Apicella
  * @author Glenn Renfro
  */
@@ -45,7 +45,7 @@ public class TaskRunOutput {
 	}
 
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
@@ -53,7 +53,7 @@ public class TaskRunOutput {
 	}
 
 	public String getOutput() {
-		return output;
+		return this.output;
 	}
 
 	public void setOutput(String output) {
@@ -62,6 +62,6 @@ public class TaskRunOutput {
 
 	@Override
 	public String toString() {
-		return "TaskRunOutput{" + "id=" + id + ", output='" + output + '\'' + '}';
+		return "TaskRunOutput{" + "id=" + this.id + ", output='" + this.output + '\'' + '}';
 	}
 }

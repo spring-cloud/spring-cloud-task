@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ItemProcessListener;
@@ -40,6 +41,7 @@ import org.springframework.util.Assert;
 public class EventEmittingItemProcessListener implements ItemProcessListener, Ordered {
 
 	private MessagePublisher<String> messagePublisher;
+
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingItemProcessListener(MessageChannel output) {
@@ -59,23 +61,25 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 	@Override
 	public void afterProcess(Object item, Object result) {
 		if (result == null) {
-			messagePublisher.publish("1 item was filtered");
+			this.messagePublisher.publish("1 item was filtered");
 		}
 		else if (item.equals(result)) {
-			messagePublisher.publish("item equaled result after processing");
+			this.messagePublisher.publish("item equaled result after processing");
 		}
 		else {
-			messagePublisher.publish("item did not equal result after processing");
+			this.messagePublisher.publish("item did not equal result after processing");
 		}
 	}
 
 	@Override
 	public void onProcessError(Object item, Exception e) {
-		messagePublisher.publishWithThrowableHeader("Exception while item was being processed", e.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(
+				"Exception while item was being processed", e.getMessage());
 	}
 
 	@Override
 	public int getOrder() {
 		return this.order;
 	}
+
 }

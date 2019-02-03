@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * Provides a strategy interface for providing configuration
- * customization to the task system.  Users should not directly use getter methods
- * from a <code>TaskConfigurer</code> directly unless they are using it to supply the implementations
- * for Spring Beans.
+ * Provides a strategy interface for providing configuration customization to the task
+ * system. Users should not directly use getter methods from a <code>TaskConfigurer</code>
+ * directly unless they are using it to supply the implementations for Spring Beans.
  *
  * @author Glenn Renfro
  */
@@ -34,7 +33,6 @@ public interface TaskConfigurer {
 
 	/**
 	 * Create a {@link TaskRepository} for the Task.
-	 *
 	 * @return A TaskRepository
 	 */
 	TaskRepository getTaskRepository();
@@ -42,23 +40,22 @@ public interface TaskConfigurer {
 	/**
 	 * Create a {@link PlatformTransactionManager} for use with the
 	 * <code>TaskRepository</code>.
-	 *
 	 * @return A <code>PlatformTransactionManager</code>
 	 */
 	PlatformTransactionManager getTransactionManager();
 
 	/**
 	 * Create a {@link TaskExplorer} for the task.
-	 *
 	 * @return a <code>TaskExplorer</code>
 	 */
 	TaskExplorer getTaskExplorer();
 
 	/**
-	 * Retrieves the {@link DataSource} that will be used for task operations.  If a
-	 * DataSource is not being used for the implemented TaskConfigurer this
-	 * method will return null.
+	 * Retrieves the {@link DataSource} that will be used for task operations. If a
+	 * DataSource is not being used for the implemented TaskConfigurer this method will
+	 * return null.
 	 * @return {@link DataSource} that will be used for task operations.
 	 */
 	DataSource getTaskDataSource();
+
 }

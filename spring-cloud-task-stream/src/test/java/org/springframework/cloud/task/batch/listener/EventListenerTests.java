@@ -1,17 +1,17 @@
 /*
- *  Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.listener;
@@ -35,7 +35,7 @@ import org.springframework.core.Ordered;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.messaging.Message;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Glenn Renfro
@@ -46,229 +46,247 @@ public class EventListenerTests {
 	private QueueChannel queueChannel;
 
 	private EventEmittingSkipListener eventEmittingSkipListener;
+
 	private EventEmittingItemProcessListener eventEmittingItemProcessListener;
+
 	private EventEmittingItemReadListener eventEmittingItemReadListener;
+
 	private EventEmittingItemWriteListener eventEmittingItemWriteListener;
+
 	private EventEmittingJobExecutionListener eventEmittingJobExecutionListener;
+
 	private EventEmittingStepExecutionListener eventEmittingStepExecutionListener;
+
 	private EventEmittingChunkListener eventEmittingChunkListener;
 
 	@Before
 	public void beforeTests() {
-		queueChannel = new QueueChannel(1);
-		eventEmittingSkipListener = new EventEmittingSkipListener(queueChannel);
-		eventEmittingItemProcessListener = new EventEmittingItemProcessListener(queueChannel);
-		eventEmittingItemReadListener = new EventEmittingItemReadListener(queueChannel);
-		eventEmittingItemWriteListener = new EventEmittingItemWriteListener(queueChannel);
-		eventEmittingJobExecutionListener = new EventEmittingJobExecutionListener(queueChannel);
-		eventEmittingStepExecutionListener = new EventEmittingStepExecutionListener(queueChannel);
-		eventEmittingChunkListener = new EventEmittingChunkListener(queueChannel,0);
+		this.queueChannel = new QueueChannel(1);
+		this.eventEmittingSkipListener = new EventEmittingSkipListener(this.queueChannel);
+		this.eventEmittingItemProcessListener = new EventEmittingItemProcessListener(
+				this.queueChannel);
+		this.eventEmittingItemReadListener = new EventEmittingItemReadListener(
+				this.queueChannel);
+		this.eventEmittingItemWriteListener = new EventEmittingItemWriteListener(
+				this.queueChannel);
+		this.eventEmittingJobExecutionListener = new EventEmittingJobExecutionListener(
+				this.queueChannel);
+		this.eventEmittingStepExecutionListener = new EventEmittingStepExecutionListener(
+				this.queueChannel);
+		this.eventEmittingChunkListener = new EventEmittingChunkListener(
+				this.queueChannel, 0);
 	}
 
 	@Test
 	public void testEventListenerOrderProperty() {
-		assertEquals(eventEmittingSkipListener.getOrder(),Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingItemProcessListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingItemReadListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingItemWriteListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingJobExecutionListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingStepExecutionListener.getOrder(), Ordered.LOWEST_PRECEDENCE);
-		assertEquals(eventEmittingChunkListener.getOrder(),0);
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingSkipListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingItemProcessListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingItemReadListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingItemWriteListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingJobExecutionListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE)
+				.isEqualTo(this.eventEmittingStepExecutionListener.getOrder());
+		assertThat(0).isEqualTo(this.eventEmittingChunkListener.getOrder());
 	}
-
 
 	@Test
 	public void testItemProcessListenerOnProcessorError() {
 		RuntimeException exeption = new RuntimeException("Test Exception");
-		eventEmittingItemProcessListener.onProcessError("HELLO", exeption);
-		assertEquals(1, queueChannel.getQueueSize());
+		this.eventEmittingItemProcessListener.onProcessError("HELLO", exeption);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
 
-		Message msg = queueChannel.receive();
-		assertEquals("Exception while item was being processed", msg.getPayload());
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload())
+				.isEqualTo("Exception while item was being processed");
 	}
 
 	@Test
 	public void testItemProcessListenerAfterProcess() {
-		eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS_EQUAL",
+		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS_EQUAL",
 				"HELLO_AFTER_PROCESS_EQUAL");
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("item equaled result after processing", msg.getPayload());
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("item equaled result after processing");
 
-		eventEmittingItemProcessListener.afterProcess("HELLO_NOT_EQUAL", "WORLD");
-		assertEquals(1, queueChannel.getQueueSize());
-		msg = queueChannel.receive();
-		assertEquals("item did not equal result after processing", msg.getPayload());
+		this.eventEmittingItemProcessListener.afterProcess("HELLO_NOT_EQUAL", "WORLD");
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		msg = this.queueChannel.receive();
+		assertThat(msg.getPayload())
+				.isEqualTo("item did not equal result after processing");
 
-		eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS", null);
-		assertEquals(1, queueChannel.getQueueSize());
-		msg = queueChannel.receive();
-		assertEquals("1 item was filtered", msg.getPayload());
+		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS", null);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("1 item was filtered");
 	}
 
 	@Test
 	public void testItemProcessBeforeProcessor() {
-		eventEmittingItemProcessListener.beforeProcess("HELLO_BEFORE_PROCESS");
-		assertEquals(0, queueChannel.getQueueSize());
+		this.eventEmittingItemProcessListener.beforeProcess("HELLO_BEFORE_PROCESS");
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(0);
 	}
 
 	@Test
 	public void EventEmittingSkipListenerSkipRead() {
 		RuntimeException exeption = new RuntimeException("Text Exception");
-		eventEmittingSkipListener.onSkipInRead(exeption);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("Skipped when reading.", msg.getPayload());
+		this.eventEmittingSkipListener.onSkipInRead(exeption);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("Skipped when reading.");
 	}
 
 	@Test
 	public void EventEmittingSkipListenerSkipWrite() {
 		final String MESSAGE = "HELLO_SKIP_WRITE";
 		RuntimeException exeption = new RuntimeException("Text Exception");
-		eventEmittingSkipListener.onSkipInWrite(MESSAGE, exeption);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals(MESSAGE, msg.getPayload());
+		this.eventEmittingSkipListener.onSkipInWrite(MESSAGE, exeption);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo(MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingSkipListenerSkipProcess() {
 		final String MESSAGE = "HELLO_SKIP_PROCESS";
 		RuntimeException exeption = new RuntimeException("Text Exception");
-		eventEmittingSkipListener.onSkipInProcess(MESSAGE, exeption);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals(MESSAGE, msg.getPayload());
+		this.eventEmittingSkipListener.onSkipInProcess(MESSAGE, exeption);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo(MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingItemReadListener() {
 		RuntimeException exeption = new RuntimeException("Text Exception");
-		eventEmittingItemReadListener.onReadError(exeption);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("Exception while item was being read", msg.getPayload());
+		this.eventEmittingItemReadListener.onReadError(exeption);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("Exception while item was being read");
 	}
 
 	@Test
 	public void EventEmittingItemReadListenerBeforeRead() {
-		eventEmittingItemReadListener.beforeRead();
-		assertEquals(0, queueChannel.getQueueSize());
+		this.eventEmittingItemReadListener.beforeRead();
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(0);
 	}
 
 	@Test
 	public void EventEmittingItemReadListenerAfterRead() {
-		eventEmittingItemReadListener.afterRead("HELLO_AFTER_READ");
-		assertEquals(0, queueChannel.getQueueSize());
+		this.eventEmittingItemReadListener.afterRead("HELLO_AFTER_READ");
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(0);
 	}
 
 	@Test
 	public void EventEmittingItemWriteListenerBeforeWrite() {
-		eventEmittingItemWriteListener.beforeWrite(getSampleList());
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("3 items to be written.", msg.getPayload());
+		this.eventEmittingItemWriteListener.beforeWrite(getSampleList());
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("3 items to be written.");
 	}
 
 	@Test
 	public void EventEmittingItemWriteListenerAfterWrite() {
-		eventEmittingItemWriteListener.afterWrite(getSampleList());
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("3 items have been written.", msg.getPayload());
+		this.eventEmittingItemWriteListener.afterWrite(getSampleList());
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo("3 items have been written.");
 	}
 
 	@Test
 	public void EventEmittingItemWriteListenerWriteError() {
 		RuntimeException exeption = new RuntimeException("Text Exception");
-		eventEmittingItemWriteListener.onWriteError(exeption, getSampleList());
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals("Exception while 3 items are attempted to be written.", msg.getPayload());
+		this.eventEmittingItemWriteListener.onWriteError(exeption, getSampleList());
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload())
+				.isEqualTo("Exception while 3 items are attempted to be written.");
 	}
-
 
 	@Test
 	public void EventEmittingJobExecutionListenerBeforeJob() {
 		JobExecution jobExecution = getJobExecution();
-		eventEmittingJobExecutionListener.beforeJob(jobExecution);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
+		this.eventEmittingJobExecutionListener.beforeJob(jobExecution);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
 		JobExecutionEvent jobEvent = (JobExecutionEvent) msg.getPayload();
-		assertEquals(jobExecution.getJobInstance().getJobName(),
-				jobEvent.getJobInstance().getJobName());
+		assertThat(jobEvent.getJobInstance().getJobName())
+				.isEqualTo(jobExecution.getJobInstance().getJobName());
 	}
 
 	@Test
 	public void EventEmittingJobExecutionListenerAfterJob() {
 		JobExecution jobExecution = getJobExecution();
-		eventEmittingJobExecutionListener.afterJob(jobExecution);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
+		this.eventEmittingJobExecutionListener.afterJob(jobExecution);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
 		JobExecutionEvent jobEvent = (JobExecutionEvent) msg.getPayload();
-		assertEquals(jobExecution.getJobInstance().getJobName(),
-				jobEvent.getJobInstance().getJobName());
+		assertThat(jobEvent.getJobInstance().getJobName())
+				.isEqualTo(jobExecution.getJobInstance().getJobName());
 	}
 
 	@Test
 	public void EventEmittingStepExecutionListenerBeforeStep() {
 		final String STEP_MESSAGE = "BEFORE_STEP_MESSAGE";
 		JobExecution jobExecution = getJobExecution();
-		StepExecution stepExecution = new StepExecution(STEP_MESSAGE,jobExecution);
-		eventEmittingStepExecutionListener.beforeStep(stepExecution);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
+		StepExecution stepExecution = new StepExecution(STEP_MESSAGE, jobExecution);
+		this.eventEmittingStepExecutionListener.beforeStep(stepExecution);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
 		StepExecutionEvent stepExecutionEvent = (StepExecutionEvent) msg.getPayload();
-		assertEquals(STEP_MESSAGE,
-				stepExecutionEvent.getStepName());
+		assertThat(stepExecutionEvent.getStepName()).isEqualTo(STEP_MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingStepExecutionListenerAfterStep() {
 		final String STEP_MESSAGE = "AFTER_STEP_MESSAGE";
 		JobExecution jobExecution = getJobExecution();
-		StepExecution stepExecution = new StepExecution(STEP_MESSAGE,jobExecution);
-		eventEmittingStepExecutionListener.afterStep(stepExecution);
-		assertEquals(1, queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
+		StepExecution stepExecution = new StepExecution(STEP_MESSAGE, jobExecution);
+		this.eventEmittingStepExecutionListener.afterStep(stepExecution);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
 		StepExecutionEvent stepExecutionEvent = (StepExecutionEvent) msg.getPayload();
-		assertEquals(STEP_MESSAGE,
-				stepExecutionEvent.getStepName());
+		assertThat(stepExecutionEvent.getStepName()).isEqualTo(STEP_MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingChunkExecutionListenerBeforeChunk() {
 		final String CHUNK_MESSAGE = "Before Chunk Processing";
 		ChunkContext chunkContext = getChunkContext();
-		eventEmittingChunkListener.beforeChunk(chunkContext);
-		assertEquals(1,queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals(CHUNK_MESSAGE,msg.getPayload());
+		this.eventEmittingChunkListener.beforeChunk(chunkContext);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo(CHUNK_MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingChunkExecutionListenerAfterChunk() {
 		final String CHUNK_MESSAGE = "After Chunk Processing";
 		ChunkContext chunkContext = getChunkContext();
-		eventEmittingChunkListener.afterChunk(chunkContext);
-		assertEquals(1,queueChannel.getQueueSize());
-		Message msg = queueChannel.receive();
-		assertEquals(CHUNK_MESSAGE,msg.getPayload());
+		this.eventEmittingChunkListener.afterChunk(chunkContext);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(1);
+		Message msg = this.queueChannel.receive();
+		assertThat(msg.getPayload()).isEqualTo(CHUNK_MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingChunkExecutionListenerAfterChunkError() {
 		ChunkContext chunkContext = getChunkContext();
-		eventEmittingChunkListener.afterChunkError(chunkContext);
-		assertEquals(0,queueChannel.getQueueSize());
+		this.eventEmittingChunkListener.afterChunkError(chunkContext);
+		assertThat(this.queueChannel.getQueueSize()).isEqualTo(0);
 	}
 
 	private JobExecution getJobExecution() {
 		final String JOB_NAME = UUID.randomUUID().toString();
 		JobInstance jobInstance = new JobInstance(1L, JOB_NAME);
-		return new JobExecution(jobInstance, 1L,
-				new JobParameters(), UUID.randomUUID().toString());
+		return new JobExecution(jobInstance, 1L, new JobParameters(),
+				UUID.randomUUID().toString());
 	}
+
 	private List<String> getSampleList() {
 		List<String> testList = new ArrayList<>(3);
 		testList.add("Hello");
@@ -276,9 +294,10 @@ public class EventListenerTests {
 		testList.add("foo");
 		return testList;
 	}
+
 	private ChunkContext getChunkContext() {
 		JobExecution jobExecution = getJobExecution();
-		StepExecution stepExecution = new StepExecution("STEP1",jobExecution);
+		StepExecution stepExecution = new StepExecution("STEP1", jobExecution);
 		StepContext stepContext = new StepContext(stepExecution);
 		ChunkContext chunkContext = new ChunkContext(stepContext);
 		return chunkContext;

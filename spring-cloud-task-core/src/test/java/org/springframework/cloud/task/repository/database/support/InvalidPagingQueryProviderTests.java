@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.database.support;
 
 import org.junit.Test;
+
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,9 @@ import org.springframework.data.domain.Pageable;
 public class InvalidPagingQueryProviderTests {
 
 	@Test(expected = IllegalStateException.class)
-	public void testInvalidDatabase() throws Exception{
+	public void testInvalidDatabase() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
 		TestDBUtils.getPagingQueryProvider("Invalid").getPageQuery(pageable);
 	}
+
 }

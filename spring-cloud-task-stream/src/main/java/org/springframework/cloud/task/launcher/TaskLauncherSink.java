@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.util.Assert;
 
-
 /**
  * A sink stream application that launches a tasks.
  *
@@ -42,20 +41,23 @@ public class TaskLauncherSink {
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLauncherSink.class);
 
+	// @checkstyle:off
 	@Autowired
 	public TaskLauncher taskLauncher;
+
+	// @checkstyle:on
 
 	@Autowired
 	private DelegatingResourceLoader resourceLoader;
 
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
-	 * @param taskLaunchRequest is a TaskLaunchRequest containing the information required to launch
-	 * a task.
+	 * @param taskLaunchRequest is a TaskLaunchRequest containing the information required
+	 * to launch a task.
 	 * @throws Exception if error occurs during task launch.
 	 */
 	@ServiceActivator(inputChannel = Sink.INPUT)
-	public void taskLauncherSink(TaskLaunchRequest taskLaunchRequest) throws Exception{
+	public void taskLauncherSink(TaskLaunchRequest taskLaunchRequest) throws Exception {
 		launchTask(taskLaunchRequest);
 	}
 
@@ -63,8 +65,12 @@ public class TaskLauncherSink {
 		Assert.notNull(this.taskLauncher, "TaskLauncher has not been initialized");
 		logger.info("Launching Task for the following uri " + taskLaunchRequest.getUri());
 		Resource resource = this.resourceLoader.getResource(taskLaunchRequest.getUri());
-		AppDefinition definition = new AppDefinition(taskLaunchRequest.getApplicationName(), taskLaunchRequest.getEnvironmentProperties());
-		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource, taskLaunchRequest.getDeploymentProperties(), taskLaunchRequest.getCommandlineArguments());
+		AppDefinition definition = new AppDefinition(
+				taskLaunchRequest.getApplicationName(),
+				taskLaunchRequest.getEnvironmentProperties());
+		AppDeploymentRequest request = new AppDeploymentRequest(definition, resource,
+				taskLaunchRequest.getDeploymentProperties(),
+				taskLaunchRequest.getCommandlineArguments());
 		this.taskLauncher.launch(request);
 	}
 

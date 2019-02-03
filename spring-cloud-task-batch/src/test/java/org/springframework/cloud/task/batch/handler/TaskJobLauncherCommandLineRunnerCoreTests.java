@@ -1,23 +1,21 @@
 /*
- *  Copyright 2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.handler;
 
-
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -55,13 +53,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class})
+@ContextConfiguration(classes = {
+		TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class })
 public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	@Autowired
@@ -93,10 +92,10 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher, this.jobExplorer, jobRepository, new TaskBatchProperties());
+		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher,
+				this.jobExplorer, this.jobRepository, new TaskBatchProperties());
 
 	}
-
 
 	@DirtiesContext
 	@Test
@@ -146,7 +145,6 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
-
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionOnNonRestartableJob() throws Exception {
@@ -162,9 +160,9 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		// try to re-run a failed execution
 		Executable executable = () -> this.runner.execute(this.job,
 				new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
-		Throwable exception = assertThrows(JobRestartException.class, executable);
-		AssertionsForClassTypes.assertThat(exception.getMessage())
-				.isEqualTo("JobInstance already exists and is not restartable");
+		assertThatExceptionOfType(JobRestartException.class)
+				.isThrownBy(executable::execute)
+				.withMessage("JobInstance already exists and is not restartable");
 	}
 
 	@DirtiesContext
@@ -177,11 +175,10 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 				.addLong("foo", 2L, false).toJobParameters();
 		runFailedJob(jobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
-		runFailedJob(new JobParametersBuilder(jobParameters)
-				.addLong("run.id", 1L).toJobParameters());
+		runFailedJob(new JobParametersBuilder(jobParameters).addLong("run.id", 1L)
+				.toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
-
 
 	@DirtiesContext
 	@Test
@@ -195,7 +192,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		runFailedJob(jobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 		// try to re-run a failed execution with non identifying parameters
-		runFailedJob( new JobParametersBuilder().addLong("run.id", 1L)
+		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L)
 				.addLong("id", 2L, false).addLong("foo", 3L, false).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 		JobInstance jobInstance = this.jobExplorer.getJobInstance(0L);
@@ -215,7 +212,6 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		assertThat(parameters.getLong("id")).isEqualTo(2L);
 		assertThat(parameters.getLong("foo")).isEqualTo(3L);
 	}
-
 
 	private Tasklet throwingTasklet() {
 		return (contribution, chunkContext) -> {
@@ -238,13 +234,11 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	@EnableBatchProcessing
 	protected static class BatchConfiguration implements BatchConfigurer {
 
-		private ResourcelessTransactionManager transactionManager =
-				new ResourcelessTransactionManager();
+		private ResourcelessTransactionManager transactionManager = new ResourcelessTransactionManager();
 
 		private JobRepository jobRepository;
 
-		private MapJobRepositoryFactoryBean jobRepositoryFactory =
-				new MapJobRepositoryFactoryBean(
+		private MapJobRepositoryFactoryBean jobRepositoryFactory = new MapJobRepositoryFactoryBean(
 				this.transactionManager);
 
 		public BatchConfiguration() throws Exception {
@@ -275,4 +269,5 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		}
 
 	}
+
 }

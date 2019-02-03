@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
@@ -43,7 +44,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
 	/**
-	 * Default constructor will result in a Map based TaskExecutionDao.  <b>This is only
+	 * Default constructor will result in a Map based TaskExecutionDao. <b>This is only
 	 * intended for testing purposes.</b>
 	 */
 	public TaskExecutionDaoFactoryBean() {
@@ -51,7 +52,6 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 
 	/**
 	 * {@link DataSource} to be used.
-	 *
 	 * @param dataSource {@link DataSource} to be used.
 	 * @param tablePrefix the table prefix to use for this dao.
 	 */
@@ -63,7 +63,6 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 
 	/**
 	 * {@link DataSource} to be used.
-	 *
 	 * @param dataSource {@link DataSource} to be used.
 	 */
 	public TaskExecutionDaoFactoryBean(DataSource dataSource) {
@@ -74,7 +73,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 
 	@Override
 	public TaskExecutionDao getObject() throws Exception {
-		if(this.dao == null) {
+		if (this.dao == null) {
 			if (this.dataSource != null) {
 				buildTaskExecutionDao(this.dataSource);
 			}
@@ -97,15 +96,19 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	}
 
 	private void buildTaskExecutionDao(DataSource dataSource) {
-		DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
+		DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(
+				dataSource);
 		this.dao = new JdbcTaskExecutionDao(dataSource, this.tablePrefix);
 		String databaseType;
 		try {
-			databaseType = org.springframework.batch.support.DatabaseType.fromMetaData(dataSource).name();
+			databaseType = org.springframework.batch.support.DatabaseType
+					.fromMetaData(dataSource).name();
 		}
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
+				.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
+
 }

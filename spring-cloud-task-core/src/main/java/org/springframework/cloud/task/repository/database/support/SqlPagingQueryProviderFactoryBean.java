@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,6 @@
 
 package org.springframework.cloud.task.repository.database.support;
 
-import static org.springframework.cloud.task.repository.support.DatabaseType.DB2;
-import static org.springframework.cloud.task.repository.support.DatabaseType.DB2AS400;
-import static org.springframework.cloud.task.repository.support.DatabaseType.DB2VSE;
-import static org.springframework.cloud.task.repository.support.DatabaseType.DB2ZOS;
-import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
-import static org.springframework.cloud.task.repository.support.DatabaseType.H2;
-import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
-import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
-import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
-import static org.springframework.cloud.task.repository.support.DatabaseType.SQLSERVER;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,14 +29,26 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2AS400;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2VSE;
+import static org.springframework.cloud.task.repository.support.DatabaseType.DB2ZOS;
+import static org.springframework.cloud.task.repository.support.DatabaseType.H2;
+import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
+import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
+import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
+import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
+import static org.springframework.cloud.task.repository.support.DatabaseType.SQLSERVER;
+
 /**
- * Factory bean for {@link PagingQueryProvider} interface. The database type
- * will be determined from the data source if not provided explicitly. Valid
- * types are given by the {@link DatabaseType} enum.
+ * Factory bean for {@link PagingQueryProvider} interface. The database type will be
+ * determined from the data source if not provided explicitly. Valid types are given by
+ * the {@link DatabaseType} enum.
  *
  * @author Glenn Renfro
  */
-public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQueryProvider> {
+public class SqlPagingQueryProviderFactoryBean
+		implements FactoryBean<PagingQueryProvider> {
 
 	private DataSource dataSource;
 
@@ -61,20 +62,19 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 
 	private Map<String, Order> sortKeys;
 
-	private Map<DatabaseType, AbstractSqlPagingQueryProvider> providers = new HashMap<DatabaseType, AbstractSqlPagingQueryProvider>();
-
+	private Map<DatabaseType, AbstractSqlPagingQueryProvider> providers = new HashMap<>();
 
 	{
-		providers.put(HSQL, new HsqlPagingQueryProvider());
-		providers.put(H2, new H2PagingQueryProvider());
-		providers.put(MYSQL, new MySqlPagingQueryProvider());
-		providers.put(POSTGRES, new PostgresPagingQueryProvider());
-		providers.put(ORACLE, new OraclePagingQueryProvider());
-		providers.put(SQLSERVER, new SqlServerPagingQueryProvider());
-		providers.put(DB2, new Db2PagingQueryProvider());
-		providers.put(DB2VSE, new Db2PagingQueryProvider());
-		providers.put(DB2ZOS, new Db2PagingQueryProvider());
-		providers.put(DB2AS400, new Db2PagingQueryProvider());
+		this.providers.put(HSQL, new HsqlPagingQueryProvider());
+		this.providers.put(H2, new H2PagingQueryProvider());
+		this.providers.put(MYSQL, new MySqlPagingQueryProvider());
+		this.providers.put(POSTGRES, new PostgresPagingQueryProvider());
+		this.providers.put(ORACLE, new OraclePagingQueryProvider());
+		this.providers.put(SQLSERVER, new SqlServerPagingQueryProvider());
+		this.providers.put(DB2, new Db2PagingQueryProvider());
+		this.providers.put(DB2VSE, new Db2PagingQueryProvider());
+		this.providers.put(DB2ZOS, new Db2PagingQueryProvider());
+		this.providers.put(DB2AS400, new Db2PagingQueryProvider());
 	}
 
 	/**
@@ -124,8 +124,8 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 	}
 
 	/**
-	 * Get a {@link PagingQueryProvider} instance using the provided properties
-	 * and appropriate for the given database type.
+	 * Get a {@link PagingQueryProvider} instance using the provided properties and
+	 * appropriate for the given database type.
 	 *
 	 * @see FactoryBean#getObject()
 	 */
@@ -134,24 +134,28 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 
 		DatabaseType type;
 		try {
-			type = databaseType != null ? DatabaseType.valueOf(databaseType.toUpperCase()) : DatabaseType
-					.fromMetaData(dataSource);
+			type = this.databaseType != null
+					? DatabaseType.valueOf(this.databaseType.toUpperCase())
+					: DatabaseType.fromMetaData(this.dataSource);
 		}
 		catch (MetaDataAccessException e) {
 			throw new IllegalArgumentException(
-					"Could not inspect meta data for database type.  You have to supply it explicitly.", e);
+					"Could not inspect meta data for database type.  You have to supply it explicitly.",
+					e);
 		}
 
-		AbstractSqlPagingQueryProvider provider = providers.get(type);
-		Assert.state(provider != null, "Should not happen: missing PagingQueryProvider for DatabaseType=" + type);
+		AbstractSqlPagingQueryProvider provider = this.providers.get(type);
+		Assert.state(provider != null,
+				"Should not happen: missing PagingQueryProvider for DatabaseType="
+						+ type);
 
-		provider.setFromClause(fromClause);
-		provider.setWhereClause(whereClause);
-		provider.setSortKeys(sortKeys);
-		if (StringUtils.hasText(selectClause)) {
-			provider.setSelectClause(selectClause);
+		provider.setFromClause(this.fromClause);
+		provider.setWhereClause(this.whereClause);
+		provider.setSortKeys(this.sortKeys);
+		if (StringUtils.hasText(this.selectClause)) {
+			provider.setSelectClause(this.selectClause);
 		}
-		provider.init(dataSource);
+		provider.init(this.dataSource);
 
 		return provider;
 
@@ -176,4 +180,5 @@ public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQuer
 	public boolean isSingleton() {
 		return true;
 	}
+
 }

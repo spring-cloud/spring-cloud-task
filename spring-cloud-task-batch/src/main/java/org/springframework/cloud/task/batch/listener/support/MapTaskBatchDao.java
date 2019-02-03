@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.listener.support;
 
 import java.util.Map;
@@ -25,8 +26,10 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.util.Assert;
 
 /**
- * Map implementation of the {@link TaskBatchDao}.  <p> This is intended for
- * testing purposes only!</p>
+ * Map implementation of the {@link TaskBatchDao}.
+ * <p>
+ * This is intended for testing purposes only!
+ * </p>
  *
  * @author Michael Minella
  */
@@ -44,8 +47,9 @@ public class MapTaskBatchDao implements TaskBatchDao {
 		Assert.notNull(taskExecution, "A taskExecution is required");
 		Assert.notNull(jobExecution, "A jobExecution is required");
 
-		if(this.relationships.containsKey(taskExecution.getExecutionId())) {
-			this.relationships.get(taskExecution.getExecutionId()).add(jobExecution.getId());
+		if (this.relationships.containsKey(taskExecution.getExecutionId())) {
+			this.relationships.get(taskExecution.getExecutionId())
+					.add(jobExecution.getId());
 		}
 		else {
 			TreeSet<Long> jobExecutionIds = new TreeSet<>();
@@ -54,4 +58,5 @@ public class MapTaskBatchDao implements TaskBatchDao {
 			this.relationships.put(taskExecution.getExecutionId(), jobExecutionIds);
 		}
 	}
+
 }

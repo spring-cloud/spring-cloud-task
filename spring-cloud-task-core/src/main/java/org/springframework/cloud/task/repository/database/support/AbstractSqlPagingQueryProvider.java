@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * Abstract SQL Paging Query Provider to serve as a base class for all provided
- * SQL paging query providers.
+ * Abstract SQL Paging Query Provider to serve as a base class for all provided SQL paging
+ * query providers.
  *
- * Any implementation must provide a way to specify the select clause, from
- * clause and optionally a where clause. It is recommended that there should be an index for
- * the sort key to provide better performance.
+ * Any implementation must provide a way to specify the select clause, from clause and
+ * optionally a where clause. It is recommended that there should be an index for the sort
+ * key to provide better performance.
  *
- * Provides properties and preparation for the mandatory "selectClause" and
- * "fromClause" as well as for the optional "whereClause".
+ * Provides properties and preparation for the mandatory "selectClause" and "fromClause"
+ * as well as for the optional "whereClause".
  *
  * @author Glenn Renfro
  */
@@ -51,11 +51,18 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 
 	private String whereClause;
 
-	private Map<String, Order> sortKeys = new LinkedHashMap<String, Order>();
+	private Map<String, Order> sortKeys = new LinkedHashMap<>();
 
 	private int parameterCount;
 
 	private boolean usingNamedParameters;
+
+	/**
+	 * @return SQL SELECT clause part of SQL query string
+	 */
+	protected String getSelectClause() {
+		return this.selectClause;
+	}
 
 	/**
 	 * @param selectClause SELECT clause part of SQL query string
@@ -65,11 +72,10 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	}
 
 	/**
-	 *
-	 * @return SQL SELECT clause part of SQL query string
+	 * @return SQL FROM clause part of SQL query string
 	 */
-	protected String getSelectClause() {
-		return selectClause;
+	protected String getFromClause() {
+		return this.fromClause;
 	}
 
 	/**
@@ -80,11 +86,10 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	}
 
 	/**
-	 *
-	 * @return SQL FROM clause part of SQL query string
+	 * @return SQL WHERE clause part of SQL query string
 	 */
-	protected String getFromClause() {
-		return fromClause;
+	protected String getWhereClause() {
+		return this.whereClause;
 	}
 
 	/**
@@ -100,11 +105,13 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	}
 
 	/**
-	 *
-	 * @return SQL WHERE clause part of SQL query string
+	 * A Map&lt;String, Order&gt; of sort columns as the key and {@link Order} for
+	 * ascending/descending.
+	 * @return sortKey key to use to sort and limit page content
 	 */
-	protected String getWhereClause() {
-		return whereClause;
+	@Override
+	public Map<String, Order> getSortKeys() {
+		return this.sortKeys;
 	}
 
 	/**
@@ -114,56 +121,51 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 		this.sortKeys = sortKeys;
 	}
 
-	/**
-	 * A Map&lt;String, Order&gt; of sort columns as the key and {@link Order} for ascending/descending.
-	 *
-	 * @return sortKey key to use to sort and limit page content
-	 */
-	@Override
-	public Map<String, Order> getSortKeys() {
-		return sortKeys;
-	}
-
 	@Override
 	public int getParameterCount() {
-		return parameterCount;
+		return this.parameterCount;
 	}
 
 	@Override
 	public boolean isUsingNamedParameters() {
-		return usingNamedParameters;
+		return this.usingNamedParameters;
 	}
 
 	@Override
 	public void init(DataSource dataSource) throws Exception {
 		Assert.notNull(dataSource, "DataSource must not be null");
-		Assert.hasLength(selectClause, "selectClause must be specified");
-		Assert.hasLength(fromClause, "fromClause must be specified");
-		Assert.notEmpty(sortKeys, "sortKey must be specified");
+		Assert.hasLength(this.selectClause, "selectClause must be specified");
+		Assert.hasLength(this.fromClause, "fromClause must be specified");
+		Assert.notEmpty(this.sortKeys, "sortKey must be specified");
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(selectClause);
-		sql.append(" FROM ").append(fromClause);
-		if (whereClause != null) {
-			sql.append(" WHERE ").append(whereClause);
+		sql.append("SELECT ").append(this.selectClause);
+		sql.append(" FROM ").append(this.fromClause);
+		if (this.whereClause != null) {
+			sql.append(" WHERE ").append(this.whereClause);
 		}
-		List<String> namedParameters = new ArrayList<String>();
-		parameterCount = JdbcParameterUtils.countParameterPlaceholders(sql.toString(), namedParameters);
+		List<String> namedParameters = new ArrayList<>();
+		this.parameterCount = JdbcParameterUtils
+				.countParameterPlaceholders(sql.toString(), namedParameters);
 		if (namedParameters.size() > 0) {
-			if (parameterCount != namedParameters.size()) {
+			if (this.parameterCount != namedParameters.size()) {
 				throw new InvalidDataAccessApiUsageException(
-						"You can't use both named parameters and classic \"?\" placeholders: " + sql);
+						"You can't use both named parameters and classic \"?\" placeholders: "
+								+ sql);
 			}
-			usingNamedParameters = true;
+			this.usingNamedParameters = true;
 		}
 	}
+
 	private String removeKeyWord(String keyWord, String clause) {
 		String temp = clause.trim();
 		String keyWordString = keyWord + " ";
-		if (temp.toLowerCase().startsWith(keyWordString) && temp.length() > keyWordString.length()) {
+		if (temp.toLowerCase().startsWith(keyWordString)
+				&& temp.length() > keyWordString.length()) {
 			return temp.substring(keyWordString.length());
 		}
 		else {
 			return temp;
 		}
 	}
+
 }

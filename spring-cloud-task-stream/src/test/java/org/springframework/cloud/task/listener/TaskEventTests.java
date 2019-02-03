@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.listener;
 
 import org.junit.Test;
@@ -31,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.BridgeFrom;
 import org.springframework.integration.channel.NullChannel;
 
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -43,19 +44,21 @@ public class TaskEventTests {
 	@Test
 	public void testDefaultConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(
+						EmbeddedDataSourceConfiguration.class,
 						TaskEventAutoConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						TestSupportBinderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
 						BindingServiceConfiguration.class))
 				.withUserConfiguration(TaskEventsConfiguration.class)
 				.withPropertyValues("spring.cloud.task.closecontext_enabled=false",
 						"spring.main.web-environment=false");
 		applicationContextRunner.run((context) -> {
-			assertNotNull(context.getBean("taskEventListener"));
-			assertNotNull(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
+			assertThat(context.getBean("taskEventListener")).isNotNull();
+			assertThat(
+					context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class))
+							.isNotNull();
 		});
 	}
 
@@ -68,6 +71,7 @@ public class TaskEventTests {
 		public NullChannel testEmptyChannel() {
 			return new NullChannel();
 		}
+
 	}
 
 }

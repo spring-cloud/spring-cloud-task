@@ -1,17 +1,17 @@
 /*
- *  Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.listener.support;
@@ -27,8 +27,10 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.util.Assert;
 
 /**
- * This is a StepExecution DTO created so that a {@link org.springframework.batch.core.StepExecution} can be serialized
- * into Json without having to add mixins to an ObjectMapper.
+ * This is a StepExecution DTO created so that a
+ * {@link org.springframework.batch.core.StepExecution} can be serialized into Json
+ * without having to add mixins to an ObjectMapper.
+ *
  * @author Glenn Renfro
  */
 public class StepExecutionEvent extends Entity {
@@ -61,14 +63,14 @@ public class StepExecutionEvent extends Entity {
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
-	private ExitStatus exitStatus = new ExitStatus(org.springframework.batch.core.ExitStatus.EXECUTING);
+	private ExitStatus exitStatus = new ExitStatus(
+			org.springframework.batch.core.ExitStatus.EXECUTING);
 
 	private boolean terminateOnly;
 
 	private int filterCount;
 
-	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
-
+	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
 	public StepExecutionEvent() {
 		super();
@@ -76,13 +78,14 @@ public class StepExecutionEvent extends Entity {
 
 	/**
 	 * Constructor for the StepExecution to initialize the DTO.
-	 *
 	 * @param stepExecution the StepExecution to build this DTO around.
 	 */
 	public StepExecutionEvent(StepExecution stepExecution) {
 		super();
-		Assert.notNull(stepExecution, "StepExecution must be provided to re-hydrate an existing StepExecutionEvent");
-		Assert.notNull(stepExecution.getJobExecution(), "JobExecution must be provided to re-hydrate an existing StepExecutionEvent");
+		Assert.notNull(stepExecution,
+				"StepExecution must be provided to re-hydrate an existing StepExecutionEvent");
+		Assert.notNull(stepExecution.getJobExecution(),
+				"JobExecution must be provided to re-hydrate an existing StepExecutionEvent");
 		setId(stepExecution.getId());
 		this.jobExecutionId = stepExecution.getJobExecutionId();
 		this.stepName = stepExecution.getStepName();
@@ -90,7 +93,7 @@ public class StepExecutionEvent extends Entity {
 		this.status = stepExecution.getStatus();
 		this.exitStatus = new ExitStatus(stepExecution.getExitStatus());
 		this.executionContext = stepExecution.getExecutionContext();
-		for (Throwable throwable : stepExecution.getFailureExceptions()){
+		for (Throwable throwable : stepExecution.getFailureExceptions()) {
 			this.failureExceptions.add(throwable);
 		}
 		this.terminateOnly = stepExecution.isTerminateOnly();
@@ -111,8 +114,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the {@link ExecutionContext} for this execution
-	 *
+	 * Returns the {@link ExecutionContext} for this execution.
 	 * @return the attributes
 	 */
 	public ExecutionContext getExecutionContext() {
@@ -120,8 +122,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the {@link ExecutionContext} for this execution
-	 *
+	 * Sets the {@link ExecutionContext} for this execution.
 	 * @param executionContext the attributes
 	 */
 	public void setExecutionContext(ExecutionContext executionContext) {
@@ -129,8 +130,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current number of commits for this execution
-	 *
+	 * Returns the current number of commits for this execution.
 	 * @return the current number of commits
 	 */
 	public int getCommitCount() {
@@ -138,8 +138,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the current number of commits for this execution
-	 *
+	 * Sets the current number of commits for this execution.
 	 * @param commitCount the current number of commits
 	 */
 	public void setCommitCount(int commitCount) {
@@ -147,8 +146,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the time that this execution ended
-	 *
+	 * Returns the time that this execution ended.
 	 * @return the time that this execution ended
 	 */
 	public Date getEndTime() {
@@ -156,8 +154,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the time that this execution ended
-	 *
+	 * Sets the time that this execution ended.
 	 * @param endTime the time that this execution ended
 	 */
 	public void setEndTime(Date endTime) {
@@ -165,8 +162,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current number of items read for this execution
-	 *
+	 * Returns the current number of items read for this execution.
 	 * @return the current number of items read for this execution
 	 */
 	public int getReadCount() {
@@ -174,8 +170,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the current number of read items for this execution
-	 *
+	 * Sets the current number of read items for this execution.
 	 * @param readCount the current number of read items for this execution
 	 */
 	public void setReadCount(int readCount) {
@@ -183,8 +178,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current number of items written for this execution
-	 *
+	 * Returns the current number of items written for this execution.
 	 * @return the current number of items written for this execution
 	 */
 	public int getWriteCount() {
@@ -192,8 +186,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the current number of written items for this execution
-	 *
+	 * Sets the current number of written items for this execution.
 	 * @param writeCount the current number of written items for this execution
 	 */
 	public void setWriteCount(int writeCount) {
@@ -201,8 +194,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current number of rollbacks for this execution
-	 *
+	 * Returns the current number of rollbacks for this execution.
 	 * @return the current number of rollbacks for this execution
 	 */
 	public int getRollbackCount() {
@@ -210,8 +202,15 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current number of items filtered out of this execution
-	 *
+	 * Setter for number of rollbacks for this execution.
+	 * @param rollbackCount the number of rollbacks for this execution
+	 */
+	public void setRollbackCount(int rollbackCount) {
+		this.rollbackCount = rollbackCount;
+	}
+
+	/**
+	 * Returns the current number of items filtered out of this execution.
 	 * @return the current number of items filtered out of this execution
 	 */
 	public int getFilterCount() {
@@ -220,24 +219,14 @@ public class StepExecutionEvent extends Entity {
 
 	/**
 	 * Public setter for the number of items filtered out of this execution.
-	 * @param filterCount the number of items filtered out of this execution to
-	 * set
+	 * @param filterCount the number of items filtered out of this execution to set
 	 */
 	public void setFilterCount(int filterCount) {
 		this.filterCount = filterCount;
 	}
 
 	/**
-	 * Setter for number of rollbacks for this execution
-	 * @param rollbackCount the number of rollbacks for this execution
-	 */
-	public void setRollbackCount(int rollbackCount) {
-		this.rollbackCount = rollbackCount;
-	}
-
-	/**
-	 * Gets the time this execution started
-	 *
+	 * Gets the time this execution started.
 	 * @return the time this execution started
 	 */
 	public Date getStartTime() {
@@ -245,8 +234,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the time this execution started
-	 *
+	 * Sets the time this execution started.
 	 * @param startTime the time this execution started
 	 */
 	public void setStartTime(Date startTime) {
@@ -254,8 +242,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Returns the current status of this step
-	 *
+	 * Returns the current status of this step.
 	 * @return the current status of this step
 	 */
 	public BatchStatus getStatus() {
@@ -263,29 +250,22 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the current status of this step
-	 *
+	 * Sets the current status of this step.
 	 * @param status the current status of this step
 	 */
 	public void setStatus(BatchStatus status) {
 		this.status = status;
 	}
 
-	public void setStepName(String stepName) {
-		this.stepName = stepName;
-	}
 	/**
-	 * @return the name of the step
+	 * @return the name of the step.
 	 */
 	public String getStepName() {
 		return this.stepName;
 	}
 
-	/**
-	 * @param exitStatus the {@link ExitStatus} for the step.
-	 */
-	public void setExitStatus(ExitStatus exitStatus) {
-		this.exitStatus = exitStatus;
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
 	}
 
 	/**
@@ -296,6 +276,13 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
+	 * @param exitStatus the {@link ExitStatus} for the step.
+	 */
+	public void setExitStatus(ExitStatus exitStatus) {
+		this.exitStatus = exitStatus;
+	}
+
+	/**
 	 * @return flag to indicate that an execution should halt
 	 */
 	public boolean isTerminateOnly() {
@@ -303,8 +290,8 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Set a flag that will signal to an execution environment that this
-	 * execution (and its surrounding job) wishes to exit.
+	 * Set a flag that will signal to an execution environment that this execution (and
+	 * its surrounding job) wishes to exit.
 	 */
 	public void setTerminateOnly() {
 		this.terminateOnly = true;
@@ -318,17 +305,25 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Increment the number of commits
+	 * Increment the number of commits.
 	 */
 	public void incrementCommitCount() {
 		this.commitCount++;
 	}
 
 	/**
-	 * @return the number of records skipped on read
+	 * @return the number of records skipped on read.
 	 */
 	public int getReadSkipCount() {
 		return this.readSkipCount;
+	}
+
+	/**
+	 * Set the number of records skipped on read.
+	 * @param readSkipCount the number of records to be skipped on read.
+	 */
+	public void setReadSkipCount(int readSkipCount) {
+		this.readSkipCount = readSkipCount;
 	}
 
 	/**
@@ -339,17 +334,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Set the number of records skipped on read
-	 *
-	 * @param readSkipCount the number of records to be skipped on read.
-	 */
-	public void setReadSkipCount(int readSkipCount) {
-		this.readSkipCount = readSkipCount;
-	}
-
-	/**
-	 * Set the number of records skipped on write
-	 *
+	 * Set the number of records skipped on write.
 	 * @param writeSkipCount the number of records to be skipped on write.
 	 */
 	public void setWriteSkipCount(int writeSkipCount) {
@@ -365,7 +350,6 @@ public class StepExecutionEvent extends Entity {
 
 	/**
 	 * Set the number of records skipped during processing.
-	 *
 	 * @param processSkipCount the number of records skip during processing.
 	 */
 	public void setProcessSkipCount(int processSkipCount) {
@@ -380,8 +364,7 @@ public class StepExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Set the time when the StepExecution was last updated before persisting
-	 *
+	 * Set the time when the StepExecution was last updated before persisting.
 	 * @param lastUpdated the {@link Date} the StepExecution was last updated.
 	 */
 	public void setLastUpdated(Date lastUpdated) {
@@ -399,19 +382,19 @@ public class StepExecutionEvent extends Entity {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.springframework.batch.container.common.domain.Entity#equals(java.
+	 * @see org.springframework.batch.container.common.domain.Entity#equals(java.
 	 * lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 
-		if ( !(obj instanceof StepExecution) || getId() == null) {
+		if (!(obj instanceof StepExecution) || getId() == null) {
 			return super.equals(obj);
 		}
 		StepExecution other = (StepExecution) obj;
 
-		return this.stepName.equals(other.getStepName()) && (this.jobExecutionId == other.getJobExecutionId())
+		return this.stepName.equals(other.getStepName())
+				&& (this.jobExecutionId == other.getJobExecutionId())
 				&& getId().equals(other.getId());
 	}
 
@@ -424,21 +407,27 @@ public class StepExecutionEvent extends Entity {
 	public int hashCode() {
 		Object jobExecutionId = getJobExecutionId();
 		Long id = getId();
-		return super.hashCode() + 31 * (this.stepName != null ? this.stepName.hashCode() : 0) + 91
-				* (jobExecutionId != null ? jobExecutionId.hashCode() : 0) + 59 * (id != null ? id.hashCode() : 0);
+		return super.hashCode()
+				+ 31 * (this.stepName != null ? this.stepName.hashCode() : 0)
+				+ 91 * (jobExecutionId != null ? jobExecutionId.hashCode() : 0)
+				+ 59 * (id != null ? id.hashCode() : 0);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(getSummary() + ", exitDescription=%s", this.exitStatus.getExitDescription());
+		return String.format(getSummary() + ", exitDescription=%s",
+				this.exitStatus.getExitDescription());
 	}
 
 	public String getSummary() {
-		return super.toString()
-				+ String.format(
-				", name=%s, status=%s, exitStatus=%s, readCount=%d, filterCount=%d, writeCount=%d readSkipCount=%d, writeSkipCount=%d"
-						+ ", processSkipCount=%d, commitCount=%d, rollbackCount=%d", this.stepName, this.status,
-				this.exitStatus.getExitCode(), this.readCount, this.filterCount, this.writeCount, this.readSkipCount, this.writeSkipCount,
-				this.processSkipCount, this.commitCount, this.rollbackCount);
+		return super.toString() + String.format(
+				", name=%s, status=%s, exitStatus=%s, readCount=%d, "
+						+ "filterCount=%d, writeCount=%d readSkipCount=%d, writeSkipCount=%d"
+						+ ", processSkipCount=%d, commitCount=%d, rollbackCount=%d",
+				this.stepName, this.status, this.exitStatus.getExitCode(), this.readCount,
+				this.filterCount, this.writeCount, this.readSkipCount,
+				this.writeSkipCount, this.processSkipCount, this.commitCount,
+				this.rollbackCount);
 	}
+
 }

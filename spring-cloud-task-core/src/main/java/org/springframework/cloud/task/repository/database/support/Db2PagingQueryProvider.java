@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ package org.springframework.cloud.task.repository.database.support;
 import org.springframework.data.domain.Pageable;
 
 /**
- * IBM DB2 implementation of a {@link org.springframework.cloud.task.repository.database.PagingQueryProvider} using database
- * specific features.
- * 
+ * IBM DB2 implementation of a
+ * {@link org.springframework.cloud.task.repository.database.PagingQueryProvider} using
+ * database specific features.
+ *
  * @author Thomas Schuettel
  */
 public class Db2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
@@ -30,15 +31,18 @@ public class Db2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 	public String getPageQuery(Pageable pageable) {
 		long offset = pageable.getOffset() + 1;
 		return generateRowNumSqlQueryWithNesting(getSelectClause(), false,
-				"TMP_ROW_NUM BETWEEN " + offset + " AND " + (offset + pageable.getPageSize()));
+				"TMP_ROW_NUM BETWEEN " + offset + " AND "
+						+ (offset + pageable.getPageSize()));
 	}
 
-	private String generateRowNumSqlQueryWithNesting(String selectClause, boolean remainingPageQuery,
-			String rowNumClause) {
+	private String generateRowNumSqlQueryWithNesting(String selectClause,
+			boolean remainingPageQuery, String rowNumClause) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(selectClause).append(" FROM (SELECT ").append(selectClause).append(", ")
+		sql.append("SELECT ").append(selectClause).append(" FROM (SELECT ")
+				.append(selectClause).append(", ")
 				.append("ROW_NUMBER() OVER() as TMP_ROW_NUM");
-		sql.append(" FROM (SELECT ").append(selectClause).append(" FROM ").append(this.getFromClause());
+		sql.append(" FROM (SELECT ").append(selectClause).append(" FROM ")
+				.append(this.getFromClause());
 		SqlPagingQueryUtils.buildWhereClause(this, remainingPageQuery, sql);
 		sql.append(" ORDER BY ").append(SqlPagingQueryUtils.buildSortClause(this));
 		sql.append(")) WHERE ").append(rowNumClause);

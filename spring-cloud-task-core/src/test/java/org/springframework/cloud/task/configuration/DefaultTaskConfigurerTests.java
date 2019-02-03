@@ -1,17 +1,17 @@
 /*
- *  Copyright 2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.configuration;
@@ -31,11 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -54,64 +50,80 @@ public class DefaultTaskConfigurerTests {
 	@Test
 	public void resourcelessTransactionManagerTest() {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer();
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
-				is("org.springframework.batch.support.transaction.ResourcelessTransactionManager"));
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo(
+						"org.springframework.batch.support.transaction.ResourcelessTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer("foo");
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
-				is("org.springframework.batch.support.transaction.ResourcelessTransactionManager"));
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo(
+						"org.springframework.batch.support.transaction.ResourcelessTransactionManager");
 	}
 
 	@Test
 	public void testDefaultContext() throws Exception {
 		AnnotationConfigApplicationContext localContext = new AnnotationConfigApplicationContext();
-		localContext.register(EmbeddedDataSourceConfiguration.class,EntityManagerConfiguration.class);
+		localContext.register(EmbeddedDataSourceConfiguration.class,
+				EntityManagerConfiguration.class);
 		localContext.refresh();
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(), is(equalTo("org.springframework.orm.jpa.JpaTransactionManager")));
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
+				this.dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo("org.springframework.orm.jpa.JpaTransactionManager");
 	}
 
 	@Test
 	public void dataSourceTransactionManagerTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource);
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
-				is("org.springframework.jdbc.datasource.DataSourceTransactionManager"));
-		defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource, "FOO", null);
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
-				is("org.springframework.jdbc.datasource.DataSourceTransactionManager"));
-		defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource, "FOO", context);
-		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName(),
-				is("org.springframework.jdbc.datasource.DataSourceTransactionManager"));
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
+				this.dataSource);
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo(
+						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO", null);
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo(
+						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO",
+				this.context);
+		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
+				.isEqualTo(
+						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
 	}
 
 	@Test
 	public void taskExplorerTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource);
-		assertThat(defaultTaskConfigurer.getTaskExplorer(), is(notNullValue()));
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
+				this.dataSource);
+		assertThat(defaultTaskConfigurer.getTaskExplorer()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
-		assertThat(defaultTaskConfigurer.getTaskExplorer(), is(notNullValue()));
+		assertThat(defaultTaskConfigurer.getTaskExplorer()).isNotNull();
 	}
 
 	@Test
 	public void taskRepositoryTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource);
-		assertThat(defaultTaskConfigurer.getTaskRepository(), is(notNullValue()));
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
+				this.dataSource);
+		assertThat(defaultTaskConfigurer.getTaskRepository()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
-		assertThat(defaultTaskConfigurer.getTaskRepository(), is(notNullValue()));
+		assertThat(defaultTaskConfigurer.getTaskRepository()).isNotNull();
 	}
 
 	@Test
 	public void taskDataSource() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(dataSource);
-		assertThat(defaultTaskConfigurer.getTaskDataSource(), is(notNullValue()));
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
+				this.dataSource);
+		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
-		assertThat(defaultTaskConfigurer.getTaskDataSource(), is(nullValue()));
+		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNull();
 	}
 
 	@Configuration
 	public static class EntityManagerConfiguration {
+
 		@Bean
 		public EntityManager entityManager() {
 			return mock(EntityManager.class);
 		}
+
 	}
+
 }

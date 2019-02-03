@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,34 +32,35 @@ public class TaskExecutionCreator {
 
 	/**
 	 * Creates a sample TaskExecution and stores it in the taskRepository.
-	 *
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreEmptyTaskExecution(TaskRepository taskRepository) {
+	public static TaskExecution createAndStoreEmptyTaskExecution(
+			TaskRepository taskRepository) {
 		return taskRepository.createTaskExecution();
 	}
 
 	/**
 	 * Creates a sample TaskExecution and stores it in the taskRepository.
-	 *
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
+	public static TaskExecution createAndStoreTaskExecutionNoParams(
+			TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = taskRepository.createTaskExecution();
 		return expectedTaskExecution;
 	}
 
 	/**
 	 * Creates a sample TaskExecution and stores it in the taskRepository with params.
-	 *
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreTaskExecutionWithParams(TaskRepository taskRepository) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		List<String> params = new ArrayList<String>();
+	public static TaskExecution createAndStoreTaskExecutionWithParams(
+			TaskRepository taskRepository) {
+		TaskExecution expectedTaskExecution = TestVerifierUtils
+				.createSampleTaskExecutionNoArg();
+		List<String> params = new ArrayList<>();
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
 		expectedTaskExecution.setArguments(params);
@@ -69,14 +70,16 @@ public class TaskExecutionCreator {
 
 	/**
 	 * Updates a sample TaskExecution in the taskRepository.
-	 *
 	 * @param taskRepository the taskRepository where the taskExecution should be updated.
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution completeExecution(TaskRepository taskRepository,
 			TaskExecution expectedTaskExecution) {
-		return taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+		return taskRepository.completeTaskExecution(
+				expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage(), expectedTaskExecution.getErrorMessage());
+				expectedTaskExecution.getExitMessage(),
+				expectedTaskExecution.getErrorMessage());
 	}
+
 }

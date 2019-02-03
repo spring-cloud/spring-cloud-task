@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,28 +25,73 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.util.StringUtils;
 
-
 /**
- * Enum representing a database type, such as DB2 or oracle.  The type also
- * contains a product name, which is expected to be the same as the product name
- * provided by the database driver's metadata.
+ * Enum representing a database type, such as DB2 or oracle. The type also contains a
+ * product name, which is expected to be the same as the product name provided by the
+ * database driver's metadata.
  *
  * @author Glenn Renfro
  */
 public enum DatabaseType {
 
+	/**
+	 * HSQL DB.
+	 */
 	HSQL("HSQL Database Engine"),
+
+	/**
+	 * H2 DB.
+	 */
 	H2("H2"),
+
+	/**
+	 * Oracle DB.
+	 */
 	ORACLE("Oracle"),
+
+	/**
+	 * MySQL DB.
+	 */
 	MYSQL("MySQL"),
+
+	/**
+	 * PostgreSQL DB.
+	 */
 	POSTGRES("PostgreSQL"),
+
+	/**
+	 * Microsoft SQL Server DB.
+	 */
 	SQLSERVER("Microsoft SQL Server"),
+
+	/**
+	 * DB2 DB.
+	 */
 	DB2("DB2"),
+
+	/**
+	 * DB2VSE DB.
+	 */
 	DB2VSE("DB2VSE"),
+
+	/**
+	 * DB2ZOS DB.
+	 */
 	DB2ZOS("DB2ZOS"),
+
+	/**
+	 * DB2AS400 DB.
+	 */
 	DB2AS400("DB2AS400");
 
 	private static final Map<String, DatabaseType> dbNameMap;
+
+	static {
+		dbNameMap = new HashMap<>();
+		for (DatabaseType type : values()) {
+			dbNameMap.put(type.getProductName(), type);
+		}
+	}
 
 	private final String productName;
 
@@ -54,34 +99,33 @@ public enum DatabaseType {
 		this.productName = productName;
 	}
 
-	static{
-		dbNameMap = new HashMap<String, DatabaseType>();
-		for(DatabaseType type: values()){
-			dbNameMap.put(type.getProductName(), type);
-		}
-	}
-
 	/**
-	 * Convenience method that pulls a database product name from the DataSource's metadata.
-	 *
+	 * Convenience method that pulls a database product name from the DataSource's
+	 * metadata.
 	 * @param dataSource the datasource used to extact metadata.
 	 * @return DatabaseType The database type associated with the datasource.
 	 * @throws MetaDataAccessException thrown if failure occurs on metadata lookup.
 	 */
-	public static DatabaseType fromMetaData(DataSource dataSource) throws MetaDataAccessException {
-		String databaseProductName =
-				JdbcUtils.extractDatabaseMetaData(dataSource, "getDatabaseProductName").toString();
-		if (StringUtils.hasText(databaseProductName) && !databaseProductName.equals("DB2/Linux") && databaseProductName.startsWith("DB2")) {
-			String databaseProductVersion =
-					JdbcUtils.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion").toString();
+	public static DatabaseType fromMetaData(DataSource dataSource)
+			throws MetaDataAccessException {
+		String databaseProductName = JdbcUtils
+				.extractDatabaseMetaData(dataSource, "getDatabaseProductName").toString();
+		if (StringUtils.hasText(databaseProductName)
+				&& !databaseProductName.equals("DB2/Linux")
+				&& databaseProductName.startsWith("DB2")) {
+			String databaseProductVersion = JdbcUtils
+					.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion")
+					.toString();
 			if (databaseProductVersion.startsWith("ARI")) {
 				databaseProductName = "DB2VSE";
 			}
 			else if (databaseProductVersion.startsWith("DSN")) {
 				databaseProductName = "DB2ZOS";
 			}
-			else if (databaseProductName.indexOf("AS") != -1 && (databaseProductVersion.startsWith("QSQ") ||
-					databaseProductVersion.substring(databaseProductVersion.indexOf('V')).matches("V\\dR\\d[mM]\\d"))) {
+			else if (databaseProductName.indexOf("AS") != -1
+					&& (databaseProductVersion.startsWith("QSQ") || databaseProductVersion
+							.substring(databaseProductVersion.indexOf('V'))
+							.matches("V\\dR\\d[mM]\\d"))) {
 				databaseProductName = "DB2AS400";
 			}
 			else {
@@ -96,23 +140,22 @@ public enum DatabaseType {
 
 	/**
 	 * Static method to obtain a DatabaseType from the provided product name.
-	 *
 	 * @param productName the name of the database.
 	 * @return DatabaseType for given product name.
 	 * @throws IllegalArgumentException if none is found.
 	 */
-	public static DatabaseType fromProductName(String productName){
-		if(!dbNameMap.containsKey(productName)){
-			throw new IllegalArgumentException("DatabaseType not found for product name: [" +
-					productName + "]");
+	public static DatabaseType fromProductName(String productName) {
+		if (!dbNameMap.containsKey(productName)) {
+			throw new IllegalArgumentException(
+					"DatabaseType not found for product name: [" + productName + "]");
 		}
-		else{
+		else {
 			return dbNameMap.get(productName);
 		}
 	}
 
 	private String getProductName() {
-		return productName;
+		return this.productName;
 	}
 
 }

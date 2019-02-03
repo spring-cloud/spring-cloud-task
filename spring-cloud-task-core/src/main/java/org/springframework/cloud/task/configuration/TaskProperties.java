@@ -1,21 +1,20 @@
 /*
- *  Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.configuration;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,11 +31,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.cloud.task")
 public class TaskProperties {
 
+	/**
+	 * Default table prefix for Spring Cloud Task.
+	 */
+	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
+
 	private static final int DEFAULT_CHECK_INTERVAL = 500;
 
 	private static final Log logger = LogFactory.getLog(TaskProperties.class);
-	
-	public static final String DEFAULT_TABLE_PREFIX = "TASK_";
 
 	/**
 	 * An id that can be associated with a task.
@@ -49,8 +51,8 @@ public class TaskProperties {
 	private Long executionid;
 
 	/**
-	 * The id of the parent task execution id that launched this task execution.
-	 * Defaults to null if task execution had no parent.
+	 * The id of the parent task execution id that launched this task execution. Defaults
+	 * to null if task execution had no parent.
 	 */
 	private Long parentExecutionId;
 
@@ -60,35 +62,34 @@ public class TaskProperties {
 	private String tablePrefix = DEFAULT_TABLE_PREFIX;
 
 	/**
-	 * When set to true the context is closed at the end of the task.  Else
-	 * the context remains open.
+	 * When set to true the context is closed at the end of the task. Else the context
+	 * remains open.
 	 */
 	private Boolean closecontextEnabled = false;
 
 	/**
-	 * When set to true it
-	 * will check to see if a task execution with the same task name is already
-	 * running.  If a task is still running then it will throw a
-	 * {@link org.springframework.cloud.task.listener.TaskExecutionException}.
-	 * When task execution ends the lock is released.
+	 * When set to true it will check to see if a task execution with the same task name
+	 * is already running. If a task is still running then it will throw a
+	 * {@link org.springframework.cloud.task.listener.TaskExecutionException}. When task
+	 * execution ends the lock is released.
 	 */
 	private boolean singleInstanceEnabled = false;
 
 	/**
-	 * Declares the maximum amount of time (in millis) that a task execution can
-	 * hold a lock to prevent another task from executing with a specific task
-	 * name when the single-instance-enabled is set to true. Default time is: Integer.MAX_VALUE.
+	 * Declares the maximum amount of time (in millis) that a task execution can hold a
+	 * lock to prevent another task from executing with a specific task name when the
+	 * single-instance-enabled is set to true. Default time is: Integer.MAX_VALUE.
 	 */
 	private int singleInstanceLockTtl = Integer.MAX_VALUE;
 
 	/**
-	 * Declares the  time (in millis) that a task execution will wait between
-	 * checks. Default time is: 500 millis.
+	 * Declares the time (in millis) that a task execution will wait between checks.
+	 * Default time is: 500 millis.
 	 */
 	private int singleInstanceLockCheckInterval = DEFAULT_CHECK_INTERVAL;
 
 	public String getExternalExecutionId() {
-		return externalExecutionId;
+		return this.externalExecutionId;
 	}
 
 	public void setExternalExecutionId(String externalExecutionId) {
@@ -96,7 +97,7 @@ public class TaskProperties {
 	}
 
 	public Long getExecutionid() {
-		return executionid;
+		return this.executionid;
 	}
 
 	public void setExecutionid(Long executionid) {
@@ -104,7 +105,7 @@ public class TaskProperties {
 	}
 
 	public Boolean getClosecontextEnabled() {
-		return closecontextEnabled;
+		return this.closecontextEnabled;
 	}
 
 	public void setClosecontextEnabled(Boolean closecontextEnabled) {
@@ -112,7 +113,7 @@ public class TaskProperties {
 	}
 
 	public String getTablePrefix() {
-		return tablePrefix;
+		return this.tablePrefix;
 	}
 
 	public void setTablePrefix(String tablePrefix) {
@@ -120,7 +121,7 @@ public class TaskProperties {
 	}
 
 	public Long getParentExecutionId() {
-		return parentExecutionId;
+		return this.parentExecutionId;
 	}
 
 	public void setParentExecutionId(Long parentExecutionId) {
@@ -128,7 +129,7 @@ public class TaskProperties {
 	}
 
 	public boolean getSingleInstanceEnabled() {
-		return singleInstanceEnabled;
+		return this.singleInstanceEnabled;
 	}
 
 	public void setSingleInstanceEnabled(boolean singleInstanceEnabled) {
@@ -136,7 +137,7 @@ public class TaskProperties {
 	}
 
 	public int getSingleInstanceLockTtl() {
-		return singleInstanceLockTtl;
+		return this.singleInstanceLockTtl;
 	}
 
 	public void setSingleInstanceLockTtl(int singleInstanceLockTtl) {
@@ -144,10 +145,11 @@ public class TaskProperties {
 	}
 
 	public int getSingleInstanceLockCheckInterval() {
-		return singleInstanceLockCheckInterval;
+		return this.singleInstanceLockCheckInterval;
 	}
 
 	public void setSingleInstanceLockCheckInterval(int singleInstanceLockCheckInterval) {
 		this.singleInstanceLockCheckInterval = singleInstanceLockCheckInterval;
 	}
+
 }

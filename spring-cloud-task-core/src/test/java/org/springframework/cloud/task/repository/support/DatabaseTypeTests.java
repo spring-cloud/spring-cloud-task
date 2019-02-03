@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.repository.support;
 
-import static org.junit.Assert.assertEquals;
+import javax.sql.DataSource;
+
+import org.junit.Test;
+
+import org.springframework.cloud.task.util.TestDBUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
 import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
 import static org.springframework.cloud.task.repository.support.DatabaseType.fromProductName;
-
-import javax.sql.DataSource;
-
-import org.junit.Test;
-import org.springframework.cloud.task.util.TestDBUtils;
 
 /**
  * Tests that the correct database names are selected from datasource metadata.
@@ -39,10 +41,10 @@ public class DatabaseTypeTests {
 
 	@Test
 	public void testFromProductName() {
-		assertEquals(HSQL, fromProductName("HSQL Database Engine"));
-		assertEquals(ORACLE, fromProductName("Oracle"));
-		assertEquals(POSTGRES, fromProductName("PostgreSQL"));
-		assertEquals(MYSQL, fromProductName("MySQL"));
+		assertThat(fromProductName("HSQL Database Engine")).isEqualTo(HSQL);
+		assertThat(fromProductName("Oracle")).isEqualTo(ORACLE);
+		assertThat(fromProductName("PostgreSQL")).isEqualTo(POSTGRES);
+		assertThat(fromProductName("MySQL")).isEqualTo(MYSQL);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -53,25 +55,25 @@ public class DatabaseTypeTests {
 	@Test
 	public void testFromMetaDataForHsql() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("HSQL Database Engine");
-		assertEquals(HSQL, DatabaseType.fromMetaData(ds));
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(HSQL);
 	}
 
 	@Test
 	public void testFromMetaDataForOracle() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("Oracle");
-		assertEquals(ORACLE, DatabaseType.fromMetaData(ds));
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(ORACLE);
 	}
 
 	@Test
 	public void testFromMetaDataForPostgres() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("PostgreSQL");
-		assertEquals(POSTGRES, DatabaseType.fromMetaData(ds));
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(POSTGRES);
 	}
 
 	@Test
 	public void testFromMetaDataForMySQL() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MySQL");
-		assertEquals(MYSQL, DatabaseType.fromMetaData(ds));
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
 	}
 
 }

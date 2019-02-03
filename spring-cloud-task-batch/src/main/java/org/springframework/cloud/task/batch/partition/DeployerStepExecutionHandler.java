@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import org.apache.commons.logging.Log;
@@ -34,20 +35,24 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
 /**
- * <p>A {@link CommandLineRunner} used to execute a {@link Step}.  No result is provided
+ * <p>
+ * A {@link CommandLineRunner} used to execute a {@link Step}. No result is provided
  * directly to the associated {@link DeployerPartitionHandler} as it will obtain the step
- * results directly from the shared job repository.</p>
+ * results directly from the shared job repository.
+ * </p>
  *
- * <p>The {@link StepExecution} is rehydrated based on the environment variables provided.
- * Specifically, the following variables are required:</p>
+ * <p>
+ * The {@link StepExecution} is rehydrated based on the environment variables provided.
+ * Specifically, the following variables are required:
+ * </p>
  * <ul>
- *     <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_JOB_EXECUTION_ID}: The id of
- *     the JobExecution.</li>
- *     <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_STEP_EXECUTION_ID}: The id of
- *     the StepExecution.</li>
- *     <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_STEP_NAME}: The id of the
- *     bean definition for the Step to execute.  The id must be found within the provided
- *     {@link BeanFactory}</li>
+ * <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_JOB_EXECUTION_ID}: The id of the
+ * JobExecution.</li>
+ * <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_STEP_EXECUTION_ID}: The id of the
+ * StepExecution.</li>
+ * <li>{@link DeployerPartitionHandler#SPRING_CLOUD_TASK_STEP_NAME}: The id of the bean
+ * definition for the Step to execute. The id must be found within the provided
+ * {@link BeanFactory}</li>
  * </ul>
  *
  * @author Michael Minella
@@ -65,7 +70,8 @@ public class DeployerStepExecutionHandler implements CommandLineRunner {
 
 	private StepLocator stepLocator;
 
-	public DeployerStepExecutionHandler(BeanFactory beanFactory, JobExplorer jobExplorer, JobRepository jobRepository) {
+	public DeployerStepExecutionHandler(BeanFactory beanFactory, JobExplorer jobExplorer,
+			JobRepository jobRepository) {
 		Assert.notNull(beanFactory, "A beanFactory is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(jobRepository, "A jobRepository is required");
@@ -82,38 +88,60 @@ public class DeployerStepExecutionHandler implements CommandLineRunner {
 
 		validateRequest();
 
-		Long jobExecutionId = Long.parseLong(environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
-		Long stepExecutionId = Long.parseLong(environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
-		StepExecution stepExecution = jobExplorer.getStepExecution(jobExecutionId, stepExecutionId);
+		Long jobExecutionId = Long.parseLong(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
+		Long stepExecutionId = Long.parseLong(this.environment.getProperty(
+				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
+		StepExecution stepExecution = this.jobExplorer.getStepExecution(jobExecutionId,
+				stepExecutionId);
 
 		if (stepExecution == null) {
-			throw new NoSuchStepException(String.format("No StepExecution could be located for step execution id %s within job execution %s", stepExecutionId, jobExecutionId));
+			throw new NoSuchStepException(String.format(
+					"No StepExecution could be located for step execution id %s within job execution %s",
+					stepExecutionId, jobExecutionId));
 		}
 
-		String stepName = environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME);
-		Step step = stepLocator.getStep(stepName);
+		String stepName = this.environment
+				.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME);
+		Step step = this.stepLocator.getStep(stepName);
 
 		try {
-			logger.debug(String.format("Executing step %s with step execution id %s and job execution id %s", stepExecution.getStepName(), stepExecutionId, jobExecutionId));
+			this.logger.debug(String.format(
+					"Executing step %s with step execution id %s and job execution id %s",
+					stepExecution.getStepName(), stepExecutionId, jobExecutionId));
 
 			step.execute(stepExecution);
 		}
 		catch (JobInterruptedException e) {
 			stepExecution.setStatus(BatchStatus.STOPPED);
-			jobRepository.update(stepExecution);
+			this.jobRepository.update(stepExecution);
 		}
 		catch (Throwable e) {
 			stepExecution.addFailureException(e);
 			stepExecution.setStatus(BatchStatus.FAILED);
-			jobRepository.update(stepExecution);
+			this.jobRepository.update(stepExecution);
 		}
 	}
 
 	private void validateRequest() {
-		Assert.isTrue(environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID), "A job execution id is required");
-		Assert.isTrue(environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID), "A step execution id is required");
-		Assert.isTrue(environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME), "A step name is required");
+		Assert.isTrue(
+				this.environment.containsProperty(
+						DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID),
+				"A job execution id is required");
+		Assert.isTrue(
+				this.environment.containsProperty(
+						DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID),
+				"A step execution id is required");
+		Assert.isTrue(
+				this.environment.containsProperty(
+						DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME),
+				"A step name is required");
 
-		Assert.isTrue(this.stepLocator.getStepNames().contains(environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)), "The step requested cannot be found in the provided BeanFactory");
+		Assert.isTrue(
+				this.stepLocator.getStepNames()
+						.contains(this.environment.getProperty(
+								DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)),
+				"The step requested cannot be found in the provided BeanFactory");
 	}
+
 }

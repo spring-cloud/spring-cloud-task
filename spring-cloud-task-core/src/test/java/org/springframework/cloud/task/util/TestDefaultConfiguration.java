@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(TaskProperties.class)
 public class TestDefaultConfiguration implements InitializingBean {
 
-	private TaskExecutionDaoFactoryBean factoryBean;
-
 	@Autowired
 	TaskProperties taskProperties;
+
+	private TaskExecutionDaoFactoryBean factoryBean;
 
 	@Autowired(required = false)
 	private ApplicationArguments applicationArguments;
@@ -61,7 +61,7 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskRepository taskRepository(){
+	public TaskRepository taskRepository() {
 		return new SimpleTaskRepository(this.factoryBean);
 	}
 
@@ -76,19 +76,21 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskListenerExecutorObjectFactory taskListenerExecutorObjectProvider(ConfigurableApplicationContext context) {
+	public TaskListenerExecutorObjectFactory taskListenerExecutorObjectProvider(
+			ConfigurableApplicationContext context) {
 		return new TaskListenerExecutorObjectFactory(context);
 	}
 
 	@Bean
-	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer){
+	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer) {
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
-				applicationArguments, taskExplorer, taskProperties, taskListenerExecutorObjectProvider(context));
+				this.applicationArguments, taskExplorer, this.taskProperties,
+				taskListenerExecutorObjectProvider(this.context));
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if(this.context.getBeanNamesForType(DataSource.class).length == 1){
+		if (this.context.getBeanNamesForType(DataSource.class).length == 1) {
 			DataSource dataSource = this.context.getBean(DataSource.class);
 			this.factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
 		}
@@ -96,4 +98,5 @@ public class TestDefaultConfiguration implements InitializingBean {
 			this.factoryBean = new TaskExecutionDaoFactoryBean();
 		}
 	}
+
 }

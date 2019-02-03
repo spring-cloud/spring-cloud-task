@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.spring;
 
 import java.util.ArrayList;
@@ -58,41 +59,40 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class JobConfiguration {
 
+	private static final int GRID_SIZE = 4;
+	// @checkstyle:off
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
-
 	@Autowired
 	public StepBuilderFactory stepBuilderFactory;
-
 	@Autowired
 	public DataSource dataSource;
-
 	@Autowired
 	public JobRepository jobRepository;
-
+	// @checkstyle:on
 	@Autowired
 	private ConfigurableApplicationContext context;
-
 	@Autowired
 	private DelegatingResourceLoader resourceLoader;
-
 	@Autowired
 	private Environment environment;
 
-	private static final int GRID_SIZE = 4;
-
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.RELEASE");
+		Resource resource = this.resourceLoader
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.RELEASE");
 
-		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
+		DeployerPartitionHandler partitionHandler =
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
 		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
 		commandLineArgs.add("--spring.batch.initializer.enabled=false");
-		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
-		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
+		partitionHandler
+			.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
+		partitionHandler
+			.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
 		partitionHandler.setMaxWorkers(1);
 		partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
@@ -107,7 +107,7 @@ public class JobConfiguration {
 
 				Map<String, ExecutionContext> partitions = new HashMap<>(gridSize);
 
-				for(int i = 0; i < GRID_SIZE; i++) {
+				for (int i = 0; i < GRID_SIZE; i++) {
 					ExecutionContext context1 = new ExecutionContext();
 					context1.put("partitionNumber", i);
 
@@ -128,7 +128,7 @@ public class JobConfiguration {
 	@Bean
 	@StepScope
 	public Tasklet workerTasklet(
-			final @Value("#{stepExecutionContext['partitionNumber']}")Integer partitionNumber) {
+		final @Value("#{stepExecutionContext['partitionNumber']}") Integer partitionNumber) {
 
 		return new Tasklet() {
 			@Override
@@ -142,26 +142,26 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step1(PartitionHandler partitionHandler) throws Exception {
-		return stepBuilderFactory.get("step1")
-				.partitioner(workerStep().getName(), partitioner())
-				.step(workerStep())
-				.partitionHandler(partitionHandler)
-				.build();
+		return this.stepBuilderFactory.get("step1")
+			.partitioner(workerStep().getName(), partitioner())
+			.step(workerStep())
+			.partitionHandler(partitionHandler)
+			.build();
 	}
 
 	@Bean
 	public Step workerStep() {
-		return stepBuilderFactory.get("workerStep")
-				.tasklet(workerTasklet(null))
-				.build();
+		return this.stepBuilderFactory.get("workerStep")
+			.tasklet(workerTasklet(null))
+			.build();
 	}
 
 	@Bean
 	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
-		return jobBuilderFactory.get("partitionedJob"+random.nextInt())
-				.start(step1(partitionHandler))
-				.build();
+		return this.jobBuilderFactory.get("partitionedJob" + random.nextInt())
+			.start(step1(partitionHandler))
+			.build();
 	}
 }

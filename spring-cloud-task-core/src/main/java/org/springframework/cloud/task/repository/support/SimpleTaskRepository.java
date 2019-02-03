@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,27 @@ import org.springframework.util.Assert;
 
 /**
  * Records the task execution information to the log and to TaskExecutionDao provided.
+ *
  * @author Glenn Renfro
  */
 public class SimpleTaskRepository implements TaskRepository {
 
+	/**
+	 * Max exit message size.
+	 */
 	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
+
+	/**
+	 * Max task name size.
+	 */
 	public static final int MAX_TASK_NAME_SIZE = 100;
+
+	/**
+	 * Max error message size.
+	 */
 	public static final int MAX_ERROR_MESSAGE_SIZE = 2500;
 
-	private static final  Log logger = LogFactory.getLog(SimpleTaskRepository.class);
+	private static final Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
 	private TaskExecutionDao taskExecutionDao;
 
@@ -53,63 +65,63 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	private int maxErrorMessageSize = MAX_ERROR_MESSAGE_SIZE;
 
-	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean){
-		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
+	public SimpleTaskRepository(
+			FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean) {
+		Assert.notNull(taskExecutionDaoFactoryBean,
+				"A FactoryBean that provides a TaskExecutionDao is required");
 
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
-	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean, Integer maxExitMessageSize,
-			Integer maxTaskNameSize, Integer maxErrorMessageSize){
-		Assert.notNull(taskExecutionDaoFactoryBean, "A FactoryBean that provides a TaskExecutionDao is required");
-		if(maxTaskNameSize != null) {
+	public SimpleTaskRepository(FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean,
+			Integer maxExitMessageSize, Integer maxTaskNameSize,
+			Integer maxErrorMessageSize) {
+		Assert.notNull(taskExecutionDaoFactoryBean,
+				"A FactoryBean that provides a TaskExecutionDao is required");
+		if (maxTaskNameSize != null) {
 			this.maxTaskNameSize = maxTaskNameSize;
 		}
-		if(maxExitMessageSize != null) {
+		if (maxExitMessageSize != null) {
 			this.maxExitMessageSize = maxExitMessageSize;
 		}
-		if(maxErrorMessageSize != null) {
+		if (maxErrorMessageSize != null) {
 			this.maxErrorMessageSize = maxErrorMessageSize;
 		}
 		this.taskExecutionDaoFactoryBean = taskExecutionDaoFactoryBean;
 	}
 
 	@Override
-	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode,
+			Date endTime, String exitMessage) {
 		return completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override
-	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage, String errorMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode,
+			Date endTime, String exitMessage, String errorMessage) {
 		initialize();
 
 		validateCompletedTaskExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimMessage(exitMessage, this.maxExitMessageSize);
 		errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
-		taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
-		logger.debug("Updating: TaskExecution with executionId="+executionId
-				+ " with the following {"
-				+ "exitCode=" + exitCode
-				+ ", endTime=" + endTime
-				+ ", exitMessage='" + exitMessage + '\''
-				+ ", errorMessage='" + errorMessage + '\''
-				+ '}');
+		this.taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime,
+				exitMessage, errorMessage);
+		logger.debug("Updating: TaskExecution with executionId=" + executionId
+				+ " with the following {" + "exitCode=" + exitCode + ", endTime="
+				+ endTime + ", exitMessage='" + exitMessage + '\'' + ", errorMessage='"
+				+ errorMessage + '\'' + '}');
 
-		return taskExecutionDao.getTaskExecution(executionId);
+		return this.taskExecutionDao.getTaskExecution(executionId);
 	}
 
 	@Override
 	public TaskExecution createTaskExecution(TaskExecution taskExecution) {
 		initialize();
 		validateCreateInformation(taskExecution);
-		TaskExecution daoTaskExecution =
-				taskExecutionDao.createTaskExecution(
-						taskExecution.getTaskName(),
-						taskExecution.getStartTime(),
-						taskExecution.getArguments(),
-						taskExecution.getExternalExecutionId(),
-						taskExecution.getParentExecutionId());
+		TaskExecution daoTaskExecution = this.taskExecutionDao.createTaskExecution(
+				taskExecution.getTaskName(), taskExecution.getStartTime(),
+				taskExecution.getArguments(), taskExecution.getExternalExecutionId(),
+				taskExecution.getParentExecutionId());
 		logger.debug("Creating: " + taskExecution.toString());
 		return daoTaskExecution;
 	}
@@ -117,21 +129,20 @@ public class SimpleTaskRepository implements TaskRepository {
 	@Override
 	public TaskExecution createTaskExecution(String name) {
 		initialize();
-		TaskExecution taskExecution =
-				taskExecutionDao.createTaskExecution(name, null,
-						Collections.<String>emptyList(), null);
+		TaskExecution taskExecution = this.taskExecutionDao.createTaskExecution(name,
+				null, Collections.<String>emptyList(), null);
 		logger.debug("Creating: " + taskExecution.toString());
 		return taskExecution;
 	}
 
 	@Override
 	public TaskExecution createTaskExecution() {
-		return createTaskExecution((String)null);
+		return createTaskExecution((String) null);
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionId) {
+	public TaskExecution startTaskExecution(long executionid, String taskName,
+			Date startTime, List<String> arguments, String externalExecutionId) {
 		return startTaskExecution(executionid, taskName, startTime, arguments,
 				externalExecutionId, null);
 	}
@@ -139,7 +150,7 @@ public class SimpleTaskRepository implements TaskRepository {
 	@Override
 	public void updateExternalExecutionId(long executionid, String externalExecutionId) {
 		initialize();
-		taskExecutionDao.updateExternalExecutionId(executionid, externalExecutionId);
+		this.taskExecutionDao.updateExternalExecutionId(executionid, externalExecutionId);
 	}
 
 	@Override
@@ -147,10 +158,9 @@ public class SimpleTaskRepository implements TaskRepository {
 			Date startTime, List<String> arguments, String externalExecutionId,
 			Long parentExecutionId) {
 		initialize();
-		TaskExecution taskExecution =
-				taskExecutionDao.startTaskExecution(executionid, taskName,
-						startTime, arguments, externalExecutionId,
-						parentExecutionId);
+		TaskExecution taskExecution = this.taskExecutionDao.startTaskExecution(
+				executionid, taskName, startTime, arguments, externalExecutionId,
+				parentExecutionId);
 		logger.debug("Starting: " + taskExecution.toString());
 		return taskExecution;
 	}
@@ -161,44 +171,47 @@ public class SimpleTaskRepository implements TaskRepository {
 	 */
 	public TaskExecutionDao getTaskExecutionDao() {
 		initialize();
-		return taskExecutionDao;
+		return this.taskExecutionDao;
 	}
 
 	private void initialize() {
-		if(!initialized) {
+		if (!this.initialized) {
 			try {
 				this.taskExecutionDao = this.taskExecutionDaoFactoryBean.getObject();
 				this.initialized = true;
 			}
 			catch (Exception e) {
-				throw new IllegalStateException("Unable to create the TaskExecutionDao", e);
+				throw new IllegalStateException("Unable to create the TaskExecutionDao",
+						e);
 			}
 		}
 	}
 
 	/**
 	 * Validate startTime and taskName are valid.
+	 * @param taskExecution task execution to validate
 	 */
 	private void validateCreateInformation(TaskExecution taskExecution) {
-		Assert.notNull(taskExecution.getStartTime(), "TaskExecution start time cannot be null.");
+		Assert.notNull(taskExecution.getStartTime(),
+				"TaskExecution start time cannot be null.");
 
-		if (taskExecution.getTaskName() != null &&
-				taskExecution.getTaskName().length() > this.maxTaskNameSize) {
-			throw new IllegalArgumentException("TaskName length exceeds "
-					+ this.maxTaskNameSize + " characters");
+		if (taskExecution.getTaskName() != null
+				&& taskExecution.getTaskName().length() > this.maxTaskNameSize) {
+			throw new IllegalArgumentException(
+					"TaskName length exceeds " + this.maxTaskNameSize + " characters");
 		}
 	}
 
-	private void validateCompletedTaskExitInformation(long executionId, Integer exitCode,  Date endTime){
+	private void validateCompletedTaskExitInformation(long executionId, Integer exitCode,
+			Date endTime) {
 		Assert.notNull(exitCode, "exitCode should not be null");
 		Assert.isTrue(exitCode >= 0, "exit code must be greater than or equal to zero");
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");
 	}
 
-	private String trimMessage(String exitMessage, int maxSize){
+	private String trimMessage(String exitMessage, int maxSize) {
 		String result = exitMessage;
-		if(exitMessage != null &&
-				exitMessage.length() > maxSize) {
+		if (exitMessage != null && exitMessage.length() > maxSize) {
 			result = exitMessage.substring(0, maxSize);
 		}
 		return result;
@@ -215,4 +228,5 @@ public class SimpleTaskRepository implements TaskRepository {
 	public void setMaxErrorMessageSize(int maxErrorMessageSize) {
 		this.maxErrorMessageSize = maxErrorMessageSize;
 	}
+
 }

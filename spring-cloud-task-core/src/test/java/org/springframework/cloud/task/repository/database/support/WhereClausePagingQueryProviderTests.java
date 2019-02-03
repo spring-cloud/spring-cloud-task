@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Glenn Renfro
@@ -37,13 +37,22 @@ import static org.junit.Assert.assertEquals;
 public class WhereClausePagingQueryProviderTests {
 
 	private String databaseProductName;
+
 	private String expectedQuery;
+
 	private Pageable pageable = PageRequest.of(0, 10);
 
+	public WhereClausePagingQueryProviderTests(String databaseProductName,
+			String expectedQuery) {
+		this.databaseProductName = databaseProductName;
+		this.expectedQuery = expectedQuery;
+	}
+
+	// @checkstyle:off
 	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][]{
-				{"Oracle", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
+		return Arrays.asList(new Object[][] {
+				{ "Oracle", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
 						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM "
 						+ "(SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
 						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID, ROWNUM as "
@@ -52,46 +61,43 @@ public class WhereClausePagingQueryProviderTests {
 						+ "LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM %PREFIX%EXECUTION "
 						+ "WHERE TASK_EXECUTION_ID = '0000' ORDER BY START_TIME DESC, "
 						+ "TASK_EXECUTION_ID DESC)) WHERE TMP_ROW_NUM >= 1 AND "
-						+ "TMP_ROW_NUM < 11"},
-				{"HSQL Database Engine","SELECT LIMIT 0 10 TASK_EXECUTION_ID, "
+						+ "TMP_ROW_NUM < 11" },
+				{ "HSQL Database Engine", "SELECT LIMIT 0 10 TASK_EXECUTION_ID, "
 						+ "START_TIME, END_TIME, TASK_NAME, EXIT_CODE, EXIT_MESSAGE, "
 						+ "ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM %PREFIX%EXECUTION "
 						+ "WHERE TASK_EXECUTION_ID = '0000' ORDER BY "
-						+ "START_TIME DESC, TASK_EXECUTION_ID DESC"},
-				{"PostgreSQL","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
+						+ "START_TIME DESC, TASK_EXECUTION_ID DESC" },
+				{ "PostgreSQL", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
 						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID "
 						+ "FROM %PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = '0000' "
 						+ "ORDER BY START_TIME DESC, "
-						+ "TASK_EXECUTION_ID DESC LIMIT 10 OFFSET 0"},
-				{"MySQL","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
+						+ "TASK_EXECUTION_ID DESC LIMIT 10 OFFSET 0" },
+				{ "MySQL", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
 						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM "
 						+ "%PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = '0000' "
 						+ "ORDER BY START_TIME DESC, "
-						+ "TASK_EXECUTION_ID DESC LIMIT 0, 10"},
-				{"Microsoft SQL Server","SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
-						+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM "
-						+ "(SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
-						+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID, ROW_NUMBER() "
-						+ "OVER (ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC) AS "
-						+ "TMP_ROW_NUM  FROM %PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = "
-						+ "'0000') TASK_EXECUTION_PAGE  WHERE TMP_ROW_NUM >= 1 "
-						+ "AND TMP_ROW_NUM < 11 ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC"}
-		});
+						+ "TASK_EXECUTION_ID DESC LIMIT 0, 10" },
+				{ "Microsoft SQL Server",
+						"SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, "
+								+ "TASK_NAME, EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID FROM "
+								+ "(SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
+								+ "EXIT_CODE, EXIT_MESSAGE, ERROR_MESSAGE, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID, ROW_NUMBER() "
+								+ "OVER (ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC) AS "
+								+ "TMP_ROW_NUM  FROM %PREFIX%EXECUTION WHERE TASK_EXECUTION_ID = "
+								+ "'0000') TASK_EXECUTION_PAGE  WHERE TMP_ROW_NUM >= 1 "
+								+ "AND TMP_ROW_NUM < 11 ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC" } });
 	}
-
-	public WhereClausePagingQueryProviderTests(String databaseProductName, String expectedQuery) {
-		this.databaseProductName = databaseProductName;
-		this.expectedQuery = expectedQuery;
-	}
+	// @checkstyle:on
 
 	@Test
-	public void testGeneratedQuery() throws Exception{
-		PagingQueryProvider pagingQueryProvider =
-				TestDBUtils.getPagingQueryProvider(databaseProductName,
-						"TASK_EXECUTION_ID = '0000'");
-		String actualQuery = pagingQueryProvider.getPageQuery(pageable);
-		assertEquals(String.format(
-				"the generated query for %s, was not the expected query",
-				databaseProductName), expectedQuery, actualQuery);
+	public void testGeneratedQuery() throws Exception {
+		PagingQueryProvider pagingQueryProvider = TestDBUtils.getPagingQueryProvider(
+				this.databaseProductName, "TASK_EXECUTION_ID = '0000'");
+		String actualQuery = pagingQueryProvider.getPageQuery(this.pageable);
+		assertThat(actualQuery).as(
+				String.format("the generated query for %s, was not the expected query",
+						this.databaseProductName))
+				.isEqualTo(this.expectedQuery);
 	}
+
 }

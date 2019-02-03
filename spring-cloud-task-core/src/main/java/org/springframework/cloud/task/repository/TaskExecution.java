@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 public class TaskExecution {
 
 	/**
-	 * The unique id  associated with the task execution.
+	 * The unique id associated with the task execution.
 	 */
 	private long executionId;
 
@@ -75,7 +75,7 @@ public class TaskExecution {
 	private String externalExecutionId;
 
 	/**
-	 * Error information available upon the failure of a task
+	 * Error information available upon the failure of a task.
 	 *
 	 * @since 1.1.0
 	 */
@@ -87,14 +87,12 @@ public class TaskExecution {
 	private List<String> arguments;
 
 	public TaskExecution() {
-		arguments = new ArrayList<>();
+		this.arguments = new ArrayList<>();
 	}
 
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
-						 Date startTime, Date endTime,
-						 String exitMessage, List<String> arguments,
-						 String errorMessage, String externalExecutionId,
-						 Long parentExecutionId) {
+			Date startTime, Date endTime, String exitMessage, List<String> arguments,
+			String errorMessage, String externalExecutionId, Long parentExecutionId) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		this.executionId = executionId;
@@ -102,24 +100,23 @@ public class TaskExecution {
 		this.taskName = taskName;
 		this.exitMessage = exitMessage;
 		this.arguments = new ArrayList<>(arguments);
-		this.startTime = (startTime != null) ? (Date)startTime.clone() : null;
-		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
+		this.startTime = (startTime != null) ? (Date) startTime.clone() : null;
+		this.endTime = (endTime != null) ? (Date) endTime.clone() : null;
 		this.errorMessage = errorMessage;
 		this.externalExecutionId = externalExecutionId;
 		this.parentExecutionId = parentExecutionId;
 	}
 
 	public TaskExecution(long executionId, Integer exitCode, String taskName,
-			Date startTime, Date endTime,
-			String exitMessage, List<String> arguments,
+			Date startTime, Date endTime, String exitMessage, List<String> arguments,
 			String errorMessage, String externalExecutionId) {
 
-		this(executionId, exitCode, taskName, startTime, endTime, exitMessage,
-				arguments, errorMessage,externalExecutionId, null);
+		this(executionId, exitCode, taskName, startTime, endTime, exitMessage, arguments,
+				errorMessage, externalExecutionId, null);
 	}
 
 	public long getExecutionId() {
-		return executionId;
+		return this.executionId;
 	}
 
 	public Integer getExitCode() {
@@ -131,7 +128,7 @@ public class TaskExecution {
 	}
 
 	public String getTaskName() {
-		return taskName;
+		return this.taskName;
 	}
 
 	public void setTaskName(String taskName) {
@@ -139,23 +136,23 @@ public class TaskExecution {
 	}
 
 	public Date getStartTime() {
-		return (startTime != null) ? (Date)startTime.clone() : null;
+		return (this.startTime != null) ? (Date) this.startTime.clone() : null;
 	}
 
 	public void setStartTime(Date startTime) {
-		this.startTime = (startTime != null) ? (Date)startTime.clone() : null;
+		this.startTime = (startTime != null) ? (Date) startTime.clone() : null;
 	}
 
 	public Date getEndTime() {
-		return (endTime != null) ? (Date)endTime.clone() : null;
+		return (this.endTime != null) ? (Date) this.endTime.clone() : null;
 	}
 
 	public void setEndTime(Date endTime) {
-		this.endTime = (endTime != null) ? (Date)endTime.clone() : null;
+		this.endTime = (endTime != null) ? (Date) endTime.clone() : null;
 	}
 
 	public String getExitMessage() {
-		return exitMessage;
+		return this.exitMessage;
 	}
 
 	public void setExitMessage(String exitMessage) {
@@ -163,15 +160,15 @@ public class TaskExecution {
 	}
 
 	public List<String> getArguments() {
-		return arguments;
+		return this.arguments;
 	}
 
 	public void setArguments(List<String> arguments) {
-		this.arguments = new ArrayList<> (arguments);
+		this.arguments = new ArrayList<>(arguments);
 	}
 
 	public String getErrorMessage() {
-		return errorMessage;
+		return this.errorMessage;
 	}
 
 	public void setErrorMessage(String errorMessage) {
@@ -179,7 +176,7 @@ public class TaskExecution {
 	}
 
 	public String getExternalExecutionId() {
-		return externalExecutionId;
+		return this.externalExecutionId;
 	}
 
 	public void setExternalExecutionId(String externalExecutionId) {
@@ -187,7 +184,7 @@ public class TaskExecution {
 	}
 
 	public Long getParentExecutionId() {
-		return parentExecutionId;
+		return this.parentExecutionId;
 	}
 
 	public void setParentExecutionId(Long parentExecutionId) {
@@ -196,17 +193,13 @@ public class TaskExecution {
 
 	@Override
 	public String toString() {
-		return "TaskExecution{" +
-				"executionId=" + executionId +
-				", parentExecutionId=" + parentExecutionId +
-				", exitCode=" + exitCode +
-				", taskName='" + taskName + '\'' +
-				", startTime=" + startTime +
-				", endTime=" + endTime +
-				", exitMessage='" + exitMessage + '\'' +
-				", externalExecutionId='" + externalExecutionId + '\'' +
-				", errorMessage='" + errorMessage + '\'' +
-				", arguments=" + arguments +
-				'}';
+		return "TaskExecution{" + "executionId=" + this.executionId
+				+ ", parentExecutionId=" + this.parentExecutionId + ", exitCode="
+				+ this.exitCode + ", taskName='" + this.taskName + '\'' + ", startTime="
+				+ this.startTime + ", endTime=" + this.endTime + ", exitMessage='"
+				+ this.exitMessage + '\'' + ", externalExecutionId='"
+				+ this.externalExecutionId + '\'' + ", errorMessage='" + this.errorMessage
+				+ '\'' + ", arguments=" + this.arguments + '}';
 	}
+
 }

@@ -1,10 +1,10 @@
 {
-  "properties": [
-    {
-      "defaultValue": true,
-      "name": "spring.cloud.task.events.enabled",
-      "description": "This property is used to determine if a task app should emit task events.",
-      "type": "java.lang.Boolean"
-    }
-  ]
+	"properties": [
+		{
+			"defaultValue": true,
+			"name": "spring.cloud.task.events.enabled",
+			"description": "This property is used to determine if a task app should emit task events.",
+			"type": "java.lang.Boolean"
+		}
+	]
 }

@@ -1,17 +1,17 @@
 /*
- *  Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.listener;
@@ -29,20 +29,23 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
- *  Setups up the ItemWriteEventsListener to emit events to the spring cloud stream output channel.
+ * Setups up the ItemWriteEventsListener to emit events to the spring cloud stream output
+ * channel.
  *
- *  Each method provides an informational message.
- *  {@link ItemWriteListener#onWriteError(Exception, List)} provides a message as well as
- *  the exception's message via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
+ * Each method provides an informational message.
+ * {@link ItemWriteListener#onWriteError(Exception, List)} provides a message as well as
+ * the exception's message via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
 public class EventEmittingItemWriteListener implements ItemWriteListener, Ordered {
 
-	private static final Log logger = LogFactory.getLog(EventEmittingItemWriteListener.class);
+	private static final Log logger = LogFactory
+			.getLog(EventEmittingItemWriteListener.class);
 
 	private MessagePublisher<String> messagePublisher;
+
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingItemWriteListener(MessageChannel output) {
@@ -73,7 +76,8 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onWriteError: " + exception.getMessage(), exception);
 		}
-		String payload = "Exception while " + items.size() + " items are attempted to be written.";
+		String payload = "Exception while " + items.size()
+				+ " items are attempted to be written.";
 		this.messagePublisher.publishWithThrowableHeader(payload, exception.getMessage());
 	}
 
@@ -81,4 +85,5 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 	public int getOrder() {
 		return this.order;
 	}
+
 }

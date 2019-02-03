@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
@@ -63,27 +64,29 @@ public class TestConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskRepository taskRepository(){
+	public TaskRepository taskRepository() {
 		return new SimpleTaskRepository(this.taskExecutionDaoFactoryBean);
 	}
 
 	@Bean
 	public PlatformTransactionManager transactionManager() {
-		if(dataSource == null) {
+		if (this.dataSource == null) {
 			return new ResourcelessTransactionManager();
 		}
 		else {
-			return new DataSourceTransactionManager(dataSource);
+			return new DataSourceTransactionManager(this.dataSource);
 		}
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if(this.dataSource != null) {
-			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource);
+		if (this.dataSource != null) {
+			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(
+					this.dataSource);
 		}
 		else {
 			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
 		}
 	}
+
 }

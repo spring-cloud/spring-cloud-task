@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.Arrays;
@@ -29,12 +30,11 @@ import org.springframework.core.env.PropertySource;
 
 /**
  * Copies all existing environment variables as made available in the {@link Environment}
- * only if includeCurrentEnvironment is set to true (default).
- * The <code>environmentProperties</code> option provides the ability to override any
- * specific values on an as needed basis.
+ * only if includeCurrentEnvironment is set to true (default). The
+ * <code>environmentProperties</code> option provides the ability to override any specific
+ * values on an as needed basis.
  *
  * @author Michael Minella
- *
  * @since 1.0.2
  */
 public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
@@ -53,28 +53,31 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 	}
 
 	/**
-	 * @param environmentProperties a {@link Map} of properties used to override any values
-	 * configured in the current {@link Environment}
+	 * @param environmentProperties a {@link Map} of properties used to override any
+	 * values configured in the current {@link Environment}
 	 */
 	public void setEnvironmentProperties(Map<String, String> environmentProperties) {
 		this.environmentProperties = environmentProperties;
 	}
 
 	/**
-	 * Establishes if current environment variables will be included as a part of the provider.
-	 * @param includeCurrentEnvironment true(default) include local environment properties.  False do not include
-	 * current environment properties.
+	 * Establishes if current environment variables will be included as a part of the
+	 * provider.
+	 * @param includeCurrentEnvironment true(default) include local environment
+	 * properties. False do not include current environment properties.
 	 */
 	public void setIncludeCurrentEnvironment(boolean includeCurrentEnvironment) {
 		this.includeCurrentEnvironment = includeCurrentEnvironment;
 	}
 
 	@Override
-	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
+	public Map<String, String> getEnvironmentVariables(
+			ExecutionContext executionContext) {
 
-		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
+		Map<String, String> environmentProperties = new HashMap<>(
+				this.environmentProperties.size());
 
-		if(includeCurrentEnvironment) {
+		if (this.includeCurrentEnvironment) {
 			environmentProperties.putAll(getCurrentEnvironmentProperties());
 		}
 
@@ -88,9 +91,11 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 
 		Set<String> keys = new HashSet<>();
 
-		for (PropertySource<?> propertySource : ((AbstractEnvironment) this.environment).getPropertySources()) {
+		for (PropertySource<?> propertySource : ((AbstractEnvironment) this.environment)
+				.getPropertySources()) {
 			if (propertySource instanceof MapPropertySource) {
-				keys.addAll(Arrays.asList(((MapPropertySource) propertySource).getPropertyNames()));
+				keys.addAll(Arrays
+						.asList(((MapPropertySource) propertySource).getPropertyNames()));
 			}
 		}
 
@@ -100,4 +105,5 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 
 		return currentEnvironment;
 	}
+
 }

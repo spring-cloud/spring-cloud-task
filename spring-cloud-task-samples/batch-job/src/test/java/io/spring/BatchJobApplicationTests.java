@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,23 +50,23 @@ public class BatchJobApplicationTests {
 
 		String output = this.outputCapture.toString();
 		assertTrue("Unable to find the timestamp: " + output,
-				output.contains(JOB_RUN_MESSAGE));
+			output.contains(JOB_RUN_MESSAGE));
 		assertTrue("Test results do not show create task message: " + output,
-				output.contains(CREATE_TASK_MESSAGE));
+			output.contains(CREATE_TASK_MESSAGE));
 		assertTrue("Test results do not show success message: " + output,
-				output.contains(UPDATE_TASK_MESSAGE));
+			output.contains(UPDATE_TASK_MESSAGE));
 		assertTrue("Test results do not show success message: " + output,
-				output.contains(EXIT_CODE_MESSAGE));
+			output.contains(EXIT_CODE_MESSAGE));
 
 		int i = output.indexOf(JOB_ASSOCIATION_MESSAGE);
 
 		assertTrue("Test results do not show the listener message: " + output,
-				i > 0);
+			i > 0);
 
 		int j = output.indexOf(JOB_ASSOCIATION_MESSAGE, i + 1);
 
 		assertTrue("Test results do not show the listener message: " + output,
-				j > i);
+			j > i);
 
 
 		String taskTitle = "Demo Batch Job Task";

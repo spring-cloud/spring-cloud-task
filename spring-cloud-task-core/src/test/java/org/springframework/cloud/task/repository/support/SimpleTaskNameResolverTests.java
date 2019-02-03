@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.repository.support;
 
 import org.junit.Test;
 
 import org.springframework.context.support.GenericApplicationContext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -34,7 +34,9 @@ public class SimpleTaskNameResolverTests {
 		SimpleTaskNameResolver taskNameResolver = new SimpleTaskNameResolver();
 		taskNameResolver.setApplicationContext(context);
 
-		assertTrue(taskNameResolver.getTaskName().startsWith("org.springframework.context.support.GenericApplicationContext"));
+		assertThat(taskNameResolver.getTaskName().startsWith(
+				"org.springframework.context.support.GenericApplicationContext"))
+						.isTrue();
 	}
 
 	@Test
@@ -45,7 +47,7 @@ public class SimpleTaskNameResolverTests {
 		SimpleTaskNameResolver taskNameResolver = new SimpleTaskNameResolver();
 		taskNameResolver.setApplicationContext(context);
 
-		assertTrue(taskNameResolver.getTaskName().startsWith("foo_bar"));
+		assertThat(taskNameResolver.getTaskName().startsWith("foo_bar")).isTrue();
 	}
 
 	@Test
@@ -56,7 +58,7 @@ public class SimpleTaskNameResolverTests {
 		SimpleTaskNameResolver taskNameResolver = new SimpleTaskNameResolver();
 		taskNameResolver.setApplicationContext(context);
 
-		assertEquals("foo", taskNameResolver.getTaskName());
+		assertThat(taskNameResolver.getTaskName()).isEqualTo("foo");
 	}
 
 	@Test
@@ -69,6 +71,7 @@ public class SimpleTaskNameResolverTests {
 
 		taskNameResolver.setConfiguredName("bar");
 
-		assertEquals("bar", taskNameResolver.getTaskName());
+		assertThat(taskNameResolver.getTaskName()).isEqualTo("bar");
 	}
+
 }

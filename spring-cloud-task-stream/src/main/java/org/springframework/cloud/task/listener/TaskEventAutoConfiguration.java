@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.listener;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -31,38 +32,51 @@ import org.springframework.integration.gateway.GatewayProxyFactoryBean;
 import org.springframework.messaging.MessageChannel;
 
 /**
- *
  * @author Michael Minella
  */
 @Configuration
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
+// @checkstyle:off
 @ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled", havingValue = "true", matchIfMissing = true)
+// @checkstyle:on
 @PropertySource("classpath:/org/springframework/cloud/task/application.properties")
 @AutoConfigureBefore(BindingServiceConfiguration.class)
 @AutoConfigureAfter(SimpleTaskAutoConfiguration.class)
 public class TaskEventAutoConfiguration {
 
+	/**
+	 * Task Event channels definition.
+	 */
+	public interface TaskEventChannels {
+
+		/**
+		 * Name of the task events channel.
+		 */
+		String TASK_EVENTS = "task-events";
+
+		@Output(TASK_EVENTS)
+		MessageChannel taskEvents();
+
+	}
+
+	/**
+	 * Configuration for a {@link TaskExecutionListener}.
+	 */
 	@Configuration
 	@EnableBinding(TaskEventChannels.class)
 	public static class ListenerConfiguration {
 
 		@Bean
 		public GatewayProxyFactoryBean taskEventListener() {
-			GatewayProxyFactoryBean factoryBean =
-					new GatewayProxyFactoryBean(TaskExecutionListener.class);
+			GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(
+					TaskExecutionListener.class);
 
 			factoryBean.setDefaultRequestChannelName(TaskEventChannels.TASK_EVENTS);
 
 			return factoryBean;
 		}
+
 	}
 
-	public interface TaskEventChannels {
-
-		String TASK_EVENTS = "task-events";
-
-		@Output(TASK_EVENTS)
-		MessageChannel taskEvents();
-	}
 }

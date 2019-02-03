@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.handler;
@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -59,18 +60,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
  */
 public class TaskJobLauncherCommandLineRunnerTests {
 
-	private ConfigurableApplicationContext applicationContext;
+	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n"
+			+ "Job jobA failed during execution for job instance id 1 with jobExecutionId of 1 \n";
 
-	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n" +
-			"Job jobA failed during execution for job instance id 1 with jobExecutionId of 1 \n";
+	private ConfigurableApplicationContext applicationContext;
 
 	@After
 	public void tearDown() {
@@ -82,20 +83,22 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.failOnJobFailure=true"};
-		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
+				"--spring.cloud.task.batch.failOnJobFailure=true" };
+		validateForFail(DEFAULT_ERROR_MESSAGE,
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
 				enabledArgs);
 	}
 
 	/**
-	 * Verifies that the task will return an exit code other than zero if the
-	 * job fails with the deprecated EnableTask annotation.
+	 * Verifies that the task will return an exit code other than zero if the job fails
+	 * with the deprecated EnableTask annotation.
 	 */
 	@Test
 	public void testTaskJobLauncherCLRSuccessFailWithAnnotation() {
 		String[] enabledArgs = new String[] {
-				"--spring.cloud.task.batch.failOnJobFailure=true"};
-		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class,
+				"--spring.cloud.task.batch.failOnJobFailure=true" };
+		validateForFail(DEFAULT_ERROR_MESSAGE,
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class,
 				enabledArgs);
 	}
 
@@ -103,8 +106,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherCLRSuccessFailWithTaskExecutor() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500"};
-		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500" };
+		validateForFail(DEFAULT_ERROR_MESSAGE,
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
 				enabledArgs);
 	}
 
@@ -112,11 +116,12 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.fail-on-job-failure=true",
-				"--spring.cloud.task.batch.jobNames=jobSucceed"};
+				"--spring.cloud.task.batch.jobNames=jobSucceed" };
 		boolean isExceptionThrown = false;
 		try {
-			this.applicationContext = SpringApplication
-					.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class }, enabledArgs);
+			this.applicationContext = SpringApplication.run(new Class[] {
+					TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+					enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -128,39 +133,50 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	@Test
 	public void testCommandLineRunnerSetToFalse() {
 		String[] enabledArgs = new String[] {};
-		this.applicationContext = SpringApplication
-				.run(new Class[] { TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class }, enabledArgs);
+		this.applicationContext = SpringApplication.run(
+				new Class[] {
+						TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class },
+				enabledArgs);
 		validateContext();
-		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
+		assertThat(this.applicationContext.getBean(JobLauncherCommandLineRunner.class))
+				.isNotNull();
 
-		Executable executable = () -> applicationContext.getBean(TaskJobLauncherCommandLineRunner.class);
+		Executable executable = () -> this.applicationContext
+				.getBean(TaskJobLauncherCommandLineRunner.class);
 
-		Throwable exception = assertThrows(NoSuchBeanDefinitionException.class, executable);
-		assertThat(exception.getMessage()).isEqualTo("No qualifying bean of type " +
-				"'org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner' available");
+		assertThatExceptionOfType(NoSuchBeanDefinitionException.class)
+				.isThrownBy(executable::execute).withMessage("No qualifying bean of type "
+						+ "'org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner' available");
 		validateContext();
 	}
 
 	private void validateContext() {
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
+				PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
+				page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
-		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
+		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next())
+				.getExecutionId()).isEqualTo(1);
 	}
 
-	private void validateForFail(String errorMessage, Class clazz, String [] enabledArgs) {
-		Executable executable = () -> this.applicationContext = SpringApplication
-				.run(new Class[] { clazz,PropertyPlaceholderAutoConfiguration.class}, enabledArgs);
+	private void validateForFail(String errorMessage, Class clazz, String[] enabledArgs) {
+		Executable executable = () -> this.applicationContext = SpringApplication.run(
+				new Class[] { clazz, PropertyPlaceholderAutoConfiguration.class },
+				enabledArgs);
 
-		Throwable exception = assertThrows(IllegalStateException.class, executable);
-		assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
+		assertThatExceptionOfType(IllegalStateException.class)
+				.isThrownBy(executable::execute).has(new Condition<Throwable>() {
+					@Override
+					public boolean matches(Throwable value) {
+						return errorMessage.equals(value.getCause().getMessage());
+					}
+				});
 	}
-
 
 	@EnableBatchProcessing
 	@TaskBatchTest
@@ -176,25 +192,23 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 		@Bean
 		public Job job() {
-			return jobBuilderFactory.get("job")
-					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+			return this.jobBuilderFactory.get("job")
+					.start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+						public RepeatStatus execute(StepContribution contribution,
+								ChunkContext chunkContext) {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
-					}).build())
-					.build();
+					}).build()).build();
 		}
+
 	}
 
 	@EnableBatchProcessing
-	@ImportAutoConfiguration({
-			PropertyPlaceholderAutoConfiguration.class,
-			BatchAutoConfiguration.class,
-			TaskBatchAutoConfiguration.class,
-			TaskJobLauncherAutoConfiguration.class,
-			SingleTaskConfiguration.class,
+	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class,
+			BatchAutoConfiguration.class, TaskBatchAutoConfiguration.class,
+			TaskJobLauncherAutoConfiguration.class, SingleTaskConfiguration.class,
 			SimpleTaskAutoConfiguration.class })
 	@Import(EmbeddedDataSourceConfiguration.class)
 	@EnableTask
@@ -208,50 +222,54 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 		@Bean
 		public Job jobFail() {
-			return jobBuilderFactory.get("jobA")
-					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+			return this.jobBuilderFactory.get("jobA")
+					.start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext)
-								throws Exception {
+								ChunkContext chunkContext) throws Exception {
 							System.out.println("Executed");
-								throw new IllegalStateException("WHOOPS");
+							throw new IllegalStateException("WHOOPS");
 						}
-					}).build())
-					.build();
+					}).build()).build();
 		}
 
 		@Bean
 		public Job jobFun() {
-			return jobBuilderFactory.get("jobSucceed")
-					.start(stepBuilderFactory.get("step1Succeed").tasklet(new Tasklet() {
+			return this.jobBuilderFactory.get("jobSucceed").start(
+					this.stepBuilderFactory.get("step1Succeed").tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution,
 								ChunkContext chunkContext) {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
-					}).build())
-					.build();
+					}).build()).build();
 		}
+
 	}
 
 	@EnableTask
-	public static class JobWithFailureAnnotatedConfiguration extends JobWithFailureConfiguration{
+	public static class JobWithFailureAnnotatedConfiguration
+			extends JobWithFailureConfiguration {
 
 	}
 
-	public static class JobWithFailureTaskExecutorConfiguration extends JobWithFailureConfiguration{
+	public static class JobWithFailureTaskExecutorConfiguration
+			extends JobWithFailureConfiguration {
+
 		@Bean
 		public BatchConfigurer batchConfigurer(DataSource dataSource) {
 			return new TestBatchConfigurer(dataSource);
 		}
+
 	}
 
-	private static class TestBatchConfigurer extends DefaultBatchConfigurer{
-		public TestBatchConfigurer(DataSource dataSource) {
+	private static class TestBatchConfigurer extends DefaultBatchConfigurer {
+
+		TestBatchConfigurer(DataSource dataSource) {
 			super(dataSource);
 		}
+
 		protected JobLauncher createJobLauncher() throws Exception {
 			SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
 			jobLauncher.setJobRepository(getJobRepository());
@@ -259,5 +277,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 			jobLauncher.afterPropertiesSet();
 			return jobLauncher;
 		}
+
 	}
+
 }

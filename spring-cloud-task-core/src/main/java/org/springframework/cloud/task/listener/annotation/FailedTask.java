@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,22 +27,22 @@ import org.springframework.cloud.task.repository.TaskExecution;
 
 /**
  * <p>
- * {@link TaskExecutionListener#onTaskFailed(TaskExecution, Throwable)}
+ * {@link TaskExecutionListener#onTaskFailed(TaskExecution, Throwable)}.
  * </p>
  *
  * <pre class="code">
  * public class MyListener {
-
  * 	&#064;FailedTask
  * 	public void  doSomething(TaskExecution taskExecution, Throwable throwable) {
- * 	}
+ *    }
  * }
  * </pre>
  *
  * @author Glenn Renfro
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FailedTask {
+
 }

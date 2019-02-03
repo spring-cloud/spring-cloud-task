@@ -1,17 +1,17 @@
 /*
- *  Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.launcher;
@@ -24,14 +24,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Glenn Renfro
  */
 public class TaskLaunchRequestTests {
+
 	public static final String URI = "http://myURI";
 
 	public static final String APP_NAME = "MY_APP_NAME";
@@ -43,51 +42,47 @@ public class TaskLaunchRequestTests {
 		args.add("foo");
 		map.put("bar", "baz");
 
-		TaskLaunchRequest request = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP, null);
-		TaskLaunchRequest request2 = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP, null);
-		assertFalse(request.equals(null));
-		assertFalse(request.equals("nope"));
-		assertTrue(request.equals(request));
-		assertTrue(request.equals(request2));
+		TaskLaunchRequest request = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
+				Collections.EMPTY_MAP, Collections.EMPTY_MAP, null);
+		TaskLaunchRequest request2 = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
+				Collections.EMPTY_MAP, Collections.EMPTY_MAP, null);
+		assertThat(request.equals(null)).isFalse();
+		assertThat(request.equals("nope")).isFalse();
+		assertThat(request.equals(request)).isTrue();
+		assertThat(request.equals(request2)).isTrue();
 		TaskLaunchRequest requestDiff = new TaskLaunchRequest("http://oops",
-				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP, null);
-		assertFalse(request.equals(requestDiff));
+				Collections.EMPTY_LIST, Collections.EMPTY_MAP, Collections.EMPTY_MAP,
+				null);
+		assertThat(request.equals(requestDiff)).isFalse();
 
 		requestDiff = new TaskLaunchRequest(URI, args, Collections.EMPTY_MAP,
 				Collections.EMPTY_MAP, null);
-		assertFalse(request.equals(requestDiff));
+		assertThat(request.equals(requestDiff)).isFalse();
 
-		requestDiff = new TaskLaunchRequest(URI,
-				null, null, null, null);
-		assertTrue(request.equals(requestDiff));
+		requestDiff = new TaskLaunchRequest(URI, null, null, null, null);
+		assertThat(request.equals(requestDiff)).isTrue();
 
 		requestDiff = new TaskLaunchRequest(URI, Collections.EMPTY_LIST, map,
 				Collections.EMPTY_MAP, null);
-		assertFalse(request.equals(requestDiff));
+		assertThat(request.equals(requestDiff)).isFalse();
 
 		requestDiff = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
 				Collections.EMPTY_MAP, map, null);
-		assertFalse(request.equals(requestDiff));
+		assertThat(request.equals(requestDiff)).isFalse();
 
-		assertEquals(request.hashCode(), request.hashCode());
+		assertThat(request.hashCode()).isEqualTo(request.hashCode());
 
 	}
 
 	@Test
 	public void testApplicationName() {
-		TaskLaunchRequest request = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP, null);
-		assertTrue(request.getApplicationName().startsWith("Task-"));
+		TaskLaunchRequest request = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
+				Collections.EMPTY_MAP, Collections.EMPTY_MAP, null);
+		assertThat(request.getApplicationName().startsWith("Task-")).isTrue();
 
-		request = new TaskLaunchRequest(URI,
-				Collections.EMPTY_LIST, Collections.EMPTY_MAP,
-				Collections.EMPTY_MAP, APP_NAME);
-		assertEquals(APP_NAME, request.getApplicationName());
+		request = new TaskLaunchRequest(URI, Collections.EMPTY_LIST,
+				Collections.EMPTY_MAP, Collections.EMPTY_MAP, APP_NAME);
+		assertThat(request.getApplicationName()).isEqualTo(APP_NAME);
 	}
+
 }

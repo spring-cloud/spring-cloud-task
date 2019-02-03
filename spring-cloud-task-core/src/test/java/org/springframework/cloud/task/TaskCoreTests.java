@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies core behavior for Tasks.
@@ -41,42 +41,49 @@ import static org.junit.Assert.assertTrue;
 public class TaskCoreTests {
 
 	private static final String TASK_NAME = "taskEventTest";
-	private static final String EXCEPTION_MESSAGE = "FOO EXCEPTION";
-	private static final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
-	private static final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
-	private static final String SUCCESS_EXIT_CODE_MESSAGE = "with the following {exitCode=0";
-	private static final String EXCEPTION_EXIT_CODE_MESSAGE = "with the following {exitCode=1";
-	private static final String EXCEPTION_INVALID_TASK_EXECUTION_ID =
-			"java.lang.IllegalArgumentException: Invalid TaskExecution, ID 55 not found";
-	private static final String ERROR_MESSAGE =
-			"errorMessage='java.lang.IllegalStateException: Failed to execute CommandLineRunner";
 
-	private ConfigurableApplicationContext applicationContext;
+	private static final String EXCEPTION_MESSAGE = "FOO EXCEPTION";
+
+	private static final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
+
+	private static final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
+
+	private static final String SUCCESS_EXIT_CODE_MESSAGE = "with the following {exitCode=0";
+
+	private static final String EXCEPTION_EXIT_CODE_MESSAGE = "with the following {exitCode=1";
+
+	private static final String EXCEPTION_INVALID_TASK_EXECUTION_ID = "java.lang.IllegalArgumentException: "
+			+ "Invalid TaskExecution, ID 55 not found";
+
+	private static final String ERROR_MESSAGE = "errorMessage='java.lang.IllegalStateException: "
+			+ "Failed to execute CommandLineRunner";
 
 	@Rule
 	public OutputCapture outputCapture = new OutputCapture();
 
+	private ConfigurableApplicationContext applicationContext;
+
 	@After
 	public void teardown() {
-		if (applicationContext != null && applicationContext.isActive()) {
-			applicationContext.close();
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
+			this.applicationContext.close();
 		}
 	}
 
 	@Test
 	public void successfulTaskTest() {
-		this.applicationContext = SpringApplication.run( TaskConfiguration.class,
+		this.applicationContext = SpringApplication.run(TaskConfiguration.class,
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
 		String output = this.outputCapture.toString();
-		assertTrue("Test results do not show create task message: " + output,
-				output.contains(CREATE_TASK_MESSAGE));
-		assertTrue("Test results do not show success message: " + output,
-				output.contains(UPDATE_TASK_MESSAGE));
-		assertTrue("Test results have incorrect exit code: " + output,
-				output.contains(SUCCESS_EXIT_CODE_MESSAGE));
+		assertThat(output.contains(CREATE_TASK_MESSAGE))
+				.as("Test results do not show create task message: " + output).isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE))
+				.as("Test results do not show success message: " + output).isTrue();
+		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE))
+				.as("Test results have incorrect exit code: " + output).isTrue();
 	}
 
 	/**
@@ -84,25 +91,27 @@ public class TaskCoreTests {
 	 */
 	@Test
 	public void successfulTaskTestWithAnnotation() {
-		this.applicationContext = SpringApplication.run( TaskConfigurationWithAnotation.class,
+		this.applicationContext = SpringApplication.run(
+				TaskConfigurationWithAnotation.class,
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
 		String output = this.outputCapture.toString();
-		assertTrue("Test results do not show create task message: " + output,
-				output.contains(CREATE_TASK_MESSAGE));
-		assertTrue("Test results do not show success message: " + output,
-				output.contains(UPDATE_TASK_MESSAGE));
-		assertTrue("Test results have incorrect exit code: " + output,
-				output.contains(SUCCESS_EXIT_CODE_MESSAGE));
+		assertThat(output.contains(CREATE_TASK_MESSAGE))
+				.as("Test results do not show create task message: " + output).isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE))
+				.as("Test results do not show success message: " + output).isTrue();
+		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE))
+				.as("Test results have incorrect exit code: " + output).isTrue();
 	}
 
 	@Test
 	public void exceptionTaskTest() {
 		boolean exceptionFired = false;
 		try {
-			this.applicationContext = SpringApplication.run( TaskExceptionConfiguration.class,
+			this.applicationContext = SpringApplication.run(
+					TaskExceptionConfiguration.class,
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false");
@@ -110,19 +119,20 @@ public class TaskCoreTests {
 		catch (IllegalStateException exception) {
 			exceptionFired = true;
 		}
-		assertTrue("An IllegalStateException should have been thrown", exceptionFired);
+		assertThat(exceptionFired).as("An IllegalStateException should have been thrown")
+				.isTrue();
 
 		String output = this.outputCapture.toString();
-		assertTrue("Test results do not show create task message: " + output,
-				output.contains(CREATE_TASK_MESSAGE));
-		assertTrue("Test results do not show success message: " + output,
-				output.contains(UPDATE_TASK_MESSAGE));
-		assertTrue("Test results have incorrect exit code: " + output,
-				output.contains(EXCEPTION_EXIT_CODE_MESSAGE));
-		assertTrue("Test results have incorrect exit message: " + output,
-				output.contains(ERROR_MESSAGE));
-		assertTrue("Test results have exception message: " + output,
-				output.contains(EXCEPTION_MESSAGE));
+		assertThat(output.contains(CREATE_TASK_MESSAGE))
+				.as("Test results do not show create task message: " + output).isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE))
+				.as("Test results do not show success message: " + output).isTrue();
+		assertThat(output.contains(EXCEPTION_EXIT_CODE_MESSAGE))
+				.as("Test results have incorrect exit code: " + output).isTrue();
+		assertThat(output.contains(ERROR_MESSAGE))
+				.as("Test results have incorrect exit message: " + output).isTrue();
+		assertThat(output.contains(EXCEPTION_MESSAGE))
+				.as("Test results have exception message: " + output).isTrue();
 	}
 
 	@Test
@@ -130,7 +140,8 @@ public class TaskCoreTests {
 		boolean exceptionFired = false;
 		try {
 			this.applicationContext = SpringApplication.run(
-							TaskExceptionConfiguration.class, "--spring.cloud.task.closecontext.enable=false",
+					TaskExceptionConfiguration.class,
+					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false",
 					"--spring.cloud.task.executionid=55");
@@ -138,15 +149,18 @@ public class TaskCoreTests {
 		catch (ApplicationContextException exception) {
 			exceptionFired = true;
 		}
-		assertTrue("An ApplicationContextException should have been thrown", exceptionFired);
+		assertThat(exceptionFired)
+				.as("An ApplicationContextException should have been thrown").isTrue();
 
 		String output = this.outputCapture.toString();
-		assertTrue("Test results do not show the correct exception message: " + output,
-				output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID));
+		assertThat(output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID))
+				.as("Test results do not show the correct exception message: " + output)
+				.isTrue();
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
+			PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskConfiguration {
 
 		@Bean
@@ -157,10 +171,12 @@ public class TaskCoreTests {
 				}
 			};
 		}
+
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
+			PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskConfigurationWithAnotation {
 
 		@Bean
@@ -171,10 +187,12 @@ public class TaskCoreTests {
 				}
 			};
 		}
+
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class})
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
+			PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskExceptionConfiguration {
 
 		@Bean
@@ -186,5 +204,7 @@ public class TaskCoreTests {
 				}
 			};
 		}
+
 	}
+
 }

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>2.1.1.RELEASE</version>
-		<relativePath />
+		<version>2.1.3.BUILD-SNAPSHOT</version>
+		<relativePath/>
 	</parent>
 
 	<groupId>org.springframework.cloud</groupId>
@@ -126,15 +128,24 @@
 	<properties>
 		<spring-cloud-stream.version>2.1.0.RELEASE</spring-cloud-stream.version>
 		<spring-cloud-deployer.version>2.0.0.RELEASE</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.0.0.RELEASE</spring-cloud-deployer-local.version>
-		<spring-cloud-stream-binder-rabbit.version>2.1.0.RELEASE</spring-cloud-stream-binder-rabbit.version>
+		<spring-cloud-deployer-local.version>2.0.0.RELEASE
+		</spring-cloud-deployer-local.version>
+		<spring-cloud-stream-binder-rabbit.version>2.1.0.RELEASE
+		</spring-cloud-stream-binder-rabbit.version>
 		<spring-batch.version>4.1.1.RELEASE</spring-batch.version>
 		<commons-logging.version>1.1</commons-logging.version>
 		<java-ee-api.version>8.0</java-ee-api.version>
 		<junit.version>5.3.1</junit.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.reportPath>
+			${project.build.directory}/coverage-reports/jacoco-ut.exec
+		</sonar.jacoco.reportPath>
+		<maven-checkstyle-plugin.failsOnError>true</maven-checkstyle-plugin.failsOnError>
+		<maven-checkstyle-plugin.failsOnViolation>true
+		</maven-checkstyle-plugin.failsOnViolation>
+		<maven-checkstyle-plugin.includeTestSourceDirectory>true
+		</maven-checkstyle-plugin.includeTestSourceDirectory>
 	</properties>
 
 	<build>
@@ -211,7 +222,9 @@
 						</goals>
 						<configuration>
 							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+							<destFile>
+								${project.build.directory}/coverage-reports/jacoco-ut.exec
+							</destFile>
 							<!--
 								Sets the name of the property containing the settings
 								for JaCoCo runtime agent.
@@ -231,15 +244,38 @@
 						</goals>
 						<configuration>
 							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+							<dataFile>
+								${project.build.directory}/coverage-reports/jacoco-ut.exec
+							</dataFile>
 							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+							<outputDirectory>
+								${project.reporting.outputDirectory}/jacoco-ut
+							</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.spring.javaformat</groupId>
+				<artifactId>spring-javaformat-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
+
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<profiles>
 		<profile>
 			<id>spring</id>

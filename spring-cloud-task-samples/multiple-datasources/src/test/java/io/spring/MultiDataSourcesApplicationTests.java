@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.spring;
 
 import org.junit.Rule;
@@ -21,7 +22,7 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.rule.OutputCapture;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -38,11 +39,11 @@ public class MultiDataSourcesApplicationTests {
 
 		String output = this.outputCapture.toString();
 
-		assertTrue("Unable to find CommandLineRunner output: " + output,
-				output.contains("There are 2 DataSources within this application"));
-		assertTrue("Unable to find start task message: " + output,
-				output.contains("Creating: TaskExecution{"));
-		assertTrue("Unable to find update task message: " + output,
-				output.contains("Updating: TaskExecution"));
+		assertThat(output.contains("There are 2 DataSources within this application"))
+			.as("Unable to find CommandLineRunner output: " + output).isTrue();
+		assertThat(output.contains("Creating: TaskExecution{"))
+			.as("Unable to find start task message: " + output).isTrue();
+		assertThat(output.contains("Updating: TaskExecution"))
+			.as("Unable to find update task message: " + output).isTrue();
 	}
 }

@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.handler;
@@ -57,11 +57,11 @@ import org.springframework.util.StringUtils;
  * {@link CommandLineRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
  * jobs in the surrounding context by default and throws an exception upon the first job
  * that returns an {@link BatchStatus} of FAILED if a {@link TaskExecutor} in the
- * {@link JobLauncher} is not specified. If a {@link TaskExecutor} is specified
- * in the {@link JobLauncher} then all Jobs are launched and an
- * exception is thrown if one or more of the jobs has an {@link BatchStatus} of FAILED.
- * TaskJobLauncherCommandLineRunner can also be used to launch a specific job by
- * providing a jobName. The TaskJobLaunchercommandLineRunner takes the place of the
+ * {@link JobLauncher} is not specified. If a {@link TaskExecutor} is specified in the
+ * {@link JobLauncher} then all Jobs are launched and an exception is thrown if one or
+ * more of the jobs has an {@link BatchStatus} of FAILED. TaskJobLauncherCommandLineRunner
+ * can also be used to launch a specific job by providing a jobName. The
+ * TaskJobLaunchercommandLineRunner takes the place of the
  * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner} when
  * it is in use.
  *
@@ -70,14 +70,14 @@ import org.springframework.util.StringUtils;
  */
 public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunner {
 
+	private static final Log logger = LogFactory
+			.getLog(TaskJobLauncherCommandLineRunner.class);
+
 	private JobLauncher taskJobLauncher;
 
 	private JobExplorer taskJobExplorer;
 
 	private JobRepository taskJobRepository;
-
-	private static final Log logger = LogFactory
-			.getLog(TaskJobLauncherCommandLineRunner.class);
 
 	private List<JobExecution> jobExecutionList = new ArrayList<>();
 
@@ -91,10 +91,12 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 	 * @param jobExplorer to check the job repository for previous executions
 	 * @param jobRepository to check if a job instance exists with the given parameters
 	 * when running a job
-	 * @param taskBatchProperties the properties used to configure the taskBatchProperties.
+	 * @param taskBatchProperties the properties used to configure the
+	 * taskBatchProperties.
 	 */
-	public TaskJobLauncherCommandLineRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
-			JobRepository jobRepository, TaskBatchProperties taskBatchProperties) {
+	public TaskJobLauncherCommandLineRunner(JobLauncher jobLauncher,
+			JobExplorer jobExplorer, JobRepository jobRepository,
+			TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer, jobRepository);
 		this.taskJobLauncher = jobLauncher;
 		this.taskJobExplorer = jobExplorer;
@@ -151,7 +153,8 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 		}
 		JobExecution execution = this.taskJobLauncher.run(job, parameters);
 		if (this.taskApplicationEventPublisher != null) {
-			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
+			this.taskApplicationEventPublisher
+					.publishEvent(new JobExecutionEvent(execution));
 		}
 		this.jobExecutionList.add(execution);
 		if (execution.getStatus().equals(BatchStatus.FAILED)) {
@@ -168,8 +171,9 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 
 			List<JobExecution> failedJobExecutions = new ArrayList<>();
 			RepeatStatus repeatStatus = RepeatStatus.FINISHED;
-			for (JobExecution jobExecution : jobExecutionList) {
-				JobExecution currentJobExecution = taskJobExplorer.getJobExecution(jobExecution.getId());
+			for (JobExecution jobExecution : this.jobExecutionList) {
+				JobExecution currentJobExecution = this.taskJobExplorer
+						.getJobExecution(jobExecution.getId());
 				BatchStatus batchStatus = currentJobExecution.getStatus();
 				if (batchStatus.isRunning()) {
 					repeatStatus = RepeatStatus.CONTINUABLE;
@@ -178,9 +182,10 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 					failedJobExecutions.add(jobExecution);
 				}
 			}
-			Thread.sleep(taskBatchProperties.getFailOnJobFailurePollInterval());
+			Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
 
-			if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
+			if (repeatStatus.equals(RepeatStatus.FINISHED)
+					&& failedJobExecutions.size() > 0) {
 				throwJobFailedException(failedJobExecutions);
 			}
 			return repeatStatus;
@@ -190,8 +195,8 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 	private void throwJobFailedException(List<JobExecution> failedJobExecutions) {
 		StringBuilder message = new StringBuilder("The following Jobs have failed: \n");
 		for (JobExecution failedJobExecution : failedJobExecutions) {
-			message.append(String.format("Job %s failed during " +
-					"execution for job instance id %s with jobExecutionId of %s \n",
+			message.append(String.format("Job %s failed during "
+					+ "execution for job instance id %s with jobExecutionId of %s \n",
 					failedJobExecution.getJobInstance().getJobName(),
 					failedJobExecution.getJobId(), failedJobExecution.getId()));
 		}
@@ -201,6 +206,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 		throw new TaskException(message.toString());
 
 	}
+
 	private JobParameters removeNonIdentifying(JobParameters parameters) {
 		Map<String, JobParameter> parameterMap = parameters.getParameters();
 		HashMap<String, JobParameter> copy = new HashMap<>(parameterMap);
@@ -225,4 +231,5 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 		merged.putAll(additionals.getParameters());
 		return new JobParameters(merged);
 	}
+
 }

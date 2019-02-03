@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.repository.support;
 
 import org.springframework.beans.BeansException;
@@ -23,11 +24,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 
 /**
- * Simple implementation of the {@link TaskNameResolver} interface.  Names the task based
+ * Simple implementation of the {@link TaskNameResolver} interface. Names the task based
  * on the following order of precidence:
  * <ol>
- *    <li>A configured property <code>spring.cloud.task.name</code></li>
- *    <li>The {@link ApplicationContext}'s id.</li>
+ * <li>A configured property <code>spring.cloud.task.name</code></li>
+ * <li>The {@link ApplicationContext}'s id.</li>
  * </ol>
  *
  * @author Michael Minella
@@ -45,17 +46,19 @@ public class SimpleTaskNameResolver implements TaskNameResolver, ApplicationCont
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
 		this.context = applicationContext;
 	}
 
 	@Override
 	public String getTaskName() {
-		if(StringUtils.hasText(configuredName)) {
-			return configuredName;
+		if (StringUtils.hasText(this.configuredName)) {
+			return this.configuredName;
 		}
 		else {
-			return context.getId().replace(":", "_");
+			return this.context.getId().replace(":", "_");
 		}
 	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Glenn Renfro
@@ -53,18 +52,21 @@ public class TaskProcessorApplicationTests {
 
 	private ObjectMapper mapper = new ObjectMapper();
 
-		@Test
-		public void test() throws InterruptedException, IOException {
-			channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
-			Map<String, String> properties = new HashMap();
-			properties.put("payload", DEFAULT_PAYLOAD);
-			TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
-					"maven://org.springframework.cloud.task.app:"
-					+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
-					null, null);
-			Message<String> result = (Message<String>)collector.forChannel(channels.output()).take();
-			TaskLaunchRequest tlq = mapper.readValue(result.getPayload(),TaskLaunchRequest.class);
-			assertThat(tlq, is(expectedRequest));
-		}
+	@Test
+	public void test() throws InterruptedException, IOException {
+		this.channels.input().send(new GenericMessage<Object>(DEFAULT_PAYLOAD));
+		Map<String, String> properties = new HashMap();
+		properties.put("payload", DEFAULT_PAYLOAD);
+		TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
+			"maven://org.springframework.cloud.task.app:"
+				+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
+			null, null);
+		Message<String> result = (Message<String>) this.collector
+			.forChannel(this.channels.output())
+			.take();
+		TaskLaunchRequest tlq = this.mapper
+			.readValue(result.getPayload(), TaskLaunchRequest.class);
+		assertThat(tlq).isEqualTo(expectedRequest);
+	}
 
 }

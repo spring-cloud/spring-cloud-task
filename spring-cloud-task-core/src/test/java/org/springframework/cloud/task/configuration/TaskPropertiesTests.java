@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,36 +27,37 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-		TaskPropertiesTests.CloseContextEnabledTest.class
-		
+@SuiteClasses({ TaskPropertiesTests.CloseContextEnabledTest.class
+
 })
 
 @DirtiesContext
 public class TaskPropertiesTests {
+
 	@Autowired
 	TaskProperties taskProperties;
 
 	@Test
 	public void test() {
-		assertThat(taskProperties.getClosecontextEnabled(), is(false));
+		assertThat(this.taskProperties.getClosecontextEnabled()).isFalse();
 	}
 
 	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes={TaskPropertiesTests.Config.class,
-			SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class},
-			properties = { "spring.cloud.task.closecontextEnabled=false" })
+	@SpringBootTest(classes = { TaskPropertiesTests.Config.class,
+			SimpleTaskAutoConfiguration.class,
+			SingleTaskConfiguration.class }, properties = {
+					"spring.cloud.task.closecontextEnabled=false" })
 	@DirtiesContext
-	public static class CloseContextEnabledTest extends TaskPropertiesTests {}
-	
-	
+	public static class CloseContextEnabledTest extends TaskPropertiesTests {
+
+	}
+
 	@Configuration
 	public static class Config {
 
 	}
+
 }

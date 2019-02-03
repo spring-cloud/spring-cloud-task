@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ import org.springframework.data.domain.Pageable;
  * @author Glenn Renfro
  */
 public class MySqlPagingQueryProvider extends AbstractSqlPagingQueryProvider {
+
 	@Override
 	public String getPageQuery(Pageable pageable) {
 		String topClause = new StringBuilder().append("LIMIT ")
-				.append(pageable.getOffset()).append(", ")
-				.append(pageable.getPageSize()).toString();
+				.append(pageable.getOffset()).append(", ").append(pageable.getPageSize())
+				.toString();
 		return SqlPagingQueryUtils.generateLimitJumpToQuery(this, topClause);
 	}
 

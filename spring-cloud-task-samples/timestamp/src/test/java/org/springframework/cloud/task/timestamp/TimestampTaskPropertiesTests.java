@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.springframework.cloud.task.timestamp;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Glenn Renfro
@@ -36,7 +37,8 @@ public class TimestampTaskPropertiesTests {
 		testPropertyValues.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
+		TimestampTaskProperties properties = context
+			.getBean(TimestampTaskProperties.class);
 		properties.getFormat();
 	}
 
@@ -45,9 +47,10 @@ public class TimestampTaskPropertiesTests {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
-		assertEquals("result does not match default format.", "yyyy-MM-dd HH:mm:ss.SSS",
-				properties.getFormat());
+		TimestampTaskProperties properties = context
+			.getBean(TimestampTaskProperties.class);
+		assertThat(properties.getFormat()).as("result does not match default format.")
+			.isEqualTo("yyyy-MM-dd HH:mm:ss.SSS");
 	}
 
 	@Test
@@ -56,10 +59,11 @@ public class TimestampTaskPropertiesTests {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
+		TimestampTaskProperties properties = context
+			.getBean(TimestampTaskProperties.class);
 		properties.setFormat(FORMAT);
-		assertEquals("result does not match established format.", FORMAT,
-				properties.getFormat());
+		assertThat(properties.getFormat()).as("result does not match established format.")
+			.isEqualTo(FORMAT);
 	}
 
 	@Configuration

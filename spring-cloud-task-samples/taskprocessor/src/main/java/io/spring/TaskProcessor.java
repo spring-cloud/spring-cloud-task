@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,26 +43,32 @@ public class TaskProcessor {
 
 	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public Object setupRequest(String message) {
-		Map<String, String> properties = new HashMap<String,String>();
-		if(StringUtils.hasText(processorProperties.getDataSourceUrl())){
-			properties.put("spring_datasource_url",processorProperties.getDataSourceUrl());
+		Map<String, String> properties = new HashMap<>();
+		if (StringUtils.hasText(this.processorProperties.getDataSourceUrl())) {
+			properties
+				.put("spring_datasource_url", this.processorProperties
+					.getDataSourceUrl());
 		}
-		if(StringUtils.hasText(processorProperties.getDataSourceDriverClassName())){
-			properties.put("spring_datasource_driverClassName",processorProperties.getDataSourceDriverClassName());
+		if (StringUtils
+			.hasText(this.processorProperties.getDataSourceDriverClassName())) {
+			properties.put("spring_datasource_driverClassName", this.processorProperties
+				.getDataSourceDriverClassName());
 		}
-		if(StringUtils.hasText(processorProperties.getDataSourceUserName())){
-			properties.put("spring_datasource_username",processorProperties.getDataSourceUserName());
+		if (StringUtils.hasText(this.processorProperties.getDataSourceUserName())) {
+			properties.put("spring_datasource_username", this.processorProperties
+				.getDataSourceUserName());
 		}
-		if(StringUtils.hasText(processorProperties.getDataSourcePassword())){
-			properties.put("spring_datasource_password",processorProperties.getDataSourcePassword());
+		if (StringUtils.hasText(this.processorProperties.getDataSourcePassword())) {
+			properties.put("spring_datasource_password", this.processorProperties
+				.getDataSourcePassword());
 		}
 		properties.put("payload", message);
 
 		TaskLaunchRequest request = new TaskLaunchRequest(
-				processorProperties.getUri(), null, properties, null,
-				processorProperties.getApplicationName());
+			this.processorProperties.getUri(), null, properties, null,
+			this.processorProperties.getApplicationName());
 
-		return new GenericMessage<TaskLaunchRequest>(request);
+		return new GenericMessage<>(request);
 	}
 
 }

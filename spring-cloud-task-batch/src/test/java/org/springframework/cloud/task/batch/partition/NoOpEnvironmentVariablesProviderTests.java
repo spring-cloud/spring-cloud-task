@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -35,11 +37,14 @@ public class NoOpEnvironmentVariablesProviderTests {
 
 	@Test
 	public void test() {
-		Map<String, String> environmentVariables = this.provider.getEnvironmentVariables(null);
-		assertNotNull(environmentVariables);
-		assertTrue(environmentVariables.isEmpty());
+		Map<String, String> environmentVariables = this.provider
+				.getEnvironmentVariables(null);
+		assertThat(environmentVariables).isNotNull();
+		assertThat(environmentVariables.isEmpty()).isTrue();
 
-		Map<String, String> environmentVariables2 = this.provider.getEnvironmentVariables(null);
-		assertTrue(environmentVariables == environmentVariables2);
+		Map<String, String> environmentVariables2 = this.provider
+				.getEnvironmentVariables(null);
+		assertThat(environmentVariables == environmentVariables2).isTrue();
 	}
+
 }

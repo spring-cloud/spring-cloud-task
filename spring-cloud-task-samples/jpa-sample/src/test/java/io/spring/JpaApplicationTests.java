@@ -1,17 +1,17 @@
 /*
- *  Copyright 2017-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.spring;
@@ -34,10 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.util.SocketUtils;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that a JPA Application can write its data to a repository.
@@ -56,16 +53,16 @@ public class JpaApplicationTests {
 
 	private static int randomPort;
 
-	private ConfigurableApplicationContext context;
-
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
+			+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
+	private ConfigurableApplicationContext context;
 	private DataSource dataSource;
-
 	private Server server;
 
 	@Before
@@ -77,8 +74,10 @@ public class JpaApplicationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		this.dataSource = dataSource;
 		try {
-			this.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-					.start();
+			this.server = Server
+				.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", String
+					.valueOf(randomPort))
+				.start();
 		}
 		catch (SQLException e) {
 			throw new IllegalStateException(e);
@@ -87,28 +86,29 @@ public class JpaApplicationTests {
 
 	@After
 	public void tearDown() {
-		if(this.context != null && this.context.isActive()) {
+		if (this.context != null && this.context.isActive()) {
 			this.context.close();
 		}
 		this.server.stop();
 	}
 
-	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
-
 	@Test
 	public void testBatchJobApp() {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
-		this.context = SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
+		this.context = SpringApplication
+			.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 				"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
 				"--spring.jpa.database-platform=org.hibernate.dialect.H2Dialect");
 		String output = this.outputCapture.toString();
-		assertTrue("Unable to find the insert message: " + output, output.contains(INSERT_MESSAGE));
+		assertThat(output
+			.contains(INSERT_MESSAGE)).as("Unable to find the insert message: " + output)
+			.isTrue();
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
-		Map<String, Object> result = template.queryForMap("Select * from TASK_RUN_OUTPUT");
-		assertThat(result.get("ID"), is(1L));
-		assertThat(((String) result.get("OUTPUT")), containsString("Executed at"));
+		Map<String, Object> result = template
+			.queryForMap("Select * from TASK_RUN_OUTPUT");
+		assertThat(result.get("ID")).isEqualTo(1L);
+		assertThat(((String) result.get("OUTPUT"))).contains("Executed at");
 	}
 
 }

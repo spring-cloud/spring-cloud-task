@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TaskProcessorProperties {
 
 	private static final String DEFAULT_URI = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:jar:1.0.1.RELEASE";
+		+ "timestamp-task:jar:1.0.1.RELEASE";
 
 
 	private String uri = DEFAULT_URI;
@@ -41,9 +41,8 @@ public class TaskProcessorProperties {
 	private String applicationName;
 
 
-
 	public String getDataSourceUrl() {
-		return dataSourceUrl;
+		return this.dataSourceUrl;
 	}
 
 	public void setDataSourceUrl(String dataSourceUrl) {
@@ -51,7 +50,7 @@ public class TaskProcessorProperties {
 	}
 
 	public String getDataSourceDriverClassName() {
-		return dataSourceDriverClassName;
+		return this.dataSourceDriverClassName;
 	}
 
 	public void setDataSourceDriverClassName(String dataSourceDriverClassName) {
@@ -59,7 +58,7 @@ public class TaskProcessorProperties {
 	}
 
 	public String getDataSourceUserName() {
-		return dataSourceUserName;
+		return this.dataSourceUserName;
 	}
 
 	public void setDataSourceUserName(String dataSourceUserName) {
@@ -67,7 +66,7 @@ public class TaskProcessorProperties {
 	}
 
 	public String getDataSourcePassword() {
-		return dataSourcePassword;
+		return this.dataSourcePassword;
 	}
 
 	public void setDataSourcePassword(String dataSourcePassword) {
@@ -75,7 +74,7 @@ public class TaskProcessorProperties {
 	}
 
 	public String getUri() {
-		return uri;
+		return this.uri;
 	}
 
 	public void setUri(String uri) {
@@ -83,7 +82,7 @@ public class TaskProcessorProperties {
 	}
 
 	public String getApplicationName() {
-		return applicationName;
+		return this.applicationName;
 	}
 
 	public void setApplicationName(String applicationName) {

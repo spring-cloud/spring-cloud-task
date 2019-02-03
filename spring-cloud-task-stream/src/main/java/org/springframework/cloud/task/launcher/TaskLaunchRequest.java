@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.springframework.cloud.task.launcher;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,13 +33,18 @@ import org.springframework.util.StringUtils;
  *
  * @author Glenn Renfro
  */
-public class TaskLaunchRequest implements Serializable{
+public class TaskLaunchRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	private String uri;
+
 	private List<String> commandlineArguments;
+
 	private Map<String, String> environmentProperties;
+
 	private Map<String, String> deploymentProperties;
+
 	private String applicationName;
 
 	/**
@@ -49,20 +53,21 @@ public class TaskLaunchRequest implements Serializable{
 	 * @param commandlineArguments list of commandlineArguments to be used by the task
 	 * @param environmentProperties are the environment variables for this task.
 	 * @param deploymentProperties are the variables used to setup task on the platform.
-	 * @param applicationName name to be applied to the launched task.   If set
-	 * 	to null then the launched task name will be "Task-`hash code of the
-	 * 	TaskLaunchRequest`.
+	 * @param applicationName name to be applied to the launched task. If set to null then
+	 * the launched task name will be "Task-`hash code of the TaskLaunchRequest`.
 	 */
 	public TaskLaunchRequest(String uri, List<String> commandlineArguments,
-							Map<String, String> environmentProperties,
-							Map<String, String> deploymentProperties,
-							String applicationName) {
+			Map<String, String> environmentProperties,
+			Map<String, String> deploymentProperties, String applicationName) {
 		Assert.hasText(uri, "uri must not be empty nor null.");
 
 		this.uri = uri;
-		this.commandlineArguments = (commandlineArguments == null) ? new ArrayList<String>() : commandlineArguments;
-		this.environmentProperties = environmentProperties == null ? new HashMap<String, String>() : environmentProperties;
-		this.deploymentProperties = deploymentProperties == null ? new HashMap<String, String>() : deploymentProperties;
+		this.commandlineArguments = (commandlineArguments == null) ? new ArrayList<>()
+				: commandlineArguments;
+		this.environmentProperties = environmentProperties == null ? new HashMap<>()
+				: environmentProperties;
+		this.deploymentProperties = deploymentProperties == null ? new HashMap<>()
+				: deploymentProperties;
 		setApplicationName(applicationName);
 	}
 
@@ -75,17 +80,17 @@ public class TaskLaunchRequest implements Serializable{
 	}
 
 	/**
-	 * @return  the current uri to the artifact for this launch request.
+	 * @return the current uri to the artifact for this launch request.
 	 */
 	public String getUri() {
-		return uri;
+		return this.uri;
 	}
 
 	/**
-	 * @return  an unmodifiable list of arguments that will be used for the task execution
+	 * @return an unmodifiable list of arguments that will be used for the task execution
 	 */
 	public List<String> getCommandlineArguments() {
-		return  Collections.unmodifiableList(commandlineArguments);
+		return Collections.unmodifiableList(this.commandlineArguments);
 	}
 
 	/**
@@ -94,80 +99,76 @@ public class TaskLaunchRequest implements Serializable{
 	 */
 
 	public Map<String, String> getEnvironmentProperties() {
-		return environmentProperties;
+		return this.environmentProperties;
 	}
 
 	/**
-	 * Returns the properties used by a {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}
-	 *
+	 * Returns the properties used by a
+	 * {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}.
 	 * @return deployment properties
 	 */
 	public Map<String, String> getDeploymentProperties() {
-		return deploymentProperties;
+		return this.deploymentProperties;
 	}
 
 	/**
 	 * Returns the name that will be associated with the launched task.
-	 *
 	 * @return string containing the application name.
 	 */
 	public String getApplicationName() {
-		return applicationName;
+		return this.applicationName;
 	}
 
 	/**
-	 * Sets the name to be applied to the launched task.   If set
-	 * 	to null then the launched task name will be "Task-`unique id`".
-	 *
+	 * Sets the name to be applied to the launched task. If set to null then the launched
+	 * task name will be "Task-`unique id`".
 	 * @param applicationName the name to be
 	 */
 	public void setApplicationName(String applicationName) {
-		this.applicationName = !StringUtils.hasText(applicationName) ? "Task-" +
-				UUID.randomUUID().toString() : applicationName;
+		this.applicationName = !StringUtils.hasText(applicationName)
+				? "Task-" + UUID.randomUUID().toString() : applicationName;
 	}
 
 	@Override
 	public String toString() {
-		return "TaskLaunchRequest{" +
-				"uri='" + uri + '\'' +
-				", commandlineArguments=" + commandlineArguments +
-				", environmentProperties=" + environmentProperties +
-				", deploymentProperties=" + deploymentProperties +
-				'}';
+		return "TaskLaunchRequest{" + "uri='" + this.uri + '\''
+				+ ", commandlineArguments=" + this.commandlineArguments
+				+ ", environmentProperties=" + this.environmentProperties
+				+ ", deploymentProperties=" + this.deploymentProperties + '}';
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o){
+		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()){
+		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
 
 		TaskLaunchRequest that = (TaskLaunchRequest) o;
 
-		if (!uri.equals(that.uri)){
+		if (!this.uri.equals(that.uri)) {
 			return false;
 		}
-		if (!commandlineArguments.equals(that.commandlineArguments)){
+		if (!this.commandlineArguments.equals(that.commandlineArguments)) {
 			return false;
 		}
-		if(!deploymentProperties.equals(that.deploymentProperties))
-		{
+		if (!this.deploymentProperties.equals(that.deploymentProperties)) {
 			return false;
 		}
-		return environmentProperties.equals(that.environmentProperties);
+		return this.environmentProperties.equals(that.environmentProperties);
 
 	}
 
 	@Override
 	public int hashCode() {
 		final int HASH_DEFAULT = 31;
-		int result = uri.hashCode();
-		result = HASH_DEFAULT * result + commandlineArguments.hashCode();
-		result = HASH_DEFAULT * result + environmentProperties.hashCode();
-		result = HASH_DEFAULT * result + deploymentProperties.hashCode();
+		int result = this.uri.hashCode();
+		result = HASH_DEFAULT * result + this.commandlineArguments.hashCode();
+		result = HASH_DEFAULT * result + this.environmentProperties.hashCode();
+		result = HASH_DEFAULT * result + this.deploymentProperties.hashCode();
 		return result;
 	}
+
 }

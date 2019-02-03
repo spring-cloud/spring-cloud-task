@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
  *
  * @author Glenn Renfro
  */
-public class TaskListenerExecutor implements TaskExecutionListener{
+public class TaskListenerExecutor implements TaskExecutionListener {
 
 	private Map<Method, Object> beforeTaskInstances;
 
@@ -42,7 +42,7 @@ public class TaskListenerExecutor implements TaskExecutionListener{
 
 	public TaskListenerExecutor(Map<Method, Object> beforeTaskInstances,
 			Map<Method, Object> afterTaskInstances,
-			Map<Method, Object> failedTaskInstances){
+			Map<Method, Object> failedTaskInstances) {
 
 		this.beforeTaskInstances = beforeTaskInstances;
 		this.afterTaskInstances = afterTaskInstances;
@@ -50,66 +50,77 @@ public class TaskListenerExecutor implements TaskExecutionListener{
 	}
 
 	/**
-	 * Executes all the methods that have been annotated with  &#064;BeforeTask.
+	 * Executes all the methods that have been annotated with &#064;BeforeTask.
 	 * @param taskExecution associated with the event.
 	 */
 	@Override
 	public void onTaskStartup(TaskExecution taskExecution) {
-		executeTaskListener(taskExecution, beforeTaskInstances.keySet(), beforeTaskInstances);
+		executeTaskListener(taskExecution, this.beforeTaskInstances.keySet(),
+				this.beforeTaskInstances);
 	}
 
 	/**
-	 * Executes all the methods that have been annotated with  &#064;AfterTask.
+	 * Executes all the methods that have been annotated with &#064;AfterTask.
 	 * @param taskExecution associated with the event.
 	 */
 	@Override
 	public void onTaskEnd(TaskExecution taskExecution) {
-		executeTaskListener(taskExecution, afterTaskInstances.keySet(), afterTaskInstances);
+		executeTaskListener(taskExecution, this.afterTaskInstances.keySet(),
+				this.afterTaskInstances);
 	}
 
 	/**
-	 * Executes all the methods that have been annotated with  &#064;FailedTask.
+	 * Executes all the methods that have been annotated with &#064;FailedTask.
 	 * @param throwable that was not caught for the task execution.
 	 * @param taskExecution associated with the event.
 	 */
 	@Override
 	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
 		executeTaskListenerWithThrowable(taskExecution, throwable,
-				failedTaskInstances.keySet(),failedTaskInstances);
+				this.failedTaskInstances.keySet(), this.failedTaskInstances);
 	}
 
-	private void executeTaskListener(TaskExecution taskExecution, Set<Method> methods, Map<Method, Object> instances){
+	private void executeTaskListener(TaskExecution taskExecution, Set<Method> methods,
+			Map<Method, Object> instances) {
 		for (Method method : methods) {
 			try {
-				method.invoke(instances.get(method),taskExecution);
+				method.invoke(instances.get(method), taskExecution);
 			}
 			catch (IllegalAccessException e) {
-				throw new TaskExecutionException("@BeforeTask and @AfterTask annotated methods must be public.", e);
+				throw new TaskExecutionException(
+						"@BeforeTask and @AfterTask annotated methods must be public.",
+						e);
 			}
 			catch (InvocationTargetException e) {
-				throw new TaskExecutionException(String.format("Failed to process @BeforeTask or @AfterTask" +
-						" annotation because: %s", e.getTargetException().getMessage()), e);
+				throw new TaskExecutionException(String.format(
+						"Failed to process @BeforeTask or @AfterTask"
+								+ " annotation because: %s",
+						e.getTargetException().getMessage()), e);
 			}
-			catch (IllegalArgumentException e){
-				throw new TaskExecutionException("taskExecution parameter is required for @BeforeTask and @AfterTask annotated methods", e);
+			catch (IllegalArgumentException e) {
+				throw new TaskExecutionException("taskExecution parameter "
+						+ "is required for @BeforeTask and @AfterTask annotated methods",
+						e);
 			}
 		}
 	}
 
 	private void executeTaskListenerWithThrowable(TaskExecution taskExecution,
-			Throwable throwable, Set<Method> methods, Map<Method, Object> instances){
+			Throwable throwable, Set<Method> methods, Map<Method, Object> instances) {
 		for (Method method : methods) {
 			try {
-				method.invoke(instances.get(method),taskExecution, throwable);
+				method.invoke(instances.get(method), taskExecution, throwable);
 			}
 			catch (IllegalAccessException e) {
-				throw new TaskExecutionException("@FailedTask annotated methods must be public.", e);
+				throw new TaskExecutionException(
+						"@FailedTask annotated methods must be public.", e);
 			}
 			catch (InvocationTargetException e) {
-				throw new TaskExecutionException(String.format("Failed to process @FailedTask " +
-						"annotation because: %s", e.getTargetException().getMessage()), e);
+				throw new TaskExecutionException(String.format(
+						"Failed to process @FailedTask " + "annotation because: %s",
+						e.getTargetException().getMessage()), e);
 			}
-			catch (IllegalArgumentException e){
+			catch (IllegalArgumentException e) {
 				throw new TaskExecutionException("taskExecution and throwable parameters "
 						+ "are required for @FailedTask annotated methods", e);
 			}

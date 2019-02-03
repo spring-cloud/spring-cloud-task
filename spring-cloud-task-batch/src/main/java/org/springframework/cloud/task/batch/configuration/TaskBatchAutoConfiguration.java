@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.configuration;
 
 import org.springframework.batch.core.Job;
@@ -38,8 +39,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  */
 @Configuration
-@ConditionalOnBean({Job.class})
-@ConditionalOnProperty(name = {"spring.cloud.task.batch.listener.enable", "spring.cloud.task.batch.listener.enabled"}, havingValue = "true", matchIfMissing = true)
+@ConditionalOnBean({ Job.class })
+@ConditionalOnProperty(name = { "spring.cloud.task.batch.listener.enable",
+		"spring.cloud.task.batch.listener.enabled" }, havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
 
 	@Bean
@@ -48,6 +50,9 @@ public class TaskBatchAutoConfiguration {
 		return new TaskBatchExecutionListenerBeanPostProcessor();
 	}
 
+	/**
+	 * Auto configuration for Task Batch Execution Listener.
+	 */
 	@Configuration
 	@ConditionalOnMissingBean(name = "taskBatchExecutionListener")
 	@EnableConfigurationProperties(TaskProperties.class)
@@ -60,20 +65,23 @@ public class TaskBatchAutoConfiguration {
 		private TaskProperties taskProperties;
 
 		@Bean
-		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
+		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(
+				TaskExplorer taskExplorer) {
 			TaskConfigurer taskConfigurer = null;
-			if(!this.context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
+			if (!this.context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
 				taskConfigurer = this.context.getBean(TaskConfigurer.class);
 			}
-			if(taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
+			if (taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
 				return new TaskBatchExecutionListenerFactoryBean(
-						taskConfigurer.getTaskDataSource(),
-						taskExplorer, taskProperties.getTablePrefix());
+						taskConfigurer.getTaskDataSource(), taskExplorer,
+						this.taskProperties.getTablePrefix());
 			}
 			else {
-				return new TaskBatchExecutionListenerFactoryBean(null,
-						taskExplorer, taskProperties.getTablePrefix());
+				return new TaskBatchExecutionListenerFactoryBean(null, taskExplorer,
+						this.taskProperties.getTablePrefix());
 			}
 		}
+
 	}
+
 }

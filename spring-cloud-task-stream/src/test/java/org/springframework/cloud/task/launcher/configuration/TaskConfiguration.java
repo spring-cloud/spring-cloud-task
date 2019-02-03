@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ import org.springframework.context.annotation.Configuration;
 public class TaskConfiguration {
 
 	@Bean
-	public TaskLauncher taskLauncher(){
+	public TaskLauncher taskLauncher() {
 		return new TestTaskLauncher();
 	}
 
-	public static class TestTaskLauncher implements TaskLauncher{
+	public static class TestTaskLauncher implements TaskLauncher {
 
 		public static final String LAUNCH_ID = "TEST_LAUNCH_ID";
 
@@ -50,7 +50,7 @@ public class TaskConfiguration {
 
 		@Override
 		public String launch(AppDeploymentRequest request) {
-			state = LaunchState.complete;
+			this.state = LaunchState.complete;
 			this.commandlineArguments = request.getCommandlineArguments();
 			this.applicationName = request.getDefinition().getName();
 			return null;
@@ -63,7 +63,7 @@ public class TaskConfiguration {
 
 		@Override
 		public TaskStatus status(String id) {
-			return new TaskStatus(LAUNCH_ID, state, null);
+			return new TaskStatus(LAUNCH_ID, this.state, null);
 		}
 
 		@Override
@@ -82,11 +82,13 @@ public class TaskConfiguration {
 		}
 
 		public List<String> getCommandlineArguments() {
-			return commandlineArguments;
+			return this.commandlineArguments;
 		}
 
 		public String getApplicationName() {
-			return applicationName;
+			return this.applicationName;
 		}
+
 	}
+
 }

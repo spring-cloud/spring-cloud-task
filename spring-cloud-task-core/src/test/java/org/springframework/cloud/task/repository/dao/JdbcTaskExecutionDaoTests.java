@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Executes unit tests on JdbcTaskExecutionDao.
@@ -53,83 +53,95 @@ import static org.junit.Assert.assertEquals;
  * @author Gunnar Hillert
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class,
+@ContextConfiguration(classes = { TestConfiguration.class,
 		EmbeddedDataSourceConfiguration.class,
-		PropertyPlaceholderAutoConfiguration.class})
+		PropertyPlaceholderAutoConfiguration.class })
 public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
-
-	@Autowired
-	private DataSource dataSource;
 
 	@Autowired
 	TaskRepository repository;
 
+	@Autowired
+	private DataSource dataSource;
+
 	@Before
-	public void setup(){
-		final JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
-		dao.setTaskIncrementer(TestDBUtils.getIncrementer(dataSource));
+	public void setup() {
+		final JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
+		dao.setTaskIncrementer(TestDBUtils.getIncrementer(this.dataSource));
 		super.dao = dao;
 	}
 
 	@Test
 	@DirtiesContext
 	public void testStartTaskExecution() {
-		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
-				new ArrayList<String>(0), null);
+		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null,
+				new ArrayList<>(0), null);
 
-		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setArguments(
+				Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(new Date());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
-		dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void createTaskExecution() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(), expectedTaskExecution.getExternalExecutionId());
+		TaskExecution expectedTaskExecution = TestVerifierUtils
+				.createSampleTaskExecutionNoArg();
+		expectedTaskExecution = this.dao.createTaskExecution(
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void createEmptyTaskExecution() {
-		TaskExecution expectedTaskExecution = dao.createTaskExecution(null, null,
-				new ArrayList<String>(0), null);
+		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null,
+				new ArrayList<>(0), null);
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void completeTaskExecution() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
-		expectedTaskExecution = dao.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+		TaskExecution expectedTaskExecution = TestVerifierUtils
+				.endSampleTaskExecutionNoArg();
+		expectedTaskExecution = this.dao.createTaskExecution(
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
-		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	@DirtiesContext
 	public void completeTaskExecutionWithNoCreate() {
-		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(dataSource);
+		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
 
-		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
+		TaskExecution expectedTaskExecution = TestVerifierUtils
+				.endSampleTaskExecutionNoArg();
 		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
 				expectedTaskExecution.getExitMessage());
@@ -137,89 +149,90 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void testFindAllPageableSort()  {
+	public void testFindAllPageableSort() {
 		initializeRepositoryNotInOrder();
-		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC,
-				"EXTERNAL_EXECUTION_ID"));
+		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "EXTERNAL_EXECUTION_ID"));
 		Iterator<TaskExecution> iter = getPageIterator(0, 2, sort);
 		TaskExecution taskExecution = iter.next();
-		assertEquals("FOO2", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO2");
 		taskExecution = iter.next();
-		assertEquals("FOO3", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO3");
 
 		iter = getPageIterator(1, 2, sort);
 		taskExecution = iter.next();
-		assertEquals("FOO1", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO1");
 	}
 
 	@Test
 	@DirtiesContext
-	public void testFindAllDefaultSort()  {
+	public void testFindAllDefaultSort() {
 		initializeRepository();
 		Iterator<TaskExecution> iter = getPageIterator(0, 2, null);
 		TaskExecution taskExecution = iter.next();
-		assertEquals("FOO1", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO1");
 		taskExecution = iter.next();
-		assertEquals("FOO2", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO2");
 
 		iter = getPageIterator(1, 2, null);
 		taskExecution = iter.next();
-		assertEquals("FOO3", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("FOO3");
 	}
 
 	@Test
 	@DirtiesContext
 	public void testStartExecutionWithNullExternalExecutionIdExisting() {
-		TaskExecution expectedTaskExecution =
-				initializeTaskExecutionWithExternalExecutionId();
+		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
-		dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				null);
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(), null);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void testStartExecutionWithNullExternalExecutionIdNonExisting() {
-		TaskExecution expectedTaskExecution =
-				initializeTaskExecutionWithExternalExecutionId();
+		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
-		dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				"BAR");
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
+				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(), "BAR");
 		expectedTaskExecution.setExternalExecutionId("BAR");
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(dataSource, expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
+						expectedTaskExecution.getExecutionId()));
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		TaskExecution expectedTaskExecution = TestVerifierUtils
+				.createSampleTaskExecutionNoArg();
 		return this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
-				"FOO1");
+				expectedTaskExecution.getStartTime(),
+				expectedTaskExecution.getArguments(), "FOO1");
 	}
 
-	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize, Sort sort) {
-		Pageable pageable = (sort == null) ?
-				PageRequest.of(pageNum, pageSize) :
-				PageRequest.of(pageNum, pageSize, sort);
-		Page<TaskExecution> page = dao.findAll(pageable);
-		assertEquals(3, page.getTotalElements());
-		assertEquals(2, page.getTotalPages());
+	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize,
+			Sort sort) {
+		Pageable pageable = (sort == null) ? PageRequest.of(pageNum, pageSize)
+				: PageRequest.of(pageNum, pageSize, sort);
+		Page<TaskExecution> page = this.dao.findAll(pageable);
+		assertThat(page.getTotalElements()).isEqualTo(3);
+		assertThat(page.getTotalPages()).isEqualTo(2);
 		return page.iterator();
 	}
 
 	private void initializeRepository() {
-		repository.createTaskExecution(getTaskExecution("FOO3", "externalA"));
-		repository.createTaskExecution(getTaskExecution("FOO2", "externalB"));
-		repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
+		this.repository.createTaskExecution(getTaskExecution("FOO3", "externalA"));
+		this.repository.createTaskExecution(getTaskExecution("FOO2", "externalB"));
+		this.repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
 	}
 
 	private void initializeRepositoryNotInOrder() {
-		repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
-		repository.createTaskExecution(getTaskExecution("FOO2", "externalA"));
-		repository.createTaskExecution(getTaskExecution("FOO3", "externalB"));
+		this.repository.createTaskExecution(getTaskExecution("FOO1", "externalC"));
+		this.repository.createTaskExecution(getTaskExecution("FOO2", "externalA"));
+		this.repository.createTaskExecution(getTaskExecution("FOO3", "externalB"));
 	}
+
 }

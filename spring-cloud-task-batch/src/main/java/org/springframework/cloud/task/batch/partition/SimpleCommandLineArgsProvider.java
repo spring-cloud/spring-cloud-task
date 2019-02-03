@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.ArrayList;
@@ -31,7 +32,8 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @since 1.1.0
  */
-public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport implements CommandLineArgsProvider {
+public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport
+		implements CommandLineArgsProvider {
 
 	private TaskExecution taskExecution;
 
@@ -56,7 +58,6 @@ public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport 
 
 	/**
 	 * Additional command line args to be appended.
-	 *
 	 * @param appendedArgs list of arguments
 	 * @since 1.2
 	 */
@@ -67,17 +68,18 @@ public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport 
 	@Override
 	public List<String> getCommandLineArgs(ExecutionContext executionContext) {
 
-		int listSize = this.taskExecution.getArguments().size() +
-				(this.appendedArgs != null ? this.appendedArgs.size() : 0);
+		int listSize = this.taskExecution.getArguments().size()
+				+ (this.appendedArgs != null ? this.appendedArgs.size() : 0);
 
 		List<String> args = new ArrayList<>(listSize);
 
 		args.addAll(this.taskExecution.getArguments());
 
-		if(this.appendedArgs != null) {
+		if (this.appendedArgs != null) {
 			args.addAll(this.appendedArgs);
 		}
 
 		return args;
 	}
+
 }

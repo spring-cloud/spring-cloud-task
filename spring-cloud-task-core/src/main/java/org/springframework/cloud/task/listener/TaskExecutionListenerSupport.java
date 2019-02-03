@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.listener;
 
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -25,6 +26,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @since 1.2
  */
 public class TaskExecutionListenerSupport implements TaskExecutionListener {
+
 	@Override
 	public void onTaskStartup(TaskExecution taskExecution) {
 
@@ -39,4 +41,5 @@ public class TaskExecutionListenerSupport implements TaskExecutionListener {
 	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
 
 	}
+
 }

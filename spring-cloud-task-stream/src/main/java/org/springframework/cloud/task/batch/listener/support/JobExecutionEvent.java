@@ -1,17 +1,17 @@
 /*
- *  Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.springframework.cloud.task.batch.listener.support;
@@ -33,8 +33,10 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
 /**
- * This is a JobEvent DTO created so that a {@link org.springframework.batch.core.JobExecution} can be serialized into
- * Json without having to add mixins to an ObjectMapper.
+ * This is a JobEvent DTO created so that a
+ * {@link org.springframework.batch.core.JobExecution} can be serialized into Json without
+ * having to add mixins to an ObjectMapper.
+ *
  * @author Glenn Renfro
  */
 public class JobExecutionEvent extends Entity {
@@ -43,7 +45,7 @@ public class JobExecutionEvent extends Entity {
 
 	private JobInstanceEvent jobInstance;
 
-	private Collection<StepExecutionEvent> stepExecutions = new CopyOnWriteArraySet<StepExecutionEvent>();
+	private Collection<StepExecutionEvent> stepExecutions = new CopyOnWriteArraySet<>();
 
 	private BatchStatus status = BatchStatus.STARTING;
 
@@ -55,11 +57,12 @@ public class JobExecutionEvent extends Entity {
 
 	private Date lastUpdated = null;
 
-	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN"));
+	private ExitStatus exitStatus = new ExitStatus(
+			new org.springframework.batch.core.ExitStatus("UNKNOWN"));
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
-	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
+	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
 	private String jobConfigurationName;
 
@@ -69,14 +72,15 @@ public class JobExecutionEvent extends Entity {
 
 	/**
 	 * Constructor for the StepExecution to initialize the DTO.
-	 *
 	 * @param original the StepExecution to build this DTO around.
 	 */
 	public JobExecutionEvent(JobExecution original) {
-		this.jobParameters = new JobParametersEvent(original.getJobParameters().getParameters());
-		this.jobInstance = new JobInstanceEvent(original.getJobInstance().getId(), original.getJobInstance().getJobName());
-		for(StepExecution stepExecution : original.getStepExecutions()){
-			stepExecutions.add(new StepExecutionEvent(stepExecution));
+		this.jobParameters = new JobParametersEvent(
+				original.getJobParameters().getParameters());
+		this.jobInstance = new JobInstanceEvent(original.getJobInstance().getId(),
+				original.getJobInstance().getJobName());
+		for (StepExecution stepExecution : original.getStepExecutions()) {
+			this.stepExecutions.add(new StepExecutionEvent(stepExecution));
 		}
 		this.status = original.getStatus();
 		this.startTime = original.getStartTime();
@@ -99,16 +103,12 @@ public class JobExecutionEvent extends Entity {
 		return this.endTime;
 	}
 
-	public void setJobInstance(JobInstanceEvent jobInstance) {
-		this.jobInstance = jobInstance;
-	}
-
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 
 	public Date getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 
 	public void setStartTime(Date startTime) {
@@ -121,7 +121,6 @@ public class JobExecutionEvent extends Entity {
 
 	/**
 	 * Set the value of the status field.
-	 *
 	 * @param status the status to set
 	 */
 	public void setStatus(BatchStatus status) {
@@ -129,10 +128,9 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Upgrade the status field if the provided value is greater than the
-	 * existing one. Clients using this method to set the status can be sure
-	 * that they don't overwrite a failed status with an successful one.
-	 *
+	 * Upgrade the status field if the provided value is greater than the existing one.
+	 * Clients using this method to set the status can be sure that they don't overwrite a
+	 * failed status with an successful one.
 	 * @param status the new status value
 	 */
 	public void upgradeStatus(BatchStatus status) {
@@ -142,21 +140,13 @@ public class JobExecutionEvent extends Entity {
 	/**
 	 * Convenience getter for for the id of the enclosing job. Useful for DAO
 	 * implementations.
-	 *
 	 * @return the id of the enclosing job
 	 */
 	public Long getJobId() {
-		if (jobInstance != null) {
-			return jobInstance.getId();
+		if (this.jobInstance != null) {
+			return this.jobInstance.getId();
 		}
 		return null;
-	}
-
-	/**
-	 * @param exitStatus the exit status for the job.
-	 */
-	public void setExitStatus(ExitStatus exitStatus) {
-		this.exitStatus = exitStatus;
 	}
 
 	/**
@@ -167,15 +157,25 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
+	 * @param exitStatus the exit status for the job.
+	 */
+	public void setExitStatus(ExitStatus exitStatus) {
+		this.exitStatus = exitStatus;
+	}
+
+	/**
 	 * @return the Job that is executing.
 	 */
 	public JobInstanceEvent getJobInstance() {
 		return this.jobInstance;
 	}
 
+	public void setJobInstance(JobInstanceEvent jobInstance) {
+		this.jobInstance = jobInstance;
+	}
+
 	/**
 	 * Accessor for the step executions.
-	 *
 	 * @return the step executions that were registered
 	 */
 	public Collection<StepExecutionEvent> getStepExecutions() {
@@ -183,22 +183,20 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Sets the {@link ExecutionContext} for this execution
-	 *
-	 * @param executionContext the context
-	 */
-	public void setExecutionContext(ExecutionContext executionContext) {
-		this.executionContext = executionContext;
-	}
-
-	/**
-	 * Returns the {@link ExecutionContext} for this execution. The content is
-	 * expected to be persisted after each step completion (successful or not).
-	 *
+	 * Returns the {@link ExecutionContext} for this execution. The content is expected to
+	 * be persisted after each step completion (successful or not).
 	 * @return the context
 	 */
 	public ExecutionContext getExecutionContext() {
 		return this.executionContext;
+	}
+
+	/**
+	 * Sets the {@link ExecutionContext} for this execution.
+	 * @param executionContext the context
+	 */
+	public void setExecutionContext(ExecutionContext executionContext) {
+		this.executionContext = executionContext;
 	}
 
 	/**
@@ -220,9 +218,8 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Get the date representing the last time this JobExecution was updated in
-	 * the JobRepository.
-	 *
+	 * Get the date representing the last time this JobExecution was updated in the
+	 * JobRepository.
 	 * @return Date representing the last time this JobExecution was updated.
 	 */
 	public Date getLastUpdated() {
@@ -231,7 +228,6 @@ public class JobExecutionEvent extends Entity {
 
 	/**
 	 * Set the last time this {@link JobExecution} was updated.
-	 *
 	 * @param lastUpdated The date the {@link JobExecution} was updated.
 	 */
 	public void setLastUpdated(Date lastUpdated) {
@@ -244,7 +240,6 @@ public class JobExecutionEvent extends Entity {
 
 	/**
 	 * Add the provided throwable to the failure exception list.
-	 *
 	 * @param t a {@link Throwable} to be added to the exception list.
 	 */
 	public synchronized void addFailureException(Throwable t) {
@@ -252,11 +247,10 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Return all failure causing exceptions for this JobExecution, including
-	 * step executions.
-	 *
-	 * @return List&lt;Throwable&gt; containing all exceptions causing failure for
-	 * this JobExecution.
+	 * Return all failure causing exceptions for this JobExecution, including step
+	 * executions.
+	 * @return List&lt;Throwable&gt; containing all exceptions causing failure for this
+	 * JobExecution.
 	 */
 	public synchronized List<Throwable> getAllFailureExceptions() {
 
@@ -275,8 +269,10 @@ public class JobExecutionEvent extends Entity {
 	 */
 	@Override
 	public String toString() {
-		return super.toString()
-				+ String.format(", startTime=%s, endTime=%s, lastUpdated=%s, status=%s, exitStatus=%s, job=[%s], jobParameters=[%s]",
-				startTime, endTime, lastUpdated, status, exitStatus, jobInstance, jobParameters);
+		return super.toString() + String.format(
+				", startTime=%s, endTime=%s, lastUpdated=%s, status=%s, exitStatus=%s, job=[%s], jobParameters=[%s]",
+				this.startTime, this.endTime, this.lastUpdated, this.status,
+				this.exitStatus, this.jobInstance, this.jobParameters);
 	}
+
 }

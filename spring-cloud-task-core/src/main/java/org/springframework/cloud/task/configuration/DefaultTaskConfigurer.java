@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,14 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * Default implementation of the TaskConfigurer interface.  If no {@link TaskConfigurer}
- * implementation is present, then this configuration will be used.
- * The following defaults will be used:
+ * Default implementation of the TaskConfigurer interface. If no {@link TaskConfigurer}
+ * implementation is present, then this configuration will be used. The following defaults
+ * will be used:
  * <ul>
- * <li>{@link SimpleTaskRepository} is the default {@link TaskRepository} returned.
- * If a data source is present then a data will be stored in the database {@link JdbcTaskExecutionDao} else it will
- * be stored in a map {@link MapTaskExecutionDao}.
+ * <li>{@link SimpleTaskRepository} is the default {@link TaskRepository} returned. If a
+ * data source is present then a data will be stored in the database
+ * {@link JdbcTaskExecutionDao} else it will be stored in a map
+ * {@link MapTaskExecutionDao}.
  * </ul>
  *
  * @author Glenn Renfro
@@ -67,12 +68,11 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	/**
-	 * Initializes the DefaultTaskConfigurer and sets the default table prefix
-	 * to {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
-	 *
+	 * Initializes the DefaultTaskConfigurer and sets the default table prefix to
+	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 * @param dataSource references the {@link DataSource} to be used as the Task
-	 * repository.  If none is provided, a Map will be used (not recommended for
-	 * production use.
+	 * repository. If none is provided, a Map will be used (not recommended for production
+	 * use.
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, null);
@@ -80,9 +80,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	/**
 	 * Initializes the DefaultTaskConfigurer.
-	 *
-	 * @param tablePrefix the prefix to apply to the task table names used by
-	 * task infrastructure.
+	 * @param tablePrefix the prefix to apply to the task table names used by task
+	 * infrastructure.
 	 */
 	public DefaultTaskConfigurer(String tablePrefix) {
 		this(null, tablePrefix, null);
@@ -90,23 +89,23 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	/**
 	 * Initializes the DefaultTaskConfigurer.
-	 *
 	 * @param dataSource references the {@link DataSource} to be used as the Task
-	 * repository.  If none is provided, a Map will be used (not recommended for
-	 * production use.
-	 * @param tablePrefix the prefix to apply to the task table names used by
-	 * task infrastructure.
+	 * repository. If none is provided, a Map will be used (not recommended for production
+	 * use.
+	 * @param tablePrefix the prefix to apply to the task table names used by task
+	 * infrastructure.
 	 * @param context the context to be used.
 	 */
-	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix,
+			ApplicationContext context) {
 		this.dataSource = dataSource;
 		this.context = context;
 
 		TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
-		if(this.dataSource != null) {
-			taskExecutionDaoFactoryBean = new
-					TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
+		if (this.dataSource != null) {
+			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource,
+					tablePrefix);
 		}
 		else {
 			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
@@ -137,22 +136,27 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 			if (isDataSourceAvailable()) {
 				try {
 					Class.forName("javax.persistence.EntityManager");
-					if (this.context != null && this.context.getBeanNamesForType(EntityManager.class).length > 0) {
-						logger.debug("EntityManager was found, using JpaTransactionManager");
+					if (this.context != null && this.context
+							.getBeanNamesForType(EntityManager.class).length > 0) {
+						logger.debug(
+								"EntityManager was found, using JpaTransactionManager");
 						this.transactionManager = new JpaTransactionManager();
 					}
 				}
 				catch (ClassNotFoundException ignore) {
-					logger.debug("No EntityManager was found, using DataSourceTransactionManager");
+					logger.debug(
+							"No EntityManager was found, using DataSourceTransactionManager");
 				}
 				finally {
 					if (this.transactionManager == null) {
-						this.transactionManager = new DataSourceTransactionManager(this.dataSource);
+						this.transactionManager = new DataSourceTransactionManager(
+								this.dataSource);
 					}
 				}
 			}
 			else {
-				logger.debug("No DataSource was found, using ResourcelessTransactionManager");
+				logger.debug(
+						"No DataSource was found, using ResourcelessTransactionManager");
 				this.transactionManager = new ResourcelessTransactionManager();
 			}
 		}
@@ -163,4 +167,5 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	private boolean isDataSourceAvailable() {
 		return this.dataSource != null;
 	}
+
 }

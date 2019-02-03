@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public class TimestampTaskProperties {
 	private String format = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	public String getFormat() {
-		Assert.hasText(format, "format must not be empty nor null");
-		return format;
+		Assert.hasText(this.format, "format must not be empty nor null");
+		return this.format;
 	}
 
 	public void setFormat(String format) {

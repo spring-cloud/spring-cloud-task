@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.listener.support;
 
 import javax.sql.DataSource;
@@ -27,7 +28,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * JDBC based implementation of the {@link TaskBatchDao}.  Intended to be used in
+ * JDBC based implementation of the {@link TaskBatchDao}. Intended to be used in
  * conjunction with the JDBC based
  * {@link org.springframework.cloud.task.repository.TaskRepository}
  *
@@ -36,9 +37,9 @@ import org.springframework.util.StringUtils;
  */
 public class JdbcTaskBatchDao implements TaskBatchDao {
 
-	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
-
 	private static final String INSERT_STATEMENT = "INSERT INTO %PREFIX%TASK_BATCH VALUES(?, ?)";
+
+	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
 	private JdbcOperations jdbcTemplate;
 
@@ -68,10 +69,12 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	public void saveRelationship(TaskExecution taskExecution, JobExecution jobExecution) {
 		Assert.notNull(taskExecution, "A taskExecution is required");
 		Assert.notNull(jobExecution, "A jobExecution is required");
-		jdbcTemplate.update(getQuery(INSERT_STATEMENT), taskExecution.getExecutionId(), jobExecution.getId());
+		this.jdbcTemplate.update(getQuery(INSERT_STATEMENT),
+				taskExecution.getExecutionId(), jobExecution.getId());
 	}
 
 	private String getQuery(String base) {
-		return StringUtils.replace(base, "%PREFIX%", tablePrefix);
+		return StringUtils.replace(base, "%PREFIX%", this.tablePrefix);
 	}
+
 }

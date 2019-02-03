@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.partition;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
@@ -39,8 +41,9 @@ public class PassThroughCommandLineArgsProviderTests {
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
-		assertEquals("foo", commandLineArgs.get(0));
-		assertEquals("bar", commandLineArgs.get(1));
-		assertEquals("baz", commandLineArgs.get(2));
+		assertThat(commandLineArgs.get(0)).isEqualTo("foo");
+		assertThat(commandLineArgs.get(1)).isEqualTo("bar");
+		assertThat(commandLineArgs.get(2)).isEqualTo("baz");
 	}
+
 }

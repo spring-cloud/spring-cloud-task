@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.listener;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,23 +38,23 @@ import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
-import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
  * @author Ilayaperumal Gopinathan
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskEventTests.ListenerBinding.class})
+@SpringBootTest(classes = { TaskEventTests.ListenerBinding.class })
 public class TaskEventTests {
+
+	private static final String TASK_NAME = "taskEventTest";
 
 	@ClassRule
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
@@ -60,13 +62,10 @@ public class TaskEventTests {
 	// Count for two task execution events per task
 	static CountDownLatch latch = new CountDownLatch(2);
 
-	private static final String TASK_NAME = "taskEventTest";
-
 	@Test
 	public void testTaskEventListener() throws Exception {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(
-						TaskEventAutoConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(TaskEventAutoConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						RabbitServiceAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
@@ -78,15 +77,18 @@ public class TaskEventTests {
 						"--spring.cloud.stream.defaultBinder=rabbit",
 						"--spring.cloud.stream.bindings.task-events.destination=test");
 		applicationContextRunner.run((context) -> {
-			assertNotNull(context.getBean("taskEventListener"));
-			assertNotNull(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
+			assertThat(context.getBean("taskEventListener")).isNotNull();
+			assertThat(
+					context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class))
+							.isNotNull();
 		});
-		assertTrue(latch.await(1, TimeUnit.SECONDS));
+		assertThat(latch.await(1, TimeUnit.SECONDS)).isTrue();
 	}
 
 	@EnableTask
 	@Configuration
 	public static class TaskEventsConfiguration {
+
 	}
 
 	@EnableBinding(Sink.class)
@@ -96,12 +98,13 @@ public class TaskEventTests {
 
 		@StreamListener(Sink.INPUT)
 		public void receive(TaskExecution execution) {
-			assertTrue(String.format("Task name should be '%s'", TASK_NAME), execution.getTaskName().equals(TASK_NAME));
+			Assertions.assertThat(execution.getTaskName()).isEqualTo(TASK_NAME)
+					.as(String.format("Task name should be '%s'", TASK_NAME));
 			latch.countDown();
 		}
 
 		@Bean
-		public CommandLineRunner commandLineRunner(){
+		public CommandLineRunner commandLineRunner() {
 			return new CommandLineRunner() {
 				@Override
 				public void run(String... args) throws Exception {
@@ -109,5 +112,7 @@ public class TaskEventTests {
 				}
 			};
 		}
+
 	}
+
 }

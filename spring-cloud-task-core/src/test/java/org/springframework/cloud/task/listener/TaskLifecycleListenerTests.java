@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,32 +51,30 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that the TaskLifecycleListener Methods record the appropriate log header entries and
- * result codes.
+ * Verifies that the TaskLifecycleListener Methods record the appropriate log header
+ * entries and result codes.
  *
  * @author Glenn Renfro
  * @author Michael Minella
  */
 public class TaskLifecycleListenerTests {
 
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
+
 	private AnnotationConfigApplicationContext context;
 
 	private TaskExplorer taskExplorer;
 
-	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
-
 	@Before
 	public void setUp() {
-		context = new AnnotationConfigApplicationContext();
-		context.setId("testTask");
-		context.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
+		this.context = new AnnotationConfigApplicationContext();
+		this.context.setId("testTask");
+		this.context.register(TestDefaultConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class);
 		TestListener.getStartupOrderList().clear();
 		TestListener.getFailOrderList().clear();
 		TestListener.getEndOrderList().clear();
@@ -85,44 +83,47 @@ public class TaskLifecycleListenerTests {
 
 	@After
 	public void tearDown() {
-		if(context != null && context.isActive()) {
-			context.close();
+		if (this.context != null && this.context.isActive()) {
+			this.context.close();
 		}
 	}
 
 	@Test
 	public void testTaskCreate() {
-		context.refresh();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
+		this.context.refresh();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 		verifyTaskExecution(0, false);
 	}
 
 	@Test
 	public void testTaskCreateWithArgs() {
-		context.register(ArgsConfiguration.class);
-		context.refresh();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
+		this.context.register(ArgsConfiguration.class);
+		this.context.refresh();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 		verifyTaskExecution(2, false);
 	}
 
 	@Test
 	public void testTaskUpdate() {
-		context.refresh();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
+		this.context.refresh();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 
-		context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], context));
+		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
+				new String[0], this.context));
 
 		verifyTaskExecution(0, true, 0);
 	}
 
 	@Test
 	public void testTaskFailedUpdate() {
-		context.refresh();
+		this.context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
 		SpringApplication application = new SpringApplication();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
-		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
-		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
+		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
+				this.context, exception));
+		this.context.publishEvent(
+				new ApplicationReadyEvent(application, new String[0], this.context));
 
 		verifyTaskExecution(0, true, 1, exception, null);
 	}
@@ -130,38 +131,44 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testTaskFailedWithExitCodeEvent() {
 		final int exitCode = 10;
-		context.register(TestListener.class);
-		context.register(TestListener2.class);
+		this.context.register(TestListener.class);
+		this.context.register(TestListener2.class);
 
-		context.refresh();
+		this.context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
 		SpringApplication application = new SpringApplication();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
-		context.publishEvent(new ExitCodeEvent(context, exitCode));
-		context.publishEvent(new ApplicationFailedEvent(application, new String[0], context, exception));
-		context.publishEvent(new ApplicationReadyEvent(application, new String[0], context));
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
+		this.context.publishEvent(new ExitCodeEvent(this.context, exitCode));
+		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
+				this.context, exception));
+		this.context.publishEvent(
+				new ApplicationReadyEvent(application, new String[0], this.context));
 
 		verifyTaskExecution(0, true, exitCode, exception, null);
-		assertEquals(2, TestListener.getStartupOrderList().size());
-		assertEquals(Integer.valueOf(2), TestListener.getStartupOrderList().get(0));
-		assertEquals(Integer.valueOf(1), TestListener.getStartupOrderList().get(1));
+		assertThat(TestListener.getStartupOrderList().size()).isEqualTo(2);
+		assertThat(TestListener.getStartupOrderList().get(0))
+				.isEqualTo(Integer.valueOf(2));
+		assertThat(TestListener.getStartupOrderList().get(1))
+				.isEqualTo(Integer.valueOf(1));
 
-		assertEquals(2, TestListener.getEndOrderList().size());
-		assertEquals(Integer.valueOf(1), TestListener.getEndOrderList().get(0));
-		assertEquals(Integer.valueOf(2), TestListener.getEndOrderList().get(1));
+		assertThat(TestListener.getEndOrderList().size()).isEqualTo(2);
+		assertThat(TestListener.getEndOrderList().get(0)).isEqualTo(Integer.valueOf(1));
+		assertThat(TestListener.getEndOrderList().get(1)).isEqualTo(Integer.valueOf(2));
 
-		assertEquals(2, TestListener.getFailOrderList().size());
-		assertEquals(Integer.valueOf(1), TestListener.getFailOrderList().get(0));
-		assertEquals(Integer.valueOf(2), TestListener.getFailOrderList().get(1));
+		assertThat(TestListener.getFailOrderList().size()).isEqualTo(2);
+		assertThat(TestListener.getFailOrderList().get(0)).isEqualTo(Integer.valueOf(1));
+		assertThat(TestListener.getFailOrderList().get(1)).isEqualTo(Integer.valueOf(2));
 
 	}
 
 	@Test
 	public void testNoClosingOfContext() {
 
-		try (ConfigurableApplicationContext applicationContext = SpringApplication.run(new Class[] {TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class},
-				new String[] {"--spring.cloud.task.closecontext_enabled=false"})) {
-			assertTrue(applicationContext.isActive());
+		try (ConfigurableApplicationContext applicationContext = SpringApplication.run(
+				new Class[] { TestDefaultConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class },
+				new String[] { "--spring.cloud.task.closecontext_enabled=false" })) {
+			assertThat(applicationContext.isActive()).isTrue();
 		}
 	}
 
@@ -171,20 +178,21 @@ public class TaskLifecycleListenerTests {
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.executionid", "55");
-		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
-		context.setEnvironment(environment);
-		context.refresh();
+		propertySources
+				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		this.context.setEnvironment(environment);
+		this.context.refresh();
 	}
 
 	@Test
 	public void testRestartExistingTask() {
-		context.refresh();
-		TaskLifecycleListener taskLifecycleListener =
-				context.getBean(TaskLifecycleListener.class);
+		this.context.refresh();
+		TaskLifecycleListener taskLifecycleListener = this.context
+				.getBean(TaskLifecycleListener.class);
 		taskLifecycleListener.start();
 		String output = this.outputCapture.toString();
-		assertTrue("Test results do not show error message: " + output,
-				output.contains("Multiple start events have been received"));
+		assertThat(output.contains("Multiple start events have been received"))
+				.as("Test results do not show error message: " + output).isTrue();
 	}
 
 	@Test
@@ -193,10 +201,11 @@ public class TaskLifecycleListenerTests {
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.external-execution-id", "myid");
-		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
-		context.setEnvironment(environment);
-		context.refresh();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
+		propertySources
+				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		this.context.setEnvironment(environment);
+		this.context.refresh();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 
 		verifyTaskExecution(0, false, null, null, "myid");
 	}
@@ -207,15 +216,17 @@ public class TaskLifecycleListenerTests {
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.parentExecutionId", 789);
-		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
-		context.setEnvironment(environment);
-		context.refresh();
-		this.taskExplorer = context.getBean(TaskExplorer.class);
+		propertySources
+				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		this.context.setEnvironment(environment);
+		this.context.refresh();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 
 		verifyTaskExecution(0, false, null, null, null, 789L);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode) {
+	private void verifyTaskExecution(int numberOfParams, boolean update,
+			Integer exitCode) {
 		verifyTaskExecution(numberOfParams, update, exitCode, null, null);
 	}
 
@@ -223,47 +234,48 @@ public class TaskLifecycleListenerTests {
 		verifyTaskExecution(numberOfParams, update, null, null, null);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update,
-			Integer exitCode, Throwable exception, String externalExecutionId) {
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode,
+			Throwable exception, String externalExecutionId) {
 		verifyTaskExecution(numberOfParams, update, exitCode, exception,
 				externalExecutionId, null);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update,
-			Integer exitCode, Throwable exception, String externalExecutionId,
-			Long parentExecutionId) {
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode,
+			Throwable exception, String externalExecutionId, Long parentExecutionId) {
 
 		Sort sort = Sort.by("id");
 
 		PageRequest request = PageRequest.of(0, Integer.MAX_VALUE, sort);
 
-		Page<TaskExecution> taskExecutionsByName = this.taskExplorer.findTaskExecutionsByName("testTask",
-				request);
-		assertTrue(taskExecutionsByName.iterator().hasNext());
+		Page<TaskExecution> taskExecutionsByName = this.taskExplorer
+				.findTaskExecutionsByName("testTask", request);
+		assertThat(taskExecutionsByName.iterator().hasNext()).isTrue();
 		TaskExecution taskExecution = taskExecutionsByName.iterator().next();
 
-		assertEquals(numberOfParams, taskExecution.getArguments().size());
-		assertEquals(exitCode, taskExecution.getExitCode());
-		assertEquals(externalExecutionId, taskExecution.getExternalExecutionId());
-		assertEquals(parentExecutionId, taskExecution.getParentExecutionId());
+		assertThat(taskExecution.getArguments().size()).isEqualTo(numberOfParams);
+		assertThat(taskExecution.getExitCode()).isEqualTo(exitCode);
+		assertThat(taskExecution.getExternalExecutionId()).isEqualTo(externalExecutionId);
+		assertThat(taskExecution.getParentExecutionId()).isEqualTo(parentExecutionId);
 
-		if(exception != null) {
-			assertTrue(taskExecution.getErrorMessage().length() > exception.getStackTrace().length);
+		if (exception != null) {
+			assertThat(taskExecution.getErrorMessage()
+					.length() > exception.getStackTrace().length).isTrue();
 		}
 		else {
-			assertNull(taskExecution.getExitMessage());
+			assertThat(taskExecution.getExitMessage()).isNull();
 		}
 
-		if(update) {
-			assertTrue(taskExecution.getEndTime().getTime() >= taskExecution.getStartTime().getTime());
-			assertNotNull(taskExecution.getExitCode());
+		if (update) {
+			assertThat(taskExecution.getEndTime().getTime() >= taskExecution
+					.getStartTime().getTime()).isTrue();
+			assertThat(taskExecution.getExitCode()).isNotNull();
 		}
 		else {
-			assertNull(taskExecution.getEndTime());
-			assertTrue(taskExecution.getExitCode() == null);
+			assertThat(taskExecution.getEndTime()).isNull();
+			assertThat(taskExecution.getExitCode() == null).isTrue();
 		}
 
-		assertEquals("testTask", taskExecution.getTaskName());
+		assertThat(taskExecution.getTaskName()).isEqualTo("testTask");
 	}
 
 	@Configuration
@@ -278,23 +290,25 @@ public class TaskLifecycleListenerTests {
 
 			return new SimpleApplicationArgs(args);
 		}
+
 	}
 
 	private static class SimpleApplicationArgs implements ApplicationArguments {
 
 		private Map<String, String> args;
 
-		public SimpleApplicationArgs(Map<String, String> args) {
+		SimpleApplicationArgs(Map<String, String> args) {
 			this.args = args;
 		}
 
 		@Override
 		public String[] getSourceArgs() {
-			String [] sourceArgs = new String[this.args.size()];
+			String[] sourceArgs = new String[this.args.size()];
 
 			int i = 0;
-			for (Map.Entry<String, String> stringStringEntry : args.entrySet()) {
-				sourceArgs[i] = "--" + stringStringEntry.getKey() + "=" + stringStringEntry.getValue();
+			for (Map.Entry<String, String> stringStringEntry : this.args.entrySet()) {
+				sourceArgs[i] = "--" + stringStringEntry.getKey() + "="
+						+ stringStringEntry.getValue();
 				i++;
 			}
 
@@ -320,6 +334,7 @@ public class TaskLifecycleListenerTests {
 		public List<String> getNonOptionArgs() {
 			throw new UnsupportedOperationException("Not supported at this time.");
 		}
+
 	}
 
 	private static class TestListener2 extends TestListener {
@@ -328,34 +343,17 @@ public class TaskLifecycleListenerTests {
 
 	private static class TestListener implements TaskExecutionListener {
 
+		static List<Integer> startupOrderList = new ArrayList<>();
+		static List<Integer> endOrderList = new ArrayList<>();
+		static List<Integer> failOrderList = new ArrayList<>();
+
 		private static int currentCount = 0;
 
 		private int id = 0;
 
-		static List<Integer> startupOrderList = new ArrayList<>();
-
-		static List<Integer> endOrderList = new ArrayList<>();
-
-		static List<Integer> failOrderList = new ArrayList<>();
-
-		public TestListener() {
+		TestListener() {
 			currentCount++;
-			id = currentCount;
-		}
-
-		@Override
-		public void onTaskStartup(TaskExecution taskExecution) {
-			startupOrderList.add(id);
-		}
-
-		@Override
-		public void onTaskEnd(TaskExecution taskExecution) {
-			endOrderList.add(id);
-		}
-
-		@Override
-		public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
-			failOrderList.add(id);
+			this.id = currentCount;
 		}
 
 		public static List<Integer> getStartupOrderList() {
@@ -369,5 +367,22 @@ public class TaskLifecycleListenerTests {
 		public static List<Integer> getFailOrderList() {
 			return failOrderList;
 		}
+
+		@Override
+		public void onTaskStartup(TaskExecution taskExecution) {
+			startupOrderList.add(this.id);
+		}
+
+		@Override
+		public void onTaskEnd(TaskExecution taskExecution) {
+			endOrderList.add(this.id);
+		}
+
+		@Override
+		public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
+			failOrderList.add(this.id);
+		}
+
 	}
+
 }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -33,14 +35,19 @@
 						<configuration>
 							<transformationSets>
 								<transformationSet>
-									<dir>${project.build.directory}/external-resources</dir>
-									<stylesheet>src/main/xslt/dependencyVersions.xsl</stylesheet>
+									<dir>${project.build.directory}/external-resources
+									</dir>
+									<stylesheet>src/main/xslt/dependencyVersions.xsl
+									</stylesheet>
 									<fileMappers>
-										<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+										<fileMapper
+											implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
 											<targetExtension>.adoc</targetExtension>
 										</fileMapper>
 									</fileMappers>
-									<outputDir>${project.build.directory}/generated-resources</outputDir>
+									<outputDir>
+										${project.build.directory}/generated-resources
+									</outputDir>
 								</transformationSet>
 							</transformationSets>
 						</configuration>
@@ -71,11 +78,17 @@
 									<doctype>book</doctype>
 									<attributes>
 										<docinfo>true</docinfo>
-										<spring-boot-version>${project.version}</spring-boot-version>
-										<spring-boot-docs-version>${project.version}</spring-boot-docs-version>
-										<spring-boot-repo>${spring-boot-repo}</spring-boot-repo>
-										<spring-docs-version>${spring.version}</spring-docs-version>
-										<spring-security-docs-version>${spring-security.version}</spring-security-docs-version>
+										<spring-boot-version>${project.version}
+										</spring-boot-version>
+										<spring-boot-docs-version>${project.version}
+										</spring-boot-docs-version>
+										<spring-boot-repo>${spring-boot-repo}
+										</spring-boot-repo>
+										<spring-docs-version>${spring.version}
+										</spring-docs-version>
+										<spring-security-docs-version>
+											${spring-security.version}
+										</spring-security-docs-version>
 										<allow-uri-read>true</allow-uri-read>
 										<github-tag>${github-tag}</github-tag>
 									</attributes>
@@ -88,14 +101,18 @@
 						<artifactId>docbkx-maven-plugin</artifactId>
 						<version>2.0.15</version>
 						<configuration>
-							<sourceDirectory>${basedir}/target/generated-docs</sourceDirectory>
+							<sourceDirectory>${basedir}/target/generated-docs
+							</sourceDirectory>
 							<includes>index.xml</includes>
 							<xincludeSupported>true</xincludeSupported>
 							<chunkedOutput>false</chunkedOutput>
-							<foCustomization>${basedir}/src/main/docbook/xsl/pdf.xsl</foCustomization>
+							<foCustomization>${basedir}/src/main/docbook/xsl/pdf.xsl
+							</foCustomization>
 							<useExtensions>1</useExtensions>
 							<highlightSource>1</highlightSource>
-							<highlightXslthlConfig>${basedir}/src/main/docbook/xsl/xslthl-config.xml</highlightXslthlConfig>
+							<highlightXslthlConfig>
+								${basedir}/src/main/docbook/xsl/xslthl-config.xml
+							</highlightXslthlConfig>
 						</configuration>
 						<dependencies>
 							<dependency>
@@ -120,20 +137,27 @@
 								</goals>
 								<phase>prepare-package</phase>
 								<configuration>
-									<htmlCustomization>${basedir}/src/main/docbook/xsl/html-singlepage.xsl</htmlCustomization>
-									<targetDirectory>${basedir}/target/docbook/htmlsingle</targetDirectory>
+									<htmlCustomization>
+										${basedir}/src/main/docbook/xsl/html-singlepage.xsl
+									</htmlCustomization>
+									<targetDirectory>
+										${basedir}/target/docbook/htmlsingle
+									</targetDirectory>
 									<postProcess>
-										<copy todir="${basedir}/target/contents/reference/htmlsingle">
-											<fileset dir="${basedir}/target/docbook/htmlsingle">
-												<include name="**/*.html" />
+										<copy
+											todir="${basedir}/target/contents/reference/htmlsingle">
+											<fileset
+												dir="${basedir}/target/docbook/htmlsingle">
+												<include name="**/*.html"/>
 											</fileset>
 										</copy>
-										<copy todir="${basedir}/target/contents/reference/htmlsingle">
+										<copy
+											todir="${basedir}/target/contents/reference/htmlsingle">
 											<fileset dir="${basedir}/src/main/docbook">
-												<include name="**/*.css" />
-												<include name="**/*.png" />
-												<include name="**/*.gif" />
-												<include name="**/*.jpg" />
+												<include name="**/*.css"/>
+												<include name="**/*.png"/>
+												<include name="**/*.gif"/>
+												<include name="**/*.jpg"/>
 											</fileset>
 										</copy>
 									</postProcess>
@@ -146,21 +170,26 @@
 								</goals>
 								<phase>prepare-package</phase>
 								<configuration>
-									<htmlCustomization>${basedir}/src/main/docbook/xsl/html-multipage.xsl</htmlCustomization>
-									<targetDirectory>${basedir}/target/docbook/html</targetDirectory>
+									<htmlCustomization>
+										${basedir}/src/main/docbook/xsl/html-multipage.xsl
+									</htmlCustomization>
+									<targetDirectory>${basedir}/target/docbook/html
+									</targetDirectory>
 									<chunkedOutput>true</chunkedOutput>
 									<postProcess>
-										<copy todir="${basedir}/target/contents/reference/html">
+										<copy
+											todir="${basedir}/target/contents/reference/html">
 											<fileset dir="${basedir}/target/docbook/html">
-												<include name="**/*.html" />
+												<include name="**/*.html"/>
 											</fileset>
 										</copy>
-										<copy todir="${basedir}/target/contents/reference/html">
+										<copy
+											todir="${basedir}/target/contents/reference/html">
 											<fileset dir="${basedir}/src/main/docbook">
-												<include name="**/*.css" />
-												<include name="**/*.png" />
-												<include name="**/*.gif" />
-												<include name="**/*.jpg" />
+												<include name="**/*.css"/>
+												<include name="**/*.png"/>
+												<include name="**/*.gif"/>
+												<include name="**/*.jpg"/>
 											</fileset>
 										</copy>
 									</postProcess>
@@ -173,15 +202,21 @@
 								</goals>
 								<phase>prepare-package</phase>
 								<configuration>
-									<foCustomization>${basedir}/src/main/docbook/xsl/pdf.xsl</foCustomization>
-									<targetDirectory>${basedir}/target/docbook/pdf</targetDirectory>
+									<foCustomization>
+										${basedir}/src/main/docbook/xsl/pdf.xsl
+									</foCustomization>
+									<targetDirectory>${basedir}/target/docbook/pdf
+									</targetDirectory>
 									<postProcess>
-										<copy todir="${basedir}/target/contents/reference">
+										<copy
+											todir="${basedir}/target/contents/reference">
 											<fileset dir="${basedir}/target/docbook">
-												<include name="**/*.pdf" />
+												<include name="**/*.pdf"/>
 											</fileset>
 										</copy>
-										<move file="${basedir}/target/contents/reference/pdf/index.pdf" tofile="${basedir}/target/contents/reference/pdf/spring-cloud-task-reference.pdf" />
+										<move
+											file="${basedir}/target/contents/reference/pdf/index.pdf"
+											tofile="${basedir}/target/contents/reference/pdf/spring-cloud-task-reference.pdf"/>
 									</postProcess>
 								</configuration>
 							</execution>
@@ -192,15 +227,21 @@
 								</goals>
 								<phase>prepare-package</phase>
 								<configuration>
-									<epubCustomization>${basedir}/src/main/docbook/xsl/epub.xsl</epubCustomization>
-									<targetDirectory>${basedir}/target/docbook/epub</targetDirectory>
+									<epubCustomization>
+										${basedir}/src/main/docbook/xsl/epub.xsl
+									</epubCustomization>
+									<targetDirectory>${basedir}/target/docbook/epub
+									</targetDirectory>
 									<postProcess>
-										<copy todir="${basedir}/target/contents/reference/epub">
+										<copy
+											todir="${basedir}/target/contents/reference/epub">
 											<fileset dir="${basedir}/target/docbook">
-												<include name="**/*.epub" />
+												<include name="**/*.epub"/>
 											</fileset>
 										</copy>
-										<move file="${basedir}/target/contents/reference/epub/index.epub" tofile="${basedir}/target/contents/reference/epub/spring-cloud-task-reference.epub" />
+										<move
+											file="${basedir}/target/contents/reference/epub/index.epub"
+											tofile="${basedir}/target/contents/reference/epub/spring-cloud-task-reference.epub"/>
 									</postProcess>
 								</configuration>
 							</execution>
@@ -241,8 +282,10 @@
 								</goals>
 								<configuration>
 									<target>
-										<zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip">
-											<fileset dir="${project.build.directory}/contents" />
+										<zip
+											destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip">
+											<fileset
+												dir="${project.build.directory}/contents"/>
 										</zip>
 									</target>
 								</configuration>
@@ -256,18 +299,42 @@
 								<configuration>
 									<exportAntProperties>true</exportAntProperties>
 									<target>
-										<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
-										<taskdef name="stringutil" classname="ise.antelope.tasks.StringUtilTask" />
-										<var name="version-type" value="${project.version}" />
-										<propertyregex property="version-type" override="true" input="${version-type}" regexp=".*\.(.*)" replace="\1" />
-										<propertyregex property="version-type" override="true" input="${version-type}" regexp="(M)\d+" replace="MILESTONE" />
-										<propertyregex property="version-type" override="true" input="${version-type}" regexp="(RC)\d+" replace="MILESTONE" />
-										<propertyregex property="version-type" override="true" input="${version-type}" regexp="BUILD-(.*)" replace="SNAPSHOT" />
-										<stringutil string="${version-type}" property="spring-boot-repo">
-											<lowercase />
+										<taskdef
+											resource="net/sf/antcontrib/antcontrib.properties"/>
+										<taskdef name="stringutil"
+												 classname="ise.antelope.tasks.StringUtilTask"/>
+										<var name="version-type"
+											 value="${project.version}"/>
+										<propertyregex property="version-type"
+													   override="true"
+													   input="${version-type}"
+													   regexp=".*\.(.*)" replace="\1"/>
+										<propertyregex property="version-type"
+													   override="true"
+													   input="${version-type}"
+													   regexp="(M)\d+"
+													   replace="MILESTONE"/>
+										<propertyregex property="version-type"
+													   override="true"
+													   input="${version-type}"
+													   regexp="(RC)\d+"
+													   replace="MILESTONE"/>
+										<propertyregex property="version-type"
+													   override="true"
+													   input="${version-type}"
+													   regexp="BUILD-(.*)"
+													   replace="SNAPSHOT"/>
+										<stringutil string="${version-type}"
+													property="spring-boot-repo">
+											<lowercase/>
 										</stringutil>
-										<var name="github-tag" value="v${project.version}" />
-										<propertyregex property="github-tag" override="true" input="${github-tag}" regexp=".*SNAPSHOT" replace="master" />
+										<var name="github-tag"
+											 value="v${project.version}"/>
+										<propertyregex property="github-tag"
+													   override="true"
+													   input="${github-tag}"
+													   regexp=".*SNAPSHOT"
+													   replace="master"/>
 									</target>
 								</configuration>
 							</execution>
@@ -282,7 +349,8 @@
 								<configuration>
 									<appendAssemblyId>false</appendAssemblyId>
 									<descriptors>
-										<descriptor>src/main/assembly/assemble.xml</descriptor>
+										<descriptor>src/main/assembly/assemble.xml
+										</descriptor>
 									</descriptors>
 									<attach>false</attach>
 								</configuration>
@@ -304,8 +372,11 @@
 								<configuration>
 									<artifacts>
 										<artifact>
-											<file>${project.build.directory}/${project.artifactId}-${project.version}.zip</file>
-											<type>zip;zip.type=docs;zip.deployed=false</type>
+											<file>
+												${project.build.directory}/${project.artifactId}-${project.version}.zip
+											</file>
+											<type>zip;zip.type=docs;zip.deployed=false
+											</type>
 										</artifact>
 									</artifacts>
 								</configuration>

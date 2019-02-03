@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -44,10 +42,11 @@ import static org.mockito.Mockito.mock;
  * @author Glenn Renfro
  */
 public class TaskDatabaseInitializerTests {
-	private AnnotationConfigApplicationContext context;
 
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
+
+	private AnnotationConfigApplicationContext context;
 
 	@After
 	public void close() {
@@ -59,21 +58,23 @@ public class TaskDatabaseInitializerTests {
 	@Test
 	public void testDefaultContext() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register( TestConfiguration.class,
+		this.context.register(TestConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
-		assertEquals(0, new JdbcTemplate(this.context.getBean(DataSource.class))
-				.queryForList("select * from TASK_EXECUTION").size());
+		assertThat(new JdbcTemplate(this.context.getBean(DataSource.class))
+				.queryForList("select * from TASK_EXECUTION").size()).isEqualTo(0);
 	}
 
 	@Test
 	public void testNoDatabase() {
 		this.context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
-		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
-		assertThat(repository.getTaskExecutionDao(), instanceOf(MapTaskExecutionDao.class));
+		SimpleTaskRepository repository = new SimpleTaskRepository(
+				new TaskExecutionDaoFactoryBean());
+		assertThat(repository.getTaskExecutionDao())
+				.isInstanceOf(MapTaskExecutionDao.class);
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
-		assertEquals(0, dao.getTaskExecutions().size());
+		assertThat(dao.getTaskExecutions().size()).isEqualTo(0);
 	}
 
 	@Test
@@ -83,20 +84,24 @@ public class TaskDatabaseInitializerTests {
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
-		assertEquals(0, this.context.getBeanNamesForType(SimpleTaskRepository.class).length);
+		assertThat(this.context.getBeanNamesForType(SimpleTaskRepository.class).length)
+				.isEqualTo(0);
 	}
 
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleDataSourcesContext() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register( SimpleTaskAutoConfiguration.class,
+		this.context.register(SimpleTaskAutoConfiguration.class,
 				EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		DataSource dataSource = mock(DataSource.class);
-		context.getBeanFactory().registerSingleton("mockDataSource", dataSource);
+		this.context.getBeanFactory().registerSingleton("mockDataSource", dataSource);
 		this.context.refresh();
 	}
 
 	@Configuration
-	public static class EmptyConfiguration {}
+	public static class EmptyConfiguration {
+
+	}
+
 }

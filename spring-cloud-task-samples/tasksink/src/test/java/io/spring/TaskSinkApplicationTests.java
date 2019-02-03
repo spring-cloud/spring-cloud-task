@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -54,29 +52,32 @@ public class TaskSinkApplicationTests {
 
 	@Test
 	public void testLaunch() throws IOException {
-		assertNotNull(this.sink.input());
+		assertThat(this.sink.input()).isNotNull();
 
 		TaskLauncher testTaskLauncher =
-				 context.getBean(TaskLauncher.class);
+			this.context.getBean(TaskLauncher.class);
 
 		Map<String, String> properties = new HashMap();
 		properties.put("server.port", "0");
 		TaskLaunchRequest request = new TaskLaunchRequest(
-				"maven://org.springframework.cloud.task.app:"
+			"maven://org.springframework.cloud.task.app:"
 				+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
-				null, null);
-		GenericMessage<TaskLaunchRequest> message = new GenericMessage<TaskLaunchRequest>(request);
+			null, null);
+		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 
-		ArgumentCaptor<AppDeploymentRequest> deploymentRequest = ArgumentCaptor.forClass(AppDeploymentRequest.class);
+		ArgumentCaptor<AppDeploymentRequest> deploymentRequest = ArgumentCaptor
+			.forClass(AppDeploymentRequest.class);
 
 		verify(testTaskLauncher).launch(deploymentRequest.capture());
 
 		AppDeploymentRequest actualRequest = deploymentRequest.getValue();
 
-		assertTrue(actualRequest.getCommandlineArguments().isEmpty());
-		assertEquals("0", actualRequest.getDefinition().getProperties().get("server.port"));
-		assertTrue(actualRequest.getResource().toString()
-				.contains("maven://org.springframework.cloud.task.app:timestamp-task:jar:1.0.1.RELEASE"));
+		assertThat(actualRequest.getCommandlineArguments().isEmpty()).isTrue();
+		assertThat(actualRequest.getDefinition().getProperties()
+			.get("server.port")).isEqualTo("0");
+		assertThat(actualRequest.getResource().toString()
+			.contains("maven://org.springframework.cloud.task.app:timestamp-task:jar:1.0.1.RELEASE"))
+			.isTrue();
 	}
 }

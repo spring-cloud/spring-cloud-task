@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
-import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.core.Ordered;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
  * Provides a {@link StepExecutionEvent} at the start and end of each step indicating the
- * step's status.  The {@link StepExecutionListener#afterStep(StepExecution)} returns the
+ * step's status. The {@link StepExecutionListener#afterStep(StepExecution)} returns the
  * {@link ExitStatus} of the inputted {@link StepExecution}.
  *
  * @author Michael Minella
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingStepExecutionListener implements StepExecutionListener, Ordered {
+public class EventEmittingStepExecutionListener
+		implements StepExecutionListener, Ordered {
 
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
+
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	public EventEmittingStepExecutionListener(MessageChannel output) {
@@ -64,4 +67,5 @@ public class EventEmittingStepExecutionListener implements StepExecutionListener
 	public int getOrder() {
 		return this.order;
 	}
+
 }

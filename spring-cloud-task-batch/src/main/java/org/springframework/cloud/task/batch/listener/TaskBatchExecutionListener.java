@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.task.batch.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
@@ -31,14 +33,14 @@ import org.springframework.util.Assert;
  */
 public class TaskBatchExecutionListener extends JobExecutionListenerSupport {
 
+	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
+
 	private TaskExecution taskExecution;
 
 	private TaskBatchDao taskBatchDao;
 
-	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
-
 	/**
-	 * @param taskBatchDao dao used to persist the relationship.  Must not be null
+	 * @param taskBatchDao dao used to persist the relationship. Must not be null
 	 */
 	public TaskBatchExecutionListener(TaskBatchDao taskBatchDao) {
 		Assert.notNull(taskBatchDao, "A TaskBatchDao is required");
@@ -53,14 +55,16 @@ public class TaskBatchExecutionListener extends JobExecutionListenerSupport {
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
-		if(this.taskExecution == null) {
-			logger.warn("This job was executed outside the scope of a task but still used the task listener.");
+		if (this.taskExecution == null) {
+			logger.warn(
+					"This job was executed outside the scope of a task but still used the task listener.");
 		}
 		else {
-			logger.info(String.format("The job execution id %s was run within the task execution %s",
-					jobExecution.getId(),
-					this.taskExecution.getExecutionId()));
-			taskBatchDao.saveRelationship(taskExecution, jobExecution);
+			logger.info(String.format(
+					"The job execution id %s was run within the task execution %s",
+					jobExecution.getId(), this.taskExecution.getExecutionId()));
+			this.taskBatchDao.saveRelationship(this.taskExecution, jobExecution);
 		}
 	}
+
 }

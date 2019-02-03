@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.util.StringUtils;
 
 /**
- * Utility for initializing the Task Repository's datasource.  If a single
+ * Utility for initializing the Task Repository's datasource. If a single
  * {@link DataSource} is available in the current context, and functionality is enabled
- * (as it is by default), this will initialize the database.  If more than one DataSource
- * is available in the current context, custom configuration of this is required
- * (if desired).
+ * (as it is by default), this will initialize the database. If more than one DataSource
+ * is available in the current context, custom configuration of this is required (if
+ * desired).
  *
  * By default, initialization of the database can be disabled by configuring the property
  * <code>spring.cloud.task.initialize.enable</code> to false.
@@ -67,7 +67,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	@Value("${spring.cloud.task.tablePrefix:#{null}}")
 	private String tablePrefix;
 
-	public TaskRepositoryInitializer(){
+	public TaskRepositoryInitializer() {
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -81,7 +81,9 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private String getDatabaseType(DataSource dataSource) {
 		try {
-			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString()).toLowerCase();
+			return JdbcUtils
+					.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString())
+					.toLowerCase();
 		}
 		catch (MetaDataAccessException ex) {
 			throw new IllegalStateException("Unable to detect database type", ex);
@@ -90,10 +92,9 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (dataSource != null &&
-				taskInitializationEnable &&
-				!StringUtils.hasText(this.tablePrefix)) {
-			String platform = getDatabaseType(dataSource);
+		if (this.dataSource != null && this.taskInitializationEnable
+				&& !StringUtils.hasText(this.tablePrefix)) {
+			String platform = getDatabaseType(this.dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
 			}
@@ -106,17 +107,18 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 			if ("mysql".equals(platform)) {
 				platform = "mysql";
 			}
-			if ("sqlserver".equals(platform)){
+			if ("sqlserver".equals(platform)) {
 				platform = "sqlserver";
 			}
 			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 			String schemaLocation = schema;
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);
-			populator.addScript(resourceLoader.getResource(schemaLocation));
+			populator.addScript(this.resourceLoader.getResource(schemaLocation));
 			populator.setContinueOnError(true);
-			logger.debug(String.format("Initializing task schema for %s database",
-					platform));
-			DatabasePopulatorUtils.execute(populator, dataSource);
+			logger.debug(
+					String.format("Initializing task schema for %s database", platform));
+			DatabasePopulatorUtils.execute(populator, this.dataSource);
 		}
 	}
+
 }

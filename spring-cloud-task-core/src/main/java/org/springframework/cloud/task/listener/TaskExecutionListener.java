@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,29 +21,32 @@ import org.springframework.cloud.task.repository.TaskRepository;
 
 /**
  * The listener interface for receiving task execution events.
+ *
  * @author Glenn Renfro
  */
 public interface TaskExecutionListener {
 
 	/**
-	 * Invoked after the {@link TaskExecution} has been stored in the {@link TaskRepository}.
+	 * Invoked after the {@link TaskExecution} has been stored in the
+	 * {@link TaskRepository}.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
 	void onTaskStartup(TaskExecution taskExecution);
 
 	/**
-	 * Invoked before the {@link TaskExecution} has been updated in the {@link TaskRepository}
-	 * upon task end.
+	 * Invoked before the {@link TaskExecution} has been updated in the
+	 * {@link TaskRepository} upon task end.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
 	void onTaskEnd(TaskExecution taskExecution);
 
 	/**
-	 * Invoked if an uncaught exception occurs during a task execution.  This invocation
-	 * will occur before the {@link TaskExecution} has been updated in the {@link TaskRepository}
-	 * and before the onTaskEnd is called.
+	 * Invoked if an uncaught exception occurs during a task execution. This invocation
+	 * will occur before the {@link TaskExecution} has been updated in the
+	 * {@link TaskRepository} and before the onTaskEnd is called.
 	 * @param taskExecution instance containing the information about the current task.
 	 * @param throwable the uncaught exception that was thrown during task execution.
 	 */
 	void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
+
 }

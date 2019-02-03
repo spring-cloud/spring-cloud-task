@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,29 +61,35 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskStartTests.TaskLauncherConfiguration.class})
+@SpringBootTest(classes = { TaskStartTests.TaskLauncherConfiguration.class })
 public class TaskStartTests {
 
 	private final static int WAIT_INTERVAL = 500;
+
 	private final static int MAX_WAIT_TIME = 5000;
+
 	private final static String URL = "maven://io.spring.cloud:"
 			+ "timestamp-task:jar:1.1.0.RELEASE";
+
 	private final static String DATASOURCE_URL;
+
 	private final static String DATASOURCE_USER_NAME = "SA";
+
 	private final static String DATASOURCE_USER_PASSWORD = "''";
+
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
+
 	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
 
 	private static int randomPort;
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
+				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	private DataSource dataSource;
@@ -98,7 +104,7 @@ public class TaskStartTests {
 
 	@After
 	public void tearDown() {
-		if (this.applicationContext != null && this.applicationContext.isActive() ) {
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
 		}
 	}
@@ -106,20 +112,22 @@ public class TaskStartTests {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
-		taskExplorer = new SimpleTaskExplorer(factoryBean);
-		taskRepository = new SimpleTaskRepository(factoryBean);
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(
+				dataSource);
+		this.taskExplorer = new SimpleTaskExplorer(factoryBean);
+		this.taskRepository = new SimpleTaskRepository(factoryBean);
 	}
 
 	@Before
 	public void setup() {
-		properties = new HashMap<>();
-		properties.put("spring.datasource.url", DATASOURCE_URL);
-		properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
-		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
-		properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
-		properties.put("spring.application.name",TASK_NAME);
-		properties.put("spring.cloud.task.initialize.enable", "false");
+		this.properties = new HashMap<>();
+		this.properties.put("spring.datasource.url", DATASOURCE_URL);
+		this.properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
+		this.properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
+		this.properties.put("spring.datasource.driverClassName",
+				DATASOURCE_DRIVER_CLASS_NAME);
+		this.properties.put("spring.application.name", TASK_NAME);
+		this.properties.put("spring.cloud.task.initialize.enable", "false");
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
@@ -140,41 +148,52 @@ public class TaskStartTests {
 
 		DataSourceInitializer initializer = new DataSourceInitializer();
 
-		initializer.setDataSource(dataSource);
+		initializer.setDataSource(this.dataSource);
 		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-		databasePopulator.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
+		databasePopulator.addScript(
+				new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
 		initializer.setDatabasePopulator(databasePopulator);
 		initializer.afterPropertiesSet();
 	}
 
 	@Test
 	public void testWithGeneratedTaskExecution() throws Exception {
-		taskRepository.createTaskExecution();
-		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
+		this.taskRepository.createTaskExecution();
+		assertThat(this.taskExplorer.getTaskExecutionCount())
+				.as("Only one row is expected").isEqualTo(1);
 		this.applicationContext = getTaskApplication(1).run(new String[0]);
-		assertTrue(waitForDBToBePopulated());
+		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+				.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
-		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
-		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
+				.isEqualTo(1);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
+				.as("return code should be 0").isEqualTo(0);
 	}
 
 	@Test
 	public void testWithGeneratedTaskExecutionWithName() throws Exception {
 		final String TASK_EXECUTION_NAME = "PRE-EXECUTION-TEST-NAME";
-		taskRepository.createTaskExecution(TASK_EXECUTION_NAME);
-		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
-		assertEquals(TASK_EXECUTION_NAME, taskExplorer.getTaskExecution(1).getTaskName());
+		this.taskRepository.createTaskExecution(TASK_EXECUTION_NAME);
+		assertThat(this.taskExplorer.getTaskExecutionCount())
+				.as("Only one row is expected").isEqualTo(1);
+		assertThat(this.taskExplorer.getTaskExecution(1).getTaskName())
+				.isEqualTo(TASK_EXECUTION_NAME);
 
 		this.applicationContext = getTaskApplication(1).run(new String[0]);
-		assertTrue(waitForDBToBePopulated());
+		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+				.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
-		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
-		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
-		assertEquals("batchEvents", taskExplorer.getTaskExecution(1).getTaskName());
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
+				.isEqualTo(1);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
+				.as("return code should be 0").isEqualTo(0);
+		assertThat(this.taskExplorer.getTaskExecution(1).getTaskName())
+				.isEqualTo("batchEvents");
 	}
 
 	@Test(expected = ApplicationContextException.class)
@@ -184,64 +203,67 @@ public class TaskStartTests {
 
 	@Test(expected = ApplicationContextException.class)
 	public void testCompletedTaskExecution() throws Exception {
-		taskRepository.createTaskExecution();
-		assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
-		taskRepository.completeTaskExecution(1, 0, new Date(),"");
+		this.taskRepository.createTaskExecution();
+		assertThat(this.taskExplorer.getTaskExecutionCount())
+				.as("Only one row is expected").isEqualTo(1);
+		this.taskRepository.completeTaskExecution(1, 0, new Date(), "");
 		this.applicationContext = getTaskApplication(1).run(new String[0]);
 	}
 
 	@Test
 	public void testDuplicateTaskExecutionWithSingleInstanceEnabled() throws Exception {
-		String params[] = {"--spring.cloud.task.single-instance-enabled=true",
-				"--spring.cloud.task.name=foo"};
+		String[] params = { "--spring.cloud.task.single-instance-enabled=true",
+				"--spring.cloud.task.name=foo" };
 		boolean testFailed = false;
 		try {
-			taskRepository.createTaskExecution();
-			assertEquals("Only one row is expected", 1, taskExplorer.getTaskExecutionCount());
+			this.taskRepository.createTaskExecution();
+			assertThat(this.taskExplorer.getTaskExecutionCount())
+					.as("Only one row is expected").isEqualTo(1);
 			enableLock("foo");
 			getTaskApplication(1).run(params);
 		}
 		catch (ApplicationContextException taskException) {
-			assertEquals("Failed to start bean 'taskLifecycleListener'; nested " +
-							"exception is org.springframework.cloud.task." +
-							"listener.TaskExecutionException: Failed to process " +
-							"@BeforeTask or @AfterTask annotation because: Task with name \"foo\" is already running.",
-					taskException.getMessage());
+			assertThat(taskException.getMessage())
+					.isEqualTo("Failed to start bean 'taskLifecycleListener'; nested "
+							+ "exception is org.springframework.cloud.task."
+							+ "listener.TaskExecutionException: Failed to process "
+							+ "@BeforeTask or @AfterTask annotation because: Task with name \"foo\" is already running.");
 			testFailed = true;
 		}
-		assertTrue("Expected TaskExecutionException for because  of " +
-				"single-instance-enabled is enabled", testFailed);
+		assertThat(testFailed).as("Expected TaskExecutionException for because  of "
+				+ "single-instance-enabled is enabled").isTrue();
 
 	}
 
 	@Test
 	public void testDuplicateTaskExecutionWithSingleInstanceDisabled() throws Exception {
-		taskRepository.createTaskExecution();
-		TaskExecution execution = taskRepository.createTaskExecution();
-		taskRepository.startTaskExecution(execution.getExecutionId(), "bar",
+		this.taskRepository.createTaskExecution();
+		TaskExecution execution = this.taskRepository.createTaskExecution();
+		this.taskRepository.startTaskExecution(execution.getExecutionId(), "bar",
 				new Date(), new ArrayList<>(), "");
-		String params[] = {"--spring.cloud.task.name=bar"};
+		String[] params = { "--spring.cloud.task.name=bar" };
 		enableLock("bar");
 		this.applicationContext = getTaskApplication(1).run(params);
-		assertTrue(waitForDBToBePopulated());
+		assertThat(waitForDBToBePopulated()).isTrue();
 	}
 
 	private SpringApplication getTaskApplication(Integer executionId) {
 		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
-		Map<String,Object> myMap = new HashMap<>();
+		Map<String, Object> myMap = new HashMap<>();
 		ConfigurableEnvironment environment = new StandardEnvironment();
 		MutablePropertySources propertySources = environment.getPropertySources();
 		myMap.put("spring.cloud.task.executionid", executionId);
-		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		propertySources
+				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		myapp.setEnvironment(environment);
 		return myapp;
 	}
 
 	private boolean tableExists() throws SQLException {
 		boolean result;
-		try (Connection conn = dataSource.getConnection();
-			ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
-						new String[]{"TABLE"})) {
+		try (Connection conn = this.dataSource.getConnection();
+				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
+						new String[] { "TABLE" })) {
 			result = res.next();
 		}
 		return result;
@@ -251,7 +273,7 @@ public class TaskStartTests {
 		boolean isDbPopulated = false;
 		for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
 			Thread.sleep(WAIT_INTERVAL);
-			if (tableExists() && taskExplorer.getTaskExecutionCount() > 0) {
+			if (tableExists() && this.taskExplorer.getTaskExecutionCount() > 0) {
 				isDbPopulated = true;
 				break;
 			}
@@ -260,9 +282,11 @@ public class TaskStartTests {
 	}
 
 	private void enableLock(String lockKey) {
-		SimpleJdbcInsert taskLockInsert = new SimpleJdbcInsert(this.dataSource).withTableName("TASK_LOCK");
+		SimpleJdbcInsert taskLockInsert = new SimpleJdbcInsert(this.dataSource)
+				.withTableName("TASK_LOCK");
 		Map<String, Object> taskLockParams = new HashMap<>();
-		taskLockParams.put("LOCK_KEY", UUID.nameUUIDFromBytes(lockKey.getBytes()).toString());
+		taskLockParams.put("LOCK_KEY",
+				UUID.nameUUIDFromBytes(lockKey.getBytes()).toString());
 		taskLockParams.put("REGION", "DEFAULT");
 		taskLockParams.put("CLIENT_ID", "aClientID");
 		taskLockParams.put("CREATED_DATE", new Date());
@@ -271,13 +295,14 @@ public class TaskStartTests {
 
 	@Configuration
 	public static class TaskLauncherConfiguration {
+
 		private static Server defaultServer;
 
-		@Bean()
+		@Bean
 		public Server initH2TCPServer() {
 			Server server = null;
 			try {
-				if(defaultServer == null) {
+				if (defaultServer == null) {
 					server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
 							String.valueOf(randomPort)).start();
 					defaultServer = server;
@@ -298,6 +323,7 @@ public class TaskStartTests {
 			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 			return dataSource;
 		}
+
 	}
 
 }

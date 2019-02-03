@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
@@ -55,34 +55,41 @@ import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class},
-	properties = {"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone"})
+@SpringBootTest(classes = { TaskLauncherSinkApplication.class,
+		TaskLauncherSinkTests.TaskLauncherConfiguration.class }, properties = {
+				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone" })
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
+
 	private final static int MAX_WAIT_TIME = 120000;
+
 	private final static String URL = "maven://org.springframework.cloud.task.app:"
 			+ "timestamp-task:2.0.0.RELEASE";
+
 	private final static String DATASOURCE_URL;
+
 	private final static String DATASOURCE_USER_NAME = "SA";
+
 	private final static String DATASOURCE_USER_PASSWORD = "''";
+
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
+
 	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
+
+	@ClassRule
+	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	private static int randomPort;
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
+				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}
-
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@Autowired
 	private Sink sink;
@@ -96,27 +103,30 @@ public class TaskLauncherSinkTests {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
+		this.taskExplorer = new SimpleTaskExplorer(
+				new TaskExecutionDaoFactoryBean(dataSource));
 	}
 
 	@Before
 	public void setup() {
-		properties = new HashMap<>();
-		properties.put("spring.datasource.url", DATASOURCE_URL);
-		properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
-		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
-		properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
-		properties.put("spring.application.name",TASK_NAME);
-		properties.put("spring.cloud.task.initialize.enable", "false");
+		this.properties = new HashMap<>();
+		this.properties.put("spring.datasource.url", DATASOURCE_URL);
+		this.properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
+		this.properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
+		this.properties.put("spring.datasource.driverClassName",
+				DATASOURCE_DRIVER_CLASS_NAME);
+		this.properties.put("spring.application.name", TASK_NAME);
+		this.properties.put("spring.cloud.task.initialize.enable", "false");
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP ALL OBJECTS");
 
 		DataSourceInitializer initializer = new DataSourceInitializer();
 
-		initializer.setDataSource(dataSource);
+		initializer.setDataSource(this.dataSource);
 		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-		databasePopulator.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
+		databasePopulator.addScript(
+				new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
 		initializer.setDatabasePopulator(databasePopulator);
 
 		initializer.afterPropertiesSet();
@@ -125,20 +135,22 @@ public class TaskLauncherSinkTests {
 	@Test
 	public void testWithLocalDeployer() throws Exception {
 		launchTask(URL);
-		assertTrue(waitForDBToBePopulated());
+		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
-		assertEquals("Only one row is expected", 1, taskExecutions.getTotalElements());
-		assertTrue(waitForTaskToComplete());
-		assertEquals("return code should be 0", 0, taskExecutions.iterator().next().getExitCode().intValue());
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+				.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
+				.isEqualTo(1);
+		assertThat(waitForTaskToComplete()).isTrue();
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
+				.as("return code should be 0").isEqualTo(0);
 	}
 
 	private boolean tableExists() throws SQLException {
 		boolean result;
-		try (
-				Connection conn = dataSource.getConnection();
+		try (Connection conn = this.dataSource.getConnection();
 				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
-						new String[]{"TABLE"})) {
+						new String[] { "TABLE" })) {
 			result = res.next();
 		}
 		return result;
@@ -148,7 +160,7 @@ public class TaskLauncherSinkTests {
 		boolean isDbPopulated = false;
 		for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
 			Thread.sleep(WAIT_INTERVAL);
-			if (tableExists() && taskExplorer.getTaskExecutionCount() > 0) {
+			if (tableExists() && this.taskExplorer.getTaskExecutionCount() > 0) {
 				isDbPopulated = true;
 				break;
 			}
@@ -156,18 +168,18 @@ public class TaskLauncherSinkTests {
 		return isDbPopulated;
 	}
 
-		private boolean waitForTaskToComplete() throws Exception {
-			boolean istTaskComplete = false;
-			for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
-				Thread.sleep(WAIT_INTERVAL);
-				TaskExecution taskExecution = taskExplorer.getTaskExecution(1);
-				if (taskExecution.getExitCode() != null) {
-					istTaskComplete = true;
-					break;
-				}
+	private boolean waitForTaskToComplete() throws Exception {
+		boolean istTaskComplete = false;
+		for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
+			Thread.sleep(WAIT_INTERVAL);
+			TaskExecution taskExecution = this.taskExplorer.getTaskExecution(1);
+			if (taskExecution.getExitCode() != null) {
+				istTaskComplete = true;
+				break;
 			}
-			return istTaskComplete;
 		}
+		return istTaskComplete;
+	}
 
 	private void launchTask(String artifactURL) {
 
@@ -179,6 +191,7 @@ public class TaskLauncherSinkTests {
 
 	@Configuration
 	public static class TaskLauncherConfiguration {
+
 		@Bean
 		public TaskLauncher taskLauncher() {
 			LocalDeployerProperties props = new LocalDeployerProperties();
@@ -209,6 +222,7 @@ public class TaskLauncherSinkTests {
 			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 			return dataSource;
 		}
+
 	}
 
 }

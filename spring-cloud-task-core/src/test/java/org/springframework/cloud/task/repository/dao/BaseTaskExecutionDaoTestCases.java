@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,20 @@ package org.springframework.cloud.task.repository.dao;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
 import org.junit.Test;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Defines test cases that shall be shared between {@link JdbcTaskExecutionDaoTests} and {@link MapTaskExecutionDaoTests}.
+ * Defines test cases that shall be shared between {@link JdbcTaskExecutionDaoTests} and
+ * {@link MapTaskExecutionDaoTests}.
  *
  * @author Gunnar Hillert
  */
@@ -43,12 +41,13 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithNullParameter()  {
+	public void getLatestTaskExecutionsByTaskNamesWithNullParameter() {
 		try {
-			dao.getLatestTaskExecutionsByTaskNames(null);
+			this.dao.getLatestTaskExecutionsByTaskNames(null);
 		}
 		catch (IllegalArgumentException e) {
-			assertEquals("At least 1 task name must be provided.", e.getMessage());
+			assertThat(e.getMessage())
+					.isEqualTo("At least 1 task name must be provided.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -56,12 +55,13 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithEmptyArrayParameter()  {
+	public void getLatestTaskExecutionsByTaskNamesWithEmptyArrayParameter() {
 		try {
-			dao.getLatestTaskExecutionsByTaskNames(new String[0]);
+			this.dao.getLatestTaskExecutionsByTaskNames(new String[0]);
 		}
 		catch (IllegalArgumentException e) {
-			assertEquals("At least 1 task name must be provided.", e.getMessage());
+			assertThat(e.getMessage())
+					.isEqualTo("At least 1 task name must be provided.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -69,12 +69,13 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithArrayParametersContainingNullAndEmptyValues()  {
+	public void getLatestTaskExecutionsByTaskNamesWithArrayParametersContainingNullAndEmptyValues() {
 		try {
-			dao.getLatestTaskExecutionsByTaskNames("foo", null, "bar", " ");
+			this.dao.getLatestTaskExecutionsByTaskNames("foo", null, "bar", " ");
 		}
 		catch (IllegalArgumentException e) {
-			assertEquals("Task names must not contain any empty elements but 2 of 4 were empty or null.", e.getMessage());
+			assertThat(e.getMessage()).isEqualTo(
+					"Task names must not contain any empty elements but 2 of 4 were empty or null.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -82,95 +83,105 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithSingleTaskName()  {
+	public void getLatestTaskExecutionsByTaskNamesWithSingleTaskName() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final List<TaskExecution> latestTaskExecutions = dao.getLatestTaskExecutionsByTaskNames("FOO1");
-		assertTrue("Expected only 1 taskExecution but got " + latestTaskExecutions.size(), latestTaskExecutions.size() == 1);
+		final List<TaskExecution> latestTaskExecutions = this.dao
+				.getLatestTaskExecutionsByTaskNames("FOO1");
+		assertThat(latestTaskExecutions.size() == 1).as(
+				"Expected only 1 taskExecution but got " + latestTaskExecutions.size())
+				.isTrue();
 
 		final TaskExecution lastTaskExecution = latestTaskExecutions.get(0);
-		assertEquals("FOO1", lastTaskExecution.getTaskName());
+		assertThat(lastTaskExecution.getTaskName()).isEqualTo("FOO1");
 
 		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTime.setTime(lastTaskExecution.getStartTime());
 
-		assertEquals(2015, dateTime.get(Calendar.YEAR));
-		assertEquals(2, dateTime.get(Calendar.MONTH) + 1);
-		assertEquals(22, dateTime.get(Calendar.DAY_OF_MONTH));
-		assertEquals(23, dateTime.get(Calendar.HOUR_OF_DAY));
-		assertEquals(59, dateTime.get(Calendar.MINUTE));
-		assertEquals(0, dateTime.get(Calendar.SECOND));
+		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
+		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
+		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
 	}
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithMultipleTaskNames()  {
+	public void getLatestTaskExecutionsByTaskNamesWithMultipleTaskNames() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final List<TaskExecution> latestTaskExecutions = dao.getLatestTaskExecutionsByTaskNames("FOO1", "FOO3", "FOO4");
-		assertTrue("Expected 3 taskExecutions but got " + latestTaskExecutions.size(), latestTaskExecutions.size() == 3);
+		final List<TaskExecution> latestTaskExecutions = this.dao
+				.getLatestTaskExecutionsByTaskNames("FOO1", "FOO3", "FOO4");
+		assertThat(latestTaskExecutions.size() == 3)
+				.as("Expected 3 taskExecutions but got " + latestTaskExecutions.size())
+				.isTrue();
 
 		final Calendar dateTimeFoo3 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTimeFoo3.setTime(latestTaskExecutions.get(0).getStartTime());
 
-		assertEquals(2016, dateTimeFoo3.get(Calendar.YEAR));
-		assertEquals(8, dateTimeFoo3.get(Calendar.MONTH) + 1);
-		assertEquals(20, dateTimeFoo3.get(Calendar.DAY_OF_MONTH));
-		assertEquals(14, dateTimeFoo3.get(Calendar.HOUR_OF_DAY));
-		assertEquals(45, dateTimeFoo3.get(Calendar.MINUTE));
-		assertEquals(0, dateTimeFoo3.get(Calendar.SECOND));
+		assertThat(dateTimeFoo3.get(Calendar.YEAR)).isEqualTo(2016);
+		assertThat(dateTimeFoo3.get(Calendar.MONTH) + 1).isEqualTo(8);
+		assertThat(dateTimeFoo3.get(Calendar.DAY_OF_MONTH)).isEqualTo(20);
+		assertThat(dateTimeFoo3.get(Calendar.HOUR_OF_DAY)).isEqualTo(14);
+		assertThat(dateTimeFoo3.get(Calendar.MINUTE)).isEqualTo(45);
+		assertThat(dateTimeFoo3.get(Calendar.SECOND)).isEqualTo(0);
 
 		final Calendar dateTimeFoo1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTimeFoo1.setTime(latestTaskExecutions.get(1).getStartTime());
 
-		assertEquals(2015, dateTimeFoo1.get(Calendar.YEAR));
-		assertEquals(2, dateTimeFoo1.get(Calendar.MONTH) + 1);
-		assertEquals(22, dateTimeFoo1.get(Calendar.DAY_OF_MONTH));
-		assertEquals(23, dateTimeFoo1.get(Calendar.HOUR_OF_DAY));
-		assertEquals(59, dateTimeFoo1.get(Calendar.MINUTE));
-		assertEquals(0, dateTimeFoo1.get(Calendar.SECOND));
+		assertThat(dateTimeFoo1.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTimeFoo1.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTimeFoo1.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
+		assertThat(dateTimeFoo1.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+		assertThat(dateTimeFoo1.get(Calendar.MINUTE)).isEqualTo(59);
+		assertThat(dateTimeFoo1.get(Calendar.SECOND)).isEqualTo(0);
 
 		final Calendar dateTimeFoo4 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTimeFoo4.setTime(latestTaskExecutions.get(2).getStartTime());
 
-		assertEquals(2015, dateTimeFoo4.get(Calendar.YEAR));
-		assertEquals(2, dateTimeFoo4.get(Calendar.MONTH) + 1);
-		assertEquals(20, dateTimeFoo4.get(Calendar.DAY_OF_MONTH));
-		assertEquals(14, dateTimeFoo4.get(Calendar.HOUR_OF_DAY));
-		assertEquals(45, dateTimeFoo4.get(Calendar.MINUTE));
-		assertEquals(0, dateTimeFoo4.get(Calendar.SECOND));
+		assertThat(dateTimeFoo4.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTimeFoo4.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTimeFoo4.get(Calendar.DAY_OF_MONTH)).isEqualTo(20);
+		assertThat(dateTimeFoo4.get(Calendar.HOUR_OF_DAY)).isEqualTo(14);
+		assertThat(dateTimeFoo4.get(Calendar.MINUTE)).isEqualTo(45);
+		assertThat(dateTimeFoo4.get(Calendar.SECOND)).isEqualTo(0);
 	}
 
 	/**
-	 * This test is a special use-case. While not common, it is theoretically possible, that a task may have
-	 * executed with the exact same start time multiple times. In that case we should still only get 1 returned
-	 * {@link TaskExecution}.
+	 * This test is a special use-case. While not common, it is theoretically possible,
+	 * that a task may have executed with the exact same start time multiple times. In
+	 * that case we should still only get 1 returned {@link TaskExecution}.
 	 */
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionsByTaskNamesWithIdenticalTaskExecutions()  {
+	public void getLatestTaskExecutionsByTaskNamesWithIdenticalTaskExecutions() {
 		long executionIdOffset = initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final List<TaskExecution> latestTaskExecutions = dao.getLatestTaskExecutionsByTaskNames("FOO5");
-		assertTrue("Expected only 1 taskExecution but got " + latestTaskExecutions.size(), latestTaskExecutions.size() == 1);
+		final List<TaskExecution> latestTaskExecutions = this.dao
+				.getLatestTaskExecutionsByTaskNames("FOO5");
+		assertThat(latestTaskExecutions.size() == 1).as(
+				"Expected only 1 taskExecution but got " + latestTaskExecutions.size())
+				.isTrue();
 
 		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTime.setTime(latestTaskExecutions.get(0).getStartTime());
 
-		assertEquals(2015, dateTime.get(Calendar.YEAR));
-		assertEquals(2, dateTime.get(Calendar.MONTH) + 1);
-		assertEquals(22, dateTime.get(Calendar.DAY_OF_MONTH));
-		assertEquals(23, dateTime.get(Calendar.HOUR_OF_DAY));
-		assertEquals(59, dateTime.get(Calendar.MINUTE));
-		assertEquals(0, dateTime.get(Calendar.SECOND));
-		assertEquals(9 + executionIdOffset, latestTaskExecutions.get(0).getExecutionId());
+		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
+		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
+		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(latestTaskExecutions.get(0).getExecutionId())
+				.isEqualTo(9 + executionIdOffset);
 	}
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionForTaskNameWithNullParameter()  {
+	public void getLatestTaskExecutionForTaskNameWithNullParameter() {
 		try {
-			dao.getLatestTaskExecutionForTaskName(null);
+			this.dao.getLatestTaskExecutionForTaskName(null);
 		}
 		catch (IllegalArgumentException e) {
-			assertEquals("The task name must not be empty.", e.getMessage());
+			assertThat(e.getMessage()).isEqualTo("The task name must not be empty.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -178,12 +189,12 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionForTaskNameWithEmptyStringParameter()  {
+	public void getLatestTaskExecutionForTaskNameWithEmptyStringParameter() {
 		try {
-			dao.getLatestTaskExecutionForTaskName("");
+			this.dao.getLatestTaskExecutionForTaskName("");
 		}
 		catch (IllegalArgumentException e) {
-			assertEquals("The task name must not be empty.", e.getMessage());
+			assertThat(e.getMessage()).isEqualTo("The task name must not be empty.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -191,61 +202,71 @@ public class BaseTaskExecutionDaoTestCases {
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionForNonExistingTaskName()  {
+	public void getLatestTaskExecutionForNonExistingTaskName() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final TaskExecution latestTaskExecution = dao.getLatestTaskExecutionForTaskName("Bar5");
-		assertNull("Expected the latestTaskExecution to be null but got" + latestTaskExecution, latestTaskExecution);
+		final TaskExecution latestTaskExecution = this.dao
+				.getLatestTaskExecutionForTaskName("Bar5");
+		assertThat(latestTaskExecution)
+				.as("Expected the latestTaskExecution to be null but got"
+						+ latestTaskExecution)
+				.isNull();
 	}
 
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionForExistingTaskName()  {
+	public void getLatestTaskExecutionForExistingTaskName() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final TaskExecution latestTaskExecution = dao.getLatestTaskExecutionForTaskName("FOO1");
-		assertNotNull("Expected the latestTaskExecution not to be null", latestTaskExecution);
+		final TaskExecution latestTaskExecution = this.dao
+				.getLatestTaskExecutionForTaskName("FOO1");
+		assertThat(latestTaskExecution)
+				.as("Expected the latestTaskExecution not to be null").isNotNull();
 
 		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTime.setTime(latestTaskExecution.getStartTime());
 
-		assertEquals(2015, dateTime.get(Calendar.YEAR));
-		assertEquals(2, dateTime.get(Calendar.MONTH) + 1);
-		assertEquals(22, dateTime.get(Calendar.DAY_OF_MONTH));
-		assertEquals(23, dateTime.get(Calendar.HOUR_OF_DAY));
-		assertEquals(59, dateTime.get(Calendar.MINUTE));
-		assertEquals(0, dateTime.get(Calendar.SECOND));
+		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
+		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
+		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
 	}
 
 	/**
-	 * This test is a special use-case. While not common, it is theoretically possible, that a task may have
-	 * executed with the exact same start time multiple times. In that case we should still only get 1 returned
-	 * {@link TaskExecution}.
+	 * This test is a special use-case. While not common, it is theoretically possible,
+	 * that a task may have executed with the exact same start time multiple times. In
+	 * that case we should still only get 1 returned {@link TaskExecution}.
 	 */
 	@Test
 	@DirtiesContext
-	public void getLatestTaskExecutionForTaskNameWithIdenticalTaskExecutions()  {
+	public void getLatestTaskExecutionForTaskNameWithIdenticalTaskExecutions() {
 		long executionIdOffset = initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		final TaskExecution latestTaskExecution = dao.getLatestTaskExecutionForTaskName("FOO5");
-		assertNotNull("Expected the latestTaskExecution not to be null", latestTaskExecution);
+		final TaskExecution latestTaskExecution = this.dao
+				.getLatestTaskExecutionForTaskName("FOO5");
+		assertThat(latestTaskExecution)
+				.as("Expected the latestTaskExecution not to be null").isNotNull();
 
 		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		dateTime.setTime(latestTaskExecution.getStartTime());
 
-		assertEquals(2015, dateTime.get(Calendar.YEAR));
-		assertEquals(2, dateTime.get(Calendar.MONTH) + 1);
-		assertEquals(22, dateTime.get(Calendar.DAY_OF_MONTH));
-		assertEquals(23, dateTime.get(Calendar.HOUR_OF_DAY));
-		assertEquals(59, dateTime.get(Calendar.MINUTE));
-		assertEquals(0, dateTime.get(Calendar.SECOND));
-		assertEquals(9 + executionIdOffset, latestTaskExecution.getExecutionId());
+		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
+		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
+		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
+		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
+		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
+		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(latestTaskExecution.getExecutionId()).isEqualTo(9 + executionIdOffset);
 	}
 
 	@Test
 	@DirtiesContext
 	public void getRunningTaskExecutions() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		assertEquals(dao.getTaskExecutionCount(), dao.getRunningTaskExecutionCount());
-		dao.completeTaskExecution(1, 0, new Date(), "c'est fini!" );
-		assertEquals(dao.getTaskExecutionCount() - 1, dao.getRunningTaskExecutionCount());
+		assertThat(this.dao.getRunningTaskExecutionCount())
+				.isEqualTo(this.dao.getTaskExecutionCount());
+		this.dao.completeTaskExecution(1, 0, new Date(), "c'est fini!");
+		assertThat(this.dao.getRunningTaskExecutionCount())
+				.isEqualTo(this.dao.getTaskExecutionCount() - 1);
 	}
 
 	protected long initializeRepositoryNotInOrderWithMultipleTaskExecutions() {
@@ -304,7 +325,8 @@ public class BaseTaskExecutionDaoTestCases {
 	}
 
 	private long createTaskExecution(TaskExecution te) {
-		return dao.createTaskExecution(te.getTaskName(), te.getStartTime(), te.getArguments(), te.getExternalExecutionId()).getExecutionId();
+		return this.dao.createTaskExecution(te.getTaskName(), te.getStartTime(),
+				te.getArguments(), te.getExternalExecutionId()).getExecutionId();
 	}
 
 	protected TaskExecution getTaskExecution(String taskName,
@@ -315,4 +337,5 @@ public class BaseTaskExecutionDaoTestCases {
 		taskExecution.setStartTime(new Date());
 		return taskExecution;
 	}
+
 }

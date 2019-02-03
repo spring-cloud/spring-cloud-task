@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.partitioner;
 
 import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import io.spring.PartitionedBatchJobApplication;
@@ -41,33 +42,31 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TaskPartitionerTests.TaskLauncherConfiguration.class})
 public class TaskPartitionerTests {
 
-	private static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
-
-	private TaskExplorer taskExplorer;
-
-	@Autowired
-	private DataSource dataSource;
-
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
-	}
-
+	private static String DATASOURCE_URL;
 	private static int randomPort;
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
+			+ "DB_CLOSE_ON_EXIT=FALSE";
+	}
+
+	private TaskExplorer taskExplorer;
+	@Autowired
+	private DataSource dataSource;
+
+	@Autowired
+	public void setDataSource(DataSource dataSource) {
+		this.taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
 	}
 
 	@Before
@@ -93,16 +92,23 @@ public class TaskPartitionerTests {
 		SpringApplication app = new SpringApplication(PartitionedBatchJobApplication.class);
 		app.setAdditionalProfiles("master");
 		app.run("--server.port=0", "--spring.datasource.url=" + DATASOURCE_URL,
-						"--spring.datasource.username=" + DATASOURCE_USER_NAME,
-						"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
-						"--spring.cloud.deployer.local.use-spring-application-json=false");
+			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
+			"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
+			"--spring.cloud.deployer.local.use-spring-application-json=false");
 
-		Page<TaskExecution> taskExecutions = taskExplorer.findAll(PageRequest.of(0, 10));
-		assertEquals("Five rows are expected", 5, taskExecutions.getTotalElements());
-		assertEquals("Only One master is expected", 1, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:master:0"));
-		assertEquals("4 partitions is expected", 4, taskExplorer.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:worker:0"));
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+			.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected")
+			.isEqualTo(5);
+		assertThat(this.taskExplorer
+			.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:master:0"))
+			.as("Only One master is expected").isEqualTo(1);
+		assertThat(this.taskExplorer
+			.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:worker:0"))
+			.as("4 partitions is expected").isEqualTo(4);
 		for (TaskExecution taskExecution : taskExecutions) {
-			assertEquals("return code should be 0", 0, taskExecution.getExitCode().intValue());
+			assertThat(taskExecution.getExitCode()
+				.intValue()).as("return code should be 0").isEqualTo(0);
 		}
 	}
 
@@ -114,7 +120,7 @@ public class TaskPartitionerTests {
 			Server server;
 			try {
 				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
-						String.valueOf(randomPort)).start();
+					String.valueOf(randomPort)).start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);
