@@ -316,7 +316,7 @@ public class BatchExecutionEventTests {
 		public void receive(String itemWrite) {
 			Assertions.assertThat(itemWrite).startsWith("3 items ")
 					.as("Message should start with '3 items'");
-			Assertions.assertThat(itemWrite).endsWith("written")
+			Assertions.assertThat(itemWrite).endsWith("written.")
 					.as("Message should end with ' written.'");
 			itemWriteEventsLatch.countDown();
 		}
