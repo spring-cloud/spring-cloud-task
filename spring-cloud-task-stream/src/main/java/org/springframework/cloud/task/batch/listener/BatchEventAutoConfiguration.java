@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2016-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,37 +70,37 @@ import org.springframework.messaging.MessageChannel;
 public class BatchEventAutoConfiguration {
 
 	/**
-	 * Name of the job execution events listener.
+	 * Name of the job execution events listener bean.
 	 */
 	public static final String JOB_EXECUTION_EVENTS_LISTENER = "jobExecutionEventsListener";
 
 	/**
-	 * Name of the chunk events listener.
+	 * Name of the chunk events listener bean.
 	 */
 	public static final String CHUNK_EVENTS_LISTENER = "chunkEventsListener";
 
 	/**
-	 * Name of the step execution events listener.
+	 * Name of the step execution events listener bean.
 	 */
 	public static final String STEP_EXECUTION_EVENTS_LISTENER = "stepExecutionEventsListener";
 
 	/**
-	 * Name of the item read events listener.
+	 * Name of the item read events listener bean.
 	 */
 	public static final String ITEM_READ_EVENTS_LISTENER = "itemReadEventsListener";
 
 	/**
-	 * Name of the item write events listener.
+	 * Name of the item write events listener bean.
 	 */
 	public static final String ITEM_WRITE_EVENTS_LISTENER = "itemWriteEventsListener";
 
 	/**
-	 * Name of the item process events listener.
+	 * Name of the item process events listener bean.
 	 */
 	public static final String ITEM_PROCESS_EVENTS_LISTENER = "itemProcessEventsListener";
 
 	/**
-	 * Name of the skip events listener.
+	 * Name of the skip events listener bean.
 	 */
 	public static final String SKIP_EVENTS_LISTENER = "skipEventsListener";
 
