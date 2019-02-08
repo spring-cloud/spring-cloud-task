@@ -93,8 +93,10 @@ public class TestDBUtils {
 	/**
 	 * Create a pagingQueryProvider specific database type with a findAll.
 	 * @param databaseProductName of the database.
-	 * @return a PagingQueryPovider that will return all the requested information.
-	 * @throws Exception exception
+	 * @return a {@link PagingQueryProvider} that will return all the requested
+	 * information.
+	 * @throws Exception exception thrown if error occurs creating
+	 * {@link PagingQueryProvider}.
 	 */
 	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName)
 			throws Exception {
@@ -107,7 +109,8 @@ public class TestDBUtils {
 	 * @param databaseProductName of the database.
 	 * @param whereClause to be applied to the query.
 	 * @return a PagingQueryProvider that will return the requested information.
-	 * @throws Exception exception
+	 * @throws Exception exception thrown if error occurs creating
+	 * {@link PagingQueryProvider}.
 	 */
 	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName,
 			String whereClause) throws Exception {
@@ -138,7 +141,8 @@ public class TestDBUtils {
 	 * Creates a mock DataSource for use in testing.
 	 * @param databaseProductName the name of the database type to mock.
 	 * @return a mock DataSource.
-	 * @throws Exception exception
+	 * @throws Exception exception thrown if error occurs creating mock
+	 * {@link DataSource}.
 	 */
 	public static DataSource getMockDataSource(String databaseProductName)
 			throws Exception {

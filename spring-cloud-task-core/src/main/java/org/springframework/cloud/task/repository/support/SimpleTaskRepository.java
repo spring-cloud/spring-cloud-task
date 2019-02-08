@@ -37,17 +37,17 @@ import org.springframework.util.Assert;
 public class SimpleTaskRepository implements TaskRepository {
 
 	/**
-	 * Max exit message size.
+	 * Default max exit message size.
 	 */
 	public static final int MAX_EXIT_MESSAGE_SIZE = 2500;
 
 	/**
-	 * Max task name size.
+	 * Default max task name size.
 	 */
 	public static final int MAX_TASK_NAME_SIZE = 100;
 
 	/**
-	 * Max error message size.
+	 * Default max error message size.
 	 */
 	public static final int MAX_ERROR_MESSAGE_SIZE = 2500;
 

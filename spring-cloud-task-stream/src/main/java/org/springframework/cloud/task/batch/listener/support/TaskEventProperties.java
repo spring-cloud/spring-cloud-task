@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,37 +26,44 @@ import org.springframework.core.Ordered;
 public class TaskEventProperties {
 
 	/**
-	 * Properties for jobExecution listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.JobExecutionListener}.
 	 */
 	private int jobExecutionOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for stepExecution listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.StepExecutionListener}.
 	 */
 	private int stepExecutionOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for itemRead listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.ItemReadListener}.
 	 */
 	private int itemReadOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for itemProcess listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.ItemProcessListener}.
 	 */
 	private int itemProcessOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for itemWrite listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.ItemWriteListener}.
 	 */
 	private int itemWriteOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for chunk listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.ChunkListener}.
 	 */
 	private int chunkOrder = Ordered.LOWEST_PRECEDENCE;
 
 	/**
-	 * Properties for skip listener order.
+	 * Establishes the default {@link Ordered} precedence for
+	 * {@link org.springframework.batch.core.SkipListener}.
 	 */
 	private int skipOrder = Ordered.LOWEST_PRECEDENCE;
 

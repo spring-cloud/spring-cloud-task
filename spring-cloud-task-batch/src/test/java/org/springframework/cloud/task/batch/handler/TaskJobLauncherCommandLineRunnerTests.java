@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	/**
 	 * Verifies that the task will return an exit code other than zero if the job fails
-	 * with the deprecated EnableTask annotation.
+	 * with the EnableTask annotation.
 	 */
 	@Test
 	public void testTaskJobLauncherCLRSuccessFailWithAnnotation() {
