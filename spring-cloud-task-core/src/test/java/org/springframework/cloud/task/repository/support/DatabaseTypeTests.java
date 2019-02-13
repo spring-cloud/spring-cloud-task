@@ -15,6 +15,7 @@
  */
 package org.springframework.cloud.task.repository.support;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
@@ -39,10 +40,11 @@ public class DatabaseTypeTests {
 
 	@Test
 	public void testFromProductName() {
-		assertEquals(HSQL, fromProductName("HSQL Database Engine"));
-		assertEquals(ORACLE, fromProductName("Oracle"));
-		assertEquals(POSTGRES, fromProductName("PostgreSQL"));
-		assertEquals(MYSQL, fromProductName("MySQL"));
+		assertThat(fromProductName("HSQL Database Engine")).isEqualTo(HSQL);
+		assertThat(fromProductName("Oracle")).isEqualTo(ORACLE);
+		assertThat(fromProductName("PostgreSQL")).isEqualTo(POSTGRES);
+		assertThat(fromProductName("MySQL")).isEqualTo(MYSQL);
+		assertThat(fromProductName("MariaDB")).isEqualTo(MYSQL);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -72,6 +74,12 @@ public class DatabaseTypeTests {
 	public void testFromMetaDataForMySQL() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MySQL");
 		assertEquals(MYSQL, DatabaseType.fromMetaData(ds));
+	}
+
+	@Test
+	public void testFromMetaDataForMariaDB() throws Exception {
+		DataSource ds = TestDBUtils.getMockDataSource("MariaDB");
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
 	}
 
 }
