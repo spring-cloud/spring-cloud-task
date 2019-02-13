@@ -101,8 +101,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		this.dao = new JdbcTaskExecutionDao(dataSource, this.tablePrefix);
 		String databaseType;
 		try {
-			databaseType = org.springframework.batch.support.DatabaseType
-					.fromMetaData(dataSource).name();
+			databaseType = DatabaseType.fromMetaData(dataSource).name();
 		}
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);

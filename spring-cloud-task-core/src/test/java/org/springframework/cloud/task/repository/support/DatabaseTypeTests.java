@@ -45,6 +45,7 @@ public class DatabaseTypeTests {
 		assertThat(fromProductName("Oracle")).isEqualTo(ORACLE);
 		assertThat(fromProductName("PostgreSQL")).isEqualTo(POSTGRES);
 		assertThat(fromProductName("MySQL")).isEqualTo(MYSQL);
+		assertThat(fromProductName("MariaDB")).isEqualTo(MYSQL);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -73,6 +74,12 @@ public class DatabaseTypeTests {
 	@Test
 	public void testFromMetaDataForMySQL() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MySQL");
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
+	}
+
+	@Test
+	public void testFromMetaDataForMariaDB() throws Exception {
+		DataSource ds = TestDBUtils.getMockDataSource("MariaDB");
 		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
 	}
 
