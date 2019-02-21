@@ -60,7 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { TaskLauncherSinkApplication.class,
 		TaskLauncherSinkTests.TaskLauncherConfiguration.class }, properties = {
-				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone" })
+				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
