@@ -59,8 +59,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class},
-	properties = {"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-milestone"})
+@SpringBootTest(classes = { TaskLauncherSinkApplication.class,
+		TaskLauncherSinkTests.TaskLauncherConfiguration.class }, properties = {
+				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
