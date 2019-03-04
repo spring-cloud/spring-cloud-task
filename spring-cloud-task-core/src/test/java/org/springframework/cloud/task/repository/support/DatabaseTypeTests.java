@@ -40,11 +40,11 @@ public class DatabaseTypeTests {
 
 	@Test
 	public void testFromProductName() {
-		assertThat(fromProductName("HSQL Database Engine")).isEqualTo(HSQL);
-		assertThat(fromProductName("Oracle")).isEqualTo(ORACLE);
-		assertThat(fromProductName("PostgreSQL")).isEqualTo(POSTGRES);
-		assertThat(fromProductName("MySQL")).isEqualTo(MYSQL);
-		assertThat(fromProductName("MariaDB")).isEqualTo(MYSQL);
+		assertEquals(HSQL, fromProductName("HSQL Database Engine"));
+		assertEquals(ORACLE, fromProductName("Oracle"));
+		assertEquals(POSTGRES, fromProductName("PostgreSQL"));
+		assertEquals(MYSQL, fromProductName("MySQL"));
+		assertEquals(MYSQL, fromProductName("MariaDB"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
