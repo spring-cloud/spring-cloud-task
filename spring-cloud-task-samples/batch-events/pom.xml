@@ -4,7 +4,7 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>batch-events</artifactId>
-	<version>2.1.1.BUILD-SNAPSHOT</version>
+	<version>2.1.1.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<name>Batch Events Sample Application</name>
@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>2.1.1.BUILD-SNAPSHOT</version>
+				<version>2.1.1.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
