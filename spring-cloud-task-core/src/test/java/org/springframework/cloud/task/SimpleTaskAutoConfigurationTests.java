@@ -128,10 +128,10 @@ public class SimpleTaskAutoConfigurationTests {
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class,
 				"Failed to start " + "bean 'taskLifecycleListener'; nested exception is "
 						+ "org.springframework.dao.DataAccessResourceFailureException: "
-						+ "Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLException: "
+						+ "Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLSyntaxErrorException: "
 						+ "Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL \"; "
 						+ "expected \"identifier\"; SQL statement:\n"
-						+ "select foobarlessSEQ.nextval from dual [42001-197]",
+						+ "select foobarlessSEQ.nextval from dual [42001-198]",
 				applicationContextRunner);
 	}
 
