@@ -48,7 +48,7 @@ good support for Apache Maven, so we use it as the build tool for this project.
 NOTE: The spring.io web site contains many https://spring.io/guides[“`Getting Started`”
 guides] that use Spring Boot. If you need to solve a specific problem, check there first.
 You can shortcut the following steps by going to the
-http://start.spring.io/[Spring Initializr] and creating a new project. Doing so
+https://start.spring.io/[Spring Initializr] and creating a new project. Doing so
 automatically generates a new project structure so that you can start coding right away.
 We recommend experimenting with the Spring Initializr to become familiar with it.
 
@@ -104,7 +104,7 @@ public class SampleTask {
 
 While it may seem small, quite a bit is going on. For more about Spring
 Boot specifics, see the
-http://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
+https://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot reference documentation].
 
 Now we can open the `application.properties` file in `src/main/resources`.
 We need to configure two properties in `application.properties`:

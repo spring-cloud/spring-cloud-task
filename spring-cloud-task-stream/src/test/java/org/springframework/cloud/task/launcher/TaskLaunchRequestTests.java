@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TaskLaunchRequestTests {
 
-	public static final String URI = "http://myURI";
+	public static final String URI = "https://myURI";
 
 	public static final String APP_NAME = "MY_APP_NAME";
 
@@ -50,7 +50,7 @@ public class TaskLaunchRequestTests {
 		assertThat(request.equals("nope")).isFalse();
 		assertThat(request.equals(request)).isTrue();
 		assertThat(request.equals(request2)).isTrue();
-		TaskLaunchRequest requestDiff = new TaskLaunchRequest("http://oops",
+		TaskLaunchRequest requestDiff = new TaskLaunchRequest("https://oops",
 				Collections.EMPTY_LIST, Collections.EMPTY_MAP, Collections.EMPTY_MAP,
 				null);
 		assertThat(request.equals(requestDiff)).isFalse();
