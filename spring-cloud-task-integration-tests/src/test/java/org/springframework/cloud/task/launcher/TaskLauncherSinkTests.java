@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -62,7 +62,7 @@ public class TaskLauncherSinkTests {
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 5000;
 	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:jar:1.0.0.BUILD-SNAPSHOT";
+			+ "timestamp-task:jar:2.0.0.BUILD-SNAPSHOT";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
