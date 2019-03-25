@@ -67,8 +67,8 @@ import org.springframework.util.StringUtils;
  *
  * <b>Note:</b> By default, the context will close at the completion of the task unless
  * other non-daemon threads keep it running. Programatic closing of the context can be
- * configured via the property <code>spring.cloud.task.closecontext.enabled</code>
- * (defaults to false). If the <code>spring.cloud.task.closecontext.enabled</code> is set
+ * configured via the property <code>spring.cloud.task.closecontext_enabled</code>
+ * (defaults to false). If the <code>spring.cloud.task.closecontext_enabled</code> is set
  * to true, then the context will be closed upon task completion regardless if non-daemon
  * threads are still running. Also if the context did not start, the FailedTask and
  * TaskEnd may not have all the dependencies met.
