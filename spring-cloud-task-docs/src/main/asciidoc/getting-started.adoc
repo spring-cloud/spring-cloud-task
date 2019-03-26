@@ -79,7 +79,7 @@ will be used to build your project.  Open your favorite text editor and add the 
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -189,7 +189,7 @@ public class SampleTask {
 
 While it may not look like much, quite a bit is going on.  To read more about the Spring
 Boot specifics, take a look at their reference documentation here:
-http://docs.spring.io/spring-boot/docs/current/reference/html/[http://docs.spring.io/spring-boot/docs/current/reference/html/]
+https://docs.spring.io/spring-boot/docs/current/reference/html/[https://docs.spring.io/spring-boot/docs/current/reference/html/]
 
 We'll also need to create an `application.properties` in `src/main/resources`.  We'll
 configure two properties in it: the application name (which is translated to the task name)
