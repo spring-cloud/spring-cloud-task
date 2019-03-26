@@ -29,7 +29,7 @@ project: spring-cloud-task
 github_repo_url: https://github.com/spring-cloud/spring-cloud-task
 
 # Project forum URL
-forum: http://stackoverflow.com/questions/tagged/spring-cloud
+forum: https://stackoverflow.com/questions/tagged/spring-cloud
 
 # If you want to include a custom pom.xml or gradle template set these value to true and add _include files
 custom_pom_template: false
