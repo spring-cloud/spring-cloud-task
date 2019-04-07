@@ -81,7 +81,6 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class HelloworldApplication {
-public class SampleTask {
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
