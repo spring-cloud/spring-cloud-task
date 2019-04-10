@@ -163,13 +163,14 @@
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>aggregate</id>
-						<phase>site</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>aggregate</goal>
 						</goals>
