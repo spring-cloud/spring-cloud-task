@@ -13,7 +13,7 @@
 	<description>Spring Cloud Task Docs</description>
 	<properties>
 		<main.basedir>${basedir}/..</main.basedir>
-		<asciidoctor.maven.plugin.version>1.5.7.1</asciidoctor.maven.plugin.version>
+		<asciidoctor.maven.plugin.version>1.5.6</asciidoctor.maven.plugin.version>
 		<asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
 	</properties>
 	<dependencies>
