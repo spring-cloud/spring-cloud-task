@@ -27,9 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class JobInstanceEventTests {
 
-	public static final long INSTANCE_ID = 1;
+	private static final long INSTANCE_ID = 1;
 
-	public static final String JOB_NAME = "FOOBAR";
+	private static final String JOB_NAME = "FOOBAR";
 
 	@Test
 	public void testConstructor() {

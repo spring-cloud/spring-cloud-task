@@ -43,6 +43,9 @@ import static org.mockito.Mockito.mock;
  */
 public class TaskDatabaseInitializerTests {
 
+	/**
+	 * Establishes that a Exception is not expected.
+	 */
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
 

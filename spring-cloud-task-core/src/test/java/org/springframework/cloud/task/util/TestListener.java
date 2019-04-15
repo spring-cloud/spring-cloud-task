@@ -25,10 +25,19 @@ import org.springframework.cloud.task.repository.TaskExecution;
  */
 public abstract class TestListener {
 
+	/**
+	 * Default end message to use for the start message.
+	 */
 	public static final String START_MESSAGE = "FOO";
 
+	/**
+	 * Default end message to use for the error message.
+	 */
 	public static final String ERROR_MESSAGE = "BAR";
 
+	/**
+	 * Default end message to use for the end message.
+	 */
 	public static final String END_MESSAGE = "BAZ";
 
 	protected boolean isTaskStartup;
@@ -67,6 +76,7 @@ public abstract class TestListener {
 
 	/**
 	 * Task Execution that was updated during listener call.
+	 * @return instance of TaskExecution.
 	 */
 	public TaskExecution getTaskExecution() {
 		return this.taskExecution;
@@ -74,6 +84,7 @@ public abstract class TestListener {
 
 	/**
 	 * The throwable that was sent with the task if task failed.
+	 * @return instance of Throwable.
 	 */
 	public Throwable getThrowable() {
 		return this.throwable;

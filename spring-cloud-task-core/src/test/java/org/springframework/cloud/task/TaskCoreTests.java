@@ -58,6 +58,9 @@ public class TaskCoreTests {
 	private static final String ERROR_MESSAGE = "errorMessage='java.lang.IllegalStateException: "
 			+ "Failed to execute CommandLineRunner";
 
+	/**
+	 * Used to capture the log output from the test task.
+	 */
 	@Rule
 	public OutputCapture outputCapture = new OutputCapture();
 

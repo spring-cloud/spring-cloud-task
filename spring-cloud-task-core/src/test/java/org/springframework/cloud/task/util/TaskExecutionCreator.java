@@ -28,7 +28,10 @@ import org.springframework.cloud.task.repository.TaskRepository;
  *
  * @author Glenn Renfro
  */
-public class TaskExecutionCreator {
+public final class TaskExecutionCreator {
+
+	private TaskExecutionCreator() {
+	}
 
 	/**
 	 * Creates a sample TaskExecution and stores it in the taskRepository.
@@ -71,6 +74,7 @@ public class TaskExecutionCreator {
 	/**
 	 * Updates a sample TaskExecution in the taskRepository.
 	 * @param taskRepository the taskRepository where the taskExecution should be updated.
+	 * @param expectedTaskExecution the expected task execution.
 	 * @return the taskExecution created.
 	 */
 	public static TaskExecution completeExecution(TaskRepository taskRepository,

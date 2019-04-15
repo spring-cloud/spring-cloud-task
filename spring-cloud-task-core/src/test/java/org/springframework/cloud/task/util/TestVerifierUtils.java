@@ -42,9 +42,15 @@ import static org.mockito.Mockito.when;
  *
  * @author Glenn Renfro
  */
-public class TestVerifierUtils {
+public final class TestVerifierUtils {
 
+	/**
+	 * The default number of arguments to use for the test TaskExecutions.
+	 */
 	public static final int ARG_SIZE = 5;
+
+	private TestVerifierUtils() {
+	}
 
 	/**
 	 * Creates a mock {@link Appender} to be added to the root logger.
@@ -78,7 +84,7 @@ public class TestVerifierUtils {
 
 	/**
 	 * Creates a fully populated TaskExecution (except args) for testing.
-	 * @return
+	 * @return instance of a TaskExecution
 	 */
 	public static TaskExecution createSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
@@ -92,7 +98,7 @@ public class TestVerifierUtils {
 
 	/**
 	 * Creates a fully populated TaskExecution (except args) for testing.
-	 * @return
+	 * @return instance of a TaskExecution.
 	 */
 	public static TaskExecution endSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
@@ -109,7 +115,8 @@ public class TestVerifierUtils {
 
 	/**
 	 * Creates a fully populated TaskExecution for testing.
-	 * @return
+	 * @param executionId the taskExecutionId to be created.
+	 * @return instance of the TaskExecution.
 	 */
 	public static TaskExecution createSampleTaskExecution(long executionId) {
 		Date startTime = new Date();
@@ -124,7 +131,7 @@ public class TestVerifierUtils {
 	}
 
 	/**
-	 * Verifies that all the fields in between the expected and actual are the same;
+	 * Verifies that all the fields in between the expected and actual are the same.
 	 * @param expectedTaskExecution The expected value for the task execution.
 	 * @param actualTaskExecution The actual value for the task execution.
 	 */

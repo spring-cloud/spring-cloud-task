@@ -62,6 +62,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TaskLifecycleListenerTests {
 
+	/**
+	 * Used to capture the log output from the test task.
+	 */
 	@Rule
 	public OutputCapture outputCapture = new OutputCapture();
 

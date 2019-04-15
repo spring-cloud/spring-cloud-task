@@ -65,6 +65,9 @@ public class SimpleTaskExplorerTests {
 
 	private final static String EXTERNAL_EXECUTION_ID = "123ABC";
 
+	/**
+	 * Establishes that a Exception is not expected.
+	 */
 	@Rule
 	public ExpectedException expected = ExpectedException.none();
 

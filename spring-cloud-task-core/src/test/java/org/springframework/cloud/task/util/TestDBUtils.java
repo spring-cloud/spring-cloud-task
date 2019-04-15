@@ -52,7 +52,10 @@ import static org.mockito.Mockito.when;
  * @author Glenn Renfro
  * @author Ilayaperumal Gopinathan
  */
-public class TestDBUtils {
+public final class TestDBUtils {
+
+	private TestDBUtils() {
+	}
 
 	/**
 	 * Retrieves the TaskExecution from the datasource.

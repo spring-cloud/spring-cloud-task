@@ -31,9 +31,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TaskLaunchRequestTests {
 
-	public static final String URI = "https://myURI";
+	private static final String URI = "https://myURI";
 
-	public static final String APP_NAME = "MY_APP_NAME";
+	private static final String APP_NAME = "MY_APP_NAME";
 
 	@Test
 	public void testEquals() {

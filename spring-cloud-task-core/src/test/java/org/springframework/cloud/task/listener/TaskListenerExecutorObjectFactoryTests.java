@@ -51,12 +51,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 public class TaskListenerExecutorObjectFactoryTests {
 
+	/**
+	 * Task name constant for the Before TaskListener tests.
+	 */
 	public static final String BEFORE_LISTENER = "BEFORE LISTENER";
 
+	/**
+	 * Task name constant for the After TaskListener tests.
+	 */
 	public static final String AFTER_LISTENER = "AFTER LISTENER";
 
+	/**
+	 * Task name constant for the Fail TaskListener tests.
+	 */
 	public static final String FAIL_LISTENER = "FAIL LISTENER";
 
+	/**
+	 * Collection of the task execution listeners that were fired.
+	 */
 	public static List<TaskExecution> taskExecutionListenerResults = new ArrayList<>(3);
 
 	@Autowired

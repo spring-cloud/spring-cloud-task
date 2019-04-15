@@ -40,7 +40,7 @@ public class TaskConfiguration {
 
 	public static class TestTaskLauncher implements TaskLauncher {
 
-		public static final String LAUNCH_ID = "TEST_LAUNCH_ID";
+		private static final String LAUNCH_ID = "TEST_LAUNCH_ID";
 
 		private LaunchState state = LaunchState.unknown;
 

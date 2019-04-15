@@ -75,7 +75,7 @@ public class JpaApplicationTests {
 		this.dataSource = dataSource;
 		try {
 			this.server = Server
-				.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", String
+				.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String
 					.valueOf(randomPort))
 				.start();
 		}
