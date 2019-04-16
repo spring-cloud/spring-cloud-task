@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-task-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.2.0.M1</version>
 	</parent>
 	<artifactId>spring-cloud-task-docs</artifactId>
 	<name>Spring Cloud Task Docs</name>
@@ -101,7 +99,7 @@
 										<toc>left</toc>
 										<toc-levels>4</toc-levels>
 										<sectanchors>true</sectanchors>
-										<sectnums/>
+										<sectnums />
 										<docinfo>shared</docinfo>
 										<stylesdir>css/</stylesdir>
 										<stylesheet>spring.css</stylesheet>
@@ -123,9 +121,9 @@
 									<sourceHighlighter>coderay</sourceHighlighter>
 									<attributes>
 										<icons>font</icons>
-										<pagenums/>
-										<sectnums/>
-										<toc/>
+										<pagenums />
+										<sectnums />
+										<toc />
 									</attributes>
 								</configuration>
 							</execution>
@@ -167,8 +165,8 @@
 								<configuration>
 									<target>
 										<zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip">
-											<zipfileset dir="${project.build.directory}/generated-docs" prefix="reference"/>
-											<zipfileset dir="../target/site/apidocs" prefix="apidocs"/>
+											<zipfileset dir="${project.build.directory}/generated-docs" prefix="reference" />
+											<zipfileset dir="../target/site/apidocs" prefix="apidocs" />
 										</zip>
 									</target>
 								</configuration>
@@ -182,42 +180,18 @@
 								<configuration>
 									<exportAntProperties>true</exportAntProperties>
 									<target>
-										<taskdef
-											resource="net/sf/antcontrib/antcontrib.properties"/>
-										<taskdef name="stringutil"
-												 classname="ise.antelope.tasks.StringUtilTask"/>
-										<var name="version-type"
-											 value="${project.version}"/>
-										<propertyregex property="version-type"
-													   override="true"
-													   input="${version-type}"
-													   regexp=".*\.(.*)" replace="\1"/>
-										<propertyregex property="version-type"
-													   override="true"
-													   input="${version-type}"
-													   regexp="(M)\d+"
-													   replace="MILESTONE"/>
-										<propertyregex property="version-type"
-													   override="true"
-													   input="${version-type}"
-													   regexp="(RC)\d+"
-													   replace="MILESTONE"/>
-										<propertyregex property="version-type"
-													   override="true"
-													   input="${version-type}"
-													   regexp="BUILD-(.*)"
-													   replace="SNAPSHOT"/>
-										<stringutil string="${version-type}"
-													property="spring-boot-repo">
-											<lowercase/>
+										<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+										<taskdef name="stringutil" classname="ise.antelope.tasks.StringUtilTask" />
+										<var name="version-type" value="${project.version}" />
+										<propertyregex property="version-type" override="true" input="${version-type}" regexp=".*\.(.*)" replace="\1" />
+										<propertyregex property="version-type" override="true" input="${version-type}" regexp="(M)\d+" replace="MILESTONE" />
+										<propertyregex property="version-type" override="true" input="${version-type}" regexp="(RC)\d+" replace="MILESTONE" />
+										<propertyregex property="version-type" override="true" input="${version-type}" regexp="BUILD-(.*)" replace="SNAPSHOT" />
+										<stringutil string="${version-type}" property="spring-boot-repo">
+											<lowercase />
 										</stringutil>
-										<var name="github-tag"
-											 value="v${project.version}"/>
-										<propertyregex property="github-tag"
-													   override="true"
-													   input="${github-tag}"
-													   regexp=".*SNAPSHOT"
-													   replace="master"/>
+										<var name="github-tag" value="v${project.version}" />
+										<propertyregex property="github-tag" override="true" input="${github-tag}" regexp=".*SNAPSHOT" replace="master" />
 									</target>
 								</configuration>
 							</execution>
