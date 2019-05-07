@@ -38,7 +38,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure", havingValue = "true")
+@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure",
+		havingValue = "true")
 @EnableConfigurationProperties(TaskBatchProperties.class)
 @AutoConfigureBefore(BatchAutoConfiguration.class)
 public class TaskJobLauncherAutoConfiguration {

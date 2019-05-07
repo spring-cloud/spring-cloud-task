@@ -55,7 +55,8 @@ import org.springframework.util.CollectionUtils;
 @EnableTransactionManagement
 @EnableConfigurationProperties(TaskProperties.class)
 // @checkstyle:off
-@ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled",
+		havingValue = "true", matchIfMissing = true)
 // @checkstyle:on
 public class SimpleTaskAutoConfiguration {
 

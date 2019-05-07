@@ -59,8 +59,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Glenn Renfro
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-		TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class })
+@ContextConfiguration(
+		classes = { TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class })
 public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	@Autowired

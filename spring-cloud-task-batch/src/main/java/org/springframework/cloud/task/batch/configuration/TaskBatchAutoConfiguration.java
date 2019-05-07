@@ -40,8 +40,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnBean({ Job.class })
-@ConditionalOnProperty(name = { "spring.cloud.task.batch.listener.enable",
-		"spring.cloud.task.batch.listener.enabled" }, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+		name = { "spring.cloud.task.batch.listener.enable",
+				"spring.cloud.task.batch.listener.enabled" },
+		havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
 
 	@Bean

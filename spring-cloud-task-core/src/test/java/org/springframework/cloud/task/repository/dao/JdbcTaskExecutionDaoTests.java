@@ -53,9 +53,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Gunnar Hillert
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { TestConfiguration.class,
-		EmbeddedDataSourceConfiguration.class,
-		PropertyPlaceholderAutoConfiguration.class })
+@ContextConfiguration(
+		classes = { TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class })
 public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	@Autowired
