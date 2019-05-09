@@ -87,7 +87,7 @@ public class JobConfiguration {
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
-		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
+		commandLineArgs.add("--spring.cloud.task.initialize-enabled=false");
 		commandLineArgs.add("--spring.batch.initializer.enabled=false");
 		partitionHandler
 			.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));

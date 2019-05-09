@@ -118,7 +118,6 @@ public class TaskLauncherSinkTests {
 		this.properties.put("spring.datasource.driverClassName",
 				DATASOURCE_DRIVER_CLASS_NAME);
 		this.properties.put("spring.application.name", TASK_NAME);
-		this.properties.put("spring.cloud.task.initialize.enable", "false");
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP ALL OBJECTS");

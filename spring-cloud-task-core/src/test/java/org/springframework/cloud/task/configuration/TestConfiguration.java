@@ -50,7 +50,8 @@ public class TestConfiguration implements InitializingBean {
 
 	@Bean
 	public TaskRepositoryInitializer taskRepositoryInitializer() throws Exception {
-		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(
+				new TaskProperties());
 		taskRepositoryInitializer.setDataSource(this.dataSource);
 		taskRepositoryInitializer.setResourceLoader(this.resourceLoader);
 		taskRepositoryInitializer.afterPropertiesSet();
@@ -59,7 +60,7 @@ public class TestConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskExplorer taskExplorer() throws Exception {
+	public TaskExplorer taskExplorer() {
 		return new SimpleTaskExplorer(this.taskExecutionDaoFactoryBean);
 	}
 
@@ -79,7 +80,7 @@ public class TestConfiguration implements InitializingBean {
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		if (this.dataSource != null) {
 			this.taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(
 					this.dataSource);

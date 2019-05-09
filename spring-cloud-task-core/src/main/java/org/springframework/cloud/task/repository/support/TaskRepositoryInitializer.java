@@ -24,12 +24,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility for initializing the Task Repository's datasource. If a single
@@ -38,8 +38,9 @@ import org.springframework.util.StringUtils;
  * is available in the current context, custom configuration of this is required (if
  * desired).
  *
- * By default, initialization of the database can be disabled by configuring the property
- * <code>spring.cloud.task.initialize.enable</code> to false.
+ * Initialization of the database can be disabled by configuring the property
+ * <code>spring.cloud.task.initialize-enabled</code> to false.
+ * <code>spring.cloud.task.initialize.enable</code> has been deprecated.
  *
  * @author Glenn Renfro
  * @author Michael Minella
@@ -62,12 +63,12 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	private ResourceLoader resourceLoader;
 
 	@Value("${spring.cloud.task.initialize.enable:true}")
-	private boolean taskInitializationEnable;
+	private boolean taskInitializationEnabled;
 
-	@Value("${spring.cloud.task.tablePrefix:#{null}}")
-	private String tablePrefix;
+	private TaskProperties taskProperties;
 
-	public TaskRepositoryInitializer() {
+	public TaskRepositoryInitializer(TaskProperties taskProperties) {
+		this.taskProperties = taskProperties;
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -92,8 +93,11 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (this.dataSource != null && this.taskInitializationEnable
-				&& !StringUtils.hasText(this.tablePrefix)) {
+		boolean isInitializeEnabled = (this.taskProperties.isInitializeEnabled() != null)
+				? this.taskProperties.isInitializeEnabled()
+				: this.taskInitializationEnabled;
+		if (this.dataSource != null && isInitializeEnabled && this.taskProperties
+				.getTablePrefix().equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
 			String platform = getDatabaseType(this.dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
