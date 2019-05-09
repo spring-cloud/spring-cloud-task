@@ -53,7 +53,8 @@ import org.springframework.util.CollectionUtils;
  */
 @Configuration
 @EnableTransactionManagement
-@EnableConfigurationProperties(TaskProperties.class)
+@EnableConfigurationProperties({ TaskProperties.class,
+		TaskInitializationProperties.class })
 // @checkstyle:off
 @ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled",
 		havingValue = "true", matchIfMissing = true)
@@ -74,6 +75,9 @@ public class SimpleTaskAutoConfiguration {
 
 	@Autowired
 	private TaskProperties taskProperties;
+
+	@Autowired
+	private TaskInitializationProperties taskInitializationProperties;
 
 	private boolean initialized = false;
 
@@ -106,7 +110,8 @@ public class SimpleTaskAutoConfiguration {
 
 	@Bean
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
-		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(
+				this.taskProperties, this.taskInitializationProperties);
 		DataSource initializerDataSource = getDefaultConfigurer().getTaskDataSource();
 		if (initializerDataSource != null) {
 			taskRepositoryInitializer.setDataSource(initializerDataSource);

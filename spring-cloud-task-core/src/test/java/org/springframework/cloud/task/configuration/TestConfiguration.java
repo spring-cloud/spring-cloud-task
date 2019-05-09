@@ -50,7 +50,8 @@ public class TestConfiguration implements InitializingBean {
 
 	@Bean
 	public TaskRepositoryInitializer taskRepositoryInitializer() throws Exception {
-		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer();
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(
+				new TaskProperties(), new TaskInitializationProperties());
 		taskRepositoryInitializer.setDataSource(this.dataSource);
 		taskRepositoryInitializer.setResourceLoader(this.resourceLoader);
 		taskRepositoryInitializer.afterPropertiesSet();

@@ -23,13 +23,13 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.task.configuration.TaskInitializationProperties;
+import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility for initializing the Task Repository's datasource. If a single
@@ -61,13 +61,14 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private ResourceLoader resourceLoader;
 
-	@Value("${spring.cloud.task.initialize.enable:true}")
 	private boolean taskInitializationEnable;
 
-	@Value("${spring.cloud.task.tablePrefix:#{null}}")
 	private String tablePrefix;
 
-	public TaskRepositoryInitializer() {
+	public TaskRepositoryInitializer(TaskProperties taskProperties,
+			TaskInitializationProperties taskInitializationProperties) {
+		this.tablePrefix = taskProperties.getTablePrefix();
+		this.taskInitializationEnable = taskInitializationProperties.isEnable();
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -93,7 +94,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (this.dataSource != null && this.taskInitializationEnable
-				&& !StringUtils.hasText(this.tablePrefix)) {
+				&& this.tablePrefix.equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
 			String platform = getDatabaseType(this.dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
