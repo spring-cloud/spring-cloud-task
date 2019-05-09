@@ -63,8 +63,8 @@ public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 	private final static int MAX_WAIT_TIME = 10000;
-	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.1.0.RELEASE";
+	private final static String URL = "maven://org.springframework.cloud.task.app:"
+		+ "timestamp-task:2.0.0.RELEASE";
 	private final static String DATASOURCE_URL;
 	private final static String DATASOURCE_USER_NAME = "SA";
 	private final static String DATASOURCE_USER_PASSWORD = "";
@@ -102,7 +102,6 @@ public class TaskLauncherSinkTests {
 		properties = new HashMap<>();
 		properties.put("spring.datasource.url", DATASOURCE_URL);
 		properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
-		properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
 		properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
 		properties.put("spring.application.name",TASK_NAME);
 		properties.put("spring.cloud.task.initialize.enable", "false");
@@ -189,7 +188,7 @@ public class TaskLauncherSinkTests {
 		public Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
+				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
 						String.valueOf(randomPort)).start();
 			}
 			catch (SQLException e) {

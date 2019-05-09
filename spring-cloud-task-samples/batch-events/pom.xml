@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.4.RELEASE</version>
+		<version>1.5.20.RELEASE</version>
 		<relativePath />
 	</parent>
 
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<version>1.2.1.RELEASE</version>
+			<version>1.2.2.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
