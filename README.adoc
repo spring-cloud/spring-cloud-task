@@ -1,4 +1,4 @@
-= Spring Cloud Task image:https://build.spring.io/plugins/servlet/wittified/build-status/SCT-STASK[Build Status, link=https://build.spring.io/browse/SCT-STASK] image:https://badge.waffle.io/spring-cloud/spring-cloud-task.svg?label=ready&title=Ready[Stories in Ready, link=https://waffle.io/spring-cloud/spring-cloud-task] image:https://badge.waffle.io/spring-cloud/spring-cloud-task.svg?label=In%20Progress&title=In%20Progress[Stories in Progress, link=https://waffle.io/spring-cloud/spring-cloud-task]
+= Spring Cloud Task image:https://build.spring.io/plugins/servlet/wittified/build-status/SCT-STASK[Build Status, link=https://build.spring.io/browse/SCT-STASK]
 
 image:https://badges.gitter.im/spring-cloud/spring-cloud-task.svg[link="https://gitter.im/spring-cloud/spring-cloud-task?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
 
