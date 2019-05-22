@@ -113,7 +113,7 @@ public class TaskPartitionerTests {
 		public org.h2.tools.Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
+				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
 						String.valueOf(randomPort)).start();
 			}
 			catch (SQLException e) {

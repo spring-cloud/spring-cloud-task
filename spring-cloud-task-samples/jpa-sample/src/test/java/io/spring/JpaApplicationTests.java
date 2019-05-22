@@ -74,7 +74,7 @@ public class JpaApplicationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		this.dataSource = dataSource;
 		try {
-			this.server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+			this.server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
 					.start();
 		}
 		catch (SQLException e) {
