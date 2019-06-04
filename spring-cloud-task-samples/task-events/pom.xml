@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-			<version>2.2.0.RELEASE</version>
+			<version>3.0.0.BUILD-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
