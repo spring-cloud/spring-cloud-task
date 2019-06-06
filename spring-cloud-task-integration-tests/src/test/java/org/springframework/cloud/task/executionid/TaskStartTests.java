@@ -278,7 +278,7 @@ public class TaskStartTests {
 			Server server = null;
 			try {
 				if(defaultServer == null) {
-					server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
+					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
 							String.valueOf(randomPort)).start();
 					defaultServer = server;
 				}
