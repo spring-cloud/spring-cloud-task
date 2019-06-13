@@ -64,7 +64,7 @@ To do so:
 .. In the Dependencies text box, type `jdbc` and then select the `JDBC` dependency.
 .. In the Dependencies text box, type `h2` and then select the `H2`. (or your favorite database)
 .. Click the *Generate Project* button
-. Unzip the timestamp.zip file and import the project into your favorite IDE.
+. Unzip the helloworld.zip file and import the project into your favorite IDE.
 
 [[getting-started-writing-the-code]]
 === Writing the Code
