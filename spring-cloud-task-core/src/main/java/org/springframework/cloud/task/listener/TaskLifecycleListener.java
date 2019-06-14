@@ -45,7 +45,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -70,7 +70,8 @@ import org.springframework.util.StringUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean {
+public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>,
+		SmartLifecycle, DisposableBean, Ordered {
 
 	@Autowired
 	private ConfigurableApplicationContext context;
@@ -393,5 +394,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			 this.taskExecutionListeners.addAll(this.taskExecutionListenersFromContext);
 		}
 		this.taskExecutionListeners.add(this.taskListenerExecutorObjectProvider.getObject());
+	}
+
+	@Override
+	public int getOrder() {
+		return HIGHEST_PRECEDENCE;
 	}
 }

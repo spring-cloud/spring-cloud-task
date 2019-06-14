@@ -294,6 +294,7 @@ The following example shows the three annotations in use:
 }
 ----
 
+NOTE: If you using a `ApplicationListener` early in Spring's Lifecycle this could impact TaskLifecycleListener's functionality.
 
 [[features-task-execution-listener-Exceptions]]
 ==== Exceptions Thrown by Task Execution Listener
