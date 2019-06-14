@@ -45,6 +45,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -76,8 +77,8 @@ import org.springframework.util.StringUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-public class TaskLifecycleListener
-		implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean {
+public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>,
+		SmartLifecycle, DisposableBean, Ordered {
 
 	private static final Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
@@ -430,6 +431,11 @@ public class TaskLifecycleListener
 
 	@Override
 	public void destroy() {
+	}
+
+	@Override
+	public int getOrder() {
+		return HIGHEST_PRECEDENCE;
 	}
 
 }
