@@ -43,13 +43,15 @@ public class TaskPropertiesTests {
 	@Test
 	public void test() {
 		assertThat(this.taskProperties.getClosecontextEnabled()).isFalse();
+		assertThat(this.taskProperties.isInitializeEnabled()).isFalse();
 	}
 
 	@RunWith(SpringRunner.class)
 	@SpringBootTest(
 			classes = { TaskPropertiesTests.Config.class,
 					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class },
-			properties = { "spring.cloud.task.closecontextEnabled=false" })
+			properties = { "spring.cloud.task.closecontextEnabled=false",
+					"spring.cloud.task.initialize-enabled=false" })
 	@DirtiesContext
 	public static class CloseContextEnabledTest extends TaskPropertiesTests {
 

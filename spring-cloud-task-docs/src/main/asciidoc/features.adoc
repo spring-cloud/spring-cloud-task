@@ -152,12 +152,15 @@ by setting the `spring.cloud.task.tablePrefix` to the prefix you need, as follow
 [[features-table-initialization]]
 === Enable/Disable table initialization
 In cases where you are creating the task tables and do not wish for Spring Cloud Task to
-create them at task startup, set the `spring.cloud.task.initialize.enable` property to
+create them at task startup, set the `spring.cloud.task.initialize-enabled` property to
 `false`, as follows:
 
-`spring.cloud.task.initialize.enable=false`
+`spring.cloud.task.initialize-enabled=false`
 
 It defaults to `true`.
+
+
+NOTE: The property `spring.cloud.task.initialize.enable` has been deprecated.
 
 [[features-generated_task_id]]
 === Externally Generated Task ID

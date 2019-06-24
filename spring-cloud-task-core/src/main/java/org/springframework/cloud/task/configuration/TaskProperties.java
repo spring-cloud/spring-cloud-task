@@ -88,6 +88,12 @@ public class TaskProperties {
 	 */
 	private int singleInstanceLockCheckInterval = DEFAULT_CHECK_INTERVAL;
 
+	/**
+	 * If set to true then tables are initialized. If set to false tables are not
+	 * initialized. Defaults to true.
+	 */
+	private boolean initializeEnabled = true;
+
 	public String getExternalExecutionId() {
 		return this.externalExecutionId;
 	}
@@ -150,6 +156,14 @@ public class TaskProperties {
 
 	public void setSingleInstanceLockCheckInterval(int singleInstanceLockCheckInterval) {
 		this.singleInstanceLockCheckInterval = singleInstanceLockCheckInterval;
+	}
+
+	public boolean isInitializeEnabled() {
+		return initializeEnabled;
+	}
+
+	public void setInitializeEnabled(boolean initializeEnabled) {
+		this.initializeEnabled = initializeEnabled;
 	}
 
 }
