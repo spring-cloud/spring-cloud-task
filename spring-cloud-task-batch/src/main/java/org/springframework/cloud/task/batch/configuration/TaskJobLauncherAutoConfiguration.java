@@ -26,9 +26,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -38,8 +38,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure",
-		havingValue = "true")
+@Conditional(JobLaunchCondition.class)
 @EnableConfigurationProperties(TaskBatchProperties.class)
 @AutoConfigureBefore(BatchAutoConfiguration.class)
 public class TaskJobLauncherAutoConfiguration {
