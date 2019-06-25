@@ -31,6 +31,7 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -106,6 +107,19 @@ public class TaskJobLauncherCommandLineRunnerTests {
 				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500"};
 		validateForFail(DEFAULT_ERROR_MESSAGE, TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
 				enabledArgs);
+	}
+
+	@Test
+	public void testNoTaskJobLauncher() {
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
+				"--spring.batch.job.enabled=false" };
+		this.applicationContext = SpringApplication.run(new Class[] {
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+				enabledArgs);
+		JobExplorer jobExplorer = this.applicationContext.getBean(JobExplorer.class);
+		assertThat(jobExplorer.getJobNames().size()).isEqualTo(0);
 	}
 
 	@Test
