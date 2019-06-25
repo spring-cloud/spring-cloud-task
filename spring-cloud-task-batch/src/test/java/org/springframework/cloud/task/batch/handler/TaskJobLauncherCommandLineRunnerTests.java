@@ -113,6 +113,17 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@Test
+	public void testNoTaskJobLauncher() {
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
+				"--spring.batch.job.enabled=false" };
+		this.applicationContext = SpringApplication.run(new Class[] {
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+				enabledArgs);
+	}
+
+	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.fail-on-job-failure=true",
