@@ -26,6 +26,7 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -85,6 +86,19 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@DirtiesContext
+	@Test
+	public void testNoTaskJobLauncher() {
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
+				"--spring.batch.job.enabled=false" };
+		this.applicationContext = SpringApplication.run(new Class[] {
+				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+				enabledArgs);
+		JobExplorer jobExplorer = this.applicationContext.getBean(JobExplorer.class);
+		assertThat(jobExplorer.getJobNames().size()).isEqualTo(0);
+	}
+
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
