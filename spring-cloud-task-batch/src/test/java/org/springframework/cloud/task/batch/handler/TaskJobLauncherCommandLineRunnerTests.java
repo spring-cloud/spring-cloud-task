@@ -32,6 +32,7 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -121,6 +122,8 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		this.applicationContext = SpringApplication.run(new Class[] {
 				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
 				enabledArgs);
+		JobExplorer jobExplorer = this.applicationContext.getBean(JobExplorer.class);
+		assertThat(jobExplorer.getJobNames().size()).isEqualTo(0);
 	}
 
 	@Test
