@@ -14,63 +14,51 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.launcher;
+package org.springframework.cloud.task.initializer;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
-import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
-import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
+import org.springframework.cloud.task.executionid.TaskStartApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
+import org.springframework.context.ApplicationContextException;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-		classes = { TaskLauncherSinkApplication.class,
-				TaskLauncherSinkTests.TaskLauncherConfiguration.class },
-		properties = {
-				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
-public class TaskLauncherSinkTests {
+@SpringBootTest(classes = { TaskInitializerTests.TaskLauncherConfiguration.class })
+public class TaskInitializerTests {
 
 	private final static int WAIT_INTERVAL = 500;
 
-	private final static int MAX_WAIT_TIME = 120000;
+	private final static int MAX_WAIT_TIME = 5000;
 
-	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:2.0.0.RELEASE";
+	private final static String URL = "maven://io.spring.cloud:"
+			+ "timestamp-task:jar:1.1.0.RELEASE";
 
 	private final static String DATASOURCE_URL;
 
@@ -82,9 +70,6 @@ public class TaskLauncherSinkTests {
 
 	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
 
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
-
 	private static int randomPort;
 
 	static {
@@ -93,56 +78,90 @@ public class TaskLauncherSinkTests {
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
-	@Autowired
-	private Sink sink;
-
 	private DataSource dataSource;
 
-	private Map<String, String> properties;
-
 	private TaskExplorer taskExplorer;
+
+	private ConfigurableApplicationContext applicationContext;
+
+	@After
+	public void tearDown() {
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
+			this.applicationContext.close();
+		}
+	}
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		this.taskExplorer = new SimpleTaskExplorer(
-				new TaskExecutionDaoFactoryBean(dataSource));
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(
+				dataSource);
+		this.taskExplorer = new SimpleTaskExplorer(factoryBean);
 	}
 
 	@Before
 	public void setup() {
-		this.properties = new HashMap<>();
-		this.properties.put("spring.datasource.url", DATASOURCE_URL);
-		this.properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
-		this.properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
-		this.properties.put("spring.datasource.driverClassName",
-				DATASOURCE_DRIVER_CLASS_NAME);
-		this.properties.put("spring.application.name", TASK_NAME);
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
-		template.execute("DROP ALL OBJECTS");
+		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
+		template.execute("DROP TABLE IF EXISTS TASK_SEQ");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS TASK_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS TASK_LOCK");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_STEP_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_PARAMS");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
+		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
+		template.execute("DROP SEQUENCE IF EXISTS TASK_SEQ");
+	}
 
-		DataSourceInitializer initializer = new DataSourceInitializer();
-
-		initializer.setDataSource(this.dataSource);
-		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-		databasePopulator.addScript(
-				new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
-		initializer.setDatabasePopulator(databasePopulator);
-
-		initializer.afterPropertiesSet();
+	@Test(expected = ApplicationContextException.class)
+	public void testNotInitialized() throws Exception {
+		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		String[] properties = { "--spring.cloud.task.initialize-enabled=false" };
+		this.applicationContext = myapp.run(properties);
 	}
 
 	@Test
-	public void testWithLocalDeployer() throws Exception {
-		launchTask(URL);
+	public void testWithInitialized() throws Exception {
+		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		String[] properties = { "--spring.cloud.task.initialize-enabled=true" };
+		this.applicationContext = myapp.run(properties);
 		assertThat(waitForDBToBePopulated()).isTrue();
 
 		Page<TaskExecution> taskExecutions = this.taskExplorer
 				.findAll(PageRequest.of(0, 10));
+		TaskExecution te = taskExecutions.iterator().next();
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
 				.isEqualTo(1);
-		assertThat(waitForTaskToComplete()).isTrue();
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
+				.as("return code should be 0").isEqualTo(0);
+	}
+
+	@Test(expected = ApplicationContextException.class)
+	public void testNotInitializedOriginalProperty() throws Exception {
+		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		String[] properties = { "--spring.cloud.task.initialize.enable=false" };
+		this.applicationContext = myapp.run(properties);
+	}
+
+	@Test
+	public void testWithInitializedOriginalProperty() throws Exception {
+		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		String[] properties = { "--spring.cloud.task.initialize.enable=true" };
+		this.applicationContext = myapp.run(properties);
+		assertThat(waitForDBToBePopulated()).isTrue();
+
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+				.findAll(PageRequest.of(0, 10));
+		TaskExecution te = taskExecutions.iterator().next();
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
+				.isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
 				.as("return code should be 0").isEqualTo(0);
 	}
@@ -169,49 +188,26 @@ public class TaskLauncherSinkTests {
 		return isDbPopulated;
 	}
 
-	private boolean waitForTaskToComplete() throws Exception {
-		boolean istTaskComplete = false;
-		for (int waitTime = 0; waitTime <= MAX_WAIT_TIME; waitTime += WAIT_INTERVAL) {
-			Thread.sleep(WAIT_INTERVAL);
-			TaskExecution taskExecution = this.taskExplorer.getTaskExecution(1);
-			if (taskExecution.getExitCode() != null) {
-				istTaskComplete = true;
-				break;
-			}
-		}
-		return istTaskComplete;
-	}
-
-	private void launchTask(String artifactURL) {
-
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
-				this.properties, null, null);
-		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
-		this.sink.input().send(message);
-	}
-
 	@Configuration
 	public static class TaskLauncherConfiguration {
 
+		private static Server defaultServer;
+
 		@Bean
-		public TaskLauncher taskLauncher() {
-			LocalDeployerProperties props = new LocalDeployerProperties();
-			props.setDeleteFilesOnExit(false);
-
-			return new LocalTaskLauncher(props);
-		}
-
-		@Bean(destroyMethod = "stop")
 		public Server initH2TCPServer() {
-			Server server;
+			Server server = null;
 			try {
-				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers",
-						"-tcpPort", String.valueOf(randomPort)).start();
+				if (defaultServer == null) {
+					server = Server.createTcpServer("-ifNotExists", "-tcp",
+							"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+							.start();
+					defaultServer = server;
+				}
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);
 			}
-			return server;
+			return defaultServer;
 		}
 
 		@Bean

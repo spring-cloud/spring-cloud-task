@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
@@ -39,7 +40,7 @@ import org.springframework.jdbc.support.MetaDataAccessException;
  *
  * Initialization of the database can be disabled by configuring the property
  * <code>spring.cloud.task.initialize-enabled</code> to false.
- * <code>spring.cloud.task.initialize.enabled</code> has been deprecated.
+ * <code>spring.cloud.task.initialize.enable</code> has been deprecated.
  *
  * @author Glenn Renfro
  * @author Michael Minella
@@ -61,13 +62,13 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private ResourceLoader resourceLoader;
 
+	@Value("${spring.cloud.task.initialize.enable:true}")
 	private boolean taskInitializationEnabled;
 
-	private String tablePrefix;
+	private TaskProperties taskProperties;
 
 	public TaskRepositoryInitializer(TaskProperties taskProperties) {
-		this.tablePrefix = taskProperties.getTablePrefix();
-		this.taskInitializationEnabled = taskProperties.isInitializeEnabled();
+		this.taskProperties = taskProperties;
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -92,8 +93,11 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (this.dataSource != null && this.taskInitializationEnabled
-				&& this.tablePrefix.equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
+		boolean isInitializeEnabled = (this.taskProperties.isInitializeEnabled() != null)
+				? this.taskProperties.isInitializeEnabled()
+				: this.taskInitializationEnabled;
+		if (this.dataSource != null && isInitializeEnabled && this.taskProperties
+				.getTablePrefix().equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
 			String platform = getDatabaseType(this.dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";

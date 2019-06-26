@@ -90,9 +90,11 @@ public class TaskProperties {
 
 	/**
 	 * If set to true then tables are initialized. If set to false tables are not
-	 * initialized. Defaults to true.
+	 * initialized. Defaults to null.  The requirement for it to be defaulted to null
+	 * is so that we can support the <code>spring.cloud.task.initialize.enable</code>
+	 * until it is removed.
 	 */
-	private boolean initializeEnabled = true;
+	private Boolean initializeEnabled;
 
 	public String getExternalExecutionId() {
 		return this.externalExecutionId;
@@ -158,11 +160,11 @@ public class TaskProperties {
 		this.singleInstanceLockCheckInterval = singleInstanceLockCheckInterval;
 	}
 
-	public boolean isInitializeEnabled() {
+	public Boolean isInitializeEnabled() {
 		return initializeEnabled;
 	}
 
-	public void setInitializeEnabled(boolean initializeEnabled) {
+	public void setInitializeEnabled(Boolean initializeEnabled) {
 		this.initializeEnabled = initializeEnabled;
 	}
 
