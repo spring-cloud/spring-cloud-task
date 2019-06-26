@@ -88,6 +88,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private final TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory;
 
+	private final TaskMetrics taskMetrics;
+
 	@Autowired
 	private ConfigurableApplicationContext context;
 
@@ -144,6 +146,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
+		this.taskMetrics = new TaskMetrics();
 	}
 
 	/**
@@ -312,6 +315,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
+		this.taskMetrics.onTaskStartup(taskExecution);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
 				this.taskExecutionListeners);
@@ -334,6 +338,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution) {
+		this.taskMetrics.onTaskEnd(taskExecution);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
@@ -357,6 +362,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
+		this.taskMetrics.onTaskFailed(taskExecution, throwable);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
