@@ -32,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CloudFoundryMicrometerTagsConfigurationTest {
 
 	@ActiveProfiles("cloud")
-	public static class ActiveCloudProfileDefaultValues
-			extends AbstractMicrometerTest {
+	public static class ActiveCloudProfileDefaultValues extends AbstractMicrometerTest {
 
 		@Test
 		public void testDefaultTagValues() {
@@ -51,8 +50,8 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 	@TestPropertySource(properties = { "vcap.application.org_name=PivotalOrg",
 			"vcap.application.space_id=SpringSpaceId",
 			"vcap.application.space_name=SpringSpace",
-			"vcap.application.application_name=App666",
-			"vcap.application.application_id=666guid",
+			"vcap.application.application_name=App123",
+			"vcap.application.application_id=123guid",
 			"vcap.application.application_version=2.0",
 			"vcap.application.instance_index=123" })
 	@ActiveProfiles("cloud")
@@ -63,8 +62,8 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 			assertThat(meter.getId().getTag("cf.org.name")).isEqualTo("PivotalOrg");
 			assertThat(meter.getId().getTag("cf.space.id")).isEqualTo("SpringSpaceId");
 			assertThat(meter.getId().getTag("cf.space.name")).isEqualTo("SpringSpace");
-			assertThat(meter.getId().getTag("cf.app.name")).isEqualTo("App666");
-			assertThat(meter.getId().getTag("cf.app.id")).isEqualTo("666guid");
+			assertThat(meter.getId().getTag("cf.app.name")).isEqualTo("App123");
+			assertThat(meter.getId().getTag("cf.app.id")).isEqualTo("123guid");
 			assertThat(meter.getId().getTag("cf.app.version")).isEqualTo("2.0");
 			assertThat(meter.getId().getTag("cf.instance.index")).isEqualTo("123");
 		}
@@ -74,8 +73,8 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 	@TestPropertySource(properties = { "vcap.application.org_name=PivotalOrg",
 			"vcap.application.space_id=SpringSpaceId",
 			"vcap.application.space_name=SpringSpace",
-			"vcap.application.application_name=App666",
-			"vcap.application.application_id=666guid",
+			"vcap.application.application_name=App123",
+			"vcap.application.application_id=123guid",
 			"vcap.application.application_version=2.0",
 			"vcap.application.instance_index=123" })
 	public static class InactiveCloudProfile extends AbstractMicrometerTest {

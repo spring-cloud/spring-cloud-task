@@ -45,7 +45,7 @@ public class SpringCloudTaskMicrometerCommonTagsConfigurationTest {
 	}
 
 	@TestPropertySource(properties = { "spring.cloud.task.name=myTask",
-			"spring.cloud.task.executionid=666",
+			"spring.cloud.task.executionid=123",
 			"spring.cloud.task.parent-execution-id=999",
 			"spring.cloud.task.external-execution-id=696" })
 	public static class TestPresetTagValues extends AbstractMicrometerTest {
@@ -53,7 +53,7 @@ public class SpringCloudTaskMicrometerCommonTagsConfigurationTest {
 		@Test
 		public void testPresetTagValues() {
 			assertThat(meter.getId().getTag("task.name")).isEqualTo("myTask");
-			assertThat(meter.getId().getTag("task.execution.id")).isEqualTo("666");
+			assertThat(meter.getId().getTag("task.execution.id")).isEqualTo("123");
 			assertThat(meter.getId().getTag("task.parent.execution.id")).isEqualTo("999");
 			assertThat(meter.getId().getTag("task.external.execution.id"))
 					.isEqualTo("696");

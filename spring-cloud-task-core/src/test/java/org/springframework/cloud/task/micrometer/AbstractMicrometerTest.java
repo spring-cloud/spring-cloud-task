@@ -21,9 +21,11 @@ import java.nio.charset.Charset;
 
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.simple.SimpleConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.pivotal.cfenv.test.CfEnvTestUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -39,6 +41,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StreamUtils;
 
@@ -50,6 +53,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = AbstractMicrometerTest.AutoConfigurationApplication.class)
+@DirtiesContext
 public class AbstractMicrometerTest {
 
 	@Autowired
@@ -62,19 +66,23 @@ public class AbstractMicrometerTest {
 
 	@Before
 	public void before() {
-
+		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		assertThat(simpleMeterRegistry).isNotNull();
 		meter = simpleMeterRegistry.find("jvm.memory.committed").meter();
 		assertThat(meter).isNotNull().withFailMessage(
-			"The jvm.memory.committed meter mast be present in SpringBoot apps!");
+				"The jvm.memory.committed meter must be present in SpringBoot apps!");
+	}
 
+	@After
+	public void after() {
+		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 	}
 
 	@BeforeClass
 	public static void setup() throws IOException {
 		String serviceJson = StreamUtils.copyToString(new DefaultResourceLoader()
 				.getResource("classpath:/micrometer/pcf-scs-info.json").getInputStream(),
-			Charset.forName("UTF-8"));
+				Charset.forName("UTF-8"));
 		CfEnvTestUtils.mockVcapServicesFromString(serviceJson);
 	}
 
@@ -87,6 +95,7 @@ public class AbstractMicrometerTest {
 		}
 
 		@Bean
+		@ConditionalOnMissingBean
 		public SimpleMeterRegistry simpleMeterRegistry(SimpleConfig config, Clock clock) {
 			return new SimpleMeterRegistry(config, clock);
 		}

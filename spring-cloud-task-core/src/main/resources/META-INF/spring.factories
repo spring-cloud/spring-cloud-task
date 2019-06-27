@@ -1,6 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.cloud.task.configuration.SingleTaskConfiguration,\
 org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration,\
-org.springframework.cloud.task.configuration.TaskMetricsConfiguration,\
 org.springframework.cloud.task.configuration.CloudFoundryMicrometerTagsConfiguration,\
 org.springframework.cloud.task.configuration.SpringCloudTaskMicrometerCommonTagsConfiguration\
