@@ -25,7 +25,6 @@ import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.cloud.task.listener.TaskMetrics;
@@ -47,6 +46,7 @@ public class TaskMetricsTests {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		simpleMeterRegistry = new SimpleMeterRegistry();
 		Metrics.addRegistry(simpleMeterRegistry);
+		taskMetrics = new TaskMetrics();
 	}
 
 	@After
@@ -56,12 +56,9 @@ public class TaskMetricsTests {
 
 	@Test
 	public void successfulTask() {
-		taskMetrics = new TaskMetrics();
 
 		TaskExecution taskExecution = new TaskExecution(123L, 0, "myTask72", new Date(),
 				new Date(), null, new ArrayList<>(), null, null, -1L);
-
-		System.out.println("BOza 0 " + taskExecution);
 
 		// Start Task
 		taskMetrics.onTaskStartup(taskExecution);
@@ -112,7 +109,6 @@ public class TaskMetricsTests {
 	}
 
 	@Test
-	@Ignore
 	public void failingTask() {
 
 		TaskExecution taskExecution = new TaskExecution(123L, 0, "myTask", new Date(),

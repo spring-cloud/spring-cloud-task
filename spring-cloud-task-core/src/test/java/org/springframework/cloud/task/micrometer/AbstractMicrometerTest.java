@@ -32,11 +32,8 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleProperties;
-import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimplePropertiesConfigAdapter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Soby Chacko
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = AbstractMicrometerTest.AutoConfigurationApplication.class)
+@SpringBootTest(classes = { AbstractMicrometerTest.AutoConfigurationApplication.class })
 @DirtiesContext
 public class AbstractMicrometerTest {
 
@@ -68,9 +65,9 @@ public class AbstractMicrometerTest {
 	public void before() {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		assertThat(simpleMeterRegistry).isNotNull();
-		meter = simpleMeterRegistry.find("jvm.memory.committed").meter();
+		meter = simpleMeterRegistry.find("spring.integration.handlers").meter();
 		assertThat(meter).isNotNull().withFailMessage(
-				"The jvm.memory.committed meter must be present in SpringBoot apps!");
+				"The spring.integration.handlers meter must be present in SpringBoot apps!");
 	}
 
 	@After
@@ -87,7 +84,6 @@ public class AbstractMicrometerTest {
 	}
 
 	@SpringBootApplication
-	@EnableConfigurationProperties(SimpleProperties.class)
 	public static class AutoConfigurationApplication {
 
 		public static void main(String[] args) {
@@ -102,8 +98,8 @@ public class AbstractMicrometerTest {
 
 		@Bean
 		@ConditionalOnMissingBean
-		public SimpleConfig simpleConfig(SimpleProperties simpleProperties) {
-			return new SimplePropertiesConfigAdapter(simpleProperties);
+		public SimpleConfig simpleConfig() {
+			return key -> null;
 		}
 
 	}
