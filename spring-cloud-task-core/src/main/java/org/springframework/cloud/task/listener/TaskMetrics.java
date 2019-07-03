@@ -24,7 +24,11 @@ import io.micrometer.core.instrument.Timer;
 import org.springframework.cloud.task.repository.TaskExecution;
 
 /**
+ * Utility class for publishing Spring Cloud Task specific metrics via Micrometer.
+ * Intended for internal use only.
+ *
  * @author Christian Tzolov
+ * @since 2.2
  */
 public class TaskMetrics {
 
@@ -99,7 +103,7 @@ public class TaskMetrics {
 		this.taskSample = Timer.start(Metrics.globalRegistry);
 	}
 
-	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
+	public void onTaskFailed(Throwable throwable) {
 		this.exception = throwable;
 	}
 

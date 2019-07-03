@@ -129,7 +129,7 @@ public class TaskMetricsTests {
 		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
 				.isEqualTo("123");
 
-		taskMetrics.onTaskFailed(taskExecution, new RuntimeException("Test"));
+		taskMetrics.onTaskFailed(new RuntimeException("Test"));
 
 		// Finish Task. TaskLifecycleListen calls onTaskEnd after the onTaskFailed. Make
 		// sure that the counter status

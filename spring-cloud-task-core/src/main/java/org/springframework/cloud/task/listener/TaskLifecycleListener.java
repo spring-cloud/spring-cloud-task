@@ -362,7 +362,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
-		this.taskMetrics.onTaskFailed(taskExecution, throwable);
+		this.taskMetrics.onTaskFailed(throwable);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
