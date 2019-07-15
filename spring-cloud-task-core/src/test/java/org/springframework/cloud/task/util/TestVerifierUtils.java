@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.task.repository.TaskExecution;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

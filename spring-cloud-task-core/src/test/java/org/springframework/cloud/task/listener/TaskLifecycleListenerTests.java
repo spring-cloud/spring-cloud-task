@@ -34,7 +34,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
@@ -66,7 +66,7 @@ public class TaskLifecycleListenerTests {
 	 * Used to capture the log output from the test task.
 	 */
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	private AnnotationConfigApplicationContext context;
 

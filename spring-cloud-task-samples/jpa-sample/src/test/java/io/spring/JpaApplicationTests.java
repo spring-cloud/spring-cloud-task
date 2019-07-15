@@ -28,7 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -60,7 +60,7 @@ public class JpaApplicationTests {
 	}
 
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 	private ConfigurableApplicationContext context;
 	private DataSource dataSource;
 	private Server server;

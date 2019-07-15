@@ -23,10 +23,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Verifies that the Task Application outputs the correct task log entries.
@@ -36,7 +37,7 @@ import static junit.framework.Assert.assertTrue;
 public class BatchJobApplicationTests {
 
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	@Test
 	public void testBatchJobApp() throws Exception {

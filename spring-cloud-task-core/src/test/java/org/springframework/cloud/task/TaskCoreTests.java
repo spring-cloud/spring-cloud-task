@@ -24,7 +24,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.ApplicationContextException;
@@ -62,7 +62,7 @@ public class TaskCoreTests {
 	 * Used to capture the log output from the test task.
 	 */
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	private ConfigurableApplicationContext applicationContext;
 

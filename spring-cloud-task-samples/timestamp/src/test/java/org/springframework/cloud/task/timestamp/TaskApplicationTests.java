@@ -23,7 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.rule.OutputCapture;
+import org.springframework.boot.test.system.OutputCaptureRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TaskApplicationTests {
 
 	@Rule
-	public OutputCapture outputCapture = new OutputCapture();
+	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	@Test
 	public void testTimeStampApp() throws Exception {
