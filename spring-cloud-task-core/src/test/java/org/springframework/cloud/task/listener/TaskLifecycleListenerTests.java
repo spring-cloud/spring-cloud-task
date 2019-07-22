@@ -50,6 +50,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -118,6 +119,7 @@ public class TaskLifecycleListenerTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testTaskFailedUpdate() {
 		this.context.refresh();
 		RuntimeException exception = new RuntimeException("This was expected");
@@ -132,6 +134,7 @@ public class TaskLifecycleListenerTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testTaskFailedWithExitCodeEvent() {
 		final int exitCode = 10;
 		this.context.register(TestListener.class);
@@ -162,6 +165,20 @@ public class TaskLifecycleListenerTests {
 		assertThat(TestListener.getFailOrderList().get(0)).isEqualTo(Integer.valueOf(1));
 		assertThat(TestListener.getFailOrderList().get(1)).isEqualTo(Integer.valueOf(2));
 
+	}
+
+	@Test
+	@DirtiesContext
+	public void testTaskSigTermEvent() {
+		this.context.refresh();
+		SpringApplication application = new SpringApplication();
+		this.taskExplorer = this.context.getBean(TaskExplorer.class);
+		TaskLifecycleListener taskLifecycleListener = this.context
+				.getBean(TaskLifecycleListener.class);
+		taskLifecycleListener.handle(new sun.misc.Signal("TERM"));
+		this.context.publishEvent(
+				new ApplicationReadyEvent(application, new String[0], this.context));
+		verifyTaskExecution(0, true, 143, null, null);
 	}
 
 	@Test

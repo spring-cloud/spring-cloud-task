@@ -18,6 +18,9 @@ package org.springframework.cloud.task.util;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -25,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
+import org.springframework.cloud.task.listener.TaskTerminator;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -45,6 +49,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(TaskProperties.class)
 public class TestDefaultConfiguration implements InitializingBean {
+
+	private static final Log logger = LogFactory.getLog(TestDefaultConfiguration.class);
 
 	@Autowired
 	TaskProperties taskProperties;
@@ -85,7 +91,12 @@ public class TestDefaultConfiguration implements InitializingBean {
 	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer) {
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
 				this.applicationArguments, taskExplorer, this.taskProperties,
-				taskListenerExecutorObjectProvider(this.context));
+				taskListenerExecutorObjectProvider(this.context), new TaskTerminator() {
+					@Override
+					public void terminate(int signalValue) {
+						logger.info("Terminate was requested using test handler");
+					}
+				});
 	}
 
 	@Override

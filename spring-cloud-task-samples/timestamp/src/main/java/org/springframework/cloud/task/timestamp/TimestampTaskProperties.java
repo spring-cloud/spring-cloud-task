@@ -30,6 +30,12 @@ public class TimestampTaskProperties {
 	 */
 	private String format = "yyyy-MM-dd HH:mm:ss.SSS";
 
+
+	/**
+	 * The time in millis to wait before logging the timestamp.
+	 */
+	private long waitTimeInMillis;
+
 	public String getFormat() {
 		Assert.hasText(this.format, "format must not be empty nor null");
 		return this.format;
@@ -37,5 +43,13 @@ public class TimestampTaskProperties {
 
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+	public long getWaitTimeInMillis() {
+		return waitTimeInMillis;
+	}
+
+	public void setWaitTimeInMillis(long waitTimeInMillis) {
+		this.waitTimeInMillis = waitTimeInMillis;
 	}
 }

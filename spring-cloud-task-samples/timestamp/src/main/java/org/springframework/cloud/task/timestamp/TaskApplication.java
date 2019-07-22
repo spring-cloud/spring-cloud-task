@@ -62,6 +62,9 @@ public class TaskApplication {
 		@Override
 		public void run(String... strings) throws Exception {
 			DateFormat dateFormat = new SimpleDateFormat(this.config.getFormat());
+			if(this.config.getWaitTimeInMillis() > 0) {
+				Thread.sleep(this.config.getWaitTimeInMillis());
+			}
 			logger.info(dateFormat.format(new Date()));
 		}
 	}

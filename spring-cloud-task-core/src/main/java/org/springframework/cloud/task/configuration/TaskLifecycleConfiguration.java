@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.cloud.task.listener.DefaultTaskTerminator;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -90,7 +91,8 @@ public class TaskLifecycleConfiguration {
 			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository,
 					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
 					this.taskProperties,
-					new TaskListenerExecutorObjectFactory(this.context));
+					new TaskListenerExecutorObjectFactory(this.context),
+					new DefaultTaskTerminator());
 
 			this.initialized = true;
 		}

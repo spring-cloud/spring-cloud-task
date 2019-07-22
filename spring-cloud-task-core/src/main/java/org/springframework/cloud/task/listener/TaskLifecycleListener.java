@@ -78,7 +78,7 @@ import org.springframework.util.StringUtils;
  * @author Glenn Renfro
  */
 public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>,
-		SmartLifecycle, DisposableBean, Ordered {
+		SmartLifecycle, DisposableBean, Ordered, sun.misc.SignalHandler {
 
 	private static final Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
@@ -118,6 +118,12 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
+	private boolean isSignalReceived;
+
+	private int signalValue;
+
+	private TaskTerminator taskTerminator;
+
 	/**
 	 * @param taskRepository {@link TaskRepository} to record executions.
 	 * @param taskNameResolver {@link TaskNameResolver} used to determine task name for
@@ -128,17 +134,20 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 * @param taskProperties {@link TaskProperties} to be used for the task execution.
 	 * @param taskListenerExecutorObjectFactory {@link TaskListenerExecutorObjectFactory}
 	 * to initialize TaskListenerExecutor for a task
+	 * @param taskTerminator the implementation that will terminate the task on signal.
 	 */
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
-			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory) {
+			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
+			TaskTerminator taskTerminator) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
 		Assert.notNull(taskProperties, "TaskProperties is required");
 		Assert.notNull(taskListenerExecutorObjectFactory,
 				"A TaskListenerExecutorObjectFactory is required");
+		Assert.notNull(taskTerminator, "A TaskTerminator is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
@@ -147,6 +156,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
 		this.taskMetrics = new TaskMetrics();
+		this.listenTo("HUP");
+		this.listenTo("INT");
+		this.listenTo("TERM");
+		this.taskTerminator = taskTerminator;
 	}
 
 	/**
@@ -223,6 +236,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private int calcExitStatus() {
+		if (this.isSignalReceived) {
+			return this.signalValue;
+		}
 		int exitCode = 0;
 		if (this.exitCodeEvent != null) {
 			exitCode = this.exitCodeEvent.getExitCode();
@@ -442,6 +458,18 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public int getOrder() {
 		return HIGHEST_PRECEDENCE;
+	}
+
+	public void listenTo(String name) {
+		sun.misc.Signal signal = new sun.misc.Signal(name);
+		sun.misc.Signal.handle(signal, this);
+	}
+
+	@Override
+	public void handle(sun.misc.Signal signal) {
+		this.isSignalReceived = true;
+		this.signalValue = TaskTerminator.BASE_SIGNAL_VALUE + signal.getNumber();
+		this.taskTerminator.terminate(this.signalValue);
 	}
 
 }
