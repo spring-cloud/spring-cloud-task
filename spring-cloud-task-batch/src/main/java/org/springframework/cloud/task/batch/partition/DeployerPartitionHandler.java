@@ -44,6 +44,7 @@ import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -137,17 +138,21 @@ public class DeployerPartitionHandler
 
 	private boolean defaultArgsAsEnvironmentVars = false;
 
+	private TaskRepository taskRepository;
+
 	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-			Resource resource, String stepName) {
+			Resource resource, String stepName, TaskRepository taskRepository) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
 		Assert.hasText(stepName, "A step name is required");
+		Assert.notNull(taskRepository, "A Task Repository is required");
 
 		this.taskLauncher = taskLauncher;
 		this.jobExplorer = jobExplorer;
 		this.resource = resource;
 		this.stepName = stepName;
+		this.taskRepository = taskRepository;
 	}
 
 	/**
@@ -329,11 +334,22 @@ public class DeployerPartitionHandler
 
 		AppDefinition definition = new AppDefinition(resolveApplicationName(),
 				environmentVariables);
-
+		TaskExecution taskExecution = this.taskRepository.createTaskExecution();
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource,
-				this.deploymentProperties, arguments);
+				this.deploymentProperties, commandLineArgsPrep(taskExecution, arguments));
 
-		this.taskLauncher.launch(request);
+		String externalExecutionId = this.taskLauncher.launch(request);
+		this.taskRepository.updateExternalExecutionId(taskExecution.getExecutionId(),
+				externalExecutionId);
+	}
+
+	private List<String> commandLineArgsPrep(TaskExecution taskExecution,
+			List<String> commandLineArgs) {
+		List<String> updatedCommandLineArgs = new ArrayList<>();
+		updatedCommandLineArgs.addAll(commandLineArgs);
+		updatedCommandLineArgs
+				.add("--spring.cloud.task.executionid=" + taskExecution.getExecutionId());
+		return updatedCommandLineArgs;
 	}
 
 	private String resolveApplicationName() {

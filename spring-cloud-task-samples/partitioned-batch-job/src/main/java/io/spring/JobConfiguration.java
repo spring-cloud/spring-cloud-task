@@ -46,6 +46,7 @@ import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
 import org.springframework.cloud.task.batch.partition.DeployerStepExecutionHandler;
 import org.springframework.cloud.task.batch.partition.PassThroughCommandLineArgsProvider;
 import org.springframework.cloud.task.batch.partition.SimpleEnvironmentVariablesProvider;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,12 +79,12 @@ public class JobConfiguration {
 	private Environment environment;
 
 	@Bean
-	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
+	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer, TaskRepository taskRepository) throws Exception {
 		Resource resource = this.resourceLoader
-			.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.RELEASE");
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:2.2.0.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler =
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep", taskRepository);
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
