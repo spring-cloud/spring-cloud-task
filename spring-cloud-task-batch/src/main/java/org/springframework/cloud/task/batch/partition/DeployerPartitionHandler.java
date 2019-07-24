@@ -39,11 +39,13 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -72,6 +74,7 @@ import org.springframework.util.StringUtils;
  * </p>
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class DeployerPartitionHandler
 		implements PartitionHandler, EnvironmentAware, InitializingBean {
@@ -95,6 +98,11 @@ public class DeployerPartitionHandler
 	 * ID of Spring Cloud Task parent execution.
 	 */
 	public static final String SPRING_CLOUD_TASK_PARENT_EXECUTION_ID = "spring.cloud.task.parentExecutionId";
+
+	/**
+	 * ID of the Spring Cloud Task execution.
+	 */
+	public static final String SPRING_CLOUD_TASK_EXECUTION_ID = "spring.cloud.task.executionid";
 
 	/**
 	 * Spring Cloud Task name property.
@@ -137,6 +145,19 @@ public class DeployerPartitionHandler
 
 	private boolean defaultArgsAsEnvironmentVars = false;
 
+	@Autowired
+	private TaskRepository taskRepository;
+
+	/**
+	 * Constructor initializing the DeployerPartitionHandler instance.
+	 * @param taskLauncher the launcher used to execute partitioned tasks.
+	 * @param jobExplorer used to acquire the status of the job.
+	 * @param resource the url to the app to be launched.
+	 * @param stepName the name of the step.
+	 * @deprecated Use the constructor that accepts {@link TaskRepository} as well as the
+	 * this constructor's set of parameters.
+	 */
+	@Deprecated
 	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
 			Resource resource, String stepName) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
@@ -148,6 +169,21 @@ public class DeployerPartitionHandler
 		this.jobExplorer = jobExplorer;
 		this.resource = resource;
 		this.stepName = stepName;
+	}
+
+	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
+			Resource resource, String stepName, TaskRepository taskRepository) {
+		Assert.notNull(taskLauncher, "A taskLauncher is required");
+		Assert.notNull(jobExplorer, "A jobExplorer is required");
+		Assert.notNull(resource, "A resource is required");
+		Assert.hasText(stepName, "A step name is required");
+		Assert.notNull(taskRepository, "A TaskRepository is required");
+
+		this.taskLauncher = taskLauncher;
+		this.jobExplorer = jobExplorer;
+		this.resource = resource;
+		this.stepName = stepName;
+		this.taskRepository = taskRepository;
 	}
 
 	/**
@@ -290,6 +326,8 @@ public class DeployerPartitionHandler
 
 		arguments.addAll(this.commandLineArgsProvider.getCommandLineArgs(copyContext));
 
+		TaskExecution partitionTaskExecution = this.taskRepository.createTaskExecution();
+
 		if (!this.defaultArgsAsEnvironmentVars) {
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
 					String.valueOf(workerStepExecution.getJobExecution().getId())));
@@ -304,6 +342,8 @@ public class DeployerPartitionHandler
 									workerStepExecution.getStepName())));
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
 					String.valueOf(this.taskExecution.getExecutionId())));
+			arguments.add(formatArgument(SPRING_CLOUD_TASK_EXECUTION_ID,
+					String.valueOf(partitionTaskExecution.getExecutionId())));
 		}
 
 		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
@@ -325,6 +365,8 @@ public class DeployerPartitionHandler
 									workerStepExecution.getStepName()));
 			environmentVariables.put(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
 					String.valueOf(this.taskExecution.getExecutionId()));
+			environmentVariables.put(SPRING_CLOUD_TASK_EXECUTION_ID,
+					String.valueOf(partitionTaskExecution.getExecutionId()));
 		}
 
 		AppDefinition definition = new AppDefinition(resolveApplicationName(),
@@ -333,7 +375,9 @@ public class DeployerPartitionHandler
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource,
 				this.deploymentProperties, arguments);
 
-		this.taskLauncher.launch(request);
+		String externalExecutionId = this.taskLauncher.launch(request);
+		this.taskRepository.updateExternalExecutionId(
+				partitionTaskExecution.getExecutionId(), externalExecutionId);
 	}
 
 	private String resolveApplicationName() {

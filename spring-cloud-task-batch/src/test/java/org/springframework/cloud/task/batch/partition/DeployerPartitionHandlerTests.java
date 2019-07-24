@@ -42,11 +42,11 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.StepExecutionSplitter;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
@@ -60,6 +60,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 public class DeployerPartitionHandlerTests {
 
@@ -79,7 +80,7 @@ public class DeployerPartitionHandlerTests {
 	private StepExecutionSplitter splitter;
 
 	@Mock
-	private JobRepository jobRepository;
+	private TaskRepository taskRepository;
 
 	private Environment environment;
 
@@ -87,21 +88,42 @@ public class DeployerPartitionHandlerTests {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		this.environment = new MockEnvironment();
+		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(),
+				new Date(), "", Collections.emptyList(), null, null, null);
+		when(taskRepository.createTaskExecution()).thenReturn(taskExecution);
+	}
+
+	@Test
+	public void testDeprecatedConstructorValidation() {
+		validateDeprecatedConstructorValidation(null, null, null, null,
+				"A taskLauncher is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, null, null, null,
+				"A jobExplorer is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer, null,
+				null, "A resource is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer,
+				this.resource, null, "A step name is required");
+
+		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
+				"step-name");
 	}
 
 	@Test
 	public void testConstructorValidation() {
-		validateConstructorValidation(null, null, null, null,
+		validateConstructorValidation(null, null, null, null, null,
 				"A taskLauncher is required");
-		validateConstructorValidation(this.taskLauncher, null, null, null,
+		validateConstructorValidation(this.taskLauncher, null, null, null, null,
 				"A jobExplorer is required");
 		validateConstructorValidation(this.taskLauncher, this.jobExplorer, null, null,
-				"A resource is required");
+				null, "A resource is required");
 		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
-				null, "A step name is required");
-
+				null, null, "A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
+				null, null, "A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
+				"step-name", null, "A TaskRepository is required");
 		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name");
+				"step-name", this.taskRepository);
 	}
 
 	@Test
@@ -131,7 +153,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -170,6 +192,8 @@ public class DeployerPartitionHandlerTests {
 						.isTrue();
 		assertThat(request.getCommandlineArguments().contains(formatArgs(
 				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs("spring.cloud.task.executionid", "2"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -186,9 +210,8 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
 		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
 				workerStepExecutionStart, BatchStatus.COMPLETED);
-
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setDefaultArgsAsEnvironmentVars(true);
 
@@ -237,6 +260,9 @@ public class DeployerPartitionHandlerTests {
 		assertThat(request.getDefinition().getProperties()
 				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID))
 						.isEqualTo("55");
+		assertThat(request.getDefinition().getProperties()
+				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_EXECUTION_ID))
+						.isEqualTo("2");
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -255,7 +281,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution(55, null, null, null, null, null,
@@ -304,7 +330,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -361,7 +387,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
@@ -419,7 +445,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
@@ -484,7 +510,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
 		environmentParameters.put("foo", "bar");
@@ -553,7 +579,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
@@ -626,7 +652,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
@@ -684,7 +710,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
@@ -726,7 +752,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setGridSize(2);
@@ -773,7 +799,7 @@ public class DeployerPartitionHandlerTests {
 				workerStepExecutionStart, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		Map<String, String> deploymentProperties = new HashMap<>(2);
@@ -919,14 +945,29 @@ public class DeployerPartitionHandlerTests {
 			assertThat(request.getCommandlineArguments().contains(formatArgs(
 					DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")))
 							.isTrue();
+			assertThat(request.getCommandlineArguments()
+					.contains(formatArgs("spring.cloud.task.executionid", "2"))).isTrue();
+		}
+	}
+
+	private void validateDeprecatedConstructorValidation(TaskLauncher taskLauncher,
+			JobExplorer jobExplorer, Resource resource, String stepName,
+			String expectedMessage) {
+		try {
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
+					this.taskRepository);
+		}
+		catch (IllegalArgumentException iae) {
+			assertThat(iae.getMessage()).isEqualTo(expectedMessage);
 		}
 	}
 
 	private void validateConstructorValidation(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer, Resource resource, String stepName,
-			String expectedMessage) {
+			TaskRepository taskRepository, String expectedMessage) {
 		try {
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName);
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
+					taskRepository);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo(expectedMessage);
