@@ -39,6 +39,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
@@ -138,7 +139,21 @@ public class DeployerPartitionHandler
 
 	private boolean defaultArgsAsEnvironmentVars = false;
 
+	@Autowired
 	private TaskRepository taskRepository;
+
+	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
+			Resource resource, String stepName) {
+		Assert.notNull(taskLauncher, "A taskLauncher is required");
+		Assert.notNull(jobExplorer, "A jobExplorer is required");
+		Assert.notNull(resource, "A resource is required");
+		Assert.hasText(stepName, "A step name is required");
+
+		this.taskLauncher = taskLauncher;
+		this.jobExplorer = jobExplorer;
+		this.resource = resource;
+		this.stepName = stepName;
+	}
 
 	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
 			Resource resource, String stepName, TaskRepository taskRepository) {
@@ -146,7 +161,7 @@ public class DeployerPartitionHandler
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
 		Assert.hasText(stepName, "A step name is required");
-		Assert.notNull(taskRepository, "A Task Repository is required");
+		Assert.notNull(taskRepository, "TaskRepository must not be null");
 
 		this.taskLauncher = taskLauncher;
 		this.jobExplorer = jobExplorer;

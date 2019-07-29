@@ -105,13 +105,13 @@ public class DeployerPartitionHandlerTests {
 				null, "A step name is required");
 
 		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name", this.taskRepository);
+				"step-name");
 	}
 
 	@Test
 	public void testNoPartitions() throws Exception {
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+				this.jobExplorer, this.resource, "step1");
 		handler.setEnvironment(this.environment);
 
 		StepExecution stepExecution = new StepExecution("step1", new JobExecution(1L));

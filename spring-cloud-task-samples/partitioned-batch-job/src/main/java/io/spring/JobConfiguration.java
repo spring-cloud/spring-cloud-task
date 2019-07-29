@@ -84,7 +84,7 @@ public class JobConfiguration {
 			.getResource("maven://io.spring.cloud:partitioned-batch-job:2.2.0.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler =
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep", taskRepository);
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
