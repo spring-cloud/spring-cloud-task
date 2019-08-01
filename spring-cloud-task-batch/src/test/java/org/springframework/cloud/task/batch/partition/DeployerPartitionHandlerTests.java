@@ -94,18 +94,36 @@ public class DeployerPartitionHandlerTests {
 	}
 
 	@Test
-	public void testConstructorValidation() {
-		validateConstructorValidation(null, null, null, null,
+	public void testDeprecatedConstructorValidation() {
+		validateDeprecatedConstructorValidation(null, null, null, null,
 				"A taskLauncher is required");
-		validateConstructorValidation(this.taskLauncher, null, null, null,
+		validateDeprecatedConstructorValidation(this.taskLauncher, null, null, null,
 				"A jobExplorer is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, null, null,
-				"A resource is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
-				null, "A step name is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer, null,
+				null, "A resource is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer,
+				this.resource, null, "A step name is required");
 
 		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
 				"step-name");
+	}
+
+	@Test
+	public void testConstructorValidation() {
+		validateConstructorValidation(null, null, null, null, null,
+				"A taskLauncher is required");
+		validateConstructorValidation(this.taskLauncher, null, null, null, null,
+				"A jobExplorer is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, null, null,
+				null, "A resource is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
+				null, null, "A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
+				null, null, "A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
+				"step-name", null, "A TaskRepository is required");
+		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
+				"step-name", this.taskRepository);
 	}
 
 	@Test
@@ -192,7 +210,6 @@ public class DeployerPartitionHandlerTests {
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
 		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
 				workerStepExecutionStart, BatchStatus.COMPLETED);
-
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
 				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
@@ -227,7 +244,7 @@ public class DeployerPartitionHandlerTests {
 		AppDefinition appDefinition = request.getDefinition();
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-		assertThat(request.getCommandlineArguments().isEmpty()).isFalse();
+		assertThat(request.getCommandlineArguments().isEmpty()).isTrue();
 		assertThat(request.getDefinition().getProperties()
 				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
 						.isEqualTo("1");
@@ -243,8 +260,9 @@ public class DeployerPartitionHandlerTests {
 		assertThat(request.getDefinition().getProperties()
 				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID))
 						.isEqualTo("55");
-		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs("spring.cloud.task.executionid", "2"))).isTrue();
+		assertThat(request.getDefinition().getProperties()
+				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_EXECUTION_ID))
+						.isEqualTo("2");
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -932,12 +950,24 @@ public class DeployerPartitionHandlerTests {
 		}
 	}
 
-	private void validateConstructorValidation(TaskLauncher taskLauncher,
+	private void validateDeprecatedConstructorValidation(TaskLauncher taskLauncher,
 			JobExplorer jobExplorer, Resource resource, String stepName,
 			String expectedMessage) {
 		try {
 			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
 					this.taskRepository);
+		}
+		catch (IllegalArgumentException iae) {
+			assertThat(iae.getMessage()).isEqualTo(expectedMessage);
+		}
+	}
+
+	private void validateConstructorValidation(TaskLauncher taskLauncher,
+			JobExplorer jobExplorer, Resource resource, String stepName,
+			TaskRepository taskRepository, String expectedMessage) {
+		try {
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
+					taskRepository);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo(expectedMessage);
