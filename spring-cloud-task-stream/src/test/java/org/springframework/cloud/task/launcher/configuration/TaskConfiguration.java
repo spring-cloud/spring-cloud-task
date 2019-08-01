@@ -81,6 +81,11 @@ public class TaskConfiguration {
 			throw new UnsupportedOperationException("environmentInfo is not supported");
 		}
 
+		@Override
+		public String getLog(String id) {
+			throw new UnsupportedOperationException("getLog is not supported");
+		}
+
 		public List<String> getCommandlineArguments() {
 			return this.commandlineArguments;
 		}
