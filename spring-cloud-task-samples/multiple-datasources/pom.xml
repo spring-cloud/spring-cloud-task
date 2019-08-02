@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>multiple-datasources</artifactId>
 	<packaging>jar</packaging>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<version>2.2.0.M2</version>
 	<description>To show users how to enable a task with a multiple DataSources.
 	</description>
 
@@ -28,7 +28,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>2.2.0.BUILD-SNAPSHOT</version>
+				<version>2.2.0.M2</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
