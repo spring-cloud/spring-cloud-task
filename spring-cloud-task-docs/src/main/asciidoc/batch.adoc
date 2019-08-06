@@ -107,10 +107,14 @@ NOTE: When passing environment variables to partitions, each partition may
 be on a different machine with different environment settings.
 Consequently, you should pass only those environment variables that are required.
 
+Notice in the example above that we have set the maximum number of workers to 2.
+Setting the maximum of workers establishes the maximum number of
+partitions that should be running at one time.
+
 The `Resource` to be executed is expected to be a Spring Boot über-jar with a
 `DeployerStepExecutionHandler` configured as a `CommandLineRunner` in the current context.
 The repository enumerated in the preceding example should be the remote repository in
-which the über-jar is located. Both the master and slave are expected to have visibility
+which the über-jar is located. Both the manager and worker are expected to have visibility
 into the same data store being used as the job repository and task repository. Once the
 underlying infrastructure has bootstrapped the Spring Boot jar and Spring Boot has
 launched the `DeployerStepExecutionHandler`, the step handler executes the requested

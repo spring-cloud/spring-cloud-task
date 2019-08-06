@@ -93,7 +93,7 @@ public class JobConfiguration {
 			.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
 		partitionHandler
 			.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
-		partitionHandler.setMaxWorkers(1);
+		partitionHandler.setMaxWorkers(2);
 		partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
 		return partitionHandler;
