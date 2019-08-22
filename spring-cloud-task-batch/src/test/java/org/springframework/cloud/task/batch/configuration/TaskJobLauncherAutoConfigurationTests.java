@@ -16,12 +16,15 @@
 
 package org.springframework.cloud.task.batch.configuration;
 
+import java.lang.reflect.Field;
+
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListenerTests;
@@ -60,6 +63,38 @@ public class TaskJobLauncherAutoConfigurationTests {
 					assertThat(context.getBean(TaskJobLauncherCommandLineRunner.class)
 							.getOrder()).isEqualTo(100);
 				});
+	}
+
+	@Test
+	public void testAutoBuiltDataSourceWithBatchJobNames() {
+		this.contextRunner
+				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
+						"spring.batch.job.names=job1,job2",
+						"spring.cloud.task.batch.jobNames=foobar")
+				.run(context -> {
+					validateJobNames(context, "job1,job2");
+				});
+	}
+
+	@Test
+	public void testAutoBuiltDataSourceWithTaskBatchJobNames() {
+		this.contextRunner
+				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
+						"spring.cloud.task.batch.jobNames=job1,job2")
+				.run(context -> {
+					validateJobNames(context, "job1,job2");
+				});
+	}
+
+	private void validateJobNames(AssertableApplicationContext context, String jobNames)
+			throws Exception {
+		JobLauncherCommandLineRunner jobLauncherCommandLineRunner = context
+				.getBean(JobLauncherCommandLineRunner.class);
+		Field field = jobLauncherCommandLineRunner.getClass().getSuperclass()
+				.getDeclaredField("jobNames");
+		field.setAccessible(true);
+		String names = (String) field.get(jobLauncherCommandLineRunner);
+		assertThat(names).isEqualTo(jobNames);
 	}
 
 	@Test
