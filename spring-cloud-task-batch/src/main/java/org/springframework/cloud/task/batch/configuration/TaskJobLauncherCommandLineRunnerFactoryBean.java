@@ -24,6 +24,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -55,8 +56,9 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean
 	public TaskJobLauncherCommandLineRunnerFactoryBean(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, List<Job> jobs,
 			TaskBatchProperties taskBatchProperties, JobRegistry jobRegistry,
-			JobRepository jobRepository) {
-		Assert.notNull(taskBatchProperties, "properties must not be null");
+			JobRepository jobRepository, BatchProperties batchProperties) {
+		Assert.notNull(taskBatchProperties, "taskBatchProperties must not be null");
+		Assert.notNull(batchProperties, "batchProperties must not be null");
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		Assert.notEmpty(jobs, "jobs must not be null nor empty");
@@ -64,6 +66,12 @@ public class TaskJobLauncherCommandLineRunnerFactoryBean
 		this.jobNames = taskBatchProperties.getJobNames();
 		this.jobRegistry = jobRegistry;
 		this.taskBatchProperties = taskBatchProperties;
+		if (StringUtils.hasText(batchProperties.getJob().getNames())) {
+			this.jobNames = batchProperties.getJob().getNames();
+		}
+		else {
+			this.jobNames = taskBatchProperties.getJobNames();
+		}
 		this.order = taskBatchProperties.getCommandLineRunnerOrder();
 		this.jobRepository = jobRepository;
 	}

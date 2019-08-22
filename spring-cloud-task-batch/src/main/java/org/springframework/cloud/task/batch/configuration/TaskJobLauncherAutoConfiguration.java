@@ -26,6 +26,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -49,11 +50,12 @@ public class TaskJobLauncherAutoConfiguration {
 	@Bean
 	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(
 			JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
-			JobRegistry jobRegistry, JobRepository jobRepository) {
+			JobRegistry jobRegistry, JobRepository jobRepository,
+			BatchProperties batchProperties) {
 		TaskJobLauncherCommandLineRunnerFactoryBean taskJobLauncherCommandLineRunnerFactoryBean;
 		taskJobLauncherCommandLineRunnerFactoryBean = new TaskJobLauncherCommandLineRunnerFactoryBean(
 				jobLauncher, jobExplorer, jobs, this.properties, jobRegistry,
-				jobRepository);
+				jobRepository, batchProperties);
 
 		return taskJobLauncherCommandLineRunnerFactoryBean;
 	}
