@@ -81,6 +81,21 @@ public class TaskConfiguration {
 			throw new UnsupportedOperationException("environmentInfo is not supported");
 		}
 
+		@Override
+		public int getMaximumConcurrentTasks() {
+			return 0;
+		}
+
+		@Override
+		public int getRunningTaskExecutionCount() {
+			return 0;
+		}
+
+		@Override
+		public String getLog(String id) {
+			return null;
+		}
+
 		public List<String> getCommandlineArguments() {
 			return commandlineArguments;
 		}
