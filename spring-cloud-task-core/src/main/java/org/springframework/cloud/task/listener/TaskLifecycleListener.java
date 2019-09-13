@@ -118,7 +118,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private ExitCodeEvent exitCodeEvent;
 
-	private boolean isSignalReceived;
+	private boolean signalReceived;
 
 	private int signalValue;
 
@@ -156,9 +156,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
 		this.taskMetrics = new TaskMetrics();
-		this.listenTo("HUP");
-		this.listenTo("INT");
-		this.listenTo("TERM");
+		for (SigTermSignals sigTerm : SigTermSignals.values()) {
+			this.listenTo(sigTerm.name());
+		}
 		this.taskTerminator = taskTerminator;
 	}
 
@@ -236,7 +236,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private int calcExitStatus() {
-		if (this.isSignalReceived) {
+		if (this.signalReceived) {
 			return this.signalValue;
 		}
 		int exitCode = 0;
@@ -467,9 +467,15 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	@Override
 	public void handle(sun.misc.Signal signal) {
-		this.isSignalReceived = true;
+		this.signalReceived = true;
 		this.signalValue = TaskTerminator.BASE_SIGNAL_VALUE + signal.getNumber();
 		this.taskTerminator.terminate(this.signalValue);
+	}
+
+	private enum SigTermSignals {
+
+		HUP, INT, TERM;
+
 	}
 
 }
