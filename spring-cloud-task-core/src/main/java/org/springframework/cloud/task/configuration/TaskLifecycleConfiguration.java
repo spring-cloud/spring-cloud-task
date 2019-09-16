@@ -24,15 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.cloud.task.listener.DefaultTaskTerminator;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
+import org.springframework.cloud.task.listener.TaskTerminator;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 
 /**
  * Configuration for a {@link TaskLifecycleListener}.
@@ -63,18 +64,22 @@ public class TaskLifecycleConfiguration {
 
 	private boolean initialized = false;
 
+	private TaskTerminator taskTerminator;
+
 	@Autowired
 	public TaskLifecycleConfiguration(TaskProperties taskProperties,
 			ConfigurableApplicationContext context, TaskRepository taskRepository,
 			TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
-			ObjectProvider<ApplicationArguments> applicationArguments) {
-
+			ObjectProvider<ApplicationArguments> applicationArguments,
+			TaskConfigurer taskConfigurer) {
+		Assert.notNull(taskConfigurer, "taskConfigurer must not be null");
 		this.taskProperties = taskProperties;
 		this.context = context;
 		this.taskRepository = taskRepository;
 		this.taskExplorer = taskExplorer;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments.getIfAvailable();
+		this.taskTerminator = taskConfigurer.getTaskTerminator();
 	}
 
 	@Bean
@@ -92,7 +97,7 @@ public class TaskLifecycleConfiguration {
 					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
 					this.taskProperties,
 					new TaskListenerExecutorObjectFactory(this.context),
-					new DefaultTaskTerminator());
+					this.taskTerminator);
 
 			this.initialized = true;
 		}

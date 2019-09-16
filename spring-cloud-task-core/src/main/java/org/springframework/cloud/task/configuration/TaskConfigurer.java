@@ -18,6 +18,8 @@ package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
 
+import org.springframework.cloud.task.listener.DefaultTaskTerminator;
+import org.springframework.cloud.task.listener.TaskTerminator;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -57,5 +59,15 @@ public interface TaskConfigurer {
 	 * @return {@link DataSource} that will be used for task operations.
 	 */
 	DataSource getTaskDataSource();
+
+	/**
+	 * Retrieves the {@link TaskTerminator} that will be used to terminate a task
+	 * application upon receiving a terminate signal.
+	 * @return {@link TaskTerminator} that will be used for terminating a task upon
+	 * receiving a signal.
+	 */
+	default TaskTerminator getTaskTerminator() {
+		return new DefaultTaskTerminator();
+	}
 
 }
