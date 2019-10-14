@@ -80,7 +80,7 @@ public class JobConfiguration {
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
 		Resource resource = this.resourceLoader
-			.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.RELEASE");
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:2.2.0.BUILD-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler =
 			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
