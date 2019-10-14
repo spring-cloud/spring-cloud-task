@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.partitioner;
 
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -91,21 +92,21 @@ public class TaskPartitionerTests {
 	public void testWithLocalDeployer() throws Exception {
 		SpringApplication app = new SpringApplication(PartitionedBatchJobApplication.class);
 		app.setAdditionalProfiles("master");
-		app.run("--server.port=0", "--spring.datasource.url=" + DATASOURCE_URL,
-			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
-			"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
-			"--spring.cloud.deployer.local.use-spring-application-json=false");
+		Properties properties = new Properties();
+		properties.setProperty("spring.datasource.url", DATASOURCE_URL);
+		properties.setProperty("spring.datasource.username", DATASOURCE_USER_NAME);
+		properties.setProperty("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
+		properties.setProperty("spring.cloud.deployer.local.use-spring-application-json", "false");
+		app.setDefaultProperties(properties);
+		app.run();
 
 		Page<TaskExecution> taskExecutions = this.taskExplorer
 			.findAll(PageRequest.of(0, 10));
 		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected")
 			.isEqualTo(5);
 		assertThat(this.taskExplorer
-			.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:master:0"))
+			.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
 			.as("Only One master is expected").isEqualTo(1);
-		assertThat(this.taskExplorer
-			.getTaskExecutionCountByTaskName("Partitioned Batch Job Task:worker:0"))
-			.as("4 partitions is expected").isEqualTo(4);
 		for (TaskExecution taskExecution : taskExecutions) {
 			assertThat(taskExecution.getExitCode()
 				.intValue()).as("return code should be 0").isEqualTo(0);
@@ -119,8 +120,10 @@ public class TaskPartitionerTests {
 		public org.h2.tools.Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort",
-					String.valueOf(randomPort)).start();
+				server = Server
+					.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String
+						.valueOf(randomPort))
+					.start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);
