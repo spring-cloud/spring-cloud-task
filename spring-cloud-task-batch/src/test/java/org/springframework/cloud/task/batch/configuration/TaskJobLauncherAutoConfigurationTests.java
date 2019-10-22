@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.batch.configuration;
 
-import java.lang.reflect.Field;
-
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -28,6 +26,7 @@ import org.springframework.boot.test.context.assertj.AssertableApplicationContex
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListenerTests;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,10 +89,9 @@ public class TaskJobLauncherAutoConfigurationTests {
 			throws Exception {
 		JobLauncherCommandLineRunner jobLauncherCommandLineRunner = context
 				.getBean(JobLauncherCommandLineRunner.class);
-		Field field = jobLauncherCommandLineRunner.getClass().getSuperclass()
-				.getDeclaredField("jobNames");
-		field.setAccessible(true);
-		String names = (String) field.get(jobLauncherCommandLineRunner);
+
+		Object names = ReflectionTestUtils.getField(jobLauncherCommandLineRunner,
+				"jobNames");
 		assertThat(names).isEqualTo(jobNames);
 	}
 
