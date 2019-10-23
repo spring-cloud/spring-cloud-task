@@ -326,7 +326,15 @@ public class DeployerPartitionHandler
 
 		arguments.addAll(this.commandLineArgsProvider.getCommandLineArgs(copyContext));
 
-		TaskExecution partitionTaskExecution = this.taskRepository.createTaskExecution();
+		TaskExecution partitionTaskExecution = null;
+
+		if (this.taskRepository != null) {
+			partitionTaskExecution = this.taskRepository.createTaskExecution();
+		}
+		else {
+			logger.warn(
+					"TaskRepository was not set so external execution id will not be recorded.");
+		}
 
 		if (!this.defaultArgsAsEnvironmentVars) {
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
@@ -342,8 +350,11 @@ public class DeployerPartitionHandler
 									workerStepExecution.getStepName())));
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
 					String.valueOf(this.taskExecution.getExecutionId())));
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_EXECUTION_ID,
-					String.valueOf(partitionTaskExecution.getExecutionId())));
+
+			if (partitionTaskExecution != null) {
+				arguments.add(formatArgument(SPRING_CLOUD_TASK_EXECUTION_ID,
+						String.valueOf(partitionTaskExecution.getExecutionId())));
+			}
 		}
 
 		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
@@ -376,8 +387,11 @@ public class DeployerPartitionHandler
 				this.deploymentProperties, arguments);
 
 		String externalExecutionId = this.taskLauncher.launch(request);
-		this.taskRepository.updateExternalExecutionId(
-				partitionTaskExecution.getExecutionId(), externalExecutionId);
+
+		if (this.taskRepository != null) {
+			this.taskRepository.updateExternalExecutionId(
+					partitionTaskExecution.getExecutionId(), externalExecutionId);
+		}
 	}
 
 	private String resolveApplicationName() {
