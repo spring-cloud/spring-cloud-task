@@ -37,7 +37,7 @@ import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.task.launcher.util.TaskLauncherSinkApplication;
+import org.springframework.cloud.task.launcher.app.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;

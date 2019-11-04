@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.launcher.util;
+package org.springframework.cloud.task.launcher.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +23,6 @@ import org.springframework.cloud.task.launcher.annotation.EnableTaskLauncher;
 /**
  * @author Glenn Renfro
  */
-// @checkstyle:on
 @SpringBootApplication
 @EnableTaskLauncher
 public class TaskLauncherSinkApplication {
@@ -33,4 +32,3 @@ public class TaskLauncherSinkApplication {
 	}
 
 }
-// @checkstyle:off
