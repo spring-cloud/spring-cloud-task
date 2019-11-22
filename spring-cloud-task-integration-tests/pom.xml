@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>io.spring.cloud</groupId>
 			<artifactId>partitioned-batch-job</artifactId>
-			<version>2.2.1.BUILD-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
