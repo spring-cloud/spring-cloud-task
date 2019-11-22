@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-cloud-task-dependencies</artifactId>
-	<version>2.3.0.BUILD-SNAPSHOT</version>
+	<version>2.2.1.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Spring Cloud Task Dependencies</name>
 	<description>Spring Cloud Task Dependencies</description>
@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>spring-cloud-dependencies-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>2.2.0.M1</version>
+		<version>2.2.0.RELEASE</version>
 		<relativePath />
 	</parent>
 
@@ -23,22 +23,22 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-task</artifactId>
-				<version>2.3.0.BUILD-SNAPSHOT</version>
+				<version>2.2.1.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-core</artifactId>
-				<version>2.3.0.BUILD-SNAPSHOT</version>
+				<version>2.2.1.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-batch</artifactId>
-				<version>2.3.0.BUILD-SNAPSHOT</version>
+				<version>2.2.1.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-stream</artifactId>
-				<version>2.3.0.BUILD-SNAPSHOT</version>
+				<version>2.2.1.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.cfenv</groupId>
