@@ -7,3 +7,79 @@ This appendix provides an ERD for the database schema used in the task repositor
 --
 
 image::task_schema.png[]
+
+=== Table Information
+--
+
+.TASK_EXECUTION
+Stores the task execution information.
+[width="80%", cols="1,1,1,1,10", options="header"]
+|=========================================================
+|Column Name |Required |Type |Field Length |Notes
+
+|TASK_EXECUTION_ID |TRUE |BIGINT | X |
+Spring Cloud Task Framework at app startup establishes the next available id as obtained from the `TASK_SEQ`. Or if the record is created outside of task then the value must be populated at record creation time.
+
+|START_TIME |FALSE | DATETIME | X | Spring Cloud Task Framework at app startup establishes the value.
+
+|END_TIME |FALSE | DATETIME | X | Spring Cloud Task Framework at app exit establishes the value.
+
+|TASK_NAME |FALSE | VARCHAR | 100 | Spring Cloud Task Framework at app startup will set this to "Application" unless user establish the name using the spring.cloud.task.name as discussed <<features-task-name,here>>
+
+|EXIT_CODE |FALSE | INTEGER | X | Follows Spring Boot defaults unless overridden by the user as discussed https://docs.spring.io/spring-cloud-task/docs/current/reference/#features-lifecycle-exit-codes[here].
+
+|EXIT_MESSAGE |FALSE | VARCHAR | 2500 | User Defined as discussed https://docs.spring.io/spring-cloud-task/docs/current/reference/#features-task-execution-listener-exit-messages[here].
+
+|ERROR_MESSAGE |FALSE | VARCHAR | 2500 | Spring Cloud Task Framework at app exit establishes the value.
+
+|LAST_UPDATED |TRUE | DATETIME | X | Spring Cloud Task Framework at app startup establishes the value. Or if the record is created outside of task then the value must be populated at record creation time.
+
+|EXTERNAL_EXECUTION_ID |FALSE | VARCHAR | 250 | If the `spring.cloud.task.external-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found <<features-external_task_id,here>>
+
+|PARENT_TASK_EXECUTION_ID |FALSE |BIGINT | X | If the `spring.cloud.task.parent-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found <<features-parent_task_id,here>>
+
+|=========================================================
+
+.TASK_EXECUTION_PARAMS
+Stores the parameters used for a task execution
+[width="80%", cols="1,1,1,1", options="header"]
+|=========================================================
+|Column Name |Required |Type |Field Length
+|TASK_EXECUTION_ID |TRUE |BIGINT | X |
+
+|TASK_PARAM |FALSE | VARCHAR | 2500 |
+
+|=========================================================
+
+.TASK_TASK_BATCH
+Used to link the task execution to the batch execution.
+[width="80%", cols="1,1,1,1", options="header"]
+|=========================================================
+|Column Name |Required |Type |Field Length
+
+|TASK_EXECUTION_ID |TRUE |BIGINT | X |
+
+|JOB_EXECUTION_ID |TRUE | BIGINT | X |
+
+|=========================================================
+
+
+.TASK_LOCK
+Used for the `single-instance-enabled` feature discussed <<features-single-instance-enabled,here>>.
+[width="80%", cols="1,1,1,1,10", options="header"]
+|=========================================================
+|Column Name |Required |Type | Field Length |Notes
+
+|LOCK_KEY |TRUE |CHAR | 36 | UUID for the this lock
+
+|REGION |TRUE | VARCHAR  | 100 | User can establish a group of locks using this field.
+
+|CLIENT_ID |TRUE | CHAR  | 36 | The task execution id that contains the name of the app to lock.
+
+|CREATED_DATE |TRUE | DATETIME  | X | The date that the entry was created
+
+|=========================================================
+
+
+NOTE: The DDL for setting up tables for each database type can be found https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/java/org/springframework/cloud/task/repository/database/support[here].
+--

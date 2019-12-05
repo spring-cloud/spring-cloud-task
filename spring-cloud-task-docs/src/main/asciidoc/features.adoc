@@ -355,6 +355,7 @@ the `onTaskFailed` is stored. Also if you set the `exitMessage` with an
 `onTaskEnd` listener, the `exitMessage` from the `onTaskEnd` supersedes
 the exit messages from both the `onTaskStartup` and `onTaskFailed`.
 
+[[features-single-instance-enabled]]
 === Restricting Spring Cloud Task Instances
 
 Spring Cloud Task lets you establish that only one task with a given task name can be run
