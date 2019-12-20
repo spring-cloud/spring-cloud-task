@@ -30,3 +30,6 @@ spring-*/src/main/java/META-INF/MANIFEST.MF
 *.ipr
 *.iws
 .idea/*
+
+# Github Actions
+.m2
