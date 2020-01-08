@@ -386,6 +386,11 @@ public class DeployerPartitionHandler
 		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource,
 				this.deploymentProperties, arguments);
 
+		if (logger.isDebugEnabled()) {
+			logger.debug(
+					"Requesting the launch of the following application: " + request);
+		}
+
 		String externalExecutionId = this.taskLauncher.launch(request);
 
 		if (this.taskRepository != null) {
