@@ -81,5 +81,5 @@ Used for the `single-instance-enabled` feature discussed <<features-single-insta
 |=========================================================
 
 
-NOTE: The DDL for setting up tables for each database type can be found https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/java/org/springframework/cloud/task/repository/database/support[here].
+NOTE: The DDL for setting up tables for each database type can be found https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task[here].
 --
