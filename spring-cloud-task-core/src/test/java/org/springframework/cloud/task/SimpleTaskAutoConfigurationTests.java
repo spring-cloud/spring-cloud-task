@@ -130,9 +130,9 @@ public class SimpleTaskAutoConfigurationTests {
 				"bean 'taskLifecycleListener'; nested exception is " +
 				"org.springframework.dao.DataAccessResourceFailureException: " +
 				"Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLSyntaxErrorException: " +
-				"Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL \"; " +
+				"Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL\"; " +
 				"expected \"identifier\"; SQL statement:\n" +
-				"select foobarlessSEQ.nextval from dual [42001-199]", applicationContextRunner);
+				"select foobarlessSEQ.nextval from dual [42001-200]", applicationContextRunner);
 	}
 
 	@Test
