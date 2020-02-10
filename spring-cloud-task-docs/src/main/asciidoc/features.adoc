@@ -394,4 +394,16 @@ This can be done either by adding the following annotation to your Task applicat
 ```
 You may also disable Task auto configuration by setting the `spring.cloud.task.autoconfiguration.enabled` property to `false`.
 
+[[closing-the-context]]
+=== Closing the Context
+If the application requires the `ApplicationContext` to be closed at the
+completion of a task (all `*Runner#run` methods have been called and the task
+repository has been updated), set the property `spring.cloud.task.closecontext_enabled`
+to `true`.
 
+Another case to close the context is when the Task Execution completes however the application does not terminate.
+In these cases the context is held open because a thread has been allocated
+(for example: if you are using a TaskExecutor). In these cases
+set the `spring.cloud.task.closecontext_enabled` property to `true` when launching your task.
+This will close the application's context once the task is complete.
+Thus allowing the application to terminate.
