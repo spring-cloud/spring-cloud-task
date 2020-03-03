@@ -110,8 +110,8 @@
 
 	<properties>
 		<spring-cloud-stream.version>3.0.3.RELEASE</spring-cloud-stream.version>
-		<spring-cloud-deployer.version>2.1.0.RELEASE</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.1.0.RELEASE
+		<spring-cloud-deployer.version>2.1.1.RELEASE</spring-cloud-deployer.version>
+		<spring-cloud-deployer-local.version>2.1.1.RELEASE
 		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>3.0.3.RELEASE
 		</spring-cloud-stream-binder-rabbit.version>
