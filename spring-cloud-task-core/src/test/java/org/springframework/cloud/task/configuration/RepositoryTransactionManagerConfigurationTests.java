@@ -25,7 +25,6 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -34,6 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -118,10 +119,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 	}
@@ -143,10 +141,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
@@ -173,10 +168,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
@@ -186,10 +178,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource2() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb2;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
