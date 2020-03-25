@@ -25,7 +25,6 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -34,6 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -45,13 +46,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michael Minella
  */
 public class RepositoryTransactionManagerConfigurationTests {
-
-	private final static String DATASOURCE_USER_NAME = "SA";
-
-	private final static String DATASOURCE_USER_PASSWORD = "''";
-
-	private final static String DATASOURCE_URL = "jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE";
-	private final static String DATASOURCE_CLASSNAME = "org.h2.Driver";
 
 	@Test
 	public void testZeroCustomTransactionManagerConfiguration() {
@@ -125,12 +119,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url(DATASOURCE_URL);
-			dsb.driverClassName(DATASOURCE_CLASSNAME);
-			dsb.username(DATASOURCE_USER_NAME);
-			dsb.password(DATASOURCE_USER_PASSWORD);
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 	}
@@ -152,12 +141,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-				.url(DATASOURCE_URL);
-			dsb.driverClassName(DATASOURCE_CLASSNAME);
-			dsb.username(DATASOURCE_USER_NAME);
-			dsb.password(DATASOURCE_USER_PASSWORD);
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
@@ -184,12 +168,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-				.url(DATASOURCE_URL);
-			dsb.driverClassName(DATASOURCE_CLASSNAME);
-			dsb.username(DATASOURCE_USER_NAME);
-			dsb.password(DATASOURCE_USER_PASSWORD);
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
@@ -199,12 +178,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 		@Bean
 		public DataSource dataSource2() {
-			DataSourceBuilder dsb = DataSourceBuilder.create()
-				.url(DATASOURCE_URL);
-			dsb.driverClassName(DATASOURCE_CLASSNAME);
-			dsb.username(DATASOURCE_USER_NAME);
-			dsb.password(DATASOURCE_USER_PASSWORD);
-			return dsb.build();
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 		}
 
 		@Bean
