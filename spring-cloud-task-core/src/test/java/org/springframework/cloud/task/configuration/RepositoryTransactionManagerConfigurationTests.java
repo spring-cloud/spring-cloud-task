@@ -46,6 +46,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class RepositoryTransactionManagerConfigurationTests {
 
+	private final static String DATASOURCE_USER_NAME = "SA";
+
+	private final static String DATASOURCE_USER_PASSWORD = "''";
+
+	private final static String DATASOURCE_URL = "jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE";
+	private final static String DATASOURCE_CLASSNAME = "org.h2.Driver";
+
 	@Test
 	public void testZeroCustomTransactionManagerConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
@@ -119,8 +126,10 @@ public class RepositoryTransactionManagerConfigurationTests {
 		@Bean
 		public DataSource dataSource() {
 			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
+					.url(DATASOURCE_URL);
+			dsb.driverClassName(DATASOURCE_CLASSNAME);
+			dsb.username(DATASOURCE_USER_NAME);
+			dsb.password(DATASOURCE_USER_PASSWORD);
 			return dsb.build();
 		}
 
@@ -144,8 +153,10 @@ public class RepositoryTransactionManagerConfigurationTests {
 		@Bean
 		public DataSource dataSource() {
 			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
+				.url(DATASOURCE_URL);
+			dsb.driverClassName(DATASOURCE_CLASSNAME);
+			dsb.username(DATASOURCE_USER_NAME);
+			dsb.password(DATASOURCE_USER_PASSWORD);
 			return dsb.build();
 		}
 
@@ -174,8 +185,10 @@ public class RepositoryTransactionManagerConfigurationTests {
 		@Bean
 		public DataSource dataSource() {
 			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
+				.url(DATASOURCE_URL);
+			dsb.driverClassName(DATASOURCE_CLASSNAME);
+			dsb.username(DATASOURCE_USER_NAME);
+			dsb.password(DATASOURCE_USER_PASSWORD);
 			return dsb.build();
 		}
 
@@ -187,8 +200,10 @@ public class RepositoryTransactionManagerConfigurationTests {
 		@Bean
 		public DataSource dataSource2() {
 			DataSourceBuilder dsb = DataSourceBuilder.create()
-					.url("jdbc:h2:mem:testdb2;DB_CLOSE_ON_EXIT=FALSE");
-			dsb.driverClassName("org.h2.Driver");
+				.url(DATASOURCE_URL);
+			dsb.driverClassName(DATASOURCE_CLASSNAME);
+			dsb.username(DATASOURCE_USER_NAME);
+			dsb.password(DATASOURCE_USER_PASSWORD);
 			return dsb.build();
 		}
 
