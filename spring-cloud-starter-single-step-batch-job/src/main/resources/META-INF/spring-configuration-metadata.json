@@ -1,0 +1,229 @@
+{
+	"groups": [
+		{
+			"name": "spring.batch.job",
+			"type": "org.springframework.cloud.task.batch.autoconfigure.SingleStepJobProperties",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.SingleStepJobProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader",
+			"type": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter",
+			"type": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		}
+	],
+	"properties": [
+		{
+			"name": "spring.batch.job.chunk-size",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.SingleStepJobProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.comments",
+			"type": "java.util.List<java.lang.String>",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.current-item-count",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": 0
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.delimited",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.delimiter",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.encoding",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.fixed-length",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.included-fields",
+			"type": "java.util.List<java.lang.Integer>",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.lines-to-skip",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": 0
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.max-item-count",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.name",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.names",
+			"type": "java.lang.String[]",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.parsing-strict",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": true
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.quote-character",
+			"type": "java.lang.Character",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.ranges",
+			"type": "java.util.List<org.springframework.batch.item.file.transform.Range>",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.resource",
+			"type": "org.springframework.core.io.Resource",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.save-state",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": true
+		},
+		{
+			"name": "spring.batch.job.flatfilereader.strict",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderProperties",
+			"defaultValue": true
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.append",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.delimited",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.delimiter",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": ","
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.encoding",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.force-sync",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.format",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.formatted",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.line-separator",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.locale",
+			"type": "java.util.Locale",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.maximum-length",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": 0
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.minimum-length",
+			"type": "java.lang.Integer",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": 0
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.name",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.names",
+			"type": "java.lang.String[]",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.resource",
+			"type": "org.springframework.core.io.Resource",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.save-state",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": true
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.should-delete-if-empty",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": false
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.should-delete-if-exists",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties",
+			"defaultValue": true
+		},
+		{
+			"name": "spring.batch.job.flatfilewriter.transactional",
+			"type": "java.lang.Boolean",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterProperties"
+		},
+		{
+			"name": "spring.batch.job.job-name",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.SingleStepJobProperties"
+		},
+		{
+			"name": "spring.batch.job.step-name",
+			"type": "java.lang.String",
+			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.SingleStepJobProperties"
+		}
+	],
+	"hints": []
+}
