@@ -106,6 +106,7 @@
 		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-integration-tests</module>
 		<module>spring-cloud-task-docs</module>
+		<module>spring-cloud-starter-single-step-batch-job</module>
 	</modules>
 
 	<properties>
