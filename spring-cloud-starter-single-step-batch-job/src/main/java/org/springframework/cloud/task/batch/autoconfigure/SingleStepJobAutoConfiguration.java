@@ -27,7 +27,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  */
 @Configuration
 @EnableConfigurationProperties(SingleStepJobProperties.class)
-@AutoConfigureAfter(BatchAutoConfiguration.class)
+@AutoConfigureBefore(BatchAutoConfiguration.class)
 public class SingleStepJobAutoConfiguration {
 
 	private JobBuilderFactory jobBuilderFactory;

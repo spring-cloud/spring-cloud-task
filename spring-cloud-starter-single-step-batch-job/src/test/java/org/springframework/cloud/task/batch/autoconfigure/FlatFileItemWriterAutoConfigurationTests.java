@@ -85,6 +85,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 		try {
 			configuration.itemWriter();
+			fail("Exception should have been thrown when both formatted and delimited are selected");
 		}
 		catch (IllegalStateException ise) {
 			assertThat(ise.getMessage()).isEqualTo(
@@ -103,6 +104,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 		try {
 			configuration.itemWriter();
+			fail("Exception should have been thrown when a LineAggregator and one of the autocreated options are selected");
 		}
 		catch (IllegalStateException ise) {
 			assertThat(ise.getMessage())
@@ -118,6 +120,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 		try {
 			configuration.itemWriter();
+			fail("Exception should have been thrown when a LineAggregator and one of the autocreated options are selected");
 		}
 		catch (IllegalStateException ise) {
 			assertThat(ise.getMessage())
@@ -238,7 +241,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								SingleStepJobAutoConfiguration.class,
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=2",
+						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfilewriter.name=fooWriter",
 						String.format(
 								"spring.batch.job.flatfilewriter.resource=file://%s",
