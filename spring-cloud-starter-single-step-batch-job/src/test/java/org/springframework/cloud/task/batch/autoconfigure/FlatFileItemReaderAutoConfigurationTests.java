@@ -349,15 +349,6 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@Configuration
 	public static class JobConfiguration {
 
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
-
-		@Autowired
-		private FlatFileItemReader itemReader;
-
 		@Bean
 		public ListItemWriter<Map> itemWriter() {
 			return new ListItemWriter<>();
@@ -368,15 +359,6 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class RecordSeparatorAndSkippedLinesJobConfiguration {
-
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
-
-		@Autowired
-		private FlatFileItemReader itemReader;
 
 		@Bean
 		public RecordSeparatorPolicy recordSeparatorPolicy() {
@@ -422,15 +404,6 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class CustomLineMapperConfiguration {
-
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
-
-		@Autowired
-		private FlatFileItemReader itemReader;
 
 		@Bean
 		public LineMapper<Map<Object, Object>> lineMapper() {

@@ -140,8 +140,8 @@ public class FlatFileItemWriterProperties {
 	}
 
 	/**
-	 * . When a file is delimited, this {@code String} will be used as the delimiter
-	 * between fields
+	 * When a file is delimited, this {@code String} will be used as the delimiter between
+	 * fields.
 	 * @return delimiter
 	 */
 	public String getDelimiter() {
@@ -192,7 +192,7 @@ public class FlatFileItemWriterProperties {
 
 	/**
 	 * Indicates that the output file will use String formatting to generate the output.
-	 * @return true if the file will contain formatted records
+	 * @return true if the file will contain formatted records defaults to true
 	 */
 	public boolean isFormatted() {
 		return formatted;
@@ -348,7 +348,7 @@ public class FlatFileItemWriterProperties {
 
 	/**
 	 * The longest a record is allowed to be. If 0, the maximum is unlimited.
-	 * @return the max record length allowed
+	 * @return the max record length allowed. Defaults to 0.
 	 */
 	public int getMaximumLength() {
 		return maximumLength;
