@@ -149,6 +149,13 @@ by setting the `spring.cloud.task.tablePrefix` to the prefix you need, as follow
 
 `spring.cloud.task.tablePrefix=yourPrefix`
 
+By using the `spring.cloud.task.tablePrefix`, a user assumes the responsibility to
+create the task tables that meet both the criteria for the task table schema but
+with modifications that are required for a user's business needs.
+You can utilize the Spring Cloud Task Schema DDL as a guide when creating your own Task DDL as seen
+https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task[here].
+
+
 [[features-table-initialization]]
 === Enable/Disable table initialization
 In cases where you are creating the task tables and do not wish for Spring Cloud Task to
@@ -158,7 +165,6 @@ create them at task startup, set the `spring.cloud.task.initialize-enabled` prop
 `spring.cloud.task.initialize-enabled=false`
 
 It defaults to `true`.
-
 
 NOTE: The property `spring.cloud.task.initialize.enable` has been deprecated.
 
