@@ -99,7 +99,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLRDisabled() {
 		this.contextRunner.run(context -> {
-			assertThat(context).hasSingleBean(JobLauncherApplicationRunner.class);
+			assertThat(context).hasBean("jobLauncherApplicationRunner");
 			assertThat(context).doesNotHaveBean(TaskJobLauncherCommandLineRunner.class);
 		});
 	}

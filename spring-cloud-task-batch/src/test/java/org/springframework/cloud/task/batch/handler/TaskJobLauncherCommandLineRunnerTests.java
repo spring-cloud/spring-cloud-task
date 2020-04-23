@@ -152,7 +152,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 						TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class },
 				enabledArgs);
 		validateContext();
-		assertThat(this.applicationContext.getBean(JobLauncherApplicationRunner.class))
+		assertThat(this.applicationContext.getBean("jobLauncherApplicationRunner"))
 				.isNotNull();
 
 		Executable executable = () -> this.applicationContext
