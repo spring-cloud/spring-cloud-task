@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
-import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
+import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
@@ -152,7 +152,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 						TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class },
 				enabledArgs);
 		validateContext();
-		assertThat(this.applicationContext.getBean(JobLauncherCommandLineRunner.class))
+		assertThat(this.applicationContext.getBean(JobLauncherApplicationRunner.class))
 				.isNotNull();
 
 		Executable executable = () -> this.applicationContext
