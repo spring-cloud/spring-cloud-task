@@ -34,7 +34,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>Horsham.BUILD-SNAPSHOT</version>
+				<version>3.1.0.M1</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<version>3.1.0.BUILD-SNAPSHOT</version>
+			<version>3.1.0.M1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
