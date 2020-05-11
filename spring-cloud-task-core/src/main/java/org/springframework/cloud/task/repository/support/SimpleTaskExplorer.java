@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,11 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	@Override
 	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
 		return this.taskExecutionDao.getLatestTaskExecutionForTaskName(taskName);
+	}
+
+	@Override
+	public Set<Long> getTaskExecutionIdsByTaskName(String taskName) {
+		return this.taskExecutionDao.getTaskExecutionIdsByTaskName(taskName);
 	}
 
 }

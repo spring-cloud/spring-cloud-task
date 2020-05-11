@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -203,6 +205,19 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
 						expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	@DirtiesContext
+	public void testGetTaskExecutionIdsByTaskName() {
+		String taskName = UUID.randomUUID().toString();
+		List<TaskExecution> taskExecutions = TestVerifierUtils
+				.createSampleTaskExecutions(taskName, 4);
+		for (TaskExecution taskExecution : taskExecutions) {
+			this.repository.createTaskExecution(taskExecution);
+		}
+		Set<Long> taskExecutionIds = this.dao.getTaskExecutionIdsByTaskName(taskName);
+		assertThat(taskExecutionIds.size()).isEqualTo(4);
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {

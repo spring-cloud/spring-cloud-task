@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 * FROM clause for task execution.
 	 */
 	public static final String FROM_CLAUSE = "%PREFIX%EXECUTION";
+
+	private static final String SELECT_CLAUSE_EXECUTION_ID = "TASK_EXECUTION_ID ";
 
 	/**
 	 * WHERE clause for running task.
@@ -150,6 +152,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID = "SELECT JOB_EXECUTION_ID "
 			+ "FROM %PREFIX%TASK_BATCH WHERE TASK_EXECUTION_ID = :taskExecutionId";
+
+	private static final String FIND_TASK_EXECUTION_IDS_BY_TASK_NAME = "SELECT TASK_EXECUTION_ID "
+			+ "from %PREFIX%EXECUTION where TASK_NAME = :taskName";
 
 	private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -494,6 +499,32 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				queryParameters) != 1) {
 			throw new IllegalStateException(
 					"Invalid TaskExecution, ID " + taskExecutionId + " not found.");
+		}
+	}
+
+	@Override
+	public Set<Long> getTaskExecutionIdsByTaskName(String taskName) {
+		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
+				.addValue("taskName", taskName, Types.VARCHAR);
+
+		try {
+			return this.jdbcTemplate.query(getQuery(FIND_TASK_EXECUTION_IDS_BY_TASK_NAME),
+					queryParameters, new ResultSetExtractor<Set<Long>>() {
+						@Override
+						public Set<Long> extractData(ResultSet resultSet)
+								throws SQLException, DataAccessException {
+							Set<Long> taskExecutionIds = new TreeSet<>();
+
+							while (resultSet.next()) {
+								taskExecutionIds
+										.add(resultSet.getLong("TASK_EXECUTION_ID"));
+							}
+							return taskExecutionIds;
+						}
+					});
+		}
+		catch (DataAccessException e) {
+			return Collections.emptySet();
 		}
 	}
 

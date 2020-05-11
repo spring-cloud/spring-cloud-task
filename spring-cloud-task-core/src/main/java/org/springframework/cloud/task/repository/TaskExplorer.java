@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,5 +132,12 @@ public interface TaskExplorer {
 	 * @see #getLatestTaskExecutionsByTaskNames(String...)
 	 */
 	TaskExecution getLatestTaskExecutionForTaskName(String taskName);
+
+	/**
+	 * Returns the Set of task execution IDs by the given task name.
+	 * @param taskName the task name
+	 * @return the Set of task execution IDs
+	 */
+	Set<Long> getTaskExecutionIdsByTaskName(String taskName);
 
 }

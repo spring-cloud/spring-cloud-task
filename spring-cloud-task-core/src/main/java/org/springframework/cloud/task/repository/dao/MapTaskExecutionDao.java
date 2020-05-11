@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -342,6 +342,17 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 					"Only expected a single TaskExecution but received "
 							+ taskExecutions.size());
 		}
+	}
+
+	@Override
+	public Set<Long> getTaskExecutionIdsByTaskName(String taskName) {
+		Set<Long> filteredSet = new TreeSet<>();
+		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
+			if (entry.getValue().getTaskName().equals(taskName)) {
+				filteredSet.add(entry.getValue().getExecutionId());
+			}
+		}
+		return filteredSet;
 	}
 
 	private static class TaskExecutionComparator

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -329,6 +330,15 @@ public class SimpleTaskExplorerTests {
 		}
 	}
 
+	@Test
+	public void getTaskExecutionIdsByTaskName() {
+		String taskName = UUID.randomUUID().toString();
+		createAndSaveSampleTaskExecutions(taskName, 4);
+		Set<Long> taskExecutionIdsFromRepo = this.taskExplorer
+				.getTaskExecutionIdsByTaskName(taskName);
+		assertThat(taskExecutionIdsFromRepo.size()).isEqualTo(4);
+	}
+
 	private void verifyPageResults(Pageable pageable, int totalNumberOfExecs) {
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(
 				totalNumberOfExecs);
@@ -379,6 +389,16 @@ public class SimpleTaskExplorerTests {
 				.isEqualTo(pagesExpected);
 		assertThat(elementCount).as("Elements processed did not equal expected,")
 				.isEqualTo(totalNumberOfExecs);
+	}
+
+	private List<TaskExecution> createAndSaveSampleTaskExecutions(String taskName,
+			int size) {
+		List<TaskExecution> taskExecutions = TestVerifierUtils
+				.createSampleTaskExecutions(taskName, size);
+		for (TaskExecution taskExecution : taskExecutions) {
+			this.taskRepository.createTaskExecution(taskExecution);
+		}
+		return taskExecutions;
 	}
 
 	private TaskExecution createAndSaveTaskExecution(int i) {

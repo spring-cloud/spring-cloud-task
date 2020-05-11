@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestVerifierUtils;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -175,6 +176,17 @@ public class MapTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 				expectedTaskExecution.getArguments(), "BAR");
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	@DirtiesContext
+	public void testGetTaskExecutionIdsByTaskName() {
+		String taskName = UUID.randomUUID().toString();
+		for (int i = 0; i < 4; i++) {
+			this.dao.createTaskExecution(taskName, null, new ArrayList<>(0), null);
+		}
+		Set<Long> taskExecutionIds = this.dao.getTaskExecutionIdsByTaskName(taskName);
+		assertThat(taskExecutionIds.size()).isEqualTo(4);
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {

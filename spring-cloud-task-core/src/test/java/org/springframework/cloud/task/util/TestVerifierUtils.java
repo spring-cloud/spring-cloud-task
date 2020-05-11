@@ -131,6 +131,30 @@ public final class TestVerifierUtils {
 	}
 
 	/**
+	 * Creates multiple task executions for a given task name
+	 * @param taskName the task name for the task executions
+	 * @param numExecutions the number of task executions
+	 * @return list of TaskExecutions.
+	 */
+	public static List<TaskExecution> createSampleTaskExecutions(String taskName,
+			int numExecutions) {
+		Date startTime = new Date();
+		String externalExecutionId = UUID.randomUUID().toString();
+		Random randomGenerator = new Random();
+		List<TaskExecution> taskExecutions = new ArrayList<>();
+		for (int i = 0; i < numExecutions; i++) {
+			long executionId = randomGenerator.nextLong();
+			List<String> args = new ArrayList<>(ARG_SIZE);
+			for (int j = 0; j < ARG_SIZE; j++) {
+				args.add(UUID.randomUUID().toString());
+			}
+			taskExecutions.add(new TaskExecution(executionId, null, taskName, startTime,
+					null, null, args, null, externalExecutionId));
+		}
+		return taskExecutions;
+	}
+
+	/**
 	 * Verifies that all the fields in between the expected and actual are the same.
 	 * @param expectedTaskExecution The expected value for the task execution.
 	 * @param actualTaskExecution The actual value for the task execution.
