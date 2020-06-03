@@ -165,7 +165,10 @@
 								<configuration>
 									<target>
 										<zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip">
-											<zipfileset dir="${project.build.directory}/generated-docs" prefix="reference" />
+											<zipfileset dir="${project.build.directory}/generated-docs" prefix="reference/html">
+												<exclude name="index.pdf"/>
+											</zipfileset>
+											<zipfileset dir="${project.build.directory}/generated-docs/" includes="index.pdf" prefix="reference/pdf"/>
 											<zipfileset dir="../target/site/apidocs" prefix="apidocs" />
 										</zip>
 									</target>
