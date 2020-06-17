@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.configuration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;

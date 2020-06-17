@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -62,12 +62,12 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 	private File outputFile;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		this.outputFile = File.createTempFile("flatfile-config-test-output", ".tmp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		this.outputFile.delete();
 	}

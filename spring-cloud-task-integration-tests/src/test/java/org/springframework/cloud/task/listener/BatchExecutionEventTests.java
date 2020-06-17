@@ -23,16 +23,15 @@ import java.util.concurrent.TimeUnit;
 import configuration.JobConfiguration;
 import configuration.JobSkipConfiguration;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
@@ -50,8 +49,13 @@ public class BatchExecutionEventTests {
 
 	private static final String TASK_NAME = "jobEventTest";
 
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
+	static {
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+				.withExposedPorts(5672);
+		rabbitmq.start();
+		final Integer mappedPort = rabbitmq.getMappedPort(5672);
+		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
+	}
 
 	// Count for two job execution events per job
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
@@ -80,7 +84,7 @@ public class BatchExecutionEventTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();

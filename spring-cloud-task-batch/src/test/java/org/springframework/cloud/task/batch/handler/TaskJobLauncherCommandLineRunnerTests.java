@@ -21,8 +21,8 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.assertj.core.api.Condition;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.batch.core.Job;
@@ -74,7 +74,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();

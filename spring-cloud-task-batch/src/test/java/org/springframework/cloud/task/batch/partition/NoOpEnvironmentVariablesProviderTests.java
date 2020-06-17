@@ -18,8 +18,8 @@ package org.springframework.cloud.task.batch.partition;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +30,7 @@ public class NoOpEnvironmentVariablesProviderTests {
 
 	private NoOpEnvironmentVariablesProvider provider;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.provider = new NoOpEnvironmentVariablesProvider();
 	}

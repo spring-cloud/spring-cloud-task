@@ -18,7 +18,7 @@ package org.springframework.cloud.task.batch.listener;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.JobParameter;
 import org.springframework.cloud.task.batch.listener.support.JobParameterEvent;
@@ -71,16 +71,6 @@ public class JobParameterEventTests {
 		assertTrue(jobParameterEvent.equals(jobParameterEvent));
 		assertFalse(jobParameterEvent.equals("nope"));
 		assertTrue(jobParameterEvent.equals(anotherJobParameterEvent));
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testInvalidHashCode() {
-		JobParameterEvent jobParameterEvent = new JobParameterEvent();
-		assertThat(jobParameterEvent.hashCode()).isNull();
-		final String EXPECTED_VALUE = "FOO";
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, true);
-		jobParameterEvent = new JobParameterEvent(jobParameter);
-		assertThat(jobParameterEvent.hashCode()).isNotNull();
 	}
 
 	@Test

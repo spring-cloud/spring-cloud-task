@@ -19,9 +19,8 @@ package org.springframework.cloud.task.repository.database.support;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.util.TestDBUtils;
@@ -33,23 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Glenn Renfro
  */
-@RunWith(Parameterized.class)
 public class WhereClausePagingQueryProviderTests {
-
-	private String databaseProductName;
-
-	private String expectedQuery;
 
 	private Pageable pageable = PageRequest.of(0, 10);
 
-	public WhereClausePagingQueryProviderTests(String databaseProductName,
-			String expectedQuery) {
-		this.databaseProductName = databaseProductName;
-		this.expectedQuery = expectedQuery;
-	}
-
-	// @checkstyle:off
-	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
 				{ "Oracle", "SELECT TASK_EXECUTION_ID, START_TIME, END_TIME, TASK_NAME, "
@@ -87,17 +73,18 @@ public class WhereClausePagingQueryProviderTests {
 								+ "'0000') TASK_EXECUTION_PAGE  WHERE TMP_ROW_NUM >= 1 "
 								+ "AND TMP_ROW_NUM < 11 ORDER BY START_TIME DESC, TASK_EXECUTION_ID DESC" } });
 	}
-	// @checkstyle:on
 
-	@Test
-	public void testGeneratedQuery() throws Exception {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void testGeneratedQuery(String databaseProductName, String expectedQuery)
+			throws Exception {
 		PagingQueryProvider pagingQueryProvider = TestDBUtils.getPagingQueryProvider(
-				this.databaseProductName, "TASK_EXECUTION_ID = '0000'");
+				databaseProductName, "TASK_EXECUTION_ID = '0000'");
 		String actualQuery = pagingQueryProvider.getPageQuery(this.pageable);
 		assertThat(actualQuery).as(
 				String.format("the generated query for %s, was not the expected query",
-						this.databaseProductName))
-				.isEqualTo(this.expectedQuery);
+						databaseProductName))
+				.isEqualTo(expectedQuery);
 	}
 
 }

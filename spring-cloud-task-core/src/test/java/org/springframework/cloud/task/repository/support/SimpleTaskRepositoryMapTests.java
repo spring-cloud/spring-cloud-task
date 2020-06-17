@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -30,6 +30,7 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.util.TaskExecutionCreator;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
@@ -42,7 +43,7 @@ public class SimpleTaskRepositoryMapTests {
 
 	private TaskRepository taskRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.taskRepository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
 	}
@@ -91,13 +92,15 @@ public class SimpleTaskRepositoryMapTests {
 						expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
-		this.taskRepository.updateExternalExecutionId(-1,
-				expectedTaskExecution.getExternalExecutionId());
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			this.taskRepository.updateExternalExecutionId(-1,
+					expectedTaskExecution.getExternalExecutionId());
+		});
 	}
 
 	@Test
@@ -183,13 +186,15 @@ public class SimpleTaskRepositoryMapTests {
 		return taskMap.get(taskExecutionId);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateTaskExecutionNullEndTime() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitCode(-1);
-		TaskExecutionCreator.completeExecution(this.taskRepository,
-				expectedTaskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			TaskExecutionCreator.completeExecution(this.taskRepository,
+					expectedTaskExecution);
+		});
 	}
 
 }

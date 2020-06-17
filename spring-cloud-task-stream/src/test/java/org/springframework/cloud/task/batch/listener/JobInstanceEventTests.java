@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
 

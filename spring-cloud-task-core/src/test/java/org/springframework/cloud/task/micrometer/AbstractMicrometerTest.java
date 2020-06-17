@@ -25,10 +25,10 @@ import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.simple.SimpleConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.pivotal.cfenv.test.CfEnvTestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -39,7 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Christian Tzolov
  * @author Soby Chacko
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { AbstractMicrometerTest.AutoConfigurationApplication.class })
 @DirtiesContext
 public class AbstractMicrometerTest {
@@ -61,7 +61,7 @@ public class AbstractMicrometerTest {
 
 	protected Meter meter;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		assertThat(simpleMeterRegistry).isNotNull();
@@ -70,12 +70,12 @@ public class AbstractMicrometerTest {
 				"The spring.integration.handlers meter must be present in SpringBoot apps!");
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void setup() throws IOException {
 		String serviceJson = StreamUtils.copyToString(new DefaultResourceLoader()
 				.getResource("classpath:/micrometer/pcf-scs-info.json").getInputStream(),

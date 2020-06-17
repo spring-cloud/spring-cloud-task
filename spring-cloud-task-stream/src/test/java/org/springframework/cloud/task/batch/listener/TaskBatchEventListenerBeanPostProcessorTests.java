@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.ItemProcessListener;
@@ -38,7 +38,7 @@ import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListe
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Glenn Renfro
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class TaskBatchEventListenerBeanPostProcessorTests {
 
@@ -80,7 +80,7 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 	@Autowired
 	private GenericApplicationContext context;
 
-	@Before
+	@BeforeEach
 	public void setupMock() {
 		when(this.taskletStep.getTasklet()).thenReturn(
 				new ChunkOrientedTasklet(this.chunkProvider, this.chunkProcessor));

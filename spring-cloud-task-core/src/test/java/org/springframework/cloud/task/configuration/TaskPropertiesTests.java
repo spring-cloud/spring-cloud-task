@@ -16,25 +16,22 @@
 
 package org.springframework.cloud.task.configuration;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Suite.class)
-@SuiteClasses({ TaskPropertiesTests.CloseContextEnabledTest.class
-
-})
-
 @DirtiesContext
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(
+		classes = { SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class },
+		properties = { "spring.cloud.task.closecontextEnabled=false",
+				"spring.cloud.task.initialize-enabled=false" })
 public class TaskPropertiesTests {
 
 	@Autowired
@@ -44,22 +41,6 @@ public class TaskPropertiesTests {
 	public void test() {
 		assertThat(this.taskProperties.getClosecontextEnabled()).isFalse();
 		assertThat(this.taskProperties.isInitializeEnabled()).isFalse();
-	}
-
-	@RunWith(SpringRunner.class)
-	@SpringBootTest(
-			classes = { TaskPropertiesTests.Config.class,
-					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class },
-			properties = { "spring.cloud.task.closecontextEnabled=false",
-					"spring.cloud.task.initialize-enabled=false" })
-	@DirtiesContext
-	public static class CloseContextEnabledTest extends TaskPropertiesTests {
-
-	}
-
-	@Configuration
-	public static class Config {
-
 	}
 
 }

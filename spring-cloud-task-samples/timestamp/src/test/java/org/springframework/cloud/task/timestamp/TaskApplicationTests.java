@@ -19,11 +19,12 @@ package org.springframework.cloud.task.timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,13 +33,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Glenn Renfro
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class TaskApplicationTests {
 
-	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	@Test
-	public void testTimeStampApp() throws Exception {
+	public void testTimeStampApp(CapturedOutput capturedOutput) throws Exception {
 		final String TEST_DATE_DOTS = ".......";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
@@ -47,7 +47,7 @@ public class TaskApplicationTests {
 
 		SpringApplication.run(TaskApplication.class, args);
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains(TEST_DATE_DOTS))
 			.as("Unable to find the timestamp: " + output).isTrue();
 		assertThat(output.contains(CREATE_TASK_MESSAGE))

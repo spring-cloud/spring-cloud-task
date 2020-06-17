@@ -28,10 +28,10 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -58,12 +58,13 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { TaskStartTests.TaskLauncherConfiguration.class })
 public class TaskStartTests {
 
@@ -102,7 +103,7 @@ public class TaskStartTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
@@ -118,7 +119,7 @@ public class TaskStartTests {
 		this.taskRepository = new SimpleTaskRepository(factoryBean);
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.properties = new HashMap<>();
 		this.properties.put("spring.datasource.url", DATASOURCE_URL);
@@ -196,18 +197,22 @@ public class TaskStartTests {
 				.isEqualTo("batchEvents");
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testWithNoTaskExecution() throws Exception {
-		this.applicationContext = getTaskApplication(55).run(new String[0]);
+		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
+			this.applicationContext = getTaskApplication(55).run(new String[0]);
+		});
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testCompletedTaskExecution() throws Exception {
 		this.taskRepository.createTaskExecution();
 		assertThat(this.taskExplorer.getTaskExecutionCount())
 				.as("Only one row is expected").isEqualTo(1);
 		this.taskRepository.completeTaskExecution(1, 0, new Date(), "");
-		this.applicationContext = getTaskApplication(1).run(new String[0]);
+		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
+			this.applicationContext = getTaskApplication(1).run(new String[0]);
+		});
 	}
 
 	@Test

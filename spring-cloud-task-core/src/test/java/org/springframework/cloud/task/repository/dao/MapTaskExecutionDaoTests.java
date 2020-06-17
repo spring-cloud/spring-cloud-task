@@ -25,13 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Executes unit tests on MapTaskExecutionDaoTests.
@@ -43,7 +44,7 @@ public class MapTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	private MapTaskExecutionDao mapTaskExecutionDao;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.mapTaskExecutionDao = new MapTaskExecutionDao();
 		super.dao = this.mapTaskExecutionDao;
@@ -81,13 +82,16 @@ public class MapTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 				taskExecutionMap.get(expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void completeTaskExecutionWithNoCreate() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils
 				.createSampleTaskExecutionNoArg();
-		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage());
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+			this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+					expectedTaskExecution.getExitCode(),
+					expectedTaskExecution.getEndTime(),
+					expectedTaskExecution.getExitMessage());
+		});
 	}
 
 	@Test

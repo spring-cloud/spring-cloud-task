@@ -19,11 +19,12 @@ package io.spring;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 
 
 import static junit.framework.TestCase.assertTrue;
@@ -34,13 +35,12 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Michael Minella
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class BatchJobApplicationTests {
 
-	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	@Test
-	public void testBatchJobApp() throws Exception {
+	public void testBatchJobApp(CapturedOutput capturedOutput) throws Exception {
 		final String JOB_RUN_MESSAGE = " was run";
 		final String CREATE_TASK_MESSAGE = "Creating: TaskExecution{executionId=";
 		final String UPDATE_TASK_MESSAGE = "Updating: TaskExecution with executionId=";
@@ -49,7 +49,7 @@ public class BatchJobApplicationTests {
 
 		SpringApplication.run(BatchJobApplication.class);
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertTrue("Unable to find the timestamp: " + output,
 			output.contains(JOB_RUN_MESSAGE));
 		assertTrue("Test results do not show create task message: " + output,

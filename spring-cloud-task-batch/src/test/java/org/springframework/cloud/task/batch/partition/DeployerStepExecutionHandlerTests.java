@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.batch.partition;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -67,7 +67,7 @@ public class DeployerStepExecutionHandlerTests {
 
 	private DeployerStepExecutionHandler handler;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
@@ -192,7 +192,7 @@ public class DeployerStepExecutionHandlerTests {
 		this.handler.run();
 
 		verify(this.step).execute(workerStep);
-		verifyZeroInteractions(this.jobRepository);
+		verifyNoMoreInteractions(this.jobRepository);
 	}
 
 	@Test

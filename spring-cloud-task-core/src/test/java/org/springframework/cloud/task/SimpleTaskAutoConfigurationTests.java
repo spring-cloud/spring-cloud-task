@@ -18,8 +18,8 @@ package org.springframework.cloud.task;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.aop.framework.AopProxyUtils;
@@ -61,7 +61,7 @@ public class SimpleTaskAutoConfigurationTests {
 
 	private ConfigurableApplicationContext context;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.context != null) {
 			this.context.close();

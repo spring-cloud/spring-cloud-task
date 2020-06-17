@@ -16,9 +16,8 @@
 
 package org.springframework.cloud.task.micrometer;
 
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.test.context.TestPropertySource;
 
@@ -27,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Christian Tzolov
  */
-@RunWith(Enclosed.class)
+@Nested
 public class SpringCloudTaskMicrometerCommonTagsConfigurationTest {
 
 	public static class TestDefaultTagValues extends AbstractMicrometerTest {

@@ -18,8 +18,8 @@ package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
@@ -33,6 +33,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Michael Minella
@@ -41,7 +42,7 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 	private ConfigurableApplicationContext context;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.context != null) {
 			this.context.close();
@@ -59,9 +60,11 @@ public class TaskExecutionDaoFactoryBeanTests {
 		assertThat(new TaskExecutionDaoFactoryBean().isSingleton()).isTrue();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testConstructorValidation() {
-		new TaskExecutionDaoFactoryBean(null);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			new TaskExecutionDaoFactoryBean(null);
+		});
 	}
 
 	@Test

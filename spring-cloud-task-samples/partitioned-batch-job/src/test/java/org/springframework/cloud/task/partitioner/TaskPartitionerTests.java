@@ -23,9 +23,9 @@ import javax.sql.DataSource;
 
 import io.spring.PartitionedBatchJobApplication;
 import org.h2.tools.Server;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -40,12 +40,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TaskPartitionerTests.TaskLauncherConfiguration.class})
 public class TaskPartitionerTests {
 
@@ -70,7 +70,7 @@ public class TaskPartitionerTests {
 		this.taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");

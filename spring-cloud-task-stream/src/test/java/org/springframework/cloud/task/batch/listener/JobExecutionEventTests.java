@@ -23,8 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -75,7 +75,7 @@ public class JobExecutionEventTests {
 
 	private JobInstance jobInstance;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
 		this.jobParameters = new JobParameters();

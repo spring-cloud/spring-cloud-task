@@ -23,10 +23,10 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -44,12 +44,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { TaskInitializerTests.TaskLauncherConfiguration.class })
 public class TaskInitializerTests {
 
@@ -84,7 +85,7 @@ public class TaskInitializerTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
@@ -99,7 +100,7 @@ public class TaskInitializerTests {
 		this.taskExplorer = new SimpleTaskExplorer(factoryBean);
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
@@ -120,11 +121,13 @@ public class TaskInitializerTests {
 		template.execute("DROP SEQUENCE IF EXISTS TASK_SEQ");
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testNotInitialized() throws Exception {
 		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
 		String[] properties = { "--spring.cloud.task.initialize-enabled=false" };
-		this.applicationContext = myapp.run(properties);
+		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
+			this.applicationContext = myapp.run(properties);
+		});
 	}
 
 	@Test
@@ -143,11 +146,13 @@ public class TaskInitializerTests {
 				.as("return code should be 0").isEqualTo(0);
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testNotInitializedOriginalProperty() throws Exception {
 		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
 		String[] properties = { "--spring.cloud.task.initialize.enable=false" };
-		this.applicationContext = myapp.run(properties);
+		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
+			this.applicationContext = myapp.run(properties);
+		});
 	}
 
 	@Test
