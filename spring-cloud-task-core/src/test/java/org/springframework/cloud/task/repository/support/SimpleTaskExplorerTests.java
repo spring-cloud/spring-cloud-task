@@ -29,13 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -58,18 +54,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  * @author Gunnar Hillert
  */
-@RunWith(Parameterized.class)
 public class SimpleTaskExplorerTests {
 
 	private final static String TASK_NAME = "FOOBAR";
 
 	private final static String EXTERNAL_EXECUTION_ID = "123ABC";
-
-	/**
-	 * Establishes that a Exception is not expected.
-	 */
-	@Rule
-	public ExpectedException expected = ExpectedException.none();
 
 	private AnnotationConfigApplicationContext context;
 
@@ -79,21 +68,12 @@ public class SimpleTaskExplorerTests {
 	@Autowired
 	private TaskRepository taskRepository;
 
-	private DaoType testType;
-
-	public SimpleTaskExplorerTests(DaoType testType) {
-		this.testType = testType;
-	}
-
-	@Parameterized.Parameters
 	public static Collection<Object> data() {
 		return Arrays.asList(new Object[] { DaoType.jdbc, DaoType.map });
 	}
 
-	@Before
-	public void testDefaultContext() throws Exception {
-
-		if (this.testType == DaoType.jdbc) {
+	public void testDefaultContext(DaoType testType) {
+		if (testType == DaoType.jdbc) {
 			initializeJdbcExplorerTest();
 		}
 		else {
@@ -101,70 +81,80 @@ public class SimpleTaskExplorerTests {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void close() {
 		if (this.context != null) {
 			this.context.close();
 		}
 	}
 
-	@Test
-	public void getTaskExecution() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getTaskExecution(DaoType testType) {
+		testDefaultContext(testType);
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
 		for (Long taskExecutionId : expectedResults.keySet()) {
 			TaskExecution actualTaskExecution = this.taskExplorer
 					.getTaskExecution(taskExecutionId);
 			assertThat(actualTaskExecution).as(String.format(
-					"expected a taskExecution but got null for test type %s",
-					this.testType)).isNotNull();
+					"expected a taskExecution but got null for test type %s", testType))
+					.isNotNull();
 			TestVerifierUtils.verifyTaskExecution(expectedResults.get(taskExecutionId),
 					actualTaskExecution);
 		}
 	}
 
-	@Test
-	public void taskExecutionNotFound() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void taskExecutionNotFound(DaoType testType) {
+		testDefaultContext(testType);
 		createSampleDataSet(5);
 
 		TaskExecution actualTaskExecution = this.taskExplorer.getTaskExecution(-5);
-		assertThat(actualTaskExecution).as(
-				String.format("expected null for actualTaskExecution %s", this.testType))
+		assertThat(actualTaskExecution)
+				.as(String.format("expected null for actualTaskExecution %s", testType))
 				.isNull();
 	}
 
-	@Test
-	public void getTaskCountByTaskName() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getTaskCountByTaskName(DaoType testType) {
+		testDefaultContext(testType);
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
 		for (Map.Entry<Long, TaskExecution> entry : expectedResults.entrySet()) {
 			String taskName = entry.getValue().getTaskName();
 			assertThat(this.taskExplorer.getTaskExecutionCountByTaskName(taskName))
 					.as(String.format(
 							"task count for task name did not match expected result for testType %s",
-							this.testType))
+							testType))
 					.isEqualTo(1);
 		}
 	}
 
-	@Test
-	public void getTaskCount() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getTaskCount(DaoType testType) {
+		testDefaultContext(testType);
 		createSampleDataSet(33);
-		assertThat(this.taskExplorer.getTaskExecutionCount()).as(
-				String.format("task count did not match expected result for test Type %s",
-						this.testType))
+		assertThat(this.taskExplorer.getTaskExecutionCount()).as(String.format(
+				"task count did not match expected result for test Type %s", testType))
 				.isEqualTo(33);
 	}
 
-	@Test
-	public void getRunningTaskCount() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getRunningTaskCount(DaoType testType) {
+		testDefaultContext(testType);
 		createSampleDataSet(33);
-		assertThat(this.taskExplorer.getRunningTaskExecutionCount()).as(
-				String.format("task count did not match expected result for test Type %s",
-						this.testType))
+		assertThat(this.taskExplorer.getRunningTaskExecutionCount()).as(String.format(
+				"task count did not match expected result for test Type %s", testType))
 				.isEqualTo(33);
 	}
 
-	@Test
-	public void findRunningTasks() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findRunningTasks(DaoType testType) {
+		testDefaultContext(testType);
 		final int TEST_COUNT = 2;
 		final int COMPLETE_COUNT = 5;
 
@@ -187,21 +177,23 @@ public class SimpleTaskExplorerTests {
 				.findRunningTaskExecutions(TASK_NAME, pageable);
 		assertThat(actualResults.getNumberOfElements()).as(String.format(
 				"Running task count for task name did not match expected result for testType %s",
-				this.testType)).isEqualTo(TEST_COUNT);
+				testType)).isEqualTo(TEST_COUNT);
 
 		for (TaskExecution result : actualResults) {
 			assertThat(expectedResults.containsKey(result.getExecutionId())).as(String
 					.format("result returned from repo %s not expected for testType %s",
-							result.getExecutionId(), this.testType))
+							result.getExecutionId(), testType))
 					.isTrue();
 			assertThat(result.getEndTime()).as(String.format(
-					"result had non null for endTime for the testType %s", this.testType))
+					"result had non null for endTime for the testType %s", testType))
 					.isNull();
 		}
 	}
 
-	@Test
-	public void findTasksByName() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findTasksByName(DaoType testType) {
+		testDefaultContext(testType);
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
 
@@ -223,21 +215,23 @@ public class SimpleTaskExplorerTests {
 				.findTaskExecutionsByName(TASK_NAME, pageable);
 		assertThat(resultSet.getNumberOfElements()).as(String.format(
 				"Running task count for task name did not match expected result for testType %s",
-				this.testType)).isEqualTo(TEST_COUNT);
+				testType)).isEqualTo(TEST_COUNT);
 
 		for (TaskExecution result : resultSet) {
 			assertThat(expectedResults.containsKey(result.getExecutionId()))
 					.as(String.format("result returned from %s repo %s not expected",
-							this.testType, result.getExecutionId()))
+							testType, result.getExecutionId()))
 					.isTrue();
 			assertThat(result.getTaskName()).as(String.format(
-					"taskName for taskExecution is incorrect for testType %s",
-					this.testType)).isEqualTo(TASK_NAME);
+					"taskName for taskExecution is incorrect for testType %s", testType))
+					.isEqualTo(TASK_NAME);
 		}
 	}
 
-	@Test
-	public void getTaskNames() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getTaskNames(DaoType testType) {
+		testDefaultContext(testType);
 		final int TEST_COUNT = 5;
 		Set<String> expectedResults = new HashSet<>();
 		for (int i = 0; i < TEST_COUNT; i++) {
@@ -246,50 +240,63 @@ public class SimpleTaskExplorerTests {
 		}
 		List<String> actualTaskNames = this.taskExplorer.getTaskNames();
 		for (String taskName : actualTaskNames) {
-			assertThat(expectedResults.contains(taskName)).as(
-					String.format("taskName was not in expected results for testType %s",
-							this.testType))
+			assertThat(expectedResults.contains(taskName)).as(String.format(
+					"taskName was not in expected results for testType %s", testType))
 					.isTrue();
 		}
 	}
 
-	@Test
-	public void findAllExecutionsOffBoundry() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findAllExecutionsOffBoundry(DaoType testType) {
+		testDefaultContext(testType);
 		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 103);
 	}
 
-	@Test
-	public void findAllExecutionsOffBoundryByOne() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findAllExecutionsOffBoundryByOne(DaoType testType) {
+		testDefaultContext(testType);
 		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 101);
 	}
 
-	@Test
-	public void findAllExecutionsOnBoundry() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findAllExecutionsOnBoundry(DaoType testType) {
+		testDefaultContext(testType);
 		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 100);
 	}
 
-	@Test
-	public void findAllExecutionsNoResult() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findAllExecutionsNoResult(DaoType testType) {
+		testDefaultContext(testType);
 		Pageable pageable = PageRequest.of(0, 10);
 		verifyPageResults(pageable, 0);
 	}
 
-	@Test
-	public void findTasksForInvalidJob() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findTasksForInvalidJob(DaoType testType) {
+		testDefaultContext(testType);
 		assertThat(this.taskExplorer.getTaskExecutionIdByJobExecutionId(55555L)).isNull();
 	}
 
-	@Test
-	public void findJobsExecutionIdsForInvalidTask() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findJobsExecutionIdsForInvalidTask(DaoType testType) {
+		testDefaultContext(testType);
 		assertThat(this.taskExplorer.getJobExecutionIdsByTaskExecutionId(555555L).size())
 				.isEqualTo(0);
 	}
 
-	@Test
-	public void getLatestTaskExecutionForTaskName() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getLatestTaskExecutionForTaskName(DaoType testType) {
+		testDefaultContext(testType);
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
 		for (Map.Entry<Long, TaskExecution> taskExecutionMapEntry : expectedResults
 				.entrySet()) {
@@ -297,16 +304,18 @@ public class SimpleTaskExplorerTests {
 					.getLatestTaskExecutionForTaskName(
 							taskExecutionMapEntry.getValue().getTaskName());
 			assertThat(latestTaskExecution).as(String.format(
-					"expected a taskExecution but got null for test type %s",
-					this.testType)).isNotNull();
+					"expected a taskExecution but got null for test type %s", testType))
+					.isNotNull();
 			TestVerifierUtils.verifyTaskExecution(
 					expectedResults.get(latestTaskExecution.getExecutionId()),
 					latestTaskExecution);
 		}
 	}
 
-	@Test
-	public void getLatestTaskExecutionsByTaskNames() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getLatestTaskExecutionsByTaskNames(DaoType testType) {
+		testDefaultContext(testType);
 		Map<Long, TaskExecution> expectedResults = createSampleDataSet(5);
 
 		final List<String> taskNamesAsList = new ArrayList<>();
@@ -321,8 +330,8 @@ public class SimpleTaskExplorerTests {
 
 		for (TaskExecution latestTaskExecution : latestTaskExecutions) {
 			assertThat(latestTaskExecution).as(String.format(
-					"expected a taskExecution but got null for test type %s",
-					this.testType)).isNotNull();
+					"expected a taskExecution but got null for test type %s", testType))
+					.isNotNull();
 			TestVerifierUtils.verifyTaskExecution(
 					expectedResults.get(latestTaskExecution.getExecutionId()),
 					latestTaskExecution);

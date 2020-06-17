@@ -16,21 +16,25 @@
 
 package org.springframework.cloud.task.repository.database.support;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
  */
 public class InvalidPagingQueryProviderTests {
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testInvalidDatabase() throws Exception {
 		Pageable pageable = PageRequest.of(0, 10);
-		TestDBUtils.getPagingQueryProvider("Invalid").getPageQuery(pageable);
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+			TestDBUtils.getPagingQueryProvider("Invalid").getPageQuery(pageable);
+		});
 	}
 
 }

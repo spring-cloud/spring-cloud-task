@@ -22,8 +22,8 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -36,9 +36,10 @@ import org.springframework.cloud.task.util.TestDBUtils;
 import org.springframework.cloud.task.util.TestVerifierUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Tests for the SimpleTaskRepository that uses JDBC as a datastore.
@@ -47,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michael Minella
  * @author Ilayaperumal Gopinathan
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { EmbeddedDataSourceConfiguration.class,
 		SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class })
 @DirtiesContext
@@ -153,13 +154,15 @@ public class SimpleTaskRepositoryJdbcTests {
 						expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
-		this.taskRepository.updateExternalExecutionId(-1,
-				expectedTaskExecution.getExternalExecutionId());
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+			this.taskRepository.updateExternalExecutionId(-1,
+					expectedTaskExecution.getExternalExecutionId());
+		});
 	}
 
 	@Test
@@ -260,7 +263,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		assertThat(actualTaskExecution.getErrorMessage().length()).isEqualTo(5);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMaxTaskNameSizeForConstructor() {
 		final int MAX_EXIT_MESSAGE_SIZE = 10;
 		final int MAX_ERROR_MESSAGE_SIZE = 20;
@@ -271,10 +274,12 @@ public class SimpleTaskRepositoryJdbcTests {
 		TaskExecution expectedTaskExecution = TestVerifierUtils
 				.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(new String(new char[MAX_TASK_NAME_SIZE + 1]));
-		simpleTaskRepository.createTaskExecution(expectedTaskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			simpleTaskRepository.createTaskExecution(expectedTaskExecution);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testDefaultMaxTaskNameSizeForConstructor() {
 		SimpleTaskRepository simpleTaskRepository = new SimpleTaskRepository(
 				new TaskExecutionDaoFactoryBean(this.dataSource), null, null, null);
@@ -282,7 +287,9 @@ public class SimpleTaskRepositoryJdbcTests {
 				.createSampleTaskExecutionNoArg();
 		expectedTaskExecution.setTaskName(
 				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE + 1]));
-		simpleTaskRepository.createTaskExecution(expectedTaskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			simpleTaskRepository.createTaskExecution(expectedTaskExecution);
+		});
 	}
 
 	@Test
@@ -304,17 +311,19 @@ public class SimpleTaskRepositoryJdbcTests {
 				SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE, simpleTaskRepository);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxTaskName() {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName(
 				new String(new char[SimpleTaskRepository.MAX_TASK_NAME_SIZE + 1]));
 		taskExecution.setStartTime(new Date());
-		this.taskRepository.createTaskExecution(taskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			this.taskRepository.createTaskExecution(taskExecution);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@DirtiesContext
 	public void testCreateTaskExecutionNegativeException() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
@@ -322,19 +331,24 @@ public class SimpleTaskRepositoryJdbcTests {
 		expectedTaskExecution.setEndTime(new Date());
 		expectedTaskExecution.setExitCode(-1);
 
-		TaskExecution actualTaskExecution = TaskExecutionCreator
-				.completeExecution(this.taskRepository, expectedTaskExecution);
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			TaskExecution actualTaskExecution = TaskExecutionCreator
+					.completeExecution(this.taskRepository, expectedTaskExecution);
+			TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
+					actualTaskExecution);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@DirtiesContext
 	public void testCreateTaskExecutionNullEndTime() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitCode(-1);
-		TaskExecutionCreator.completeExecution(this.taskRepository,
-				expectedTaskExecution);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			TaskExecutionCreator.completeExecution(this.taskRepository,
+					expectedTaskExecution);
+		});
 	}
 
 	private TaskExecution completeTaskExecution(TaskExecution expectedTaskExecution,

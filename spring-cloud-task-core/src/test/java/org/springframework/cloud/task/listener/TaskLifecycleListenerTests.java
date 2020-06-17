@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ExitCodeEvent;
@@ -34,7 +34,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.util.TestDefaultConfiguration;
@@ -52,6 +53,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Verifies that the TaskLifecycleListener Methods record the appropriate log header
@@ -60,19 +62,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  * @author Michael Minella
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class TaskLifecycleListenerTests {
-
-	/**
-	 * Used to capture the log output from the test task.
-	 */
-	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
 
 	private AnnotationConfigApplicationContext context;
 
 	private TaskExplorer taskExplorer;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.setId("testTask");
@@ -84,7 +81,7 @@ public class TaskLifecycleListenerTests {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.context != null && this.context.isActive()) {
 			this.context.close();
@@ -175,25 +172,27 @@ public class TaskLifecycleListenerTests {
 		}
 	}
 
-	@Test(expected = ApplicationContextException.class)
+	@Test
 	public void testInvalidTaskExecutionId() {
-		ConfigurableEnvironment environment = new StandardEnvironment();
-		MutablePropertySources propertySources = environment.getPropertySources();
-		Map<String, Object> myMap = new HashMap<>();
-		myMap.put("spring.cloud.task.executionid", "55");
-		propertySources
-				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
-		this.context.setEnvironment(environment);
-		this.context.refresh();
+		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
+			ConfigurableEnvironment environment = new StandardEnvironment();
+			MutablePropertySources propertySources = environment.getPropertySources();
+			Map<String, Object> myMap = new HashMap<>();
+			myMap.put("spring.cloud.task.executionid", "55");
+			propertySources
+					.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+			this.context.setEnvironment(environment);
+			this.context.refresh();
+		});
 	}
 
 	@Test
-	public void testRestartExistingTask() {
+	public void testRestartExistingTask(CapturedOutput capturedOutput) {
 		this.context.refresh();
 		TaskLifecycleListener taskLifecycleListener = this.context
 				.getBean(TaskLifecycleListener.class);
 		taskLifecycleListener.start();
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains("Multiple start events have been received"))
 				.as("Test results do not show error message: " + output).isTrue();
 	}

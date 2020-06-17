@@ -16,15 +16,16 @@
 
 package org.springframework.cloud.task;
 
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.ApplicationContextException;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Glenn Renfro
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class TaskCoreTests {
 
 	private static final String TASK_NAME = "taskEventTest";
@@ -58,15 +60,9 @@ public class TaskCoreTests {
 	private static final String ERROR_MESSAGE = "errorMessage='java.lang.IllegalStateException: "
 			+ "Failed to execute CommandLineRunner";
 
-	/**
-	 * Used to capture the log output from the test task.
-	 */
-	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
-
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void teardown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
@@ -74,13 +70,13 @@ public class TaskCoreTests {
 	}
 
 	@Test
-	public void successfulTaskTest() {
+	public void successfulTaskTest(CapturedOutput capturedOutput) {
 		this.applicationContext = SpringApplication.run(TaskConfiguration.class,
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE))
 				.as("Test results do not show create task message: " + output).isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE))
@@ -93,14 +89,14 @@ public class TaskCoreTests {
 	 * Test to verify that deprecated annotation does not affect task execution.
 	 */
 	@Test
-	public void successfulTaskTestWithAnnotation() {
+	public void successfulTaskTestWithAnnotation(CapturedOutput capturedOutput) {
 		this.applicationContext = SpringApplication.run(
 				TaskConfigurationWithAnotation.class,
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE))
 				.as("Test results do not show create task message: " + output).isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE))
@@ -110,7 +106,7 @@ public class TaskCoreTests {
 	}
 
 	@Test
-	public void exceptionTaskTest() {
+	public void exceptionTaskTest(CapturedOutput capturedOutput) {
 		boolean exceptionFired = false;
 		try {
 			this.applicationContext = SpringApplication.run(
@@ -125,7 +121,7 @@ public class TaskCoreTests {
 		assertThat(exceptionFired).as("An IllegalStateException should have been thrown")
 				.isTrue();
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE))
 				.as("Test results do not show create task message: " + output).isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE))
@@ -139,7 +135,7 @@ public class TaskCoreTests {
 	}
 
 	@Test
-	public void invalidExecutionId() {
+	public void invalidExecutionId(CapturedOutput capturedOutput) {
 		boolean exceptionFired = false;
 		try {
 			this.applicationContext = SpringApplication.run(
@@ -155,7 +151,7 @@ public class TaskCoreTests {
 		assertThat(exceptionFired)
 				.as("An ApplicationContextException should have been thrown").isTrue();
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 		assertThat(output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID))
 				.as("Test results do not show the correct exception message: " + output)
 				.isTrue();

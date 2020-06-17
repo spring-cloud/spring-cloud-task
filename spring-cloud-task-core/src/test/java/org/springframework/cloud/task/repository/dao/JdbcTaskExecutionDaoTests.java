@@ -24,9 +24,9 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -42,9 +42,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Executes unit tests on JdbcTaskExecutionDao.
@@ -52,7 +53,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  * @author Gunnar Hillert
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(
 		classes = { TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class })
@@ -64,7 +65,7 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	@Autowired
 	private DataSource dataSource;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		final JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
 		dao.setTaskIncrementer(TestDBUtils.getIncrementer(this.dataSource));
@@ -135,16 +136,19 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 						expectedTaskExecution.getExecutionId()));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	@DirtiesContext
 	public void completeTaskExecutionWithNoCreate() {
 		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
 
 		TaskExecution expectedTaskExecution = TestVerifierUtils
 				.endSampleTaskExecutionNoArg();
-		dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage());
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+			dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
+					expectedTaskExecution.getExitCode(),
+					expectedTaskExecution.getEndTime(),
+					expectedTaskExecution.getExitMessage());
+		});
 	}
 
 	@Test

@@ -23,9 +23,9 @@ import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.listener.TaskMetrics;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -41,7 +41,7 @@ public class TaskMetricsTests {
 
 	private SimpleMeterRegistry simpleMeterRegistry;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		simpleMeterRegistry = new SimpleMeterRegistry();
@@ -49,7 +49,7 @@ public class TaskMetricsTests {
 		taskMetrics = new TaskMetrics();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 	}

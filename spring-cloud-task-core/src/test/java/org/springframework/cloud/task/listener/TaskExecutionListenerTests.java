@@ -19,8 +19,8 @@ package org.springframework.cloud.task.listener;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -64,7 +64,7 @@ public class TaskExecutionListenerTests {
 		failedTaskDidFireOnError = false;
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.context != null && this.context.isActive()) {
 			this.context.close();

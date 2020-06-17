@@ -18,10 +18,8 @@ package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -34,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -43,15 +42,9 @@ import static org.mockito.Mockito.mock;
  */
 public class TaskDatabaseInitializerTests {
 
-	/**
-	 * Establishes that a Exception is not expected.
-	 */
-	@Rule
-	public ExpectedException expected = ExpectedException.none();
-
 	private AnnotationConfigApplicationContext context;
 
-	@After
+	@AfterEach
 	public void close() {
 		if (this.context != null) {
 			this.context.close();
@@ -91,7 +84,7 @@ public class TaskDatabaseInitializerTests {
 				.isEqualTo(0);
 	}
 
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testMultipleDataSourcesContext() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.register(SimpleTaskAutoConfiguration.class,
@@ -99,7 +92,9 @@ public class TaskDatabaseInitializerTests {
 				PropertyPlaceholderAutoConfiguration.class);
 		DataSource dataSource = mock(DataSource.class);
 		this.context.getBeanFactory().registerSingleton("mockDataSource", dataSource);
-		this.context.refresh();
+		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() -> {
+			this.context.refresh();
+		});
 	}
 
 	@Configuration

@@ -19,8 +19,8 @@ package org.springframework.cloud.task.repository.database.support;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.item.database.Order;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
@@ -36,7 +36,7 @@ public class SqlPagingQueryProviderFactoryBeanTests {
 
 	private SqlPagingQueryProviderFactoryBean factoryBean;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		this.factoryBean = new SqlPagingQueryProviderFactoryBean();
 		this.factoryBean.setDataSource(TestDBUtils.getMockDataSource("MySQL"));

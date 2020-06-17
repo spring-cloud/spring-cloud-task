@@ -18,11 +18,12 @@ package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.cloud.task.util.TestDBUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
@@ -48,9 +49,10 @@ public class DatabaseTypeTests {
 		assertThat(fromProductName("MariaDB")).isEqualTo(MYSQL);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidProductName() {
-		fromProductName("bad product name");
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> fromProductName("bad product name"));
 	}
 
 	@Test
