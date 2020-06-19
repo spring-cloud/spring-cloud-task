@@ -25,17 +25,16 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.testcontainers.containers.GenericContainer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.launcher.app.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -52,12 +51,12 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
 		classes = { TaskLauncherSinkApplication.class,
 				TaskLauncherSinkTests.TaskLauncherConfiguration.class },
@@ -82,15 +81,17 @@ public class TaskLauncherSinkTests {
 
 	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
 
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
-
 	private static int randomPort;
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+				.withExposedPorts(5672);
+		rabbitmq.start();
+		final Integer mappedPort = rabbitmq.getMappedPort(5672);
+		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
 	}
 
 	@Autowired
@@ -109,7 +110,7 @@ public class TaskLauncherSinkTests {
 				new TaskExecutionDaoFactoryBean(dataSource));
 	}
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.properties = new HashMap<>();
 		this.properties.put("spring.datasource.url", DATASOURCE_URL);

@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.batch.partition;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -67,7 +67,7 @@ public class DeployerStepExecutionHandlerTests {
 
 	private DeployerStepExecutionHandler handler;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 

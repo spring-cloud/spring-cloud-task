@@ -20,9 +20,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.core.api.Assertions;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.testcontainers.containers.GenericContainer;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -33,7 +33,6 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
-import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -42,7 +41,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,14 +49,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michael Minella
  * @author Ilayaperumal Gopinathan
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { TaskEventTests.ListenerBinding.class })
 public class TaskEventTests {
 
 	private static final String TASK_NAME = "taskEventTest";
 
-	@ClassRule
-	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
+	static {
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+				.withExposedPorts(5672);
+		rabbitmq.start();
+		final Integer mappedPort = rabbitmq.getMappedPort(5672);
+		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
+	}
 
 	// Count for two task execution events per task
 	static CountDownLatch latch = new CountDownLatch(2);

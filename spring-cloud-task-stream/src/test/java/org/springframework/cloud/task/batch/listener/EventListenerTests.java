@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -59,7 +59,7 @@ public class EventListenerTests {
 
 	private EventEmittingChunkListener eventEmittingChunkListener;
 
-	@Before
+	@BeforeEach
 	public void beforeTests() {
 		this.queueChannel = new QueueChannel(1);
 		this.eventEmittingSkipListener = new EventEmittingSkipListener(this.queueChannel);

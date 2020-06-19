@@ -16,7 +16,8 @@
 
 package org.springframework.cloud.task.timestamp;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -24,13 +25,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
  */
 public class TimestampTaskPropertiesTests {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testEmptyFormat() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		TestPropertyValues testPropertyValues = TestPropertyValues.of("format:");
@@ -39,7 +41,9 @@ public class TimestampTaskPropertiesTests {
 		context.refresh();
 		TimestampTaskProperties properties = context
 			.getBean(TimestampTaskProperties.class);
-		properties.getFormat();
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			properties.getFormat();
+		});
 	}
 
 	@Test

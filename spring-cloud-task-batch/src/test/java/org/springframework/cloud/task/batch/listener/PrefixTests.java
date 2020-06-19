@@ -20,8 +20,8 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -48,7 +48,7 @@ public class PrefixTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();

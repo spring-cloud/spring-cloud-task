@@ -16,28 +16,28 @@
 
 package io.spring;
 
-import org.junit.Rule;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.system.OutputCaptureRule;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class MultiDataSourcesApplicationTests {
 
-	@Rule
-	public OutputCaptureRule outputCapture = new OutputCaptureRule();
-
 	@Test
-	public void testTimeStampApp() throws Exception {
+	public void testTimeStampApp(CapturedOutput capturedOutput) throws Exception {
 
 		SpringApplication.run(MultipleDataSourcesApplication.class, new String[0]);
 
-		String output = this.outputCapture.toString();
+		String output = capturedOutput.toString();
 
 		assertThat(output.contains("There are 2 DataSources within this application"))
 			.as("Unable to find CommandLineRunner output: " + output).isTrue();

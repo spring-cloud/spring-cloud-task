@@ -16,11 +16,12 @@
 
 package org.springframework.cloud.task.batch.autoconfigure;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.item.file.transform.Range;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Michael Minella
@@ -54,18 +55,22 @@ public class RangeConverterTests {
 		assertThat(range.getMax()).isEqualTo(25);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void testIllegalValue() {
 		RangeConverter converter = new RangeConverter();
 
-		converter.convert("invalid");
+		assertThatExceptionOfType(NumberFormatException.class).isThrownBy(() -> {
+			converter.convert("invalid");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testTooManyValues() {
 		RangeConverter converter = new RangeConverter();
 
-		converter.convert("1-2-3-4");
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			converter.convert("1-2-3-4");
+		});
 	}
 
 }

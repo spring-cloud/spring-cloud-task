@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,11 +34,11 @@ import org.springframework.cloud.task.launcher.app.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.launcher.configuration.TaskConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { TaskLauncherSinkApplication.class, TaskConfiguration.class })
 public class TaskLauncherSinkTests {
 
@@ -66,7 +66,7 @@ public class TaskLauncherSinkTests {
 	@Autowired
 	private Sink sink;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.properties = new HashMap<>();
 		this.properties.put("server.port", "0");

@@ -19,18 +19,21 @@ package org.springframework.cloud.task.batch.partition;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Michael Minella
  */
 public class PassThroughCommandLineArgsProviderTests {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNull() {
-		new PassThroughCommandLineArgsProvider(null);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			new PassThroughCommandLineArgsProvider(null);
+		});
 	}
 
 	@Test

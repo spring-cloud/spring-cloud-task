@@ -24,8 +24,8 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.StepContribution;
@@ -63,6 +63,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Michael Minella
@@ -74,7 +75,7 @@ public class TaskBatchExecutionListenerTests {
 
 	private ConfigurableApplicationContext applicationContext;
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (this.applicationContext != null && this.applicationContext.isActive()) {
 			this.applicationContext.close();
@@ -87,25 +88,31 @@ public class TaskBatchExecutionListenerTests {
 		validateContext();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test
 	public void testNoAutoConfigurationEnabled() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class,
 				"--spring.cloud.task.batch.listener.enabled=false");
-		validateContext();
+		assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> {
+			validateContext();
+		});
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test
 	public void testNoAutoConfigurationEnable() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class,
 				"--spring.cloud.task.batch.listener.enable=false");
-		validateContext();
+		assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> {
+			validateContext();
+		});
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test
 	public void testNoAutoConfigurationBothDisabled() {
 		this.applicationContext = SpringApplication.run(JobConfiguration.class,
 				"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false");
-		validateContext();
+		assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> {
+			validateContext();
+		});
 	}
 
 	@Test
@@ -245,9 +252,11 @@ public class TaskBatchExecutionListenerTests {
 		assertThat(bean).isEqualTo(testObject);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testBatchExecutionListenerBeanPostProcessorNullJobNames() {
-		beanPostProcessor(null);
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+			beanPostProcessor(null);
+		});
 	}
 
 	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(

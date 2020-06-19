@@ -16,10 +16,10 @@
 
 package org.springframework.cloud.task.batch.handler;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.runner.RunWith;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +58,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Glenn Renfro
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(
 		classes = { TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class })
 public class TaskJobLauncherCommandLineRunnerCoreTests {
@@ -85,7 +85,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 
 	private Step step;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		this.jobs = new JobBuilderFactory(this.jobRepository);
 		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);

@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -52,6 +52,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -84,7 +85,7 @@ public class DeployerPartitionHandlerTests {
 
 	private Environment environment;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		this.environment = new MockEnvironment();
@@ -695,7 +696,7 @@ public class DeployerPartitionHandlerTests {
 				.isTrue();
 	}
 
-	@Test(expected = TimeoutException.class)
+	@Test
 	public void testTimeout() throws Exception {
 
 		StepExecution masterStepExecution = createMasterStepExecution();
@@ -734,7 +735,9 @@ public class DeployerPartitionHandlerTests {
 
 		handler.beforeTask(taskExecution);
 
-		handler.handle(this.splitter, masterStepExecution);
+		assertThatExceptionOfType(TimeoutException.class).isThrownBy(() -> {
+			handler.handle(this.splitter, masterStepExecution);
+		});
 	}
 
 	@Test
