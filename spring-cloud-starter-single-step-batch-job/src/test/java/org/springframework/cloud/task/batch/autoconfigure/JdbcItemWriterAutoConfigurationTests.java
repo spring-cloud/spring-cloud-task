@@ -79,13 +79,13 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class)
+						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						TaskLauncherConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class,
-								TaskLauncherConfiguration.class));
+								JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -95,14 +95,14 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void customSqlParameterSourceTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class)
+						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						TaskLauncherConfiguration.class,
+						CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class,
-								TaskLauncherConfiguration.class,
-								CustomSqlParameterSourceProviderConfiguration.class));
+								JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -112,14 +112,14 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void preparedStatementSetterTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class)
+						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						TaskLauncherConfiguration.class,
+						ItemPreparedStatementSetterConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class,
-								TaskLauncherConfiguration.class,
-								ItemPreparedStatementSetterConfiguration.class));
+								JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 		runTest(applicationContextRunner);
 	}

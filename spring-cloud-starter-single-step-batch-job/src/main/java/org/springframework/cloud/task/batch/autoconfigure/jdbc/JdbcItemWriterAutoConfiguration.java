@@ -32,7 +32,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 /**
  * Autconfiguration for a {@code JdbcBatchItemWriter}.
@@ -45,28 +44,26 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class JdbcItemWriterAutoConfiguration {
 
-	@Autowired
-	private DataSource dataSource;
-
 	@Autowired(required = false)
 	private ItemPreparedStatementSetter itemPreparedStatementSetter;
 
 	@Autowired(required = false)
 	private ItemSqlParameterSourceProvider itemSqlParameterSourceProvider;
 
-	@Autowired(required = false)
-	private NamedParameterJdbcOperations namedParameterJdbcTemplate;
-
 	private JdbcItemWriterProperties properties;
 
-	public JdbcItemWriterAutoConfiguration(JdbcItemWriterProperties properties) {
+	private DataSource dataSource;
+
+	public JdbcItemWriterAutoConfiguration(DataSource dataSource,
+			JdbcItemWriterProperties properties) {
+		this.dataSource = dataSource;
 		this.properties = properties;
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcwriter", name = "name")
-	ItemWriter<Map<Object, Object>> itemWriter() {
+	public ItemWriter<Map<Object, Object>> itemWriter() {
 
 		JdbcBatchItemWriterBuilder<Map<Object, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<Object, Object>>()
 				.dataSource(this.dataSource).sql(this.properties.getSql());
