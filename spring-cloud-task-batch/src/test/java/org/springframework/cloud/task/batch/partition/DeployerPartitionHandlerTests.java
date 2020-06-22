@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import org.springframework.batch.core.BatchStatus;
@@ -91,7 +92,8 @@ public class DeployerPartitionHandlerTests {
 		this.environment = new MockEnvironment();
 		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(),
 				new Date(), "", Collections.emptyList(), null, null, null);
-		when(taskRepository.createTaskExecution()).thenReturn(taskExecution);
+		Mockito.lenient().when(taskRepository.createTaskExecution())
+				.thenReturn(taskExecution);
 	}
 
 	@Test
@@ -728,7 +730,7 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.jobExplorer.getStepExecution(1L, 4L))
 				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
+		Mockito.lenient().when(this.jobExplorer.getStepExecution(1L, 5L))
 				.thenReturn(workerStepExecutionFinish2);
 
 		handler.afterPropertiesSet();

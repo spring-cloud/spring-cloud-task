@@ -39,7 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -192,7 +192,7 @@ public class DeployerStepExecutionHandlerTests {
 		this.handler.run();
 
 		verify(this.step).execute(workerStep);
-		verifyZeroInteractions(this.jobRepository);
+		verifyNoMoreInteractions(this.jobRepository);
 	}
 
 	@Test
