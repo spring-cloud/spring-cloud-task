@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.batch.autoconfigure;
+package org.springframework.cloud.task.batch.autoconfigure.jdbc;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
@@ -37,18 +39,19 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.cloud.task.batch.autoconfigure.jdbc.JdbcItemWriterAutoConfiguration;
+import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlTypeValue;
+import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -75,6 +78,19 @@ public class JdbcItemWriterAutoConfigurationTests {
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
+	@AfterEach
+	public void clearDB() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
+		dataSource.setUrl(DATASOURCE_URL);
+		dataSource.setUsername(DATASOURCE_USER_NAME);
+		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		jdbcTemplate.execute("TRUNCATE TABLE item");
+		jdbcTemplate.execute("DROP TABLE BATCH_JOB_EXECUTION CASCADE");
+		jdbcTemplate.execute("DROP TABLE BATCH_JOB_INSTANCE CASCADE");
+	}
+
 	@Test
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
@@ -95,7 +111,7 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void customSqlParameterSourceTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						JdbcItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
 						TaskLauncherConfiguration.class,
 						CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
@@ -234,13 +250,31 @@ public class JdbcItemWriterAutoConfigurationTests {
 
 	@Configuration
 	@EnableBatchProcessing
+	public static class DelimitedDifferentKeyNameJobConfiguration {
+
+		@Bean
+		public ListItemReader<Map<Object, Object>> itemReader() {
+
+			List<Map<Object, Object>> items = new ArrayList<>(3);
+
+			items.add(Collections.singletonMap("item_foo", "foo"));
+			items.add(Collections.singletonMap("item_foo", "bar"));
+			items.add(Collections.singletonMap("item_foo", "baz"));
+
+			return new ListItemReader<>(items);
+		}
+
+	}
+
+	@Configuration
+	@EnableBatchProcessing
 	public static class CustomSqlParameterSourceProviderConfiguration {
 
 		@Bean
 		public ItemSqlParameterSourceProvider<Map<Object, Object>> itemSqlParameterSourceProvider() {
 			return item -> new MapSqlParameterSource(new HashMap<String, Object>() {
 				{
-					put("item_name", item.get("item_name"));
+					put("item_name", item.get("item_foo"));
 				}
 			});
 		}
@@ -253,7 +287,15 @@ public class JdbcItemWriterAutoConfigurationTests {
 
 		@Bean
 		public ItemPreparedStatementSetter itemPreparedStatementSetter() {
-			return new ColumnMapItemPreparedStatementSetter();
+			return new ItemPreparedStatementSetter() {
+				@Override
+				public void setValues(Object item, PreparedStatement ps)
+						throws SQLException {
+					Map<String, Object> mapItem = (Map<String, Object>) item;
+					StatementCreatorUtils.setParameterValue(ps, 1,
+							SqlTypeValue.TYPE_UNKNOWN, mapItem.get("item_name"));
+				}
+			};
 		}
 
 	}
