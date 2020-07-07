@@ -41,10 +41,13 @@ public class BatchEventsApplicationTests {
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
 		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
+		rabbitPort = mappedPort.toString();
 	}
 
 	// Count for two job execution events per task
 	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
+
+	private static String rabbitPort;
 
 	@Test
 	public void testExecution() throws Exception {
@@ -53,7 +56,8 @@ public class BatchEventsApplicationTests {
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
 			"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
 			"--spring.jmx.default-domain=fakedomain",
-			"--spring.main.webEnvironment=false");
+			"--spring.main.webEnvironment=false",
+			"--spring.rabbitmq.port=" + rabbitPort);
 		assertThat(jobExecutionLatch.await(60, TimeUnit.SECONDS))
 			.as("The latch did not count down to zero before timeout").isTrue();
 	}
