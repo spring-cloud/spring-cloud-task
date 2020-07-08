@@ -18,13 +18,16 @@ package org.springframework.cloud.task.micrometer;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.simple.SimpleConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import io.pivotal.cfenv.test.CfEnvTestUtils;
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -80,7 +83,31 @@ public class AbstractMicrometerTest {
 		String serviceJson = StreamUtils.copyToString(new DefaultResourceLoader()
 				.getResource("classpath:/micrometer/pcf-scs-info.json").getInputStream(),
 				Charset.forName("UTF-8"));
-		CfEnvTestUtils.mockVcapServicesFromString(serviceJson);
+		mockVcapServicesFromString(serviceJson);
+	}
+
+	public static MockUp<?> mockVcapServicesFromString(String serviceJson) {
+		final Map<String, String> env = System.getenv();
+		return new MockUp<System>() {
+			@Mock
+			public String getenv(String name) {
+				if (name.equalsIgnoreCase("VCAP_SERVICES")) {
+					return serviceJson;
+				}
+				else {
+					return name.equalsIgnoreCase("VCAP_APPLICATION")
+							? "{\"instance_id\":\"123\"}" : (String) env.get(name);
+				}
+			}
+
+			@Mock
+			public Map getenv() {
+				Map<String, String> finalMap = new HashMap();
+				finalMap.putAll(env);
+				finalMap.put("VCAP_SERVICES", serviceJson);
+				return finalMap;
+			}
+		};
 	}
 
 	@SpringBootApplication
