@@ -14,10 +14,6 @@
 		<relativePath />
 	</parent>
 
-	<properties>
-		<java-cfenv-boot.version>2.1.0.RELEASE</java-cfenv-boot.version>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -39,11 +35,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-stream</artifactId>
 				<version>2.3.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>io.pivotal.cfenv</groupId>
-				<artifactId>java-cfenv-test-support</artifactId>
-				<version>${java-cfenv-boot.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
