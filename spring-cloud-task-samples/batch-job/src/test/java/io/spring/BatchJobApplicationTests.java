@@ -27,8 +27,7 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that the Task Application outputs the correct task log entries.
@@ -50,24 +49,18 @@ public class BatchJobApplicationTests {
 		SpringApplication.run(BatchJobApplication.class);
 
 		String output = capturedOutput.toString();
-		assertTrue("Unable to find the timestamp: " + output,
-			output.contains(JOB_RUN_MESSAGE));
-		assertTrue("Test results do not show create task message: " + output,
-			output.contains(CREATE_TASK_MESSAGE));
-		assertTrue("Test results do not show success message: " + output,
-			output.contains(UPDATE_TASK_MESSAGE));
-		assertTrue("Test results do not show success message: " + output,
-			output.contains(EXIT_CODE_MESSAGE));
+		assertThat(output).contains(JOB_RUN_MESSAGE);
+		assertThat(output).contains(CREATE_TASK_MESSAGE);
+		assertThat(output).contains(UPDATE_TASK_MESSAGE);
+		assertThat(output).contains(EXIT_CODE_MESSAGE);
 
 		int i = output.indexOf(JOB_ASSOCIATION_MESSAGE);
 
-		assertTrue("Test results do not show the listener message: " + output,
-			i > 0);
+		assertThat(i).isGreaterThan(0);
 
 		int j = output.indexOf(JOB_ASSOCIATION_MESSAGE, i + 1);
 
-		assertTrue("Test results do not show the listener message: " + output,
-			j > i);
+		assertThat(j).isGreaterThan(i);
 
 
 		String taskTitle = "Demo Batch Job Task";
@@ -78,7 +71,7 @@ public class BatchJobApplicationTests {
 		while (matcher.find()) {
 			count++;
 		}
-		assertEquals("The number of task titles did not match expected: ", 1, count);
+		assertThat(count).isEqualTo(1);
 	}
 
 }
