@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package org.springframework.cloud.task.batch.configuration;
 
 import org.junit.jupiter.api.Test;
 
+import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
-import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListenerTests;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -37,10 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TaskJobLauncherAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(BatchAutoConfiguration.class,
+					TaskJobLauncherAutoConfiguration.class))
 			.withUserConfiguration(TaskBatchExecutionListenerTests.JobConfiguration.class,
 					PropertyPlaceholderAutoConfiguration.class,
-					EmbeddedDataSourceConfiguration.class, BatchAutoConfiguration.class,
-					TaskJobLauncherAutoConfiguration.class);
+					EmbeddedDataSourceConfiguration.class);
 
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLR() {
@@ -48,8 +50,8 @@ public class TaskJobLauncherAutoConfigurationTests {
 				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true")
 				.run(context -> {
 					assertThat(context)
-							.hasSingleBean(TaskJobLauncherCommandLineRunner.class);
-					assertThat(context.getBean(TaskJobLauncherCommandLineRunner.class)
+							.hasSingleBean(TaskJobLauncherApplicationRunner.class);
+					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class)
 							.getOrder()).isEqualTo(0);
 				});
 	}
@@ -60,7 +62,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
 						"spring.cloud.task.batch.commandLineRunnerOrder=100")
 				.run(context -> {
-					assertThat(context.getBean(TaskJobLauncherCommandLineRunner.class)
+					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class)
 							.getOrder()).isEqualTo(100);
 				});
 	}
@@ -88,10 +90,10 @@ public class TaskJobLauncherAutoConfigurationTests {
 
 	private void validateJobNames(AssertableApplicationContext context, String jobNames)
 			throws Exception {
-		JobLauncherCommandLineRunner jobLauncherCommandLineRunner = context
-				.getBean(JobLauncherCommandLineRunner.class);
+		JobLauncherApplicationRunner jobLauncherApplicationRunner = context
+				.getBean(TaskJobLauncherApplicationRunner.class);
 
-		Object names = ReflectionTestUtils.getField(jobLauncherCommandLineRunner,
+		Object names = ReflectionTestUtils.getField(jobLauncherApplicationRunner,
 				"jobNames");
 		assertThat(names).isEqualTo(jobNames);
 	}

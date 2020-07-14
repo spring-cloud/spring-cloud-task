@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2020-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.repeat.support.RepeatTemplate;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.batch.JobExecutionEvent;
-import org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner;
+import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,25 +54,23 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link CommandLineRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
+ * {@link ApplicationRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
  * jobs in the surrounding context by default and throws an exception upon the first job
  * that returns an {@link BatchStatus} of FAILED if a {@link TaskExecutor} in the
  * {@link JobLauncher} is not specified. If a {@link TaskExecutor} is specified in the
  * {@link JobLauncher} then all Jobs are launched and an exception is thrown if one or
- * more of the jobs has an {@link BatchStatus} of FAILED. TaskJobLauncherCommandLineRunner
+ * more of the jobs has an {@link BatchStatus} of FAILED. TaskJobLauncherApplicationRunner
  * can also be used to launch a specific job by providing a jobName. The
- * TaskJobLaunchercommandLineRunner takes the place of the
- * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner} when
- * it is in use.
+ * TaskJobLauncherApplicationRunner takes the place of the
+ * {@link JobLauncherApplicationRunner} when it is in use.
  *
  * @author Glenn Renfro
- * @since 2.0.0
- * @deprecated Use {@link TaskJobLauncherApplicationRunner}
+ * @since 2.3.0
  */
-public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunner {
+public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunner {
 
 	private static final Log logger = LogFactory
-			.getLog(TaskJobLauncherCommandLineRunner.class);
+			.getLog(TaskJobLauncherApplicationRunner.class);
 
 	private JobLauncher taskJobLauncher;
 
@@ -87,7 +85,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 	private TaskBatchProperties taskBatchProperties;
 
 	/**
-	 * Create a new {@link TaskJobLauncherCommandLineRunner}.
+	 * Create a new {@link TaskJobLauncherApplicationRunner}.
 	 * @param jobLauncher to launch jobs
 	 * @param jobExplorer to check the job repository for previous executions
 	 * @param jobRepository to check if a job instance exists with the given parameters
@@ -95,7 +93,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 	 * @param taskBatchProperties the properties used to configure the
 	 * taskBatchProperties.
 	 */
-	public TaskJobLauncherCommandLineRunner(JobLauncher jobLauncher,
+	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher,
 			JobExplorer jobExplorer, JobRepository jobRepository,
 			TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer, jobRepository);
