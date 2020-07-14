@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -48,6 +50,7 @@ public class TaskJobLauncherAutoConfiguration {
 	private TaskBatchProperties properties;
 
 	@Bean
+	@ConditionalOnMissingClass("org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner")
 	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(
 			JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
 			JobRegistry jobRegistry, JobRepository jobRepository,
@@ -58,6 +61,21 @@ public class TaskJobLauncherAutoConfiguration {
 				jobRepository, batchProperties);
 
 		return taskJobLauncherCommandLineRunnerFactoryBean;
+	}
+
+	@Bean
+	@ConditionalOnClass(
+			name = "org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner")
+	public TaskJobLauncherApplicationRunnerFactoryBean taskJobLauncherApplicationRunner(
+			JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
+			JobRegistry jobRegistry, JobRepository jobRepository,
+			BatchProperties batchProperties) {
+		TaskJobLauncherApplicationRunnerFactoryBean taskJobLauncherApplicationRunnerFactoryBean;
+		taskJobLauncherApplicationRunnerFactoryBean = new TaskJobLauncherApplicationRunnerFactoryBean(
+				jobLauncher, jobExplorer, jobs, this.properties, jobRegistry,
+				jobRepository, batchProperties);
+
+		return taskJobLauncherApplicationRunnerFactoryBean;
 	}
 
 }
