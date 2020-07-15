@@ -196,6 +196,9 @@ public class JdbcItemWriterAutoConfigurationTests {
 					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
 							setupResource);
 					resourceDatabasePopulator.execute(dataSource);
+
+					JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+					jdbcTemplate.execute("TRUNCATE TABLE item");
 				}
 			}
 			catch (SQLException e) {
