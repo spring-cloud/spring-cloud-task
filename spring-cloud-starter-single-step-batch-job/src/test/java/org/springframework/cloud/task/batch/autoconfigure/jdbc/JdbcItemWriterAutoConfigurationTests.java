@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.h2.tools.Server;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
@@ -75,6 +76,19 @@ public class JdbcItemWriterAutoConfigurationTests {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+	}
+
+	@AfterEach
+	public void clearDB() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
+		dataSource.setUrl(DATASOURCE_URL);
+		dataSource.setUsername(DATASOURCE_USER_NAME);
+		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		jdbcTemplate.execute("TRUNCATE TABLE item");
+		jdbcTemplate.execute("DROP TABLE BATCH_JOB_EXECUTION CASCADE");
+		jdbcTemplate.execute("DROP TABLE BATCH_JOB_INSTANCE CASCADE");
 	}
 
 	@Test
@@ -196,9 +210,6 @@ public class JdbcItemWriterAutoConfigurationTests {
 					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
 							setupResource);
 					resourceDatabasePopulator.execute(dataSource);
-
-					JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-					jdbcTemplate.execute("TRUNCATE TABLE item");
 				}
 			}
 			catch (SQLException e) {
