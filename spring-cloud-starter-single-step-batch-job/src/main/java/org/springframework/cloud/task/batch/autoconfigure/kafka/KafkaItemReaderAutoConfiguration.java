@@ -34,10 +34,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-
 /**
  *
  * Autconfiguration for a {@code KafkaItemReader}.
+ *
  * @author Glenn Renfro
  * @since 2.3
  */
@@ -68,9 +68,7 @@ public class KafkaItemReaderAutoConfiguration {
 				.name(kafkaItemReaderProperties.getName())
 				.pollTimeout(Duration
 						.ofSeconds(kafkaItemReaderProperties.getPollTimeOutInSeconds()))
-				.saveState(true)
-				.topic(kafkaItemReaderProperties.getTopic())
-				.build();
+				.saveState(true).topic(kafkaItemReaderProperties.getTopic()).build();
 	}
 
 	private void validateProperties(KafkaItemReaderProperties kafkaItemReaderProperties) {

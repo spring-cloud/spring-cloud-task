@@ -57,7 +57,6 @@ public class KafkaItemReaderProperties {
 		this.name = name;
 	}
 
-
 	/**
 	 * Returns the name of the topic from which messages will be read.
 	 * @return the name of the topic.
@@ -75,7 +74,8 @@ public class KafkaItemReaderProperties {
 	}
 
 	/**
-	 * A list of partitions to manually assign to the consumer.  Defaults to a single entry value of 1.
+	 * A list of partitions to manually assign to the consumer. Defaults to a single entry
+	 * value of 1.
 	 * @return the list of partitions.
 	 */
 	public List<Integer> getPartitions() {
@@ -83,7 +83,8 @@ public class KafkaItemReaderProperties {
 	}
 
 	/**
-	 * A list of partitions to manually assign to the consumer. Defaults to a single entry value of 1.
+	 * A list of partitions to manually assign to the consumer. Defaults to a single entry
+	 * value of 1.
 	 * @param partitions list of partitions
 	 */
 	public void setPartitions(List<Integer> partitions) {
@@ -91,7 +92,7 @@ public class KafkaItemReaderProperties {
 	}
 
 	/**
-	 * Get the pollTimeout for the poll() operations.  Defaults to 30 seconds.
+	 * Get the pollTimeout for the poll() operations. Defaults to 30 seconds.
 	 * @return long containing the poll timeout.
 	 */
 	public long getPollTimeOutInSeconds() {
