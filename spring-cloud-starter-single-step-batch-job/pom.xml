@@ -13,7 +13,7 @@
 		<test.containers.version>1.15.0</test.containers.version>
 		<test.rabbit.containers.version>1.15.0</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<spring-kafka-version>2.5.3.RELEASE</spring-kafka-version>
+		<spring-kafka-version>2.6.3</spring-kafka-version>
 	</properties>
 
 	<dependencies>
