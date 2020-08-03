@@ -5,4 +5,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.springframewo
   org.springframework.cloud.task.batch.autoconfigure.jdbc.JdbcItemWriterAutoConfiguration, \
   org.springframework.cloud.task.batch.autoconfigure.jdbc.JdbcCursorItemReaderAutoConfiguration, \
   org.springframework.cloud.task.batch.autoconfigure.rabbit.AmqpItemReaderAutoConfiguration, \
-  org.springframework.cloud.task.batch.autoconfigure.rabbit.AmqpItemWriterAutoConfiguration
+  org.springframework.cloud.task.batch.autoconfigure.rabbit.AmqpItemWriterAutoConfiguration, \
+  org.springframework.cloud.task.batch.autoconfigure.kafka.KafkaItemWriterAutoConfiguration
