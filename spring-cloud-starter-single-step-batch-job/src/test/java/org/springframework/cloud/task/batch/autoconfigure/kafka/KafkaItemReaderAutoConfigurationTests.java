@@ -21,28 +21,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.support.ListItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -51,7 +44,6 @@ import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -65,32 +57,12 @@ public class KafkaItemReaderAutoConfigurationTests {
 
 	private static EmbeddedKafkaBroker embeddedKafkaBroker;
 
-	private Properties consumerProperties;
-
 	@BeforeAll
 	public static void setupTest(EmbeddedKafkaBroker embeddedKafka) {
 		embeddedKafkaBroker = embeddedKafka;
 		embeddedKafka.addTopics(new NewTopic("topic1", 1, (short) 1),
 				new NewTopic("topic2", 2, (short) 1),
 				new NewTopic("topic3", 1, (short) 1));
-	}
-
-	@BeforeEach
-	public void setUpEach() {
-		Map<String, Object> producerProperties = KafkaTestUtils
-				.producerProps(embeddedKafkaBroker);
-		ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory<>(
-				producerProperties);
-
-		this.consumerProperties = new Properties();
-		this.consumerProperties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-				embeddedKafkaBroker.getBrokersAsString());
-		this.consumerProperties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "1");
-		this.consumerProperties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-				StringDeserializer.class.getName());
-		this.consumerProperties.setProperty(
-				ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-				StringDeserializer.class.getName());
 	}
 
 	@Test
@@ -259,18 +231,10 @@ public class KafkaItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class CustomMappingConfiguration {
-
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
-
 		@Bean
 		public ListItemWriter<Map> itemWriter() {
 			return new ListItemWriter<>();
 		}
-
 	}
 
 }
