@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.batch.autoconfigure.amqp;
+package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +40,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.support.ListItemWriter;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -51,9 +52,11 @@ import org.springframework.jdbc.core.RowMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class RabbitItemReaderAutoConfigurationTests {
+public class RabbitAmqpItemReaderAutoConfigurationTests {
 
 	private static int amqpPort;
+
+	private static String host;
 
 	private RabbitTemplate template;
 
@@ -64,12 +67,13 @@ public class RabbitItemReaderAutoConfigurationTests {
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
+		host = rabbitmq.getContainerIpAddress();
 		amqpPort = mappedPort;
 	}
 
 	@BeforeEach
 	void setupTest() {
-		this.connectionFactory = new CachingConnectionFactory("localhost", amqpPort);
+		this.connectionFactory = new CachingConnectionFactory(host, amqpPort);
 		this.template = new RabbitTemplate(this.connectionFactory);
 		this.template.setMessageConverter(new Jackson2JsonMessageConverter());
 		AmqpAdmin admin = new RabbitAdmin(this.connectionFactory);
@@ -101,12 +105,14 @@ public class RabbitItemReaderAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								AmqpItemReaderAutoConfiguration.class))
+								RabbitAmqpItemReaderAutoConfiguration.class,
+								RabbitAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.amqpitemreader.name=fooReader",
-						"spring.batch.job.amqpitemreader.defaultReceiveQueue=foo",
-						"spring.batch.job.amqpitemreader.port=" + amqpPort);
+						"spring.batch.job.rabbitamqpitemreader.name=fooReader",
+						"spring.rabbitmq.template.default-receive-queue=foo",
+						"spring.rabbitmq.host=" + host,
+						"spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -139,11 +145,13 @@ public class RabbitItemReaderAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								AmqpItemReaderAutoConfiguration.class))
+								RabbitAmqpItemReaderAutoConfiguration.class,
+								RabbitAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.amqpitemreader.name=fooReader",
-						"spring.batch.job.amqpitemreader.port=" + amqpPort);
+						"spring.batch.job.rabbitamqpitemreader.name=fooReader",
+						"spring.rabbitmq.host=" + host,
+						"spring.rabbitmq.port=" + amqpPort);
 
 		assertThatThrownBy(() -> {
 			applicationContextRunner.run((context) -> {
