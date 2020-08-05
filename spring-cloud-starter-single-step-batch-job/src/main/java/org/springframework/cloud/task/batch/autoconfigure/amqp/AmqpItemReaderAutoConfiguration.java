@@ -29,6 +29,7 @@ import org.springframework.batch.item.amqp.builder.AmqpItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -45,12 +46,14 @@ public class AmqpItemReaderAutoConfiguration {
 	private AmqpItemReaderProperties amqpItemReaderProperties;
 
 	@Bean
+	@ConditionalOnMissingBean
 	public ConnectionFactory connectionFactory() {
 		return new CachingConnectionFactory(this.amqpItemReaderProperties.getHost(),
 				this.amqpItemReaderProperties.getPort());
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
 		RabbitTemplate result = new RabbitTemplate(connectionFactory);
 		result.setMessageConverter(new Jackson2JsonMessageConverter());
