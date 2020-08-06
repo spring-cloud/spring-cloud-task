@@ -47,7 +47,7 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Timed.class)
 @AutoConfigureBefore(name = {
-		"org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration" })
+		"org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration" })
 public class MetricsAutoConfiguration {
 
 	@Bean
