@@ -1,0 +1,93 @@
+= Timestamp Task
+
+This is a Spring Cloud Task application that autoconfigures a single step Spring Batch job based on properties.
+
+== Requirements:
+
+* Java 8 or Above
+
+== Classes:
+
+* SingleStepBatchJobApplication - the Spring Boot Main Application
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar --spring.config.name=<property file containing batch, reader, and writer properties>
+----
+
+== Examples
+
+=== FlatFileItemReader with a FlatFileItemWriter batch job
+In this example the batch job will read from the test.txt file from the resources directory and write a `result.txt` file to the root directory of the project.
+```
+$ java -jar -Dspring.config.location=src/main/resources/FlatfileReaderFlatfileWriter.properties target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+=== FlatFileItemReader with a JdbcItemWriter batch job
+In this example the batch job will read from the test.txt file from the resources directory and write the result to the `item` table in your data store.
+```
+$ java -jar -Dspring.config.location=src/main/resources/FlatfileReaderJdbcWriter.properties target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+Before running create the following table:
+```
+CREATE TABLE IF NOT EXISTS item
+(
+   item_name varchar(55)
+);
+```
+
+=== JdbcCursorItemReader with a JdbcItemWriter batch job
+In this example the batch job will read from the `item_sample` table in your data store and write the result to the `item` table in your data store.
+```
+$ java -jar -Dspring.config.location=src/main/resources/JdbcReaderJdbcWriter.properties target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+Before running create the following tables:
+```
+CREATE TABLE IF NOT EXISTS item
+(
+   item_name varchar(55)
+);
+CREATE TABLE IF NOT EXISTS item_sample
+(
+   ITEM_NAME varchar(55)
+);
+
+INSERT INTO item_sample (item_name) VALUES ('foo');
+INSERT INTO item_sample (item_name) VALUES ('bar');
+INSERT INTO item_sample (item_name) VALUES ('baz');
+INSERT INTO item_sample (item_name) VALUES ('boo');
+INSERT INTO item_sample (item_name) VALUES ('qux');
+INSERT INTO item_sample (item_name) VALUES ('Job');
+```
+
+=== JdbcCursorItemReader with FlatfileItemWriter batch job
+In this example the batch job will read from the `item_sample` table in your data store and write the result to the `result.txt` file to the root directory of the project.
+```
+$ java -jar -Dspring.config.location=src/main/resources/JdbcReaderFlatfileWriter.properties target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+Before running create the following table:
+```
+CREATE TABLE IF NOT EXISTS item_sample
+(
+   ITEM_NAME varchar(55)
+);
+
+INSERT INTO item_sample (item_name) VALUES ('foo');
+INSERT INTO item_sample (item_name) VALUES ('bar');
+INSERT INTO item_sample (item_name) VALUES ('baz');
+INSERT INTO item_sample (item_name) VALUES ('boo');
+INSERT INTO item_sample (item_name) VALUES ('qux');
+INSERT INTO item_sample (item_name) VALUES ('Job');
+```
