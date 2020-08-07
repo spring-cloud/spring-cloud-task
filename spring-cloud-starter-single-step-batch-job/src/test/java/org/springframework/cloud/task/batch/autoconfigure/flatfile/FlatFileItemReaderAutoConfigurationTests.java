@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.batch.autoconfigure;
+package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +44,8 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.cloud.task.batch.autoconfigure.RangeConverter;
+import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

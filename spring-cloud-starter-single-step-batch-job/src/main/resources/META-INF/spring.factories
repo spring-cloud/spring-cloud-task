@@ -1,6 +1,6 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.springframework.cloud.task.batch.autoconfigure.FlatFileItemReaderAutoConfiguration,\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.springframework.cloud.task.batch.autoconfigure.flatfile.FlatFileItemReaderAutoConfiguration,\
   org.springframework.cloud.task.batch.autoconfigure.RangeConverter,\
   org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration,\
-  org.springframework.cloud.task.batch.autoconfigure.FlatFileItemWriterAutoConfiguration, \
+  org.springframework.cloud.task.batch.autoconfigure.flatfile.FlatFileItemWriterAutoConfiguration, \
   org.springframework.cloud.task.batch.autoconfigure.jdbc.JdbcItemWriterAutoConfiguration, \
   org.springframework.cloud.task.batch.autoconfigure.jdbc.JdbcCursorItemReaderAutoConfiguration
