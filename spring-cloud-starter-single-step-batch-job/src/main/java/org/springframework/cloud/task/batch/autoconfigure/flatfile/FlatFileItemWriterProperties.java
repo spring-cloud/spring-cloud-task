@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.batch.autoconfigure;
+package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
 import java.util.Locale;
 
