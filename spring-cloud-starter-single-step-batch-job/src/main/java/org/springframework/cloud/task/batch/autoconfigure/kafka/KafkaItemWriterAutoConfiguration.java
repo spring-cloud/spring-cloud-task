@@ -57,18 +57,25 @@ public class KafkaItemWriterAutoConfiguration {
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemwriter", name = "name")
 	public KafkaItemWriter<Object, Map<Object, Object>> kafkaItemWriter(
 			KafkaItemWriterProperties kafkaItemWriterProperties,
-			ProducerFactory<Object, Map<Object, Object>> producerFactory) {
+			ProducerFactory<Object, Map<Object, Object>> producerFactory,
+			Converter<?, ?> itemKeyMapper) {
 
 		validateProperties(kafkaItemWriterProperties);
 		KafkaTemplate template = new KafkaTemplate(producerFactory);
 		template.setDefaultTopic(kafkaItemWriterProperties.getTopic());
 		return new KafkaItemWriterBuilder<Object, Map<Object, Object>>().delete(false)
-				.kafkaTemplate(template).itemKeyMapper(new Converter() {
-					@Override
-					public Object convert(Object source) {
-						return "";
-					}
-				}).build();
+				.kafkaTemplate(template).itemKeyMapper(itemKeyMapper).build();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public Converter defaultItemKeyMapper() {
+		return new Converter() {
+			@Override
+			public Object convert(Object source) {
+				return "";
+			}
+		};
 	}
 
 	@Bean
