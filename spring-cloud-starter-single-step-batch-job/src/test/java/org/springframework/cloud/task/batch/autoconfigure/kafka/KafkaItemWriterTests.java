@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +50,6 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 @EmbeddedKafka(partitions = 1, topics = { "topic1" })
 public class KafkaItemWriterTests {
@@ -78,7 +76,7 @@ public class KafkaItemWriterTests {
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.kafka.producer.bootstrap-servers="
 								+ embeddedKafkaBroker.getBrokersAsString(),
-						"spring.batch.job.kafkaitemwriter.name=kafkaItemWriter",
+						"spring.kafka.producer.keySerializer=org.springframework.kafka.support.serializer.JsonSerializer",
 						"spring.batch.job.kafkaitemwriter.topic=" + topicName);
 
 		applicationContextRunner.run((context) -> {
@@ -90,7 +88,6 @@ public class KafkaItemWriterTests {
 	private void validateResults(String topicName) {
 		Map<String, Object> configs = new HashMap<>(
 				KafkaTestUtils.consumerProps("1", "false", embeddedKafkaBroker));
-		configs.remove(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG);
 		Consumer<String, Object> consumer = new DefaultKafkaConsumerFactory<>(configs,
 				new StringDeserializer(), new JsonDeserializer<>()).createConsumer();
 		consumer.subscribe(singleton(topicName));
@@ -102,37 +99,14 @@ public class KafkaItemWriterTests {
 		consumerRecords.forEach(cs -> {
 			result.add((Map<Object, Object>) cs.value());
 		});
-
-		assertThat(result.get(0).get("first_name")).isEqualTo("Jane");
-		assertThat(result.get(1).get("first_name")).isEqualTo("John");
-		assertThat(result.get(2).get("first_name")).isEqualTo("Liz");
-		assertThat(result.get(3).get("first_name")).isEqualTo("Cameron");
-		assertThat(result.get(4).get("first_name")).isEqualTo("Judy");
-	}
-
-	@Test
-	public void testMissingTopicName() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(CustomMappingConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								KafkaItemWriterAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.kafka.producer.bootstrap-servers="
-								+ embeddedKafkaBroker.getBrokersAsString(),
-						"spring.batch.job.kafkaitemwriter.name=kafkaItemWriter");
-
-		Throwable thrown = catchThrowable(
-				() -> applicationContextRunner.run((context) -> {
-					waitForTopicPopulation(context);
-				}));
-
-		assertThat(thrown).isInstanceOf(IllegalStateException.class);
-		assertThat(thrown).getRootCause().isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("topic must not be empty or null");
+		List<String> firstNames = new ArrayList<>();
+		result.forEach(s -> firstNames.add((String) s.get("first_name")));
+		assertThat(firstNames.size()).isEqualTo(5);
+		assertThat(firstNames).contains("Jane");
+		assertThat(firstNames).contains("John");
+		assertThat(firstNames).contains("Liz");
+		assertThat(firstNames).contains("Cameron");
+		assertThat(firstNames).contains("Judy");
 	}
 
 	private void waitForTopicPopulation(ApplicationContext context) throws Exception {

@@ -27,33 +27,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.kafkaitemwriter")
 public class KafkaItemWriterProperties {
 
-	private String name;
-
 	private String topic;
 
-	private long pollTimeOutInSeconds = 30L;
+	private boolean delete;
 
 	/**
-	 * Returns the configured value of the name used to calculate {@code ExecutionContext}
-	 * keys.
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}.
-	 * @param name name of the writer instance
-	 * @see org.springframework.batch.item.ItemStreamSupport#setName(String)
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Returns the name of the topic from which messages will be read.
+	 * Returns the name of the topic from which messages will be written.
 	 * @return the name of the topic.
 	 */
 	public String getTopic() {
@@ -66,6 +45,30 @@ public class KafkaItemWriterProperties {
 	 */
 	public void setTopic(String topic) {
 		this.topic = topic;
+	}
+
+	/**
+	 * Indicate if the items being passed to the writer are all to be sent as delete
+	 * events to the topic. A delete event is made of a key with a null value. If set to
+	 * false (default), the items will be sent with provided value and key converter by
+	 * the itemKeyMapper. If set to true, the items will be sent with the key converter
+	 * from the value by the itemKeyMapper and a null value.
+	 * @return removal indicator.
+	 */
+	public boolean isDelete() {
+		return delete;
+	}
+
+	/**
+	 * Indicate if the items being passed to the writer are all to be sent as delete
+	 * events to the topic. A delete event is made of a key with a null value. If set to
+	 * false (default), the items will be sent with provided value and key converter by
+	 * the itemKeyMapper. If set to true, the items will be sent with the key converter
+	 * from the value by the itemKeyMapper and a null value.
+	 * @param delete removal indicator.
+	 */
+	public void setDelete(boolean delete) {
+		this.delete = delete;
 	}
 
 }

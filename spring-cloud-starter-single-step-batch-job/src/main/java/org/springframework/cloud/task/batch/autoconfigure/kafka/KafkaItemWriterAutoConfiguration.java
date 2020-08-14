@@ -22,6 +22,7 @@ import java.util.Map;
 import org.springframework.batch.item.kafka.KafkaItemWriter;
 import org.springframework.batch.item.kafka.builder.KafkaItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,26 +55,27 @@ public class KafkaItemWriterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemwriter", name = "name")
+	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemwriter", name = "topic")
 	public KafkaItemWriter<Object, Map<Object, Object>> kafkaItemWriter(
 			KafkaItemWriterProperties kafkaItemWriterProperties,
 			ProducerFactory<Object, Map<Object, Object>> producerFactory,
-			Converter<?, ?> itemKeyMapper) {
+			@Qualifier("batchItemKeyMapper") Converter<Object, Object> itemKeyMapper) {
 
 		validateProperties(kafkaItemWriterProperties);
 		KafkaTemplate template = new KafkaTemplate(producerFactory);
 		template.setDefaultTopic(kafkaItemWriterProperties.getTopic());
-		return new KafkaItemWriterBuilder<Object, Map<Object, Object>>().delete(false)
-				.kafkaTemplate(template).itemKeyMapper(itemKeyMapper).build();
+		return new KafkaItemWriterBuilder<Object, Map<Object, Object>>()
+				.delete(kafkaItemWriterProperties.isDelete()).kafkaTemplate(template)
+				.itemKeyMapper(itemKeyMapper).build();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public Converter defaultItemKeyMapper() {
-		return new Converter() {
+	@ConditionalOnMissingBean(name = "batchItemKeyMapper")
+	public Converter<Object, Object> batchItemKeyMapper() {
+		return new Converter<Object, Object>() {
 			@Override
 			public Object convert(Object source) {
-				return "";
+				return source;
 			}
 		};
 	}
@@ -90,8 +92,6 @@ public class KafkaItemWriterAutoConfiguration {
 	private void validateProperties(KafkaItemWriterProperties kafkaItemWriterProperties) {
 		Assert.hasText(kafkaItemWriterProperties.getTopic(),
 				"topic must not be empty or null");
-		Assert.hasText(kafkaItemWriterProperties.getName(),
-				"name must not be empty or null");
 	}
 
 }
