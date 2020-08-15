@@ -18,21 +18,22 @@ package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 
 import java.util.Map;
 
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.batch.item.amqp.AmqpItemReader;
 import org.springframework.batch.item.amqp.builder.AmqpItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-
 
 /**
  * Autconfiguration for a {@code AmqpItemReader}.
@@ -41,19 +42,21 @@ import org.springframework.util.StringUtils;
  * @since 2.3
  */
 @Configuration
-@EnableConfigurationProperties(RabbitAmqpItemReaderProperties.class)
+@EnableConfigurationProperties(AmqpItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "spring.batch.job.rabbitamqpitemreader", name = "name")
-public class RabbitAmqpItemReaderAutoConfiguration {
+@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.enabled",
+		havingValue = "true", matchIfMissing = false)
+public class AmqpItemReaderAutoConfiguration {
 
-	@Autowired
+	@Autowired(required = false)
 	private RabbitProperties rabbitProperties;
 
 	@Bean
-	public RabbitAmqpItemReaderProperties amqpItemReaderProperties() {
-		return new RabbitAmqpItemReaderProperties();
+	public AmqpItemReaderProperties amqpItemReaderProperties() {
+		return new AmqpItemReaderProperties();
 	}
 
+	@ConditionalOnBean(RabbitProperties.class)
 	@Bean
 	public Queue myQueue() {
 		if (!StringUtils
@@ -66,11 +69,16 @@ public class RabbitAmqpItemReaderAutoConfiguration {
 	}
 
 	@Bean
-	public AmqpItemReader<Map<Object, Object>> amqpItemReader(
-			RabbitTemplate rabbitTemplate) {
-		rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-		return new AmqpItemReaderBuilder<Map<Object, Object>>()
-				.amqpTemplate(rabbitTemplate).build();
+	public AmqpItemReader<Map<Object, Object>> amqpItemReader(AmqpTemplate amqpTemplate) {
+		return new AmqpItemReaderBuilder<Map<Object, Object>>().amqpTemplate(amqpTemplate)
+				.build();
+	}
+
+	@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.jsonConverterEnabled",
+			havingValue = "true", matchIfMissing = true)
+	@Bean
+	public MessageConverter messageConverter() {
+		return new Jackson2JsonMessageConverter();
 	}
 
 }

@@ -23,9 +23,11 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
 
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -52,7 +54,7 @@ import org.springframework.jdbc.core.RowMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class RabbitAmqpItemReaderAutoConfigurationTests {
+public class AmqpItemReaderAutoConfigurationTests {
 
 	private static int amqpPort;
 
@@ -105,11 +107,11 @@ public class RabbitAmqpItemReaderAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								RabbitAmqpItemReaderAutoConfiguration.class,
+								AmqpItemReaderAutoConfiguration.class,
 								RabbitAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.rabbitamqpitemreader.name=fooReader",
+						"spring.batch.job.amqpitemreader.enabled=true",
 						"spring.rabbitmq.template.default-receive-queue=foo",
 						"spring.rabbitmq.host=" + host,
 						"spring.rabbitmq.port=" + amqpPort);
@@ -145,21 +147,46 @@ public class RabbitAmqpItemReaderAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								RabbitAmqpItemReaderAutoConfiguration.class,
+								AmqpItemReaderAutoConfiguration.class,
 								RabbitAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.rabbitamqpitemreader.name=fooReader",
+						"spring.batch.job.amqpitemreader.enabled=true",
+						"spring.batch.job.amqpitemreader.jsonConverterEnabled=false",
 						"spring.rabbitmq.host=" + host,
 						"spring.rabbitmq.port=" + amqpPort);
 
 		assertThatThrownBy(() -> {
 			applicationContextRunner.run((context) -> {
-				JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+				context.getBean(JobLauncher.class);
 			});
 		}).isInstanceOf(IllegalStateException.class).getRootCause()
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessageContaining("DefaultReceiveQueue must not be empty nor null");
+	}
+
+	@Test
+	void useAmqpTemplateTest() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(MockTemplateConfiguration.class)
+				.withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+								BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class,
+								AmqpItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=integrationJob",
+						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
+						"spring.batch.job.amqpitemreader.enabled=true",
+						"spring.rabbitmq.host=" + host,
+						"spring.rabbitmq.port=" + amqpPort);
+
+		applicationContextRunner.run((context) -> {
+			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			Job job = context.getBean(Job.class);
+			jobLauncher.run(job, new JobParameters());
+			AmqpTemplate amqpTemplate = context.getBean(AmqpTemplate.class);
+			Mockito.verify(amqpTemplate, Mockito.times(1)).receiveAndConvert();
+		});
 	}
 
 	@EnableBatchProcessing
@@ -187,6 +214,22 @@ public class RabbitAmqpItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class BaseConfiguration {
+
+		@Bean
+		public ListItemWriter<Map<Object, Object>> itemWriter() {
+			return new ListItemWriter<>();
+		}
+
+	}
+
+	@EnableBatchProcessing
+	@Configuration
+	public static class MockTemplateConfiguration {
+
+		@Bean
+		AmqpTemplate amqpTemplateBean() {
+			return Mockito.mock(AmqpTemplate.class);
+		};
 
 		@Bean
 		public ListItemWriter<Map<Object, Object>> itemWriter() {
