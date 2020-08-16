@@ -18,8 +18,9 @@ package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 
 import java.util.Map;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.batch.item.amqp.AmqpItemWriter;
 import org.springframework.batch.item.amqp.builder.AmqpItemWriterBuilder;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -36,23 +37,28 @@ import org.springframework.context.annotation.Configuration;
  * @since 2.3
  */
 @Configuration
-@EnableConfigurationProperties(RabbitAmqpItemWriterProperties.class)
+@EnableConfigurationProperties(AmqpItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-public class RabbitAmqpItemWriterAutoConfiguration {
+@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.enabled",
+		havingValue = "true", matchIfMissing = false)
+public class AmqpItemWriterAutoConfiguration {
 
 	@Bean
-	@ConditionalOnProperty(prefix = "spring.batch.job.rabbitamqpitemwriter",
-			name = "name")
-	public AmqpItemWriter<Map<Object, Object>> amqpItemWriter(
-			RabbitTemplate rabbitTemplate) {
-		rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-		return new AmqpItemWriterBuilder<Map<Object, Object>>()
-				.amqpTemplate(rabbitTemplate).build();
+	public AmqpItemWriter<Map<Object, Object>> amqpItemWriter(AmqpTemplate amqpTemplate) {
+		return new AmqpItemWriterBuilder<Map<Object, Object>>().amqpTemplate(amqpTemplate)
+				.build();
 	}
 
 	@Bean
-	public RabbitAmqpItemWriterProperties amqpItemWriterProperties() {
-		return new RabbitAmqpItemWriterProperties();
+	public AmqpItemWriterProperties amqpItemWriterProperties() {
+		return new AmqpItemWriterProperties();
+	}
+
+	@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.jsonConverterEnabled",
+			havingValue = "true", matchIfMissing = true)
+	@Bean
+	public MessageConverter messageConverter() {
+		return new Jackson2JsonMessageConverter();
 	}
 
 }

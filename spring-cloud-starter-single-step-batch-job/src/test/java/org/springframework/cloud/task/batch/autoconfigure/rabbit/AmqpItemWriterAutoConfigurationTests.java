@@ -24,9 +24,11 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
 
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
@@ -47,6 +49,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -65,11 +68,13 @@ public class AmqpItemWriterAutoConfigurationTests {
 
 	private static String host;
 
+	private static List<Map<Object, Object>> sampleData;
+
 	private RabbitTemplate template;
 
 	private ConnectionFactory connectionFactory;
 
-	private static List<Map<Object, Object>> sampleData;
+	private String[] configurations;
 
 	static {
 		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
@@ -103,6 +108,12 @@ public class AmqpItemWriterAutoConfigurationTests {
 		admin.declareExchange(new TopicExchange(EXCHANGE_NAME));
 		admin.declareBinding(new Binding(QUEUE_NAME, Binding.DestinationType.QUEUE,
 				EXCHANGE_NAME, "#", null));
+		this.configurations = new String[] { "spring.batch.job.jobName=integrationJob",
+				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
+				"spring.rabbitmq.template.exchange=" + EXCHANGE_NAME,
+				"spring.rabbitmq.host=" + host,
+				"spring.batch.job.amqpitemwriter.enabled=true",
+				"spring.rabbitmq.port=" + amqpPort };
 	}
 
 	@AfterEach
@@ -120,22 +131,12 @@ public class AmqpItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								RabbitAmqpItemWriterAutoConfiguration.class,
+								AmqpItemWriterAutoConfiguration.class,
 								RabbitAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=integrationJob",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.rabbitmq.template.exchange=" + EXCHANGE_NAME,
-						"spring.rabbitmq.host=" + host,
-						"spring.batch.job.rabbitamqpitemwriter.name=rabbitItemWriter",
-						"spring.rabbitmq.port=" + amqpPort);
+				.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
-
-			Job job = context.getBean(Job.class);
-
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
-
+			JobExecution jobExecution = runJob(context);
 			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
 
 			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
@@ -151,9 +152,50 @@ public class AmqpItemWriterAutoConfigurationTests {
 		});
 	}
 
+	@Test
+	void useAmqpTemplateTest() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(MockConfiguration.class)
+				.withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+								BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class,
+								AmqpItemWriterAutoConfiguration.class))
+				.withPropertyValues(this.configurations);
+
+		applicationContextRunner.run((context) -> {
+			runJob(context);
+			AmqpTemplate amqpTemplate = context.getBean(AmqpTemplate.class);
+			Mockito.verify(amqpTemplate, Mockito.times(5)).convertAndSend(Mockito.any());
+		});
+	}
+
+	private JobExecution runJob(AssertableApplicationContext context) throws Exception {
+		JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+
+		Job job = context.getBean(Job.class);
+
+		return jobLauncher.run(job, new JobParameters());
+	}
+
 	@EnableBatchProcessing
 	@Configuration
-	public static class BaseConfiguration {
+	public static class BaseConfiguration extends ItemWriterConfiguration {
+
+	}
+
+	@EnableBatchProcessing
+	@Configuration
+	public static class MockConfiguration extends ItemWriterConfiguration {
+
+		@Bean
+		AmqpTemplate amqpTemplateBean() {
+			return Mockito.mock(AmqpTemplate.class);
+		}
+
+	}
+
+	public static class ItemWriterConfiguration {
 
 		@Bean
 		public RowMapper<Map<Object, Object>> rowMapper() {
