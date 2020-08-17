@@ -9,7 +9,7 @@ process persists beyond the life of the task for future reporting.
 
 == Requirements:
 
-* Java 7 or Above
+* Java 8 or Above
 
 == Build Main Project:
 
