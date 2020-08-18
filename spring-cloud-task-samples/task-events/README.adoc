@@ -4,7 +4,7 @@ This is a task application that emits events on a channel named `task-events`
 
 == Requirements:
 
-* Java 7 or Above
+* Java 8 or Above
 
 == Build:
 
