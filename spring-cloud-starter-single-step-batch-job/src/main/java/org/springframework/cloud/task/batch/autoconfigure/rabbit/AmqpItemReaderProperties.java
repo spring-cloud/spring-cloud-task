@@ -49,7 +49,8 @@ public class AmqpItemReaderProperties {
 	}
 
 	/**
-	 * States whether the  {@link Jackson2JsonMessageConverter} is used as a message converter.
+	 * States whether the {@link Jackson2JsonMessageConverter} is used as a message
+	 * converter.
 	 * @return true if enabled else false.
 	 */
 	public boolean isJsonConverterEnabled() {
@@ -57,8 +58,10 @@ public class AmqpItemReaderProperties {
 	}
 
 	/**
-	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a message converter.
-	 * @param jsonConverterEnabled true if it is to be enabled else false. Defaults to true.
+	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a
+	 * message converter.
+	 * @param jsonConverterEnabled true if it is to be enabled else false. Defaults to
+	 * true.
 	 */
 	public void setJsonConverterEnabled(boolean jsonConverterEnabled) {
 		this.jsonConverterEnabled = jsonConverterEnabled;

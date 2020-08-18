@@ -45,11 +45,11 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.RowMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -117,11 +117,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 						"spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
-
-			Job job = context.getBean(Job.class);
-
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = runJob(context);
 
 			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
 
@@ -129,13 +125,36 @@ public class AmqpItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> items = context.getBean(ListItemWriter.class)
-					.getWrittenItems();
+			validateBasicTest(context.getBean(ListItemWriter.class).getWrittenItems());
+		});
+	}
 
-			assertThat(items.size()).isEqualTo(3);
-			assertThat(items.get(0).get("ITEM_NAME")).isEqualTo("foo");
-			assertThat(items.get(1).get("ITEM_NAME")).isEqualTo("bar");
-			assertThat(items.get(2).get("ITEM_NAME")).isEqualTo("baz");
+	@Test
+	void basicTestWithItemType() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(ItemTypeConfiguration.class)
+				.withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+								BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class,
+								AmqpItemReaderAutoConfiguration.class,
+								RabbitAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=integrationJob",
+						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
+						"spring.batch.job.amqpitemreader.enabled=true",
+						"spring.rabbitmq.template.default-receive-queue=foo",
+						"spring.rabbitmq.host=" + host,
+						"spring.rabbitmq.port=" + amqpPort);
+
+		applicationContextRunner.run((context) -> {
+			JobExecution jobExecution = runJob(context);
+
+			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+
+			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+				Thread.sleep(1000);
+			}
+			validateBasicTest(context.getBean(ListItemWriter.class).getWrittenItems());
 		});
 	}
 
@@ -181,32 +200,39 @@ public class AmqpItemReaderAutoConfigurationTests {
 						"spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
-			Job job = context.getBean(Job.class);
-			jobLauncher.run(job, new JobParameters());
+			runJob(context);
 			AmqpTemplate amqpTemplate = context.getBean(AmqpTemplate.class);
 			Mockito.verify(amqpTemplate, Mockito.times(1)).receiveAndConvert();
 		});
 	}
 
-	@EnableBatchProcessing
-	@Configuration
-	public static class RowMapperConfiguration {
+	private JobExecution runJob(AssertableApplicationContext context) throws Exception {
+		JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+		Job job = context.getBean(Job.class);
+		return jobLauncher.run(job, new JobParameters());
+	}
+
+	private void validateBasicTest(List<Map<Object, Object>> items) {
+		assertThat(items.size()).isEqualTo(3);
+		assertThat(items.get(0).get("ITEM_NAME")).isEqualTo("foo");
+		assertThat(items.get(1).get("ITEM_NAME")).isEqualTo("bar");
+		assertThat(items.get(2).get("ITEM_NAME")).isEqualTo("baz");
+	}
+
+	public static class MockTemplateConfiguration extends BaseConfiguration {
 
 		@Bean
-		public RowMapper<Map<Object, Object>> rowMapper() {
-			return (rs, rowNum) -> {
-				Map<Object, Object> item = new HashMap<>();
+		AmqpTemplate amqpTemplateBean() {
+			return Mockito.mock(AmqpTemplate.class);
+		};
 
-				item.put("item", rs.getString("item_name"));
+	}
 
-				return item;
-			};
-		}
+	public static class ItemTypeConfiguration extends BaseConfiguration {
 
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
-			return new ListItemWriter<>();
+		Class<?> itemTypeClass() {
+			return Map.class;
 		}
 
 	}
@@ -214,22 +240,6 @@ public class AmqpItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class BaseConfiguration {
-
-		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
-			return new ListItemWriter<>();
-		}
-
-	}
-
-	@EnableBatchProcessing
-	@Configuration
-	public static class MockTemplateConfiguration {
-
-		@Bean
-		AmqpTemplate amqpTemplateBean() {
-			return Mockito.mock(AmqpTemplate.class);
-		};
 
 		@Bean
 		public ListItemWriter<Map<Object, Object>> itemWriter() {

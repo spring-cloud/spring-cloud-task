@@ -69,9 +69,14 @@ public class AmqpItemReaderAutoConfiguration {
 	}
 
 	@Bean
-	public AmqpItemReader<Map<Object, Object>> amqpItemReader(AmqpTemplate amqpTemplate) {
-		return new AmqpItemReaderBuilder<Map<Object, Object>>().amqpTemplate(amqpTemplate)
-				.build();
+	public AmqpItemReader<Map<Object, Object>> amqpItemReader(AmqpTemplate amqpTemplate,
+			@Autowired(required = false) Class itemType) {
+		AmqpItemReaderBuilder<Map<Object, Object>> builder = new AmqpItemReaderBuilder<Map<Object, Object>>()
+				.amqpTemplate(amqpTemplate);
+		if (itemType != null) {
+			builder.itemType(itemType);
+		}
+		return builder.build();
 	}
 
 	@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.jsonConverterEnabled",
