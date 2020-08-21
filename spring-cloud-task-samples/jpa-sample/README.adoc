@@ -5,7 +5,7 @@ a data store.
 
 == Requirements:
 
-* Java 7 or Above
+* Java 8 or Above
 
 == Classes:
 
