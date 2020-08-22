@@ -14,7 +14,7 @@ Note: More information on this topic is available https://docs.spring.io/spring-
 
 == Requirements:
 
-* Java 7 or Above
+* Java 8 or Above
 
 == Build:
 
