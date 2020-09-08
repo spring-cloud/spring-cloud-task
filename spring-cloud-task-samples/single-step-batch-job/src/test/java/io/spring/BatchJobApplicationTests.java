@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +92,8 @@ public class BatchJobApplicationTests {
 
 	@Test
 	public void testFileReaderJdbcWriter() throws Exception {
-		SpringApplication.run(SingleStepBatchJobApplication.class,
-			"--spring.config.name=FlatfileReaderJdbcWriter",
+		getSpringApplication().run(SingleStepBatchJobApplication.class,
+			"--spring.profiles.active=ffreader,jdbcwriter",
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
@@ -102,8 +103,8 @@ public class BatchJobApplicationTests {
 
 	@Test
 	public void testJdbcReaderJdbcWriter() throws Exception {
-		SpringApplication.run(SingleStepBatchJobApplication.class,
-			"--spring.config.name=JdbcReaderJdbcWriter",
+		getSpringApplication().run(SingleStepBatchJobApplication.class,
+			"--spring.profiles.active=jdbcreader,jdbcwriter",
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
@@ -113,8 +114,8 @@ public class BatchJobApplicationTests {
 
 	@Test
 	public void testJdbcReaderFlatfileWriter() throws Exception {
-		SpringApplication.run(SingleStepBatchJobApplication.class,
-			"--spring.config.name=JdbcReaderFlatfileWriter",
+		getSpringApplication().run(SingleStepBatchJobApplication.class,
+			"--spring.profiles.active=jdbcreader,ffwriter",
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
@@ -124,8 +125,8 @@ public class BatchJobApplicationTests {
 
 	@Test
 	public void testFileReaderFileWriter() throws Exception {
-		SpringApplication.run(SingleStepBatchJobApplication.class,
-			"--spring.config.name=FlatfileReaderFlatfileWriter");
+		getSpringApplication().run(SingleStepBatchJobApplication.class,
+			"--spring.profiles.active=ffreader,ffwriter");
 		validateFileResult();
 	}
 
@@ -183,6 +184,16 @@ public class BatchJobApplicationTests {
 		dataSourceBuilder.username(DATASOURCE_USER_NAME);
 		dataSourceBuilder.password(DATASOURCE_USER_PASSWORD);
 		return dataSourceBuilder.build();
+	}
+	private SpringApplication getSpringApplication() {
+		SpringApplication springApplication = new SpringApplication();
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("spring.application.name", "Single Step Batch Job");
+		properties.put("spring.batch.job.jobName", "job");
+		properties.put("spring.batch.job.stepName", "step1");
+		properties.put("spring.batch.job.chunkSize", "5");
+		springApplication.setDefaultProperties(properties);
+		return springApplication;
 	}
 
 }
