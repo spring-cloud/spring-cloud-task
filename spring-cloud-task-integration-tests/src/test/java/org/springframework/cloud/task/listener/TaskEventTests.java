@@ -56,8 +56,7 @@ public class TaskEventTests {
 	private static final String TASK_NAME = "taskEventTest";
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
-				.withExposedPorts(5672);
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3").withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
 		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
@@ -70,21 +69,15 @@ public class TaskEventTests {
 	public void testTaskEventListener() throws Exception {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(TaskEventAutoConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						RabbitServiceAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class,
-						BindingServiceConfiguration.class))
-				.withUserConfiguration(TaskEventsConfiguration.class)
-				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
-						"--spring.cloud.task.name=" + TASK_NAME,
-						"--spring.main.web-environment=false",
-						"--spring.cloud.stream.defaultBinder=rabbit",
+						PropertyPlaceholderAutoConfiguration.class, RabbitServiceAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class, BindingServiceConfiguration.class))
+				.withUserConfiguration(TaskEventsConfiguration.class).withPropertyValues(
+						"--spring.cloud.task.closecontext_enabled=false", "--spring.cloud.task.name=" + TASK_NAME,
+						"--spring.main.web-environment=false", "--spring.cloud.stream.defaultBinder=rabbit",
 						"--spring.cloud.stream.bindings.task-events.destination=test");
 		applicationContextRunner.run((context) -> {
 			assertThat(context.getBean("taskEventListener")).isNotNull();
-			assertThat(
-					context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class))
-							.isNotNull();
+			assertThat(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class)).isNotNull();
 		});
 		assertThat(latch.await(1, TimeUnit.SECONDS)).isTrue();
 	}

@@ -74,8 +74,8 @@ public class JdbcItemWriterAutoConfigurationTests {
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
-				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	@AfterEach
@@ -94,14 +94,11 @@ public class JdbcItemWriterAutoConfigurationTests {
 	@Test
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+				.withUserConfiguration(JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						TaskLauncherConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -112,13 +109,10 @@ public class JdbcItemWriterAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
 						JdbcItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
-						TaskLauncherConfiguration.class,
-						CustomSqlParameterSourceProviderConfiguration.class)
+						TaskLauncherConfiguration.class, CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -127,21 +121,16 @@ public class JdbcItemWriterAutoConfigurationTests {
 	@Test
 	public void preparedStatementSetterTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
-						TaskLauncherConfiguration.class,
-						ItemPreparedStatementSetterConfiguration.class)
+				.withUserConfiguration(JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						TaskLauncherConfiguration.class, ItemPreparedStatementSetterConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 		runTest(applicationContextRunner);
 	}
 
-	private ApplicationContextRunner updatePropertiesForTest(
-			ApplicationContextRunner applicationContextRunner) {
+	private ApplicationContextRunner updatePropertiesForTest(ApplicationContextRunner applicationContextRunner) {
 		return applicationContextRunner.withPropertyValues("spring.batch.job.jobName=job",
 				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 				"spring.batch.job.jdbcwriter.name=fooWriter",
@@ -151,8 +140,7 @@ public class JdbcItemWriterAutoConfigurationTests {
 	private void validateResultAndBean(ApplicationContext context) {
 		DataSource dataSource = context.getBean(DataSource.class);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<Map<String, Object>> result = jdbcTemplate
-				.queryForList("SELECT item_name FROM item ORDER BY item_name");
+		List<Map<String, Object>> result = jdbcTemplate.queryForList("SELECT item_name FROM item ORDER BY item_name");
 		assertThat(result.size()).isEqualTo(3);
 
 		assertThat(result.get(0).get("item_name")).isEqualTo("bar");
@@ -160,12 +148,9 @@ public class JdbcItemWriterAutoConfigurationTests {
 		assertThat(result.get(2).get("item_name")).isEqualTo("foo");
 
 		JdbcBatchItemWriter writer = context.getBean(JdbcBatchItemWriter.class);
-		assertThat((Boolean) ReflectionTestUtils.getField(writer, "assertUpdates"))
-				.isTrue();
-		assertThat((Integer) ReflectionTestUtils.getField(writer, "parameterCount"))
-				.isEqualTo(1);
-		assertThat((Boolean) ReflectionTestUtils.getField(writer, "usingNamedParameters"))
-				.isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(writer, "assertUpdates")).isTrue();
+		assertThat((Integer) ReflectionTestUtils.getField(writer, "parameterCount")).isEqualTo(1);
+		assertThat((Boolean) ReflectionTestUtils.getField(writer, "usingNamedParameters")).isTrue();
 	}
 
 	private void runTest(ApplicationContextRunner applicationContextRunner) {
@@ -196,19 +181,16 @@ public class JdbcItemWriterAutoConfigurationTests {
 			Server server = null;
 			try {
 				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp",
-							"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-							.start();
+					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+							String.valueOf(randomPort)).start();
 					defaultServer = server;
 					DriverManagerDataSource dataSource = new DriverManagerDataSource();
 					dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
 					dataSource.setUrl(DATASOURCE_URL);
 					dataSource.setUsername(DATASOURCE_USER_NAME);
 					dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-					ClassPathResource setupResource = new ClassPathResource(
-							"schema-h2.sql");
-					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
-							setupResource);
+					ClassPathResource setupResource = new ClassPathResource("schema-h2.sql");
+					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(setupResource);
 					resourceDatabasePopulator.execute(dataSource);
 				}
 			}
@@ -289,11 +271,9 @@ public class JdbcItemWriterAutoConfigurationTests {
 		public ItemPreparedStatementSetter itemPreparedStatementSetter() {
 			return new ItemPreparedStatementSetter() {
 				@Override
-				public void setValues(Object item, PreparedStatement ps)
-						throws SQLException {
+				public void setValues(Object item, PreparedStatement ps) throws SQLException {
 					Map<String, Object> mapItem = (Map<String, Object>) item;
-					StatementCreatorUtils.setParameterValue(ps, 1,
-							SqlTypeValue.TYPE_UNKNOWN, mapItem.get("item_name"));
+					StatementCreatorUtils.setParameterValue(ps, 1, SqlTypeValue.TYPE_UNKNOWN, mapItem.get("item_name"));
 				}
 			};
 		}

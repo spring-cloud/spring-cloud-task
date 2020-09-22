@@ -53,8 +53,7 @@ public class TaskLauncherSinkTests {
 	private final static String VALID_URL = "maven://org.springframework.cloud.task.app:"
 			+ "timestamp-task:jar:1.0.1.RELEASE";
 
-	private final static String INVALID_URL = "maven://not.real.group:"
-			+ "invalid:jar:1.0.0.BUILD-SNAPSHOT";
+	private final static String INVALID_URL = "maven://not.real.group:" + "invalid:jar:1.0.0.BUILD-SNAPSHOT";
 
 	private final static String DEFAULT_STATUS = "test_status";
 
@@ -78,8 +77,7 @@ public class TaskLauncherSinkTests {
 		commandLineArgs.add(PARAM1);
 		commandLineArgs.add(PARAM2);
 
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL,
-				commandLineArgs, null);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL, commandLineArgs, null);
 		verifySuccessWithParams(testTaskLauncher);
 
 		testTaskLauncher = launchTaskByteArray(VALID_URL, commandLineArgs, null);
@@ -89,21 +87,17 @@ public class TaskLauncherSinkTests {
 		verifySuccessWithParams(testTaskLauncher);
 	}
 
-	private void verifySuccessWithParams(
-			TaskConfiguration.TestTaskLauncher testTaskLauncher) {
-		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState())
-				.isEqualTo(LaunchState.complete);
+	private void verifySuccessWithParams(TaskConfiguration.TestTaskLauncher testTaskLauncher) {
+		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState()).isEqualTo(LaunchState.complete);
 		assertThat(testTaskLauncher.getCommandlineArguments().size()).isEqualTo(2);
 		assertThat(testTaskLauncher.getCommandlineArguments().get(0)).isEqualTo(PARAM1);
 		assertThat(testTaskLauncher.getCommandlineArguments().get(1)).isEqualTo(PARAM2);
-		assertThat(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX))
-				.isTrue();
+		assertThat(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX)).isTrue();
 	}
 
 	@Test
 	public void testSuccessWithAppName() throws Exception {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL,
-				null, APP_NAME);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL, null, APP_NAME);
 		verifySuccessWithAppName(testTaskLauncher);
 
 		testTaskLauncher = launchTaskByteArray(VALID_URL, null, APP_NAME);
@@ -115,23 +109,19 @@ public class TaskLauncherSinkTests {
 
 	@Test
 	public void testInvalidJar() throws Exception {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskTaskLaunchRequest(
-				INVALID_URL, null, APP_NAME);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskTaskLaunchRequest(INVALID_URL, null, APP_NAME);
 		verifySuccessWithAppName(testTaskLauncher);
 	}
 
-	private void verifySuccessWithAppName(
-			TaskConfiguration.TestTaskLauncher testTaskLauncher) {
-		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState())
-				.isEqualTo(LaunchState.complete);
+	private void verifySuccessWithAppName(TaskConfiguration.TestTaskLauncher testTaskLauncher) {
+		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState()).isEqualTo(LaunchState.complete);
 		assertThat(testTaskLauncher.getCommandlineArguments().size()).isEqualTo(0);
 		assertThat(testTaskLauncher.getApplicationName()).isEqualTo(APP_NAME);
 	}
 
 	@Test
 	public void testSuccessNoParams() throws Exception {
-		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL,
-				null, null);
+		TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL, null, null);
 		verifySuccessWithNoParams(testTaskLauncher);
 
 		testTaskLauncher = launchTaskByteArray(VALID_URL, null, null);
@@ -141,62 +131,55 @@ public class TaskLauncherSinkTests {
 		verifySuccessWithNoParams(testTaskLauncher);
 	}
 
-	private void verifySuccessWithNoParams(
-			TaskConfiguration.TestTaskLauncher testTaskLauncher) {
-		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState())
-				.isEqualTo(LaunchState.complete);
+	private void verifySuccessWithNoParams(TaskConfiguration.TestTaskLauncher testTaskLauncher) {
+		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState()).isEqualTo(LaunchState.complete);
 		assertThat(testTaskLauncher.getCommandlineArguments().size()).isEqualTo(0);
-		assertThat(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX))
-				.isTrue();
+		assertThat(testTaskLauncher.getApplicationName().startsWith(TASK_NAME_PREFIX)).isTrue();
 	}
 
 	@Test
 	public void testNoRun() {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher = this.context
 				.getBean(TaskConfiguration.TestTaskLauncher.class);
-		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState())
-				.isEqualTo(LaunchState.unknown);
+		assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState()).isEqualTo(LaunchState.unknown);
 	}
 
-	private TaskConfiguration.TestTaskLauncher launchTaskString(String artifactURL,
-			List<String> commandLineArgs, String applicationName) throws Exception {
+	private TaskConfiguration.TestTaskLauncher launchTaskString(String artifactURL, List<String> commandLineArgs,
+			String applicationName) throws Exception {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher = this.context
 				.getBean(TaskConfiguration.TestTaskLauncher.class);
-		String stringRequest = getStringTaskLaunchRequest(artifactURL, commandLineArgs,
-				applicationName);
+		String stringRequest = getStringTaskLaunchRequest(artifactURL, commandLineArgs, applicationName);
 		GenericMessage<String> message = new GenericMessage<>(stringRequest);
 
 		this.sink.input().send(message);
 		return testTaskLauncher;
 	}
 
-	private TaskConfiguration.TestTaskLauncher launchTaskByteArray(String artifactURL,
-			List<String> commandLineArgs, String applicationName) throws Exception {
+	private TaskConfiguration.TestTaskLauncher launchTaskByteArray(String artifactURL, List<String> commandLineArgs,
+			String applicationName) throws Exception {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher = this.context
 				.getBean(TaskConfiguration.TestTaskLauncher.class);
-		String stringRequest = getStringTaskLaunchRequest(artifactURL, commandLineArgs,
-				applicationName);
+		String stringRequest = getStringTaskLaunchRequest(artifactURL, commandLineArgs, applicationName);
 		GenericMessage<byte[]> message = new GenericMessage<>(stringRequest.getBytes());
 
 		this.sink.input().send(message);
 		return testTaskLauncher;
 	}
 
-	private String getStringTaskLaunchRequest(String artifactURL,
-			List<String> commandLineArgs, String applicationName) throws Exception {
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs,
-				this.properties, null, applicationName);
+	private String getStringTaskLaunchRequest(String artifactURL, List<String> commandLineArgs, String applicationName)
+			throws Exception {
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs, this.properties, null,
+				applicationName);
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(request);
 	}
 
-	private TaskConfiguration.TestTaskLauncher launchTaskTaskLaunchRequest(
-			String artifactURL, List<String> commandLineArgs, String applicationName)
-			throws Exception {
+	private TaskConfiguration.TestTaskLauncher launchTaskTaskLaunchRequest(String artifactURL,
+			List<String> commandLineArgs, String applicationName) throws Exception {
 		TaskConfiguration.TestTaskLauncher testTaskLauncher = this.context
 				.getBean(TaskConfiguration.TestTaskLauncher.class);
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs,
-				this.properties, null, applicationName);
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, commandLineArgs, this.properties, null,
+				applicationName);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 
 		this.sink.input().send(message);

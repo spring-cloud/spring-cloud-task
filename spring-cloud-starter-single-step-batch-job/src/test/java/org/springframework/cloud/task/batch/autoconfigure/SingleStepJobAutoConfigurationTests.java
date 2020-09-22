@@ -90,8 +90,7 @@ public class SingleStepJobAutoConfigurationTests {
 			new SingleStepJobAutoConfiguration(null, null, properties, null);
 		}
 		catch (IllegalArgumentException iae) {
-			assertThat(iae.getMessage())
-					.isEqualTo("A chunk size greater than zero is required");
+			assertThat(iae.getMessage()).isEqualTo("A chunk size greater than zero is required");
 		}
 		catch (Throwable t) {
 			fail("wrong exception was thrown", t);
@@ -104,12 +103,9 @@ public class SingleStepJobAutoConfigurationTests {
 	public void testSimpleConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(SimpleConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1",
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
 						"spring.batch.job.chunkSize=5");
 
 		applicationContextRunner.run((context) -> {

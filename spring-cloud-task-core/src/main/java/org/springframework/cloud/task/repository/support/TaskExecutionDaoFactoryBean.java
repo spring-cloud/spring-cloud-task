@@ -106,8 +106,8 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
-				.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+		((JdbcTaskExecutionDao) this.dao)
+				.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
 
 }

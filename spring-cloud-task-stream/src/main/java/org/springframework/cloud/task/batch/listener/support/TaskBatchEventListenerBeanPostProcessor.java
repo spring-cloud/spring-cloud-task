@@ -70,8 +70,7 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	private ApplicationContext applicationContext;
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName)
-			throws BeansException {
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
 		registerJobExecutionEventListener(bean);
 
@@ -83,13 +82,11 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 				registerChunkEventsListener(bean);
 
 				if (tasklet instanceof ChunkOrientedTasklet) {
-					Field chunkProviderField = ReflectionUtils
-							.findField(ChunkOrientedTasklet.class, "chunkProvider");
+					Field chunkProviderField = ReflectionUtils.findField(ChunkOrientedTasklet.class, "chunkProvider");
 					ReflectionUtils.makeAccessible(chunkProviderField);
 					SimpleChunkProvider chunkProvider = (SimpleChunkProvider) ReflectionUtils
 							.getField(chunkProviderField, tasklet);
-					Field chunkProcessorField = ReflectionUtils
-							.findField(ChunkOrientedTasklet.class, "chunkProcessor");
+					Field chunkProcessorField = ReflectionUtils.findField(ChunkOrientedTasklet.class, "chunkProcessor");
 					ReflectionUtils.makeAccessible(chunkProcessorField);
 					SimpleChunkProcessor chunkProcessor = (SimpleChunkProcessor) ReflectionUtils
 							.getField(chunkProcessorField, tasklet);
@@ -106,63 +103,55 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	}
 
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName)
-			throws BeansException {
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 
 	private void registerItemProcessEvents(SimpleChunkProcessor chunkProcessor) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER)) {
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER)) {
 			chunkProcessor.registerListener((ItemProcessListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerItemReadEvents(SimpleChunkProvider chunkProvider) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER)) {
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER)) {
 			chunkProvider.registerListener((ItemReadListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerItemWriteEvents(SimpleChunkProcessor chunkProcessor) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER)) {
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER)) {
 			chunkProcessor.registerListener((ItemWriteListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerSkipEvents(SimpleChunkProvider chunkProvider) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER)) {
-			chunkProvider.registerListener((SkipListener) this.applicationContext
-					.getBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER));
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER)) {
+			chunkProvider.registerListener(
+					(SkipListener) this.applicationContext.getBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerSkipEvents(SimpleChunkProcessor chunkProcessor) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER)) {
-			chunkProcessor.registerListener((SkipListener) this.applicationContext
-					.getBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER));
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER)) {
+			chunkProcessor.registerListener(
+					(SkipListener) this.applicationContext.getBean(BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerChunkEventsListener(Object bean) {
-		if (this.applicationContext
-				.containsBean(BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER)) {
-			((TaskletStep) bean)
-					.registerChunkListener((ChunkListener) this.applicationContext
-							.getBean(BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER));
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER)) {
+			((TaskletStep) bean).registerChunkListener(
+					(ChunkListener) this.applicationContext.getBean(BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER));
 		}
 	}
 
 	private void registerJobExecutionEventListener(Object bean) {
-		if (bean instanceof AbstractJob && this.applicationContext.containsBean(
-				BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER)) {
+		if (bean instanceof AbstractJob
+				&& this.applicationContext.containsBean(BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER)) {
 			JobExecutionListener jobExecutionEventsListener = (JobExecutionListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER);
 
@@ -172,8 +161,7 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	}
 
 	private void registerStepExecutionEventListener(Object bean) {
-		if (this.applicationContext.containsBean(
-				BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER)) {
+		if (this.applicationContext.containsBean(BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER)) {
 			StepExecutionListener stepExecutionListener = (StepExecutionListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER);
 			AbstractStep step = (AbstractStep) bean;

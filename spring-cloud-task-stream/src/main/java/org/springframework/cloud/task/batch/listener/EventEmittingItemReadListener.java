@@ -40,8 +40,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemReadListener implements ItemReadListener, Ordered {
 
-	private static final Log logger = LogFactory
-			.getLog(EventEmittingItemReadListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemReadListener.class);
 
 	private MessagePublisher<String> messagePublisher;
 
@@ -73,8 +72,7 @@ public class EventEmittingItemReadListener implements ItemReadListener, Ordered 
 			logger.debug("Executing onReadError: " + ex.getMessage(), ex);
 		}
 
-		this.messagePublisher.publishWithThrowableHeader(
-				"Exception while item was being read", ex.getMessage());
+		this.messagePublisher.publishWithThrowableHeader("Exception while item was being read", ex.getMessage());
 	}
 
 	@Override

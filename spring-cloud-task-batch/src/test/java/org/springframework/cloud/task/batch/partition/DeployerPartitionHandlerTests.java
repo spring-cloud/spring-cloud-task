@@ -90,49 +90,42 @@ public class DeployerPartitionHandlerTests {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		this.environment = new MockEnvironment();
-		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(),
-				new Date(), "", Collections.emptyList(), null, null, null);
-		Mockito.lenient().when(taskRepository.createTaskExecution())
-				.thenReturn(taskExecution);
+		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(), new Date(), "",
+				Collections.emptyList(), null, null, null);
+		Mockito.lenient().when(taskRepository.createTaskExecution()).thenReturn(taskExecution);
 	}
 
 	@Test
 	public void testDeprecatedConstructorValidation() {
-		validateDeprecatedConstructorValidation(null, null, null, null,
-				"A taskLauncher is required");
-		validateDeprecatedConstructorValidation(this.taskLauncher, null, null, null,
-				"A jobExplorer is required");
-		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer, null,
-				null, "A resource is required");
-		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer,
-				this.resource, null, "A step name is required");
+		validateDeprecatedConstructorValidation(null, null, null, null, "A taskLauncher is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, null, null, null, "A jobExplorer is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer, null, null,
+				"A resource is required");
+		validateDeprecatedConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource, null,
+				"A step name is required");
 
-		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name");
+		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step-name");
 	}
 
 	@Test
 	public void testConstructorValidation() {
-		validateConstructorValidation(null, null, null, null, null,
-				"A taskLauncher is required");
-		validateConstructorValidation(this.taskLauncher, null, null, null, null,
-				"A jobExplorer is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, null, null,
-				null, "A resource is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
-				null, null, "A step name is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
-				null, null, "A step name is required");
-		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name", null, "A TaskRepository is required");
-		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name", this.taskRepository);
+		validateConstructorValidation(null, null, null, null, null, "A taskLauncher is required");
+		validateConstructorValidation(this.taskLauncher, null, null, null, null, "A jobExplorer is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, null, null, null, "A resource is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource, null, null,
+				"A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource, null, null,
+				"A step name is required");
+		validateConstructorValidation(this.taskLauncher, this.jobExplorer, this.resource, "step-name", null,
+				"A TaskRepository is required");
+		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource, "step-name",
+				this.taskRepository);
 	}
 
 	@Test
 	public void testNoPartitions() throws Exception {
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1");
 		handler.setEnvironment(this.environment);
 
 		StepExecution stepExecution = new StepExecution("step1", new JobExecution(1L));
@@ -152,11 +145,11 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -166,18 +159,15 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
@@ -187,16 +177,14 @@ public class DeployerPartitionHandlerTests {
 		AppDefinition appDefinition = request.getDefinition();
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs("spring.cloud.task.executionid", "2"))).isTrue();
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+		assertThat(request.getCommandlineArguments().contains(formatArgs("spring.cloud.task.executionid", "2")))
+				.isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -211,33 +199,30 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setDefaultArgsAsEnvironmentVars(true);
 
-		TaskExecution taskExecution = new TaskExecution(55, null, null, null, null, null,
-				new ArrayList<>(), null, null);
+		TaskExecution taskExecution = new TaskExecution(55, null, null, null, null, null, new ArrayList<>(), null,
+				null);
 		taskExecution.setTaskName("partitionedJobTask");
 
 		Set<StepExecution> stepExecutions = new HashSet<>();
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
@@ -249,23 +234,17 @@ public class DeployerPartitionHandlerTests {
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments().isEmpty()).isTrue();
 		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
-						.isEqualTo("1");
+				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).isEqualTo("1");
 		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
-						.isEqualTo("4");
+				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).isEqualTo("4");
+		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
+				.isEqualTo("step1");
+		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_NAME))
+				.isEqualTo("partitionedJobTask_partitionedJob_step1:partition1");
 		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
-						.isEqualTo("step1");
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_NAME))
-						.isEqualTo("partitionedJobTask_partitionedJob_step1:partition1");
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID))
-						.isEqualTo("55");
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_EXECUTION_ID))
-						.isEqualTo("2");
+				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID)).isEqualTo("55");
+		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_EXECUTION_ID))
+				.isEqualTo("2");
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -280,15 +259,15 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
-		TaskExecution taskExecution = new TaskExecution(55, null, null, null, null, null,
-				new ArrayList<>(), null, null);
+		TaskExecution taskExecution = new TaskExecution(55, null, null, null, null, null, new ArrayList<>(), null,
+				null);
 
 		taskExecution.setTaskName("partitionedJobTask");
 
@@ -296,8 +275,7 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
@@ -305,13 +283,11 @@ public class DeployerPartitionHandlerTests {
 
 		handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID, "55")))
-						.isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID, "55"))).isTrue();
 	}
 
 	@Test
@@ -321,19 +297,19 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart3 = getStepExecutionStart(jobExecution, 6L);
-		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(
-				workerStepExecutionStart3, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -347,24 +323,18 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
-		when(this.jobExplorer.getStepExecution(1L, 6L))
-				.thenReturn(workerStepExecutionFinish3);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher, times(3))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher, times(3)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
-		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor.getAllValues();
 
 		validateAppDeploymentRequests(allValues, 3);
 
@@ -378,19 +348,19 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart3 = getStepExecutionStart(jobExecution, 6L);
-		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(
-				workerStepExecutionStart3, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
@@ -405,24 +375,18 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
-		when(this.jobExplorer.getStepExecution(1L, 6L))
-				.thenReturn(workerStepExecutionFinish3);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher, times(3))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher, times(3)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
-		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor.getAllValues();
 
 		validateAppDeploymentRequests(allValues, 3);
 
@@ -436,19 +400,19 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.FAILED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.FAILED);
 
 		StepExecution workerStepExecutionStart3 = getStepExecutionStart(jobExecution, 6L);
-		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(
-				workerStepExecutionStart3, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(workerStepExecutionStart3,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 		handler.setMaxWorkers(2);
 
@@ -463,24 +427,18 @@ public class DeployerPartitionHandlerTests {
 
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
-		when(this.jobExplorer.getStepExecution(1L, 6L))
-				.thenReturn(workerStepExecutionFinish3);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 6L)).thenReturn(workerStepExecutionFinish3);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher, times(3))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher, times(3)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
-		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor.getAllValues();
 
 		validateAppDeploymentRequests(allValues, 3);
 
@@ -509,11 +467,11 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
 		environmentParameters.put("foo", "bar");
@@ -531,17 +489,14 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
@@ -553,14 +508,12 @@ public class DeployerPartitionHandlerTests {
 		AppDefinition appDefinition = request.getDefinition();
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -578,11 +531,11 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		Map<String, String> environmentParameters = new HashMap<>(2);
@@ -601,17 +554,14 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
@@ -619,20 +569,17 @@ public class DeployerPartitionHandlerTests {
 		assertThat(request.getDefinition().getProperties().size()).isEqualTo(3);
 		assertThat(request.getDefinition().getProperties().get("foo")).isEqualTo("bar");
 		assertThat(request.getDefinition().getProperties().get("baz")).isEqualTo("qux");
-		assertThat(request.getDefinition().getProperties().get("task"))
-				.isEqualTo("batch");
+		assertThat(request.getDefinition().getProperties().get("task")).isEqualTo("batch");
 
 		AppDefinition appDefinition = request.getDefinition();
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -647,15 +594,15 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
@@ -669,33 +616,26 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart2);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 
 		Date startTime = new Date();
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 		Date endTime = new Date();
-		verify(this.taskLauncher, times(2))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher, times(2)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
-		List<AppDeploymentRequest> allRequests = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+		List<AppDeploymentRequest> allRequests = this.appDeploymentRequestArgumentCaptor.getAllValues();
 
 		validateAppDeploymentRequests(allRequests, 2);
 
 		validateStepExecutionResults(results);
 
 		assertThat(endTime.getTime() - startTime.getTime() >= 19999)
-				.as("Time difference was too small: "
-						+ (endTime.getTime() - startTime.getTime()))
-				.isTrue();
+				.as("Time difference was too small: " + (endTime.getTime() - startTime.getTime())).isTrue();
 	}
 
 	@Test
@@ -705,15 +645,15 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setPollInterval(20000L);
@@ -728,10 +668,8 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart2);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		Mockito.lenient().when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		Mockito.lenient().when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 
 		handler.afterPropertiesSet();
 
@@ -749,15 +687,15 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(workerStepExecutionStart1,
+				BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
-		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(workerStepExecutionStart2,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		handler.setGridSize(2);
@@ -770,23 +708,18 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart2);
 		when(this.splitter.split(masterStepExecution, 2)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
-		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish1);
+		when(this.jobExplorer.getStepExecution(1L, 5L)).thenReturn(workerStepExecutionFinish2);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher, times(2))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher, times(2)).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
-		List<AppDeploymentRequest> allRequests = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+		List<AppDeploymentRequest> allRequests = this.appDeploymentRequestArgumentCaptor.getAllValues();
 
 		validateAppDeploymentRequests(allRequests, 2);
 
@@ -800,11 +733,11 @@ public class DeployerPartitionHandlerTests {
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart = getStepExecutionStart(jobExecution, 4L);
-		StepExecution workerStepExecutionFinish = getStepExecutionFinish(
-				workerStepExecutionStart, BatchStatus.COMPLETED);
+		StepExecution workerStepExecutionFinish = getStepExecutionFinish(workerStepExecutionStart,
+				BatchStatus.COMPLETED);
 
-		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer,
+				this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		Map<String, String> deploymentProperties = new HashMap<>(2);
@@ -820,17 +753,14 @@ public class DeployerPartitionHandlerTests {
 		stepExecutions.add(workerStepExecutionStart);
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
-		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish);
+		when(this.jobExplorer.getStepExecution(1L, 4L)).thenReturn(workerStepExecutionFinish);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
-		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
+		Collection<StepExecution> results = handler.handle(this.splitter, masterStepExecution);
 
-		verify(this.taskLauncher)
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+		verify(this.taskLauncher).launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 
@@ -842,14 +772,12 @@ public class DeployerPartitionHandlerTests {
 		AppDefinition appDefinition = request.getDefinition();
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4")))
-						.isTrue();
-		assertThat(request.getCommandlineArguments().contains(formatArgs(
-				DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+		assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -861,18 +789,16 @@ public class DeployerPartitionHandlerTests {
 		return String.format("--%s=%s", key, value);
 	}
 
-	private StepExecution getStepExecutionFinish(StepExecution stepExecutionStart,
-			BatchStatus status) {
-		StepExecution workerStepExecutionFinish = new StepExecution(
-				stepExecutionStart.getStepName(), stepExecutionStart.getJobExecution());
+	private StepExecution getStepExecutionFinish(StepExecution stepExecutionStart, BatchStatus status) {
+		StepExecution workerStepExecutionFinish = new StepExecution(stepExecutionStart.getStepName(),
+				stepExecutionStart.getJobExecution());
 		workerStepExecutionFinish.setId(stepExecutionStart.getId());
 		workerStepExecutionFinish.setStatus(status);
 		return workerStepExecutionFinish;
 	}
 
 	private StepExecution getStepExecutionStart(JobExecution jobExecution, long id) {
-		StepExecution workerStepExecutionStart = new StepExecution(
-				"step1:partition" + (id - 3), jobExecution);
+		StepExecution workerStepExecutionStart = new StepExecution("step1:partition" + (id - 3), jobExecution);
 		workerStepExecutionStart.setId(id);
 		return workerStepExecutionStart;
 	}
@@ -902,8 +828,7 @@ public class DeployerPartitionHandlerTests {
 		}
 	}
 
-	private void validateAppDeploymentRequests(List<AppDeploymentRequest> allRequests,
-			int numberOfPartitions) {
+	private void validateAppDeploymentRequests(List<AppDeploymentRequest> allRequests, int numberOfPartitions) {
 		Collections.sort(allRequests, new Comparator<AppDeploymentRequest>() {
 			@Override
 			public int compare(AppDeploymentRequest o1, AppDeploymentRequest o2) {
@@ -911,8 +836,7 @@ public class DeployerPartitionHandlerTests {
 
 				String o1Command = "";
 				for (String commandlineArgument : commandlineArguments) {
-					if (commandlineArgument.contains(
-							DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
+					if (commandlineArgument.contains(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
 						o1Command = commandlineArgument;
 						break;
 					}
@@ -922,8 +846,7 @@ public class DeployerPartitionHandlerTests {
 
 				String o2Command = "";
 				for (String commandlineArgument : commandlineArguments) {
-					if (commandlineArgument.contains(
-							DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
+					if (commandlineArgument.contains(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)) {
 						o2Command = commandlineArgument;
 						break;
 					}
@@ -940,39 +863,32 @@ public class DeployerPartitionHandlerTests {
 
 			AppDefinition appDefinition = request.getDefinition();
 			assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
-			assertThat(request.getCommandlineArguments().contains(formatArgs(
-					DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1")))
+			assertThat(request.getCommandlineArguments()
+					.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+			assertThat(request.getCommandlineArguments().contains(
+					formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(i))))
 							.isTrue();
 			assertThat(request.getCommandlineArguments()
-					.contains(formatArgs(
-							DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-							String.valueOf(i)))).isTrue();
-			assertThat(request.getCommandlineArguments().contains(formatArgs(
-					DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1")))
-							.isTrue();
-			assertThat(request.getCommandlineArguments()
-					.contains(formatArgs("spring.cloud.task.executionid", "2"))).isTrue();
+					.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+			assertThat(request.getCommandlineArguments().contains(formatArgs("spring.cloud.task.executionid", "2")))
+					.isTrue();
 		}
 	}
 
-	private void validateDeprecatedConstructorValidation(TaskLauncher taskLauncher,
-			JobExplorer jobExplorer, Resource resource, String stepName,
-			String expectedMessage) {
+	private void validateDeprecatedConstructorValidation(TaskLauncher taskLauncher, JobExplorer jobExplorer,
+			Resource resource, String stepName, String expectedMessage) {
 		try {
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
-					this.taskRepository);
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName, this.taskRepository);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo(expectedMessage);
 		}
 	}
 
-	private void validateConstructorValidation(TaskLauncher taskLauncher,
-			JobExplorer jobExplorer, Resource resource, String stepName,
-			TaskRepository taskRepository, String expectedMessage) {
+	private void validateConstructorValidation(TaskLauncher taskLauncher, JobExplorer jobExplorer, Resource resource,
+			String stepName, TaskRepository taskRepository, String expectedMessage) {
 		try {
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName,
-					taskRepository);
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, stepName, taskRepository);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo(expectedMessage);

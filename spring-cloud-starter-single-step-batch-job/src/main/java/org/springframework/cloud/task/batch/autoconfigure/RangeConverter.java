@@ -51,9 +51,8 @@ public class RangeConverter implements Converter<String, Range> {
 			return new Range(start, end);
 		}
 		else {
-			throw new IllegalArgumentException(String.format(
-					"%s is in an illegal format.  Ranges must be specified as startIndex-endIndex",
-					source));
+			throw new IllegalArgumentException(String
+					.format("%s is in an illegal format.  Ranges must be specified as startIndex-endIndex", source));
 		}
 	}
 

@@ -82,9 +82,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private String getDatabaseType(DataSource dataSource) {
 		try {
-			return JdbcUtils
-					.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString())
-					.toLowerCase();
+			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString()).toLowerCase();
 		}
 		catch (MetaDataAccessException ex) {
 			throw new IllegalStateException("Unable to detect database type", ex);
@@ -94,10 +92,9 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		boolean isInitializeEnabled = (this.taskProperties.isInitializeEnabled() != null)
-				? this.taskProperties.isInitializeEnabled()
-				: this.taskInitializationEnabled;
-		if (this.dataSource != null && isInitializeEnabled && this.taskProperties
-				.getTablePrefix().equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
+				? this.taskProperties.isInitializeEnabled() : this.taskInitializationEnabled;
+		if (this.dataSource != null && isInitializeEnabled
+				&& this.taskProperties.getTablePrefix().equals(TaskProperties.DEFAULT_TABLE_PREFIX)) {
 			String platform = getDatabaseType(this.dataSource);
 			if ("hsql".equals(platform)) {
 				platform = "hsqldb";
@@ -119,8 +116,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 			schemaLocation = schemaLocation.replace("@@platform@@", platform);
 			populator.addScript(this.resourceLoader.getResource(schemaLocation));
 			populator.setContinueOnError(true);
-			logger.debug(
-					String.format("Initializing task schema for %s database", platform));
+			logger.debug(String.format("Initializing task schema for %s database", platform));
 			DatabasePopulatorUtils.execute(populator, this.dataSource);
 		}
 	}

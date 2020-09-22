@@ -47,12 +47,9 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 	}
 
 	@TestPropertySource(properties = { "vcap.application.org_name=PivotalOrg",
-			"vcap.application.space_id=SpringSpaceId",
-			"vcap.application.space_name=SpringSpace",
-			"vcap.application.application_name=App123",
-			"vcap.application.application_id=123guid",
-			"vcap.application.application_version=2.0",
-			"vcap.application.instance_index=123" })
+			"vcap.application.space_id=SpringSpaceId", "vcap.application.space_name=SpringSpace",
+			"vcap.application.application_name=App123", "vcap.application.application_id=123guid",
+			"vcap.application.application_version=2.0", "vcap.application.instance_index=123" })
 	@ActiveProfiles("cloud")
 	public static class ActiveCloudProfile extends AbstractMicrometerTest {
 
@@ -70,12 +67,9 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 	}
 
 	@TestPropertySource(properties = { "vcap.application.org_name=PivotalOrg",
-			"vcap.application.space_id=SpringSpaceId",
-			"vcap.application.space_name=SpringSpace",
-			"vcap.application.application_name=App123",
-			"vcap.application.application_id=123guid",
-			"vcap.application.application_version=2.0",
-			"vcap.application.instance_index=123" })
+			"vcap.application.space_id=SpringSpaceId", "vcap.application.space_name=SpringSpace",
+			"vcap.application.application_name=App123", "vcap.application.application_id=123guid",
+			"vcap.application.application_version=2.0", "vcap.application.instance_index=123" })
 	public static class InactiveCloudProfile extends AbstractMicrometerTest {
 
 		@Test
@@ -91,8 +85,7 @@ public class CloudFoundryMicrometerTagsConfigurationTest {
 
 	}
 
-	@TestPropertySource(
-			properties = { "spring.cloud.task.metrics.cf.tags.enabled=false" })
+	@TestPropertySource(properties = { "spring.cloud.task.metrics.cf.tags.enabled=false" })
 	@ActiveProfiles("cloud")
 	public static class ActiveCloudProfileDisabledProperty extends InactiveCloudProfile {
 

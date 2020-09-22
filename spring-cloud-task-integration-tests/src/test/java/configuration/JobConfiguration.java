@@ -59,8 +59,7 @@ public class JobConfiguration {
 	public Step step1() {
 		return this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 			@Override
-			public RepeatStatus execute(StepContribution contribution,
-					ChunkContext chunkContext) throws Exception {
+			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				System.out.println("Executed");
 				return RepeatStatus.FINISHED;
 			}
@@ -69,8 +68,7 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step2() {
-		return this.stepBuilderFactory.get("step2")
-				.<String, String>chunk(DEFAULT_CHUNK_COUNT)
+		return this.stepBuilderFactory.get("step2").<String, String>chunk(DEFAULT_CHUNK_COUNT)
 				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
 				.processor(new ItemProcessor<String, String>() {
 					@Override

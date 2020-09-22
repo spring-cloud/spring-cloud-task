@@ -71,11 +71,9 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 	}
 
 	@Override
-	public Map<String, String> getEnvironmentVariables(
-			ExecutionContext executionContext) {
+	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
 
-		Map<String, String> environmentProperties = new HashMap<>(
-				this.environmentProperties.size());
+		Map<String, String> environmentProperties = new HashMap<>(this.environmentProperties.size());
 
 		if (this.includeCurrentEnvironment) {
 			environmentProperties.putAll(getCurrentEnvironmentProperties());
@@ -91,11 +89,9 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 
 		Set<String> keys = new HashSet<>();
 
-		for (PropertySource<?> propertySource : ((AbstractEnvironment) this.environment)
-				.getPropertySources()) {
+		for (PropertySource<?> propertySource : ((AbstractEnvironment) this.environment).getPropertySources()) {
 			if (propertySource instanceof MapPropertySource) {
-				keys.addAll(Arrays
-						.asList(((MapPropertySource) propertySource).getPropertyNames()));
+				keys.addAll(Arrays.asList(((MapPropertySource) propertySource).getPropertyNames()));
 			}
 		}
 

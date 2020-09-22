@@ -71,13 +71,11 @@ public final class TestVerifierUtils {
 	 * @param mockAppender The appender that is associated with the test.
 	 * @param logSample The string to search for in the log entry.
 	 */
-	public static void verifyLogEntryExists(Appender mockAppender,
-			final String logSample) {
+	public static void verifyLogEntryExists(Appender mockAppender, final String logSample) {
 		verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {
 			@Override
 			public boolean matches(final Object argument) {
-				return ((LoggingEvent) argument).getFormattedMessage()
-						.contains(logSample);
+				return ((LoggingEvent) argument).getFormattedMessage().contains(logSample);
 			}
 		}));
 	}
@@ -92,8 +90,7 @@ public final class TestVerifierUtils {
 		long executionId = randomGenerator.nextLong();
 		String taskName = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, null, taskName, startTime, null, null,
-				new ArrayList<>(), null, null);
+		return new TaskExecution(executionId, null, taskName, startTime, null, null, new ArrayList<>(), null, null);
 	}
 
 	/**
@@ -109,8 +106,8 @@ public final class TestVerifierUtils {
 		String taskName = UUID.randomUUID().toString();
 		String exitMessage = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, exitCode, taskName, startTime, endTime,
-				exitMessage, new ArrayList<>(), null, null);
+		return new TaskExecution(executionId, exitCode, taskName, startTime, endTime, exitMessage, new ArrayList<>(),
+				null, null);
 	}
 
 	/**
@@ -126,8 +123,7 @@ public final class TestVerifierUtils {
 		for (int i = 0; i < ARG_SIZE; i++) {
 			args.add(UUID.randomUUID().toString());
 		}
-		return new TaskExecution(executionId, null, taskName, startTime, null, null, args,
-				null, externalExecutionId);
+		return new TaskExecution(executionId, null, taskName, startTime, null, null, args, null, externalExecutionId);
 	}
 
 	/**
@@ -135,10 +131,8 @@ public final class TestVerifierUtils {
 	 * @param expectedTaskExecution The expected value for the task execution.
 	 * @param actualTaskExecution The actual value for the task execution.
 	 */
-	public static void verifyTaskExecution(TaskExecution expectedTaskExecution,
-			TaskExecution actualTaskExecution) {
-		assertThat(actualTaskExecution.getExecutionId())
-				.as("taskExecutionId must be equal")
+	public static void verifyTaskExecution(TaskExecution expectedTaskExecution, TaskExecution actualTaskExecution) {
+		assertThat(actualTaskExecution.getExecutionId()).as("taskExecutionId must be equal")
 				.isEqualTo(expectedTaskExecution.getExecutionId());
 		if (actualTaskExecution.getStartTime() != null) {
 			assertThat(actualTaskExecution.getStartTime()).as("startTime must be equal")
@@ -156,31 +150,26 @@ public final class TestVerifierUtils {
 				.isEqualTo(expectedTaskExecution.getExitMessage());
 		assertThat(actualTaskExecution.getErrorMessage()).as("errorMessage must be equal")
 				.isEqualTo(expectedTaskExecution.getErrorMessage());
-		assertThat(actualTaskExecution.getExternalExecutionId())
-				.as("externalExecutionId must be equal")
+		assertThat(actualTaskExecution.getExternalExecutionId()).as("externalExecutionId must be equal")
 				.isEqualTo(expectedTaskExecution.getExternalExecutionId());
-		assertThat(actualTaskExecution.getParentExecutionId())
-				.as("parentExecutionId must be equal")
+		assertThat(actualTaskExecution.getParentExecutionId()).as("parentExecutionId must be equal")
 				.isEqualTo(expectedTaskExecution.getParentExecutionId());
 
 		if (expectedTaskExecution.getArguments() != null) {
-			assertThat(actualTaskExecution.getArguments())
-					.as("arguments should not be null").isNotNull();
+			assertThat(actualTaskExecution.getArguments()).as("arguments should not be null").isNotNull();
 			assertThat(actualTaskExecution.getArguments().size())
 					.as("arguments result set count should match expected count")
 					.isEqualTo(expectedTaskExecution.getArguments().size());
 		}
 		else {
-			assertThat(actualTaskExecution.getArguments()).as("arguments should be null")
-					.isNull();
+			assertThat(actualTaskExecution.getArguments()).as("arguments should be null").isNull();
 		}
 		Set<String> args = new HashSet<>();
 		for (String param : expectedTaskExecution.getArguments()) {
 			args.add(param);
 		}
 		for (String arg : actualTaskExecution.getArguments()) {
-			assertThat(args.contains(arg)).as("arg must exist in the repository")
-					.isTrue();
+			assertThat(args.contains(arg)).as("arg must exist in the repository").isTrue();
 		}
 	}
 

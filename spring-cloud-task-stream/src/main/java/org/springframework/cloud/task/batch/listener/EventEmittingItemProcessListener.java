@@ -73,8 +73,7 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 
 	@Override
 	public void onProcessError(Object item, Exception e) {
-		this.messagePublisher.publishWithThrowableHeader(
-				"Exception while item was being processed", e.getMessage());
+		this.messagePublisher.publishWithThrowableHeader("Exception while item was being processed", e.getMessage());
 	}
 
 	@Override

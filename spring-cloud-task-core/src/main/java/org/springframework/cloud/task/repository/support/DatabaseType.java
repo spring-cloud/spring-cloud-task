@@ -106,15 +106,11 @@ public enum DatabaseType {
 	 * @return DatabaseType The database type associated with the datasource.
 	 * @throws MetaDataAccessException thrown if failure occurs on metadata lookup.
 	 */
-	public static DatabaseType fromMetaData(DataSource dataSource)
-			throws MetaDataAccessException {
-		String databaseProductName = JdbcUtils
-				.extractDatabaseMetaData(dataSource, "getDatabaseProductName").toString();
-		if (StringUtils.hasText(databaseProductName)
-				&& !databaseProductName.equals("DB2/Linux")
+	public static DatabaseType fromMetaData(DataSource dataSource) throws MetaDataAccessException {
+		String databaseProductName = JdbcUtils.extractDatabaseMetaData(dataSource, "getDatabaseProductName").toString();
+		if (StringUtils.hasText(databaseProductName) && !databaseProductName.equals("DB2/Linux")
 				&& databaseProductName.startsWith("DB2")) {
-			String databaseProductVersion = JdbcUtils
-					.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion")
+			String databaseProductVersion = JdbcUtils.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion")
 					.toString();
 			if (databaseProductVersion.startsWith("ARI")) {
 				databaseProductName = "DB2VSE";
@@ -124,8 +120,7 @@ public enum DatabaseType {
 			}
 			else if (databaseProductName.indexOf("AS") != -1
 					&& (databaseProductVersion.startsWith("QSQ") || databaseProductVersion
-							.substring(databaseProductVersion.indexOf('V'))
-							.matches("V\\dR\\d[mM]\\d"))) {
+							.substring(databaseProductVersion.indexOf('V')).matches("V\\dR\\d[mM]\\d"))) {
 				databaseProductName = "DB2AS400";
 			}
 			else {
@@ -149,8 +144,7 @@ public enum DatabaseType {
 			productName = "MySQL";
 		}
 		if (!dbNameMap.containsKey(productName)) {
-			throw new IllegalArgumentException(
-					"DatabaseType not found for product name: [" + productName + "]");
+			throw new IllegalArgumentException("DatabaseType not found for product name: [" + productName + "]");
 		}
 		else {
 			return dbNameMap.get(productName);

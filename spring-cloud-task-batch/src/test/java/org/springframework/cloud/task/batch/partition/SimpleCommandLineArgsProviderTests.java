@@ -36,8 +36,7 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
-				taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
 
@@ -56,8 +55,7 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
-				taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
 		provider.setAppendedArgs(appendedValues);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);
@@ -76,8 +74,7 @@ public class SimpleCommandLineArgsProviderTests {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setArguments(Arrays.asList("foo", "bar", "baz"));
 
-		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
-				taskExecution);
+		SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
 		provider.setAppendedArgs(null);
 
 		List<String> commandLineArgs = provider.getCommandLineArgs(null);

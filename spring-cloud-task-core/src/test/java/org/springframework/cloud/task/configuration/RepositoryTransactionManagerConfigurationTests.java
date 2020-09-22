@@ -50,17 +50,14 @@ public class RepositoryTransactionManagerConfigurationTests {
 	@Test
 	public void testZeroCustomTransactionManagerConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								SimpleTaskAutoConfiguration.class,
-								ZeroTransactionManagerConfiguration.class))
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class, ZeroTransactionManagerConfiguration.class))
 				.withPropertyValues("application.name=transactionManagerTask");
 
 		applicationContextRunner.run((context) -> {
 			DataSource dataSource = context.getBean("dataSource", DataSource.class);
 
-			int taskExecutionCount = JdbcTestUtils
-					.countRowsInTable(new JdbcTemplate(dataSource), "TASK_EXECUTION");
+			int taskExecutionCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "TASK_EXECUTION");
 
 			assertThat(taskExecutionCount).isEqualTo(1);
 		});
@@ -78,29 +75,24 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 	private void testConfiguration(Class configurationClass) {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								SimpleTaskAutoConfiguration.class, configurationClass))
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class, configurationClass))
 				.withPropertyValues("application.name=transactionManagerTask");
 
 		applicationContextRunner.run((context) -> {
 			DataSource dataSource = context.getBean("dataSource", DataSource.class);
 
-			int taskExecutionCount = JdbcTestUtils
-					.countRowsInTable(new JdbcTemplate(dataSource), "TASK_EXECUTION");
+			int taskExecutionCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "TASK_EXECUTION");
 
 			// Verify that the create call was rolled back
 			assertThat(taskExecutionCount).isEqualTo(0);
 
 			// Execute a new create call so that things close cleanly
-			TaskRepository taskRepository = context.getBean("taskRepository",
-					TaskRepository.class);
+			TaskRepository taskRepository = context.getBean("taskRepository", TaskRepository.class);
 
-			TaskExecution taskExecution = taskRepository
-					.createTaskExecution("transactionManagerTask");
-			taskExecution = taskRepository.startTaskExecution(
-					taskExecution.getExecutionId(), taskExecution.getTaskName(),
-					new Date(), new ArrayList<>(0), null);
+			TaskExecution taskExecution = taskRepository.createTaskExecution("transactionManagerTask");
+			taskExecution = taskRepository.startTaskExecution(taskExecution.getExecutionId(),
+					taskExecution.getTaskName(), new Date(), new ArrayList<>(0), null);
 
 			TaskLifecycleListener listener = context.getBean(TaskLifecycleListener.class);
 
@@ -129,8 +121,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 	public static class SingleTransactionManagerConfiguration {
 
 		@Bean
-		public TaskConfigurer taskConfigurer(DataSource dataSource,
-				PlatformTransactionManager transactionManager) {
+		public TaskConfigurer taskConfigurer(DataSource dataSource, PlatformTransactionManager transactionManager) {
 			return new DefaultTaskConfigurer(dataSource) {
 				@Override
 				public PlatformTransactionManager getTransactionManager() {
@@ -156,8 +147,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 	public static class MultipleTransactionManagerConfiguration {
 
 		@Bean
-		public TaskConfigurer taskConfigurer(DataSource dataSource,
-				PlatformTransactionManager transactionManager) {
+		public TaskConfigurer taskConfigurer(DataSource dataSource, PlatformTransactionManager transactionManager) {
 			return new DefaultTaskConfigurer(dataSource) {
 				@Override
 				public PlatformTransactionManager getTransactionManager() {
@@ -188,8 +178,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 	}
 
-	private static class TestDataSourceTransactionManager
-			extends DataSourceTransactionManager {
+	private static class TestDataSourceTransactionManager extends DataSourceTransactionManager {
 
 		protected TestDataSourceTransactionManager(DataSource dataSource) {
 			super(dataSource);

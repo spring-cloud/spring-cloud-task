@@ -47,13 +47,11 @@ import org.springframework.core.annotation.AnnotationUtils;
  * @author Glenn Renfro
  * @since 2.1.0
  */
-public class TaskListenerExecutorObjectFactory
-		implements ObjectFactory<TaskExecutionListener> {
+public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExecutionListener> {
 
 	private static final Log logger = LogFactory.getLog(TaskListenerExecutor.class);
 
-	private final Set<Class<?>> nonAnnotatedClasses = Collections
-			.newSetFromMap(new ConcurrentHashMap<>());
+	private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	private ConfigurableApplicationContext context;
 
@@ -73,8 +71,7 @@ public class TaskListenerExecutorObjectFactory
 		this.afterTaskInstances = new HashMap<>();
 		this.failedTaskInstances = new HashMap<>();
 		initializeExecutor();
-		return new TaskListenerExecutor(this.beforeTaskInstances, this.afterTaskInstances,
-				this.failedTaskInstances);
+		return new TaskListenerExecutor(this.beforeTaskInstances, this.afterTaskInstances, this.failedTaskInstances);
 	}
 
 	private void initializeExecutor() {
@@ -90,8 +87,7 @@ public class TaskListenerExecutorObjectFactory
 					// An unresolvable bean type, probably from a lazy bean - let's ignore
 					// it.
 					if (logger.isDebugEnabled()) {
-						logger.debug("Could not resolve target class for bean with name '"
-								+ beanName + "'", ex);
+						logger.debug("Could not resolve target class for bean with name '" + beanName + "'", ex);
 					}
 				}
 				if (type != null) {
@@ -103,10 +99,7 @@ public class TaskListenerExecutorObjectFactory
 						catch (RuntimeException ex) {
 							// An invalid scoped proxy arrangement - let's ignore it.
 							if (logger.isDebugEnabled()) {
-								logger.debug(
-										"Could not resolve target bean for scoped proxy '"
-												+ beanName + "'",
-										ex);
+								logger.debug("Could not resolve target bean for scoped proxy '" + beanName + "'", ex);
 							}
 						}
 					}
@@ -115,9 +108,7 @@ public class TaskListenerExecutorObjectFactory
 					}
 					catch (RuntimeException ex) {
 						throw new BeanInitializationException(
-								"Failed to process @BeforeTask "
-										+ "annotation on bean with name '" + beanName
-										+ "'",
+								"Failed to process @BeforeTask " + "annotation on bean with name '" + beanName + "'",
 								ex);
 					}
 				}
@@ -128,12 +119,11 @@ public class TaskListenerExecutorObjectFactory
 
 	private void processBean(String beanName, final Class<?> type) {
 		if (!this.nonAnnotatedClasses.contains(type)) {
-			Map<Method, BeforeTask> beforeTaskMethods = (new MethodGetter<BeforeTask>())
-					.getMethods(type, BeforeTask.class);
-			Map<Method, AfterTask> afterTaskMethods = (new MethodGetter<AfterTask>())
-					.getMethods(type, AfterTask.class);
-			Map<Method, FailedTask> failedTaskMethods = (new MethodGetter<FailedTask>())
-					.getMethods(type, FailedTask.class);
+			Map<Method, BeforeTask> beforeTaskMethods = (new MethodGetter<BeforeTask>()).getMethods(type,
+					BeforeTask.class);
+			Map<Method, AfterTask> afterTaskMethods = (new MethodGetter<AfterTask>()).getMethods(type, AfterTask.class);
+			Map<Method, FailedTask> failedTaskMethods = (new MethodGetter<FailedTask>()).getMethods(type,
+					FailedTask.class);
 
 			if (beforeTaskMethods.isEmpty() && afterTaskMethods.isEmpty()) {
 				this.nonAnnotatedClasses.add(type);
@@ -141,20 +131,17 @@ public class TaskListenerExecutorObjectFactory
 			}
 			if (!beforeTaskMethods.isEmpty()) {
 				for (Method beforeTaskMethod : beforeTaskMethods.keySet()) {
-					this.beforeTaskInstances.put(beforeTaskMethod,
-							this.context.getBean(beanName));
+					this.beforeTaskInstances.put(beforeTaskMethod, this.context.getBean(beanName));
 				}
 			}
 			if (!afterTaskMethods.isEmpty()) {
 				for (Method afterTaskMethod : afterTaskMethods.keySet()) {
-					this.afterTaskInstances.put(afterTaskMethod,
-							this.context.getBean(beanName));
+					this.afterTaskInstances.put(afterTaskMethod, this.context.getBean(beanName));
 				}
 			}
 			if (!failedTaskMethods.isEmpty()) {
 				for (Method failedTaskMethod : failedTaskMethods.keySet()) {
-					this.failedTaskInstances.put(failedTaskMethod,
-							this.context.getBean(beanName));
+					this.failedTaskInstances.put(failedTaskMethod, this.context.getBean(beanName));
 				}
 			}
 		}
@@ -162,11 +149,10 @@ public class TaskListenerExecutorObjectFactory
 
 	private static class MethodGetter<T extends Annotation> {
 
-		public Map<Method, T> getMethods(final Class<?> type,
-				final Class<T> annotationClass) {
+		public Map<Method, T> getMethods(final Class<?> type, final Class<T> annotationClass) {
 			return MethodIntrospector.selectMethods(type,
-					(MethodIntrospector.MetadataLookup<T>) method -> AnnotationUtils
-							.findAnnotation(method, annotationClass));
+					(MethodIntrospector.MetadataLookup<T>) method -> AnnotationUtils.findAnnotation(method,
+							annotationClass));
 		}
 
 	}

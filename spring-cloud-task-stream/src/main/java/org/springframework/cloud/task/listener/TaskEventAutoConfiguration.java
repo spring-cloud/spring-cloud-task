@@ -38,8 +38,8 @@ import org.springframework.messaging.MessageChannel;
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
 // @checkstyle:off
-@ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled",
-		havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled", havingValue = "true",
+		matchIfMissing = true)
 // @checkstyle:on
 @PropertySource("classpath:/org/springframework/cloud/task/application.properties")
 @AutoConfigureBefore(BindingServiceConfiguration.class)
@@ -70,8 +70,7 @@ public class TaskEventAutoConfiguration {
 
 		@Bean
 		public GatewayProxyFactoryBean taskEventListener() {
-			GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(
-					TaskExecutionListener.class);
+			GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(TaskExecutionListener.class);
 
 			factoryBean.setDefaultRequestChannelName(TaskEventChannels.TASK_EVENTS);
 

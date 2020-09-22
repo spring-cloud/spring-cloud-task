@@ -28,9 +28,8 @@ public class H2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 
 	@Override
 	public String getPageQuery(Pageable pageable) {
-		String topClause = new StringBuilder().append("LIMIT ")
-				.append(pageable.getOffset()).append(" ").append(pageable.getPageSize())
-				.toString();
+		String topClause = new StringBuilder().append("LIMIT ").append(pageable.getOffset()).append(" ")
+				.append(pageable.getPageSize()).toString();
 		return SqlPagingQueryUtils.generateTopJumpToQuery(this, topClause);
 	}
 

@@ -46,8 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2.1.0
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-		TaskListenerExecutorObjectFactoryTests.TaskExecutionListenerConfiguration.class })
+@ContextConfiguration(classes = { TaskListenerExecutorObjectFactoryTests.TaskExecutionListenerConfiguration.class })
 @DirtiesContext
 public class TaskListenerExecutorObjectFactoryTests {
 
@@ -81,15 +80,13 @@ public class TaskListenerExecutorObjectFactoryTests {
 	@BeforeEach
 	public void setup() {
 		taskExecutionListenerResults.clear();
-		this.taskListenerExecutorObjectFactory = new TaskListenerExecutorObjectFactory(
-				this.context);
+		this.taskListenerExecutorObjectFactory = new TaskListenerExecutorObjectFactory(this.context);
 		this.taskListenerExecutor = this.taskListenerExecutorObjectFactory.getObject();
 	}
 
 	@Test
 	public void verifyTaskStartupListener() {
-		this.taskListenerExecutor
-				.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+		this.taskListenerExecutor.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
 		validateSingleEntry(BEFORE_LISTENER);
 	}
 
@@ -108,18 +105,14 @@ public class TaskListenerExecutorObjectFactoryTests {
 
 	@Test
 	public void verifyAllListener() {
-		this.taskListenerExecutor
-				.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+		this.taskListenerExecutor.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
 		this.taskListenerExecutor.onTaskFailed(createSampleTaskExecution(FAIL_LISTENER),
 				new IllegalStateException("oops"));
 		this.taskListenerExecutor.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
 		assertThat(taskExecutionListenerResults.size()).isEqualTo(3);
-		assertThat(taskExecutionListenerResults.get(0).getTaskName())
-				.isEqualTo(BEFORE_LISTENER);
-		assertThat(taskExecutionListenerResults.get(1).getTaskName())
-				.isEqualTo(FAIL_LISTENER);
-		assertThat(taskExecutionListenerResults.get(2).getTaskName())
-				.isEqualTo(AFTER_LISTENER);
+		assertThat(taskExecutionListenerResults.get(0).getTaskName()).isEqualTo(BEFORE_LISTENER);
+		assertThat(taskExecutionListenerResults.get(1).getTaskName()).isEqualTo(FAIL_LISTENER);
+		assertThat(taskExecutionListenerResults.get(2).getTaskName()).isEqualTo(AFTER_LISTENER);
 	}
 
 	private TaskExecution createSampleTaskExecution(String taskName) {
@@ -147,20 +140,17 @@ public class TaskListenerExecutorObjectFactoryTests {
 
 		@BeforeTask
 		public void initBeforeListener(TaskExecution taskExecution) {
-			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults
-					.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 
 		@AfterTask
 		public void initAfterListener(TaskExecution taskExecution) {
-			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults
-					.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 
 		@FailedTask
 		public void initFailedListener(TaskExecution taskExecution, Throwable exception) {
-			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults
-					.add(taskExecution);
+			TaskListenerExecutorObjectFactoryTests.taskExecutionListenerResults.add(taskExecution);
 		}
 
 	}

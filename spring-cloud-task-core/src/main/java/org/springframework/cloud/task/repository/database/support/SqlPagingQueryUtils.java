@@ -37,13 +37,11 @@ public final class SqlPagingQueryUtils {
 	 * @param limitClause the implementation specific top clause to be used
 	 * @return the generated query
 	 */
-	public static String generateLimitJumpToQuery(AbstractSqlPagingQueryProvider provider,
-			String limitClause) {
+	public static String generateLimitJumpToQuery(AbstractSqlPagingQueryProvider provider, String limitClause) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ").append(provider.getSelectClause());
 		sql.append(" FROM ").append(provider.getFromClause());
-		sql.append(provider.getWhereClause() == null ? ""
-				: " WHERE " + provider.getWhereClause());
+		sql.append(provider.getWhereClause() == null ? "" : " WHERE " + provider.getWhereClause());
 		sql.append(" ORDER BY ").append(buildSortClause(provider));
 		sql.append(" ").append(limitClause);
 
@@ -57,14 +55,11 @@ public final class SqlPagingQueryUtils {
 	 * @param topClause the implementation specific top clause to be used
 	 * @return the generated query
 	 */
-	public static String generateTopJumpToQuery(AbstractSqlPagingQueryProvider provider,
-			String topClause) {
+	public static String generateTopJumpToQuery(AbstractSqlPagingQueryProvider provider, String topClause) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(topClause).append(" ")
-				.append(provider.getSelectClause());
+		sql.append("SELECT ").append(topClause).append(" ").append(provider.getSelectClause());
 		sql.append(" FROM ").append(provider.getFromClause());
-		sql.append(provider.getWhereClause() == null ? ""
-				: " WHERE " + provider.getWhereClause());
+		sql.append(provider.getWhereClause() == null ? "" : " WHERE " + provider.getWhereClause());
 		sql.append(" ORDER BY ").append(buildSortClause(provider));
 
 		return sql.toString();
@@ -76,8 +71,8 @@ public final class SqlPagingQueryUtils {
 	 * @param remainingPageQuery if true assumes more will be appended to where clause
 	 * @param sql the sql statement to be appended.
 	 */
-	public static void buildWhereClause(AbstractSqlPagingQueryProvider provider,
-			boolean remainingPageQuery, StringBuilder sql) {
+	public static void buildWhereClause(AbstractSqlPagingQueryProvider provider, boolean remainingPageQuery,
+			StringBuilder sql) {
 		if (remainingPageQuery) {
 			sql.append(" WHERE ");
 			if (provider.getWhereClause() != null) {
@@ -87,8 +82,7 @@ public final class SqlPagingQueryUtils {
 			}
 		}
 		else {
-			sql.append(provider.getWhereClause() == null ? ""
-					: " WHERE " + provider.getWhereClause());
+			sql.append(provider.getWhereClause() == null ? "" : " WHERE " + provider.getWhereClause());
 		}
 	}
 

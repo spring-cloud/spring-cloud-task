@@ -56,12 +56,10 @@ public class TaskBatchExecutionListener extends JobExecutionListenerSupport {
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
 		if (this.taskExecution == null) {
-			logger.warn(
-					"This job was executed outside the scope of a task but still used the task listener.");
+			logger.warn("This job was executed outside the scope of a task but still used the task listener.");
 		}
 		else {
-			logger.info(String.format(
-					"The job execution id %s was run within the task execution %s",
+			logger.info(String.format("The job execution id %s was run within the task execution %s",
 					jobExecution.getId(), this.taskExecution.getExecutionId()));
 			this.taskBatchDao.saveRelationship(this.taskExecution, jobExecution);
 		}

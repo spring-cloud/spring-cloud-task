@@ -56,34 +56,24 @@ public class StepExecutionEventTests {
 		stepExecution.setWriteSkipCount(5);
 
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
-		assertThat(stepExecutionEvent.getStepName())
-				.as("stepName result was not as expected").isEqualTo(STEP_NAME);
-		assertThat(stepExecutionEvent.getStartTime())
-				.as("startTime result was not as expected")
+		assertThat(stepExecutionEvent.getStepName()).as("stepName result was not as expected").isEqualTo(STEP_NAME);
+		assertThat(stepExecutionEvent.getStartTime()).as("startTime result was not as expected")
 				.isEqualTo(stepExecution.getStartTime());
-		assertThat(stepExecutionEvent.getEndTime())
-				.as("endTime result was not as expected")
+		assertThat(stepExecutionEvent.getEndTime()).as("endTime result was not as expected")
 				.isEqualTo(stepExecution.getEndTime());
-		assertThat(stepExecutionEvent.getLastUpdated())
-				.as("lastUpdated result was not as expected")
+		assertThat(stepExecutionEvent.getLastUpdated()).as("lastUpdated result was not as expected")
 				.isEqualTo(stepExecution.getLastUpdated());
-		assertThat(stepExecutionEvent.getCommitCount())
-				.as("commitCount result was not as expected")
+		assertThat(stepExecutionEvent.getCommitCount()).as("commitCount result was not as expected")
 				.isEqualTo(stepExecution.getCommitCount());
-		assertThat(stepExecutionEvent.getReadCount())
-				.as("readCount result was not as expected")
+		assertThat(stepExecutionEvent.getReadCount()).as("readCount result was not as expected")
 				.isEqualTo(stepExecution.getReadCount());
-		assertThat(stepExecutionEvent.getReadSkipCount())
-				.as("readSkipCount result was not as expected")
+		assertThat(stepExecutionEvent.getReadSkipCount()).as("readSkipCount result was not as expected")
 				.isEqualTo(stepExecution.getReadSkipCount());
-		assertThat(stepExecutionEvent.getWriteCount())
-				.as("writeCount result was not as expected")
+		assertThat(stepExecutionEvent.getWriteCount()).as("writeCount result was not as expected")
 				.isEqualTo(stepExecution.getWriteCount());
-		assertThat(stepExecutionEvent.getWriteSkipCount())
-				.as("writeSkipCount result was not as expected")
+		assertThat(stepExecutionEvent.getWriteSkipCount()).as("writeSkipCount result was not as expected")
 				.isEqualTo(stepExecution.getWriteSkipCount());
-		assertThat(stepExecutionEvent.getSkipCount())
-				.as("skipCount result was not as expected")
+		assertThat(stepExecutionEvent.getSkipCount()).as("skipCount result was not as expected")
 				.isEqualTo(stepExecution.getSkipCount());
 	}
 
@@ -101,8 +91,8 @@ public class StepExecutionEventTests {
 	public void testGetSummary() {
 		StepExecution stepExecution = getBasicStepExecution();
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
-		assertThat(stepExecutionEvent.getSummary()).isEqualTo(
-				"StepExecutionEvent: id=null, version=null, name=STEP_NAME, status=STARTING,"
+		assertThat(stepExecutionEvent.getSummary())
+				.isEqualTo("StepExecutionEvent: id=null, version=null, name=STEP_NAME, status=STARTING,"
 						+ " exitStatus=EXECUTING, readCount=0, filterCount=0, writeCount=0 readSkipCount=0,"
 						+ " writeSkipCount=0, processSkipCount=0, commitCount=0, rollbackCount=0");
 	}
@@ -111,12 +101,10 @@ public class StepExecutionEventTests {
 	public void testHashCode() {
 		StepExecution stepExecution = getBasicStepExecution();
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
-		assertThat(stepExecutionEvent.toString())
-				.isEqualTo("StepExecutionEvent: id=null, version=null, "
-						+ "name=STEP_NAME, status=STARTING, exitStatus=EXECUTING, "
-						+ "readCount=0, filterCount=0, writeCount=0 readSkipCount=0, "
-						+ "writeSkipCount=0, processSkipCount=0, commitCount=0, "
-						+ "rollbackCount=0, exitDescription=");
+		assertThat(stepExecutionEvent.toString()).isEqualTo("StepExecutionEvent: id=null, version=null, "
+				+ "name=STEP_NAME, status=STARTING, exitStatus=EXECUTING, "
+				+ "readCount=0, filterCount=0, writeCount=0 readSkipCount=0, "
+				+ "writeSkipCount=0, processSkipCount=0, commitCount=0, " + "rollbackCount=0, exitDescription=");
 	}
 
 	@Test
@@ -137,8 +125,7 @@ public class StepExecutionEventTests {
 
 	@Test
 	public void testSettersGetters() {
-		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(
-				getBasicStepExecution());
+		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(getBasicStepExecution());
 		Date date = new Date();
 		stepExecutionEvent.setLastUpdated(date);
 		assertThat(stepExecutionEvent.getLastUpdated()).isEqualTo(date);
@@ -188,8 +175,7 @@ public class StepExecutionEventTests {
 
 	@Test
 	public void testExitStatus() {
-		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(
-				getBasicStepExecution());
+		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(getBasicStepExecution());
 		final String EXIT_CODE = "1";
 		final String EXIT_DESCRIPTION = "EXPECTED FAILURE";
 		ExitStatus exitStatus = new ExitStatus();
@@ -200,14 +186,12 @@ public class StepExecutionEventTests {
 		ExitStatus actualExitStatus = stepExecutionEvent.getExitStatus();
 		assertThat(actualExitStatus).isNotNull();
 		assertThat(actualExitStatus.getExitCode()).isEqualTo(exitStatus.getExitCode());
-		assertThat(actualExitStatus.getExitDescription())
-				.isEqualTo(exitStatus.getExitDescription());
+		assertThat(actualExitStatus.getExitDescription()).isEqualTo(exitStatus.getExitDescription());
 	}
 
 	@Test
 	public void testBatchStatus() {
-		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(
-				getBasicStepExecution());
+		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(getBasicStepExecution());
 		assertThat(stepExecutionEvent.getStatus()).isEqualTo(BatchStatus.STARTING);
 		stepExecutionEvent.setStatus(BatchStatus.ABANDONED);
 		assertThat(stepExecutionEvent.getStatus()).isEqualTo(BatchStatus.ABANDONED);
@@ -218,27 +202,24 @@ public class StepExecutionEventTests {
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent();
 		assertThat(stepExecutionEvent.getStatus()).isEqualTo(BatchStatus.STARTING);
 		assertThat(stepExecutionEvent.getExitStatus()).isNotNull();
-		assertThat(stepExecutionEvent.getExitStatus().getExitCode())
-				.isEqualTo("EXECUTING");
+		assertThat(stepExecutionEvent.getExitStatus().getExitCode()).isEqualTo("EXECUTING");
 	}
 
 	@Test
 	public void testExecutionContext() {
 		ExecutionContext executionContext = new ExecutionContext();
 		executionContext.put("hello", "world");
-		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(
-				getBasicStepExecution());
+		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(getBasicStepExecution());
 		assertThat(stepExecutionEvent.getExecutionContext()).isNotNull();
 		stepExecutionEvent.setExecutionContext(executionContext);
-		assertThat(stepExecutionEvent.getExecutionContext().getString("hello"))
-				.isEqualTo("world");
+		assertThat(stepExecutionEvent.getExecutionContext().getString("hello")).isEqualTo("world");
 	}
 
 	private StepExecution getBasicStepExecution() {
 		JobInstance jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
 		JobParameters jobParameters = new JobParameters();
-		JobExecution jobExecution = new JobExecution(jobInstance, JOB_EXECUTION_ID,
-				jobParameters, JOB_CONFIGURATION_NAME);
+		JobExecution jobExecution = new JobExecution(jobInstance, JOB_EXECUTION_ID, jobParameters,
+				JOB_CONFIGURATION_NAME);
 		return new StepExecution(STEP_NAME, jobExecution);
 	}
 

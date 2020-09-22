@@ -95,9 +95,8 @@ public class TaskMetrics {
 	private Throwable exception;
 
 	public void onTaskStartup(TaskExecution taskExecution) {
-		LongTaskTimer longTaskTimer = LongTaskTimer
-				.builder(SPRING_CLOUD_TASK_ACTIVE_METER).description("Long task duration")
-				.tags(commonTags(taskExecution)).register(Metrics.globalRegistry);
+		LongTaskTimer longTaskTimer = LongTaskTimer.builder(SPRING_CLOUD_TASK_ACTIVE_METER)
+				.description("Long task duration").tags(commonTags(taskExecution)).register(Metrics.globalRegistry);
 
 		this.longTaskSample = longTaskTimer.start();
 		this.taskSample = Timer.start(Metrics.globalRegistry);
@@ -109,14 +108,11 @@ public class TaskMetrics {
 
 	public void onTaskEnd(TaskExecution taskExecution) {
 		if (this.taskSample != null) {
-			this.taskSample.stop(Timer.builder(SPRING_CLOUD_TASK_METER)
-					.description("Task duration").tags(commonTags(taskExecution))
-					.tag(TASK_EXIT_CODE_TAG, "" + taskExecution.getExitCode())
+			this.taskSample.stop(Timer.builder(SPRING_CLOUD_TASK_METER).description("Task duration")
+					.tags(commonTags(taskExecution)).tag(TASK_EXIT_CODE_TAG, "" + taskExecution.getExitCode())
 					.tag(TASK_EXCEPTION_TAG,
-							(this.exception == null) ? "none"
-									: this.exception.getClass().getSimpleName())
-					.tag(TASK_STATUS_TAG,
-							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE)
+							(this.exception == null) ? "none" : this.exception.getClass().getSimpleName())
+					.tag(TASK_STATUS_TAG, (this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE)
 					.register(Metrics.globalRegistry));
 			this.taskSample = null;
 		}
@@ -130,11 +126,9 @@ public class TaskMetrics {
 	private Tags commonTags(TaskExecution taskExecution) {
 		return Tags.of(TASK_NAME_TAG, taskExecution.getTaskName())
 				.and(TASK_EXECUTION_ID_TAG, "" + taskExecution.getExecutionId())
-				.and(TASK_PARENT_EXECUTION_ID_TAG,
-						"" + taskExecution.getParentExecutionId())
-				.and(TASK_EXTERNAL_EXECUTION_ID_TAG,
-						(taskExecution.getExternalExecutionId() == null) ? "unknown"
-								: "" + taskExecution.getExternalExecutionId());
+				.and(TASK_PARENT_EXECUTION_ID_TAG, "" + taskExecution.getParentExecutionId())
+				.and(TASK_EXTERNAL_EXECUTION_ID_TAG, (taskExecution.getExternalExecutionId() == null) ? "unknown"
+						: "" + taskExecution.getExternalExecutionId());
 	}
 
 }

@@ -77,8 +77,8 @@ import org.springframework.util.StringUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-public class TaskLifecycleListener implements ApplicationListener<ApplicationEvent>,
-		SmartLifecycle, DisposableBean, Ordered {
+public class TaskLifecycleListener
+		implements ApplicationListener<ApplicationEvent>, SmartLifecycle, DisposableBean, Ordered {
 
 	private static final Log logger = LogFactory.getLog(TaskLifecycleListener.class);
 
@@ -129,16 +129,14 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	 * @param taskListenerExecutorObjectFactory {@link TaskListenerExecutorObjectFactory}
 	 * to initialize TaskListenerExecutor for a task
 	 */
-	public TaskLifecycleListener(TaskRepository taskRepository,
-			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
-			TaskExplorer taskExplorer, TaskProperties taskProperties,
+	public TaskLifecycleListener(TaskRepository taskRepository, TaskNameResolver taskNameResolver,
+			ApplicationArguments applicationArguments, TaskExplorer taskExplorer, TaskProperties taskProperties,
 			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
 		Assert.notNull(taskProperties, "TaskProperties is required");
-		Assert.notNull(taskListenerExecutorObjectFactory,
-				"A TaskListenerExecutorObjectFactory is required");
+		Assert.notNull(taskListenerExecutorObjectFactory, "A TaskListenerExecutorObjectFactory is required");
 
 		this.taskRepository = taskRepository;
 		this.taskNameResolver = taskNameResolver;
@@ -161,8 +159,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Override
 	public void onApplicationEvent(ApplicationEvent applicationEvent) {
 		if (applicationEvent instanceof ApplicationFailedEvent) {
-			this.applicationFailedException = ((ApplicationFailedEvent) applicationEvent)
-					.getException();
+			this.applicationFailedException = ((ApplicationFailedEvent) applicationEvent).getException();
 			doTaskEnd();
 		}
 		else if (applicationEvent instanceof ExitCodeEvent) {
@@ -187,21 +184,18 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			this.taskExecution.setEndTime(new Date());
 
 			if (this.applicationFailedException != null) {
-				this.taskExecution.setErrorMessage(
-						stackTraceToString(this.applicationFailedException));
+				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedException));
 			}
 
 			this.taskExecution.setExitCode(calcExitStatus());
 			if (this.applicationFailedException != null) {
-				setExitMessage(invokeOnTaskError(this.taskExecution,
-						this.applicationFailedException));
+				setExitMessage(invokeOnTaskError(this.taskExecution, this.applicationFailedException));
 			}
 
 			setExitMessage(invokeOnTaskEnd(this.taskExecution));
 			this.taskRepository.completeTaskExecution(this.taskExecution.getExecutionId(),
 					this.taskExecution.getExitCode(), this.taskExecution.getEndTime(),
-					this.taskExecution.getExitMessage(),
-					this.taskExecution.getErrorMessage());
+					this.taskExecution.getExitMessage(), this.taskExecution.getErrorMessage());
 
 			this.finished = true;
 
@@ -211,8 +205,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 		}
 		else if (!this.started) {
-			logger.error("An event to end a task has been received for a task that has "
-					+ "not yet started.");
+			logger.error("An event to end a task has been received for a task that has " + "not yet started.");
 		}
 	}
 
@@ -231,12 +224,10 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			Throwable exception = this.listenerException;
 			if (exception instanceof TaskExecutionException) {
 				TaskExecutionException taskExecutionException = (TaskExecutionException) exception;
-				if (taskExecutionException
-						.getCause() instanceof InvocationTargetException) {
+				if (taskExecutionException.getCause() instanceof InvocationTargetException) {
 					InvocationTargetException invocationTargetException = (InvocationTargetException) taskExecutionException
 							.getCause();
-					if (invocationTargetException != null
-							&& invocationTargetException.getTargetException() != null) {
+					if (invocationTargetException != null && invocationTargetException.getTargetException() != null) {
 						exception = invocationTargetException.getTargetException();
 					}
 				}
@@ -259,11 +250,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				this.taskExecutionListeners = new ArrayList<>();
 				this.taskListenerExecutorObjectFactory.getObject();
 				if (!CollectionUtils.isEmpty(this.taskExecutionListenersFromContext)) {
-					this.taskExecutionListeners
-							.addAll(this.taskExecutionListenersFromContext);
+					this.taskExecutionListeners.addAll(this.taskExecutionListenersFromContext);
 				}
-				this.taskExecutionListeners
-						.add(this.taskListenerExecutorObjectFactory.getObject());
+				this.taskExecutionListeners.add(this.taskListenerExecutorObjectFactory.getObject());
 
 				List<String> args = new ArrayList<>(0);
 
@@ -273,35 +262,27 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				if (this.taskProperties.getExecutionid() != null) {
 					TaskExecution taskExecution = this.taskExplorer
 							.getTaskExecution(this.taskProperties.getExecutionid());
-					Assert.notNull(taskExecution,
-							String.format("Invalid TaskExecution, ID %s not found",
-									this.taskProperties.getExecutionid()));
-					Assert.isNull(taskExecution.getEndTime(), String.format(
-							"Invalid TaskExecution, ID %s task is already complete",
+					Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found",
 							this.taskProperties.getExecutionid()));
-					this.taskExecution = this.taskRepository.startTaskExecution(
-							this.taskProperties.getExecutionid(),
+					Assert.isNull(taskExecution.getEndTime(),
+							String.format("Invalid TaskExecution, ID %s task is already complete",
+									this.taskProperties.getExecutionid()));
+					this.taskExecution = this.taskRepository.startTaskExecution(this.taskProperties.getExecutionid(),
 							this.taskNameResolver.getTaskName(), new Date(), args,
-							this.taskProperties.getExternalExecutionId(),
-							this.taskProperties.getParentExecutionId());
+							this.taskProperties.getExternalExecutionId(), this.taskProperties.getParentExecutionId());
 				}
 				else {
 					TaskExecution taskExecution = new TaskExecution();
 					taskExecution.setTaskName(this.taskNameResolver.getTaskName());
 					taskExecution.setStartTime(new Date());
 					taskExecution.setArguments(args);
-					taskExecution.setExternalExecutionId(
-							this.taskProperties.getExternalExecutionId());
-					taskExecution.setParentExecutionId(
-							this.taskProperties.getParentExecutionId());
-					this.taskExecution = this.taskRepository
-							.createTaskExecution(taskExecution);
+					taskExecution.setExternalExecutionId(this.taskProperties.getExternalExecutionId());
+					taskExecution.setParentExecutionId(this.taskProperties.getParentExecutionId());
+					this.taskExecution = this.taskRepository.createTaskExecution(taskExecution);
 				}
 			}
 			else {
-				logger.error(
-						"Multiple start events have been received.  The first one was "
-								+ "recorded.");
+				logger.error("Multiple start events have been received.  The first one was " + "recorded.");
 			}
 
 			setExitMessage(invokeOnTaskStartup(this.taskExecution));
@@ -317,8 +298,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
 		this.taskMetrics.onTaskStartup(taskExecution);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
-		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
-				this.taskExecutionListeners);
+		List<TaskExecutionListener> startupListenerList = new ArrayList<>(this.taskExecutionListeners);
 		if (!CollectionUtils.isEmpty(startupListenerList)) {
 			try {
 				Collections.reverse(startupListenerList);
@@ -349,8 +329,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			catch (Throwable listenerException) {
 				String errorMessage = stackTraceToString(listenerException);
 				if (StringUtils.hasText(listenerTaskExecution.getErrorMessage())) {
-					errorMessage = String.format("%s :Task also threw this Exception: %s",
-							errorMessage, listenerTaskExecution.getErrorMessage());
+					errorMessage = String.format("%s :Task also threw this Exception: %s", errorMessage,
+							listenerTaskExecution.getErrorMessage());
 				}
 				logger.error(errorMessage);
 				listenerTaskExecution.setErrorMessage(errorMessage);
@@ -360,8 +340,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		return listenerTaskExecution;
 	}
 
-	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
-			Throwable throwable) {
+	private TaskExecution invokeOnTaskError(TaskExecution taskExecution, Throwable throwable) {
 		this.taskMetrics.onTaskFailed(throwable);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
@@ -375,8 +354,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				String errorMessage;
 				if (StringUtils.hasText(listenerTaskExecution.getErrorMessage())) {
 					errorMessage = String.format("%s :While handling " + "this error: %s",
-							listenerException.getMessage(),
-							listenerTaskExecution.getErrorMessage());
+							listenerException.getMessage(), listenerTaskExecution.getErrorMessage());
 				}
 				else {
 					errorMessage = listenerTaskExecution.getErrorMessage();
@@ -392,14 +370,12 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution getTaskExecutionCopy(TaskExecution taskExecution) {
 		Date startTime = new Date(taskExecution.getStartTime().getTime());
-		Date endTime = (taskExecution.getEndTime() == null) ? null
-				: new Date(taskExecution.getEndTime().getTime());
+		Date endTime = (taskExecution.getEndTime() == null) ? null : new Date(taskExecution.getEndTime().getTime());
 
-		return new TaskExecution(taskExecution.getExecutionId(),
-				taskExecution.getExitCode(), taskExecution.getTaskName(), startTime,
-				endTime, taskExecution.getExitMessage(),
-				Collections.unmodifiableList(taskExecution.getArguments()),
-				taskExecution.getErrorMessage(), taskExecution.getExternalExecutionId());
+		return new TaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
+				taskExecution.getTaskName(), startTime, endTime, taskExecution.getExitMessage(),
+				Collections.unmodifiableList(taskExecution.getArguments()), taskExecution.getErrorMessage(),
+				taskExecution.getExternalExecutionId());
 	}
 
 	@Override

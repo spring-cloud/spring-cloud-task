@@ -62,8 +62,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInRead: " + t.getMessage(), t);
 		}
-		this.messagePublisher.publishWithThrowableHeader("Skipped when reading.",
-				t.getMessage());
+		this.messagePublisher.publishWithThrowableHeader("Skipped when reading.", t.getMessage());
 	}
 
 	@Override

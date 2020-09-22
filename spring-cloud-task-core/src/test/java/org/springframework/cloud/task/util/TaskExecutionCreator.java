@@ -38,8 +38,7 @@ public final class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreEmptyTaskExecution(
-			TaskRepository taskRepository) {
+	public static TaskExecution createAndStoreEmptyTaskExecution(TaskRepository taskRepository) {
 		return taskRepository.createTaskExecution();
 	}
 
@@ -48,8 +47,7 @@ public final class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreTaskExecutionNoParams(
-			TaskRepository taskRepository) {
+	public static TaskExecution createAndStoreTaskExecutionNoParams(TaskRepository taskRepository) {
 		TaskExecution expectedTaskExecution = taskRepository.createTaskExecution();
 		return expectedTaskExecution;
 	}
@@ -59,10 +57,8 @@ public final class TaskExecutionCreator {
 	 * @param taskRepository the taskRepository where the taskExecution should be stored.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution createAndStoreTaskExecutionWithParams(
-			TaskRepository taskRepository) {
-		TaskExecution expectedTaskExecution = TestVerifierUtils
-				.createSampleTaskExecutionNoArg();
+	public static TaskExecution createAndStoreTaskExecutionWithParams(TaskRepository taskRepository) {
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		List<String> params = new ArrayList<>();
 		params.add(UUID.randomUUID().toString());
 		params.add(UUID.randomUUID().toString());
@@ -77,13 +73,10 @@ public final class TaskExecutionCreator {
 	 * @param expectedTaskExecution the expected task execution.
 	 * @return the taskExecution created.
 	 */
-	public static TaskExecution completeExecution(TaskRepository taskRepository,
-			TaskExecution expectedTaskExecution) {
-		return taskRepository.completeTaskExecution(
-				expectedTaskExecution.getExecutionId(),
+	public static TaskExecution completeExecution(TaskRepository taskRepository, TaskExecution expectedTaskExecution) {
+		return taskRepository.completeTaskExecution(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage(),
-				expectedTaskExecution.getErrorMessage());
+				expectedTaskExecution.getExitMessage(), expectedTaskExecution.getErrorMessage());
 	}
 
 }

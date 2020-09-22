@@ -34,8 +34,7 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingStepExecutionListener
-		implements StepExecutionListener, Ordered {
+public class EventEmittingStepExecutionListener implements StepExecutionListener, Ordered {
 
 	private MessagePublisher<StepExecutionEvent> messagePublisher;
 

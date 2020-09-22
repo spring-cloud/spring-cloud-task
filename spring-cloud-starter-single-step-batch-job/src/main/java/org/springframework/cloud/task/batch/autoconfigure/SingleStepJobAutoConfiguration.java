@@ -57,9 +57,8 @@ public class SingleStepJobAutoConfiguration {
 	@Autowired(required = false)
 	private ItemProcessor<Map<Object, Object>, Map<Object, Object>> itemProcessor;
 
-	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory,
-			StepBuilderFactory stepBuilderFactory, SingleStepJobProperties properties,
-			ApplicationContext context) {
+	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
+			SingleStepJobProperties properties, ApplicationContext context) {
 
 		validateProperties(properties);
 
@@ -72,28 +71,23 @@ public class SingleStepJobAutoConfiguration {
 		Assert.hasText(properties.getJobName(), "A job name is required");
 		Assert.hasText(properties.getStepName(), "A step name is required");
 		Assert.notNull(properties.getChunkSize(), "A chunk size is required");
-		Assert.isTrue(properties.getChunkSize() > 0,
-				"A chunk size greater than zero is required");
+		Assert.isTrue(properties.getChunkSize() > 0, "A chunk size greater than zero is required");
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job", name = "jobName")
-	public Job job(ItemReader<Map<Object, Object>> itemReader,
-			ItemWriter<Map<Object, Object>> itemWriter) {
+	public Job job(ItemReader<Map<Object, Object>> itemReader, ItemWriter<Map<Object, Object>> itemWriter) {
 
 		SimpleStepBuilder<Map<Object, Object>, Map<Object, Object>> stepBuilder = this.stepBuilderFactory
 				.get(this.properties.getStepName())
-				.<Map<Object, Object>, Map<Object, Object>>chunk(
-						this.properties.getChunkSize())
-				.reader(itemReader);
+				.<Map<Object, Object>, Map<Object, Object>>chunk(this.properties.getChunkSize()).reader(itemReader);
 
 		stepBuilder.processor(this.itemProcessor);
 
 		Step step = stepBuilder.writer(itemWriter).build();
 
-		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step)
-				.build();
+		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step).build();
 	}
 
 }

@@ -50,8 +50,7 @@ public class BatchExecutionEventTests {
 	private static final String TASK_NAME = "jobEventTest";
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
-				.withExposedPorts(5672);
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3").withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
 		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
@@ -94,109 +93,81 @@ public class BatchExecutionEventTests {
 	@Test
 	public void testContext() {
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(this.getConfigurations(
-						BatchExecutionEventTests.ListenerBinding.class,
-						JobConfiguration.class))
-				.build().run(getCommandLineParams(
-						"--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
+				.sources(this.getConfigurations(BatchExecutionEventTests.ListenerBinding.class, JobConfiguration.class))
+				.build()
+				.run(getCommandLineParams("--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
 
-		assertThat(this.applicationContext.getBean("jobExecutionEventsListener"))
-				.isNotNull();
-		assertThat(this.applicationContext.getBean("stepExecutionEventsListener"))
-				.isNotNull();
+		assertThat(this.applicationContext.getBean("jobExecutionEventsListener")).isNotNull();
+		assertThat(this.applicationContext.getBean("stepExecutionEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("chunkEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("itemReadEventsListener")).isNotNull();
-		assertThat(this.applicationContext.getBean("itemWriteEventsListener"))
-				.isNotNull();
-		assertThat(this.applicationContext.getBean("itemProcessEventsListener"))
-				.isNotNull();
+		assertThat(this.applicationContext.getBean("itemWriteEventsListener")).isNotNull();
+		assertThat(this.applicationContext.getBean("itemProcessEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("skipEventsListener")).isNotNull();
-		assertThat(this.applicationContext
-				.getBean(BatchEventAutoConfiguration.BatchEventsChannels.class))
-						.isNotNull();
+		assertThat(this.applicationContext.getBean(BatchEventAutoConfiguration.BatchEventsChannels.class)).isNotNull();
 
 	}
 
 	@Test
 	public void testJobEventListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.job-execution-events.destination=foobar",
-				jobExecutionLatch, BatchExecutionEventTests.ListenerBinding.class);
+		testListener("--spring.cloud.stream.bindings.job-execution-events.destination=foobar", jobExecutionLatch,
+				BatchExecutionEventTests.ListenerBinding.class);
 
 	}
 
 	@Test
 	public void testStepEventListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.step-execution-events.destination=step-execution-foobar",
+		testListener("--spring.cloud.stream.bindings.step-execution-events.destination=step-execution-foobar",
 				stepExecutionLatch, BatchExecutionEventTests.StepListenerBinding.class);
-		assertThat(stepOneCount).as("the number of step1 events did not match")
-				.isEqualTo(2);
-		assertThat(stepTwoCount).as("the number of step2 events did not match")
-				.isEqualTo(2);
+		assertThat(stepOneCount).as("the number of step1 events did not match").isEqualTo(2);
+		assertThat(stepTwoCount).as("the number of step2 events did not match").isEqualTo(2);
 
 	}
 
 	@Test
 	public void testItemProcessEventListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.item-process-events.destination=item-process-foobar",
-				itemProcessLatch,
-				BatchExecutionEventTests.ItemProcessListenerBinding.class);
+		testListener("--spring.cloud.stream.bindings.item-process-events.destination=item-process-foobar",
+				itemProcessLatch, BatchExecutionEventTests.ItemProcessListenerBinding.class);
 	}
 
 	@Test
 	public void testChunkListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.chunk-events.destination=chunk-events-foobar",
-				chunkEventsLatch,
+		testListener("--spring.cloud.stream.bindings.chunk-events.destination=chunk-events-foobar", chunkEventsLatch,
 				BatchExecutionEventTests.ChunkEventsListenerBinding.class);
 	}
 
 	@Test
 	public void testItemReadListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.item-read-events.destination=item-read-events-foobar",
-				itemReadEventsLatch,
-				BatchExecutionEventTests.ItemReadEventsListenerBinding.class);
+		testListener("--spring.cloud.stream.bindings.item-read-events.destination=item-read-events-foobar",
+				itemReadEventsLatch, BatchExecutionEventTests.ItemReadEventsListenerBinding.class);
 	}
 
 	@Test
 	public void testWriteListener() throws Exception {
-		testListener(
-				"--spring.cloud.stream.bindings.item-write-events.destination=item-write-events-foobar",
-				itemWriteEventsLatch,
-				BatchExecutionEventTests.ItemWriteEventsListenerBinding.class);
+		testListener("--spring.cloud.stream.bindings.item-write-events.destination=item-write-events-foobar",
+				itemWriteEventsLatch, BatchExecutionEventTests.ItemWriteEventsListenerBinding.class);
 	}
 
 	@Test
 	public void testSkipEventListener() throws Exception {
-		testListenerSkip(
-				"--spring.cloud.stream.bindings.skip-events.destination=skip-event-foobar",
-				skipEventsLatch,
+		testListenerSkip("--spring.cloud.stream.bindings.skip-events.destination=skip-event-foobar", skipEventsLatch,
 				BatchExecutionEventTests.SkipEventsListenerBinding.class);
-		assertThat(readSkipCount).as("read skip count did not match expected result")
-				.isEqualTo(2);
-		assertThat(writeSkipCount).as("write skip count did not match expected result")
-				.isEqualTo(1);
+		assertThat(readSkipCount).as("read skip count did not match expected result").isEqualTo(2);
+		assertThat(writeSkipCount).as("write skip count did not match expected result").isEqualTo(1);
 	}
 
 	private Class[] getConfigurations(Class sinkClazz, Class jobConfigurationClazz) {
-		return new Class[] { PropertyPlaceholderAutoConfiguration.class,
-				jobConfigurationClazz, sinkClazz };
+		return new Class[] { PropertyPlaceholderAutoConfiguration.class, jobConfigurationClazz, sinkClazz };
 	}
 
 	private String[] getCommandLineParams(String sinkChannelParam) {
-		return new String[] { "--spring.cloud.task.closecontext_enable=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
-				"--spring.main.web-environment=false",
-				"--spring.cloud.stream.defaultBinder=rabbit",
-				"--spring.cloud.stream.bindings.task-events.destination=test",
-				"foo=" + UUID.randomUUID().toString(), sinkChannelParam };
+		return new String[] { "--spring.cloud.task.closecontext_enable=false", "--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.main.web-environment=false", "--spring.cloud.stream.defaultBinder=rabbit",
+				"--spring.cloud.stream.bindings.task-events.destination=test", "foo=" + UUID.randomUUID().toString(),
+				sinkChannelParam };
 	}
 
-	private void testListener(String channelBinding, CountDownLatch latch, Class<?> clazz)
-			throws Exception {
+	private void testListener(String channelBinding, CountDownLatch latch, Class<?> clazz) throws Exception {
 		this.applicationContext = new SpringApplicationBuilder()
 				.sources(this.getConfigurations(clazz, JobConfiguration.class)).build()
 				.run(getCommandLineParams(channelBinding));
@@ -204,11 +175,10 @@ public class BatchExecutionEventTests {
 		assertThat(latch.await(1, TimeUnit.SECONDS)).isTrue();
 	}
 
-	private void testListenerSkip(String channelBinding, CountDownLatch latch,
-			Class<?> clazz) throws Exception {
+	private void testListenerSkip(String channelBinding, CountDownLatch latch, Class<?> clazz) throws Exception {
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(this.getConfigurations(clazz, JobSkipConfiguration.class))
-				.build().run(getCommandLineParams(channelBinding));
+				.sources(this.getConfigurations(clazz, JobSkipConfiguration.class)).build()
+				.run(getCommandLineParams(channelBinding));
 
 		assertThat(latch.await(1, TimeUnit.SECONDS)).isTrue();
 	}
@@ -221,8 +191,8 @@ public class BatchExecutionEventTests {
 
 		@StreamListener(Sink.INPUT)
 		public void receive(JobExecutionEvent execution) {
-			Assertions.assertThat(execution.getJobInstance().getJobName())
-					.isEqualTo("job").as("Job name should be job");
+			Assertions.assertThat(execution.getJobInstance().getJobName()).isEqualTo("job")
+					.as("Job name should be job");
 			jobExecutionLatch.countDown();
 		}
 
@@ -318,10 +288,8 @@ public class BatchExecutionEventTests {
 
 		@StreamListener(Sink.INPUT)
 		public void receive(String itemWrite) {
-			Assertions.assertThat(itemWrite).startsWith("3 items ")
-					.as("Message should start with '3 items'");
-			Assertions.assertThat(itemWrite).endsWith("written.")
-					.as("Message should end with ' written.'");
+			Assertions.assertThat(itemWrite).startsWith("3 items ").as("Message should start with '3 items'");
+			Assertions.assertThat(itemWrite).endsWith("written.").as("Message should end with ' written.'");
 			itemWriteEventsLatch.countDown();
 		}
 

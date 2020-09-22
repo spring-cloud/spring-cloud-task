@@ -43,28 +43,24 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 	private List<String> jobNames = new ArrayList<>();
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName)
-			throws BeansException {
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName)
-			throws BeansException {
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (this.jobNames.size() > 0 && !this.jobNames.contains(beanName)) {
 			return bean;
 		}
-		int length = this.applicationContext
-				.getBeanNamesForType(TaskBatchExecutionListener.class).length;
+		int length = this.applicationContext.getBeanNamesForType(TaskBatchExecutionListener.class).length;
 
 		if (bean instanceof AbstractJob) {
 			if (length != 1) {
 				throw new IllegalStateException("The application context is required to "
-						+ "have exactly 1 instance of the TaskBatchExecutionListener but has "
-						+ length);
+						+ "have exactly 1 instance of the TaskBatchExecutionListener but has " + length);
 			}
-			((AbstractJob) bean).registerJobExecutionListener(
-					this.applicationContext.getBean(TaskBatchExecutionListener.class));
+			((AbstractJob) bean)
+					.registerJobExecutionListener(this.applicationContext.getBean(TaskBatchExecutionListener.class));
 		}
 		return bean;
 	}

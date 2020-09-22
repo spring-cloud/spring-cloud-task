@@ -43,8 +43,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TaskLifecycleConfiguration {
 
-	protected static final Log logger = LogFactory
-			.getLog(TaskLifecycleConfiguration.class);
+	protected static final Log logger = LogFactory.getLog(TaskLifecycleConfiguration.class);
 
 	private TaskProperties taskProperties;
 
@@ -63,9 +62,8 @@ public class TaskLifecycleConfiguration {
 	private boolean initialized = false;
 
 	@Autowired
-	public TaskLifecycleConfiguration(TaskProperties taskProperties,
-			ConfigurableApplicationContext context, TaskRepository taskRepository,
-			TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
+	public TaskLifecycleConfiguration(TaskProperties taskProperties, ConfigurableApplicationContext context,
+			TaskRepository taskRepository, TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
 			ObjectProvider<ApplicationArguments> applicationArguments) {
 
 		this.taskProperties = taskProperties;
@@ -87,9 +85,8 @@ public class TaskLifecycleConfiguration {
 	@PostConstruct
 	protected void initialize() {
 		if (!this.initialized) {
-			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository,
-					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
-					this.taskProperties,
+			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, this.taskNameResolver,
+					this.applicationArguments, this.taskExplorer, this.taskProperties,
 					new TaskListenerExecutorObjectFactory(this.context));
 
 			this.initialized = true;

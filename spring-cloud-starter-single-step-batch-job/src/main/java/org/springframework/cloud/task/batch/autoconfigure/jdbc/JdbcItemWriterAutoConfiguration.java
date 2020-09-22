@@ -54,8 +54,7 @@ public class JdbcItemWriterAutoConfiguration {
 
 	private DataSource dataSource;
 
-	public JdbcItemWriterAutoConfiguration(DataSource dataSource,
-			JdbcItemWriterProperties properties) {
+	public JdbcItemWriterAutoConfiguration(DataSource dataSource, JdbcItemWriterProperties properties) {
 		this.dataSource = dataSource;
 		this.properties = properties;
 	}
@@ -68,12 +67,10 @@ public class JdbcItemWriterAutoConfiguration {
 		JdbcBatchItemWriterBuilder<Map<Object, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<Object, Object>>()
 				.dataSource(this.dataSource).sql(this.properties.getSql());
 		if (this.itemPreparedStatementSetter != null) {
-			jdbcBatchItemWriterBuilder
-					.itemPreparedStatementSetter(this.itemPreparedStatementSetter);
+			jdbcBatchItemWriterBuilder.itemPreparedStatementSetter(this.itemPreparedStatementSetter);
 		}
 		else if (this.itemSqlParameterSourceProvider != null) {
-			jdbcBatchItemWriterBuilder
-					.itemSqlParameterSourceProvider(this.itemSqlParameterSourceProvider);
+			jdbcBatchItemWriterBuilder.itemSqlParameterSourceProvider(this.itemSqlParameterSourceProvider);
 		}
 		else {
 			jdbcBatchItemWriterBuilder.columnMapped();

@@ -35,8 +35,7 @@ import org.springframework.integration.support.locks.PassThruLockRegistry;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
-@ConditionalOnProperty(prefix = "spring.cloud.task", name = "single-instance-enabled",
-		havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.cloud.task", name = "single-instance-enabled", havingValue = "true")
 public class SingleTaskConfiguration {
 
 	@Autowired
@@ -51,12 +50,12 @@ public class SingleTaskConfiguration {
 	@Bean
 	public SingleInstanceTaskListener taskListener(TaskNameResolver resolver) {
 		if (this.taskConfigurer.getTaskDataSource() == null) {
-			return new SingleInstanceTaskListener(new PassThruLockRegistry(), resolver,
-					this.taskProperties, this.applicationEventPublisher);
+			return new SingleInstanceTaskListener(new PassThruLockRegistry(), resolver, this.taskProperties,
+					this.applicationEventPublisher);
 		}
 
-		return new SingleInstanceTaskListener(this.taskConfigurer.getTaskDataSource(),
-				resolver, this.taskProperties, this.applicationEventPublisher);
+		return new SingleInstanceTaskListener(this.taskConfigurer.getTaskDataSource(), resolver, this.taskProperties,
+				this.applicationEventPublisher);
 	}
 
 }

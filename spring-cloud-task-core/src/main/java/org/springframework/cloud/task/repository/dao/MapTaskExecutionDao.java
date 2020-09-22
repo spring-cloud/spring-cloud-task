@@ -58,34 +58,30 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId) {
-		return createTaskExecution(taskName, startTime, arguments, externalExecutionId,
-				null);
+	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId) {
+		return createTaskExecution(taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId, Long parentExecutionId) {
+	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId, Long parentExecutionId) {
 		long taskExecutionId = getNextExecutionId();
-		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName,
-				startTime, null, null, arguments, null, externalExecutionId,
-				parentExecutionId);
+		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName, startTime, null, null,
+				arguments, null, externalExecutionId, parentExecutionId);
 		this.taskExecutions.put(taskExecutionId, taskExecution);
 		return taskExecution;
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName,
-			Date startTime, List<String> arguments, String externalExecutionid) {
-		return startTaskExecution(executionId, taskName, startTime, arguments,
-				externalExecutionid, null);
+	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionid) {
+		return startTaskExecution(executionId, taskName, startTime, arguments, externalExecutionid, null);
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName,
-			Date startTime, List<String> arguments, String externalExecutionid,
-			Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionid, Long parentExecutionId) {
 		TaskExecution taskExecution = this.taskExecutions.get(executionId);
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(startTime);
@@ -98,11 +94,10 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage, String errorMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+			String errorMessage) {
 		if (!this.taskExecutions.containsKey(executionId)) {
-			throw new IllegalStateException(
-					"Invalid TaskExecution, ID " + executionId + " not found.");
+			throw new IllegalStateException("Invalid TaskExecution, ID " + executionId + " not found.");
 		}
 
 		TaskExecution taskExecution = this.taskExecutions.get(executionId);
@@ -113,8 +108,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
 		completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
@@ -138,8 +132,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public long getRunningTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName)
-					&& entry.getValue().getEndTime() == null) {
+			if (entry.getValue().getTaskName().equals(taskName) && entry.getValue().getEndTime() == null) {
 				count++;
 			}
 		}
@@ -163,30 +156,25 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public Page<TaskExecution> findRunningTaskExecutions(String taskName,
-			Pageable pageable) {
+	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
 		Set<TaskExecution> result = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName)
-					&& entry.getValue().getEndTime() == null) {
+			if (entry.getValue().getTaskName().equals(taskName) && entry.getValue().getEndTime() == null) {
 				result.add(entry.getValue());
 			}
 		}
-		return getPageFromList(new ArrayList<>(result), pageable,
-				getRunningTaskExecutionCountByTaskName(taskName));
+		return getPageFromList(new ArrayList<>(result), pageable, getRunningTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
-	public Page<TaskExecution> findTaskExecutionsByName(String taskName,
-			Pageable pageable) {
+	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
 		Set<TaskExecution> filteredSet = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
 			if (entry.getValue().getTaskName().equals(taskName)) {
 				filteredSet.add(entry.getValue());
 			}
 		}
-		return getPageFromList(new ArrayList<>(filteredSet), pageable,
-				getTaskExecutionCountByTaskName(taskName));
+		return getPageFromList(new ArrayList<>(filteredSet), pageable, getTaskExecutionCountByTaskName(taskName));
 	}
 
 	@Override
@@ -220,8 +208,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 		found:
 
-		for (Map.Entry<Long, Set<Long>> association : this.batchJobAssociations
-				.entrySet()) {
+		for (Map.Entry<Long, Set<Long>> association : this.batchJobAssociations.entrySet()) {
 			for (Long curJobExecutionId : association.getValue()) {
 				if (curJobExecutionId.equals(jobExecutionId)) {
 					taskId = association.getKey();
@@ -236,8 +223,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public Set<Long> getJobExecutionIdsByTaskExecutionId(long taskExecutionId) {
 		if (this.batchJobAssociations.containsKey(taskExecutionId)) {
-			return Collections
-					.unmodifiableSet(this.batchJobAssociations.get(taskExecutionId));
+			return Collections.unmodifiableSet(this.batchJobAssociations.get(taskExecutionId));
 		}
 		else {
 			return new TreeSet<>();
@@ -245,11 +231,9 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void updateExternalExecutionId(long taskExecutionId,
-			String externalExecutionId) {
+	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
 		TaskExecution taskExecution = this.taskExecutions.get(taskExecutionId);
-		Assert.notNull(taskExecution,
-				"Invalid TaskExecution, ID " + taskExecutionId + " not found.");
+		Assert.notNull(taskExecution, "Invalid TaskExecution, ID " + taskExecutionId + " not found.");
 		taskExecution.setExternalExecutionId(externalExecutionId);
 	}
 
@@ -263,22 +247,17 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			public int compare(TaskExecution e1, TaskExecution e2) {
 				int result = e1.getStartTime().compareTo(e2.getStartTime());
 				if (result == 0) {
-					result = Long.valueOf(e1.getExecutionId())
-							.compareTo(e2.getExecutionId());
+					result = Long.valueOf(e1.getExecutionId()).compareTo(e2.getExecutionId());
 				}
 				return result;
 			}
 		});
 	}
 
-	private Page getPageFromList(List<TaskExecution> executionList, Pageable pageable,
-			long maxSize) {
-		long toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList
-				.size()) ? executionList.size()
-						: pageable.getOffset() + pageable.getPageSize();
-		return new PageImpl<>(
-				executionList.subList((int) pageable.getOffset(), (int) toIndex),
-				pageable, maxSize);
+	private Page getPageFromList(List<TaskExecution> executionList, Pageable pageable, long maxSize) {
+		long toIndex = (pageable.getOffset() + pageable.getPageSize() > executionList.size()) ? executionList.size()
+				: pageable.getOffset() + pageable.getPageSize();
+		return new PageImpl<>(executionList.subList((int) pageable.getOffset(), (int) toIndex), pageable, maxSize);
 	}
 
 	@Override
@@ -294,34 +273,29 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			}
 		}
 
-		Assert.isTrue(taskNamesAsList.size() == taskNames.length, String.format(
-				"Task names must not contain any empty elements but %s of %s were empty or null.",
-				taskNames.length - taskNamesAsList.size(), taskNames.length));
+		Assert.isTrue(taskNamesAsList.size() == taskNames.length,
+				String.format("Task names must not contain any empty elements but %s of %s were empty or null.",
+						taskNames.length - taskNamesAsList.size(), taskNames.length));
 
 		final Map<String, TaskExecution> tempTaskExecutions = new HashMap<>();
 
-		for (Map.Entry<Long, TaskExecution> taskExecutionMapEntry : this.taskExecutions
-				.entrySet()) {
-			if (!taskNamesAsList
-					.contains(taskExecutionMapEntry.getValue().getTaskName())) {
+		for (Map.Entry<Long, TaskExecution> taskExecutionMapEntry : this.taskExecutions.entrySet()) {
+			if (!taskNamesAsList.contains(taskExecutionMapEntry.getValue().getTaskName())) {
 				continue;
 			}
 
 			final TaskExecution tempTaskExecution = tempTaskExecutions
 					.get(taskExecutionMapEntry.getValue().getTaskName());
 			if (tempTaskExecution == null
-					|| tempTaskExecution.getStartTime()
-							.before(taskExecutionMapEntry.getValue().getStartTime())
-					|| (tempTaskExecution.getStartTime()
-							.equals(taskExecutionMapEntry.getValue().getStartTime())
-							&& tempTaskExecution.getExecutionId() < taskExecutionMapEntry
-									.getValue().getExecutionId())) {
+					|| tempTaskExecution.getStartTime().before(taskExecutionMapEntry.getValue().getStartTime())
+					|| (tempTaskExecution.getStartTime().equals(taskExecutionMapEntry.getValue().getStartTime())
+							&& tempTaskExecution.getExecutionId() < taskExecutionMapEntry.getValue()
+									.getExecutionId())) {
 				tempTaskExecutions.put(taskExecutionMapEntry.getValue().getTaskName(),
 						taskExecutionMapEntry.getValue());
 			}
 		}
-		final List<TaskExecution> latestTaskExecutions = new ArrayList<>(
-				tempTaskExecutions.values());
+		final List<TaskExecution> latestTaskExecutions = new ArrayList<>(tempTaskExecutions.values());
 		Collections.sort(latestTaskExecutions, new TaskExecutionComparator());
 		return latestTaskExecutions;
 	}
@@ -329,8 +303,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
 		Assert.hasText(taskName, "The task name must not be empty.");
-		final List<TaskExecution> taskExecutions = this
-				.getLatestTaskExecutionsByTaskNames(taskName);
+		final List<TaskExecution> taskExecutions = this.getLatestTaskExecutionsByTaskNames(taskName);
 		if (taskExecutions.isEmpty()) {
 			return null;
 		}
@@ -339,25 +312,19 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		}
 		else {
 			throw new IllegalStateException(
-					"Only expected a single TaskExecution but received "
-							+ taskExecutions.size());
+					"Only expected a single TaskExecution but received " + taskExecutions.size());
 		}
 	}
 
-	private static class TaskExecutionComparator
-			implements Comparator<TaskExecution>, Serializable {
+	private static class TaskExecutionComparator implements Comparator<TaskExecution>, Serializable {
 
 		@Override
-		public int compare(TaskExecution firstTaskExecution,
-				TaskExecution secondTaskExecution) {
-			if (firstTaskExecution.getStartTime()
-					.equals(secondTaskExecution.getStartTime())) {
-				return Long.compare(firstTaskExecution.getExecutionId(),
-						secondTaskExecution.getExecutionId());
+		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {
+			if (firstTaskExecution.getStartTime().equals(secondTaskExecution.getStartTime())) {
+				return Long.compare(firstTaskExecution.getExecutionId(), secondTaskExecution.getExecutionId());
 			}
 			else {
-				return secondTaskExecution.getStartTime()
-						.compareTo(firstTaskExecution.getStartTime());
+				return secondTaskExecution.getStartTime().compareTo(firstTaskExecution.getStartTime());
 			}
 		}
 

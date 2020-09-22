@@ -56,8 +56,7 @@ public class JdbcCursorItemReaderAutoConfiguration {
 	@Autowired(required = false)
 	private RowMapper<Map<Object, Object>> rowMapper;
 
-	public JdbcCursorItemReaderAutoConfiguration(
-			JdbcCursorItemReaderProperties properties, DataSource dataSource) {
+	public JdbcCursorItemReaderAutoConfiguration(JdbcCursorItemReaderProperties properties, DataSource dataSource) {
 		this.properties = properties;
 		this.dataSource = dataSource;
 	}
@@ -65,23 +64,16 @@ public class JdbcCursorItemReaderAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public JdbcCursorItemReader<Map<Object, Object>> itemReader() {
-		return new JdbcCursorItemReaderBuilder<Map<Object, Object>>()
-				.name(this.properties.getName())
-				.currentItemCount(this.properties.getCurrentItemCount())
-				.dataSource(this.dataSource)
+		return new JdbcCursorItemReaderBuilder<Map<Object, Object>>().name(this.properties.getName())
+				.currentItemCount(this.properties.getCurrentItemCount()).dataSource(this.dataSource)
 				.driverSupportsAbsolute(this.properties.isDriverSupportsAbsolute())
-				.fetchSize(this.properties.getFetchSize())
-				.ignoreWarnings(this.properties.isIgnoreWarnings())
-				.maxItemCount(this.properties.getMaxItemCount())
-				.maxRows(this.properties.getMaxRows())
-				.queryTimeout(this.properties.getQueryTimeout())
-				.saveState(this.properties.isSaveState()).sql(this.properties.getSql())
-				.rowMapper(this.rowMapper)
+				.fetchSize(this.properties.getFetchSize()).ignoreWarnings(this.properties.isIgnoreWarnings())
+				.maxItemCount(this.properties.getMaxItemCount()).maxRows(this.properties.getMaxRows())
+				.queryTimeout(this.properties.getQueryTimeout()).saveState(this.properties.isSaveState())
+				.sql(this.properties.getSql()).rowMapper(this.rowMapper)
 				.preparedStatementSetter(this.preparedStatementSetter)
 				.verifyCursorPosition(this.properties.isVerifyCursorPosition())
-				.useSharedExtendedConnection(
-						this.properties.isUseSharedExtendedConnection())
-				.build();
+				.useSharedExtendedConnection(this.properties.isUseSharedExtendedConnection()).build();
 	}
 
 	@Bean

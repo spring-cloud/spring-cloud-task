@@ -32,8 +32,7 @@ public class TaskExceptionTests {
 		TaskException taskException = new TaskException(ERROR_MESSAGE);
 		assertThat(taskException.getMessage()).isEqualTo(ERROR_MESSAGE);
 
-		taskException = new TaskException(ERROR_MESSAGE,
-				new IllegalStateException(ERROR_MESSAGE));
+		taskException = new TaskException(ERROR_MESSAGE, new IllegalStateException(ERROR_MESSAGE));
 		assertThat(taskException.getMessage()).isEqualTo(ERROR_MESSAGE);
 		assertThat(taskException.getCause()).isNotNull();
 		assertThat(taskException.getCause().getMessage()).isEqualTo(ERROR_MESSAGE);
@@ -44,8 +43,7 @@ public class TaskExceptionTests {
 		TaskExecutionException taskException = new TaskExecutionException(ERROR_MESSAGE);
 		assertThat(taskException.getMessage()).isEqualTo(ERROR_MESSAGE);
 
-		taskException = new TaskExecutionException(ERROR_MESSAGE,
-				new IllegalStateException(ERROR_MESSAGE));
+		taskException = new TaskExecutionException(ERROR_MESSAGE, new IllegalStateException(ERROR_MESSAGE));
 		assertThat(taskException.getMessage()).isEqualTo(ERROR_MESSAGE);
 		assertThat(taskException.getCause()).isNotNull();
 		assertThat(taskException.getCause().getMessage()).isEqualTo(ERROR_MESSAGE);

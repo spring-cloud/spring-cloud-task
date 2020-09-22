@@ -48,8 +48,7 @@ public class MapTaskBatchDao implements TaskBatchDao {
 		Assert.notNull(jobExecution, "A jobExecution is required");
 
 		if (this.relationships.containsKey(taskExecution.getExecutionId())) {
-			this.relationships.get(taskExecution.getExecutionId())
-					.add(jobExecution.getId());
+			this.relationships.get(taskExecution.getExecutionId()).add(jobExecution.getId());
 		}
 		else {
 			TreeSet<Long> jobExecutionIds = new TreeSet<>();

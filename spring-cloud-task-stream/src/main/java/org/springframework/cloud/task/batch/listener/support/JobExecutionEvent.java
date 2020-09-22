@@ -57,8 +57,7 @@ public class JobExecutionEvent extends Entity {
 
 	private Date lastUpdated = null;
 
-	private ExitStatus exitStatus = new ExitStatus(
-			new org.springframework.batch.core.ExitStatus("UNKNOWN"));
+	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN"));
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
@@ -75,8 +74,7 @@ public class JobExecutionEvent extends Entity {
 	 * @param original the StepExecution to build this DTO around.
 	 */
 	public JobExecutionEvent(JobExecution original) {
-		this.jobParameters = new JobParametersEvent(
-				original.getJobParameters().getParameters());
+		this.jobParameters = new JobParametersEvent(original.getJobParameters().getParameters());
 		this.jobInstance = new JobInstanceEvent(original.getJobInstance().getId(),
 				original.getJobInstance().getJobName());
 		for (StepExecution stepExecution : original.getStepExecutions()) {
@@ -271,8 +269,8 @@ public class JobExecutionEvent extends Entity {
 	public String toString() {
 		return super.toString() + String.format(
 				", startTime=%s, endTime=%s, lastUpdated=%s, status=%s, exitStatus=%s, job=[%s], jobParameters=[%s]",
-				this.startTime, this.endTime, this.lastUpdated, this.status,
-				this.exitStatus, this.jobInstance, this.jobParameters);
+				this.startTime, this.endTime, this.lastUpdated, this.status, this.exitStatus, this.jobInstance,
+				this.jobParameters);
 	}
 
 }

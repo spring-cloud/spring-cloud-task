@@ -63,29 +63,22 @@ public final class TestDBUtils {
 	 * @param taskExecutionId The id of the task to search.
 	 * @return taskExecution retrieved from the database.
 	 */
-	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource,
-			long taskExecutionId) {
-		String sql = "SELECT * FROM TASK_EXECUTION WHERE " + "TASK_EXECUTION_ID = '"
-				+ taskExecutionId + "'";
+	public static TaskExecution getTaskExecutionFromDB(DataSource dataSource, long taskExecutionId) {
+		String sql = "SELECT * FROM TASK_EXECUTION WHERE " + "TASK_EXECUTION_ID = '" + taskExecutionId + "'";
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<TaskExecution> rows = jdbcTemplate.query(sql,
-				new RowMapper<TaskExecution>() {
-					@Override
-					public TaskExecution mapRow(ResultSet rs, int rownumber)
-							throws SQLException {
-						TaskExecution taskExecution = new TaskExecution(
-								rs.getLong("TASK_EXECUTION_ID"),
-								StringUtils.hasText(rs.getString("EXIT_CODE"))
-										? Integer.valueOf(rs.getString("EXIT_CODE"))
-										: null,
-								rs.getString("TASK_NAME"), rs.getTimestamp("START_TIME"),
-								rs.getTimestamp("END_TIME"), rs.getString("EXIT_MESSAGE"),
-								new ArrayList<>(0), rs.getString("ERROR_MESSAGE"),
-								rs.getString("EXTERNAL_EXECUTION_ID"));
-						return taskExecution;
-					}
-				});
+		List<TaskExecution> rows = jdbcTemplate.query(sql, new RowMapper<TaskExecution>() {
+			@Override
+			public TaskExecution mapRow(ResultSet rs, int rownumber) throws SQLException {
+				TaskExecution taskExecution = new TaskExecution(rs.getLong("TASK_EXECUTION_ID"),
+						StringUtils.hasText(rs.getString("EXIT_CODE")) ? Integer.valueOf(rs.getString("EXIT_CODE"))
+								: null,
+						rs.getString("TASK_NAME"), rs.getTimestamp("START_TIME"), rs.getTimestamp("END_TIME"),
+						rs.getString("EXIT_MESSAGE"), new ArrayList<>(0), rs.getString("ERROR_MESSAGE"),
+						rs.getString("EXTERNAL_EXECUTION_ID"));
+				return taskExecution;
+			}
+		});
 		assertThat(rows.size()).as("only one row should be returned").isEqualTo(1);
 		TaskExecution taskExecution = rows.get(0);
 
@@ -101,8 +94,7 @@ public final class TestDBUtils {
 	 * @throws Exception exception thrown if error occurs creating
 	 * {@link PagingQueryProvider}.
 	 */
-	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName)
-			throws Exception {
+	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName) throws Exception {
 		return getPagingQueryProvider(databaseProductName, null);
 	}
 
@@ -115,8 +107,8 @@ public final class TestDBUtils {
 	 * @throws Exception exception thrown if error occurs creating
 	 * {@link PagingQueryProvider}.
 	 */
-	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName,
-			String whereClause) throws Exception {
+	public static PagingQueryProvider getPagingQueryProvider(String databaseProductName, String whereClause)
+			throws Exception {
 		DataSource dataSource = getMockDataSource(databaseProductName);
 		Map<String, Order> orderMap = new TreeMap<>();
 		orderMap.put("START_TIME", Order.DESCENDING);
@@ -147,8 +139,7 @@ public final class TestDBUtils {
 	 * @throws Exception exception thrown if error occurs creating mock
 	 * {@link DataSource}.
 	 */
-	public static DataSource getMockDataSource(String databaseProductName)
-			throws Exception {
+	public static DataSource getMockDataSource(String databaseProductName) throws Exception {
 		DatabaseMetaData dmd = mock(DatabaseMetaData.class);
 		DataSource ds = mock(DataSource.class);
 		Connection con = mock(Connection.class);
@@ -177,10 +168,9 @@ public final class TestDBUtils {
 		return incrementerFactory.getIncrementer(databaseType, "TASK_SEQ");
 	}
 
-	private static void populateParamsToDB(DataSource dataSource,
-			TaskExecution taskExecution) {
-		String sql = "SELECT * FROM TASK_EXECUTION_PARAMS WHERE TASK_EXECUTION_ID = '"
-				+ taskExecution.getExecutionId() + "'";
+	private static void populateParamsToDB(DataSource dataSource, TaskExecution taskExecution) {
+		String sql = "SELECT * FROM TASK_EXECUTION_PARAMS WHERE TASK_EXECUTION_ID = '" + taskExecution.getExecutionId()
+				+ "'";
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);

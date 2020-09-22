@@ -70,44 +70,37 @@ public class FlatFileItemWriterAutoConfiguration {
 	public FlatFileItemWriter<Map<Object, Object>> itemWriter() {
 
 		if (this.properties.isDelimited() && this.properties.isFormatted()) {
-			throw new IllegalStateException(
-					"An output file must be either delimited or formatted or a custom "
-							+ "LineAggregator must be provided. Your current configuration specifies both delimited and formatted");
+			throw new IllegalStateException("An output file must be either delimited or formatted or a custom "
+					+ "LineAggregator must be provided. Your current configuration specifies both delimited and formatted");
 		}
-		else if ((this.properties.isFormatted() || this.properties.isDelimited())
-				&& this.lineAggregator != null) {
-			throw new IllegalStateException("A LineAggregator must be configured if the "
-					+ "output is not formatted or delimited");
+		else if ((this.properties.isFormatted() || this.properties.isDelimited()) && this.lineAggregator != null) {
+			throw new IllegalStateException(
+					"A LineAggregator must be configured if the " + "output is not formatted or delimited");
 		}
 
 		FlatFileItemWriterBuilder<Map<Object, Object>> builder = new FlatFileItemWriterBuilder<Map<Object, Object>>()
 				.name(this.properties.getName()).resource(this.properties.getResource())
-				.append(this.properties.isAppend())
-				.encoding(this.properties.getEncoding())
-				.forceSync(this.properties.isForceSync())
-				.lineSeparator(this.properties.getLineSeparator())
-				.saveState(this.properties.isSaveState())
-				.shouldDeleteIfEmpty(this.properties.isShouldDeleteIfEmpty())
+				.append(this.properties.isAppend()).encoding(this.properties.getEncoding())
+				.forceSync(this.properties.isForceSync()).lineSeparator(this.properties.getLineSeparator())
+				.saveState(this.properties.isSaveState()).shouldDeleteIfEmpty(this.properties.isShouldDeleteIfEmpty())
 				.shouldDeleteIfExists(this.properties.isShouldDeleteIfExists())
-				.transactional(this.properties.isTransactional())
-				.headerCallback(this.headerCallback).footerCallback(this.footerCallback);
+				.transactional(this.properties.isTransactional()).headerCallback(this.headerCallback)
+				.footerCallback(this.footerCallback);
 
 		if (this.properties.isDelimited()) {
-			FlatFileItemWriterBuilder.DelimitedBuilder<Map<Object, Object>> delimitedBuilder = builder
-					.delimited().delimiter(this.properties.getDelimiter());
+			FlatFileItemWriterBuilder.DelimitedBuilder<Map<Object, Object>> delimitedBuilder = builder.delimited()
+					.delimiter(this.properties.getDelimiter());
 
 			if (this.fieldExtractor != null) {
 				delimitedBuilder.fieldExtractor(this.fieldExtractor);
 			}
 			else {
-				delimitedBuilder.fieldExtractor(
-						new MapFieldExtractor(this.properties.getNames()));
+				delimitedBuilder.fieldExtractor(new MapFieldExtractor(this.properties.getNames()));
 			}
 		}
 		else if (this.properties.isFormatted()) {
-			FlatFileItemWriterBuilder.FormattedBuilder<Map<Object, Object>> formattedBuilder = builder
-					.formatted().format(this.properties.getFormat())
-					.locale(this.properties.getLocale())
+			FlatFileItemWriterBuilder.FormattedBuilder<Map<Object, Object>> formattedBuilder = builder.formatted()
+					.format(this.properties.getFormat()).locale(this.properties.getLocale())
 					.maximumLength(this.properties.getMaximumLength())
 					.minimumLength(this.properties.getMinimumLength());
 
@@ -115,8 +108,7 @@ public class FlatFileItemWriterAutoConfiguration {
 				formattedBuilder.fieldExtractor(this.fieldExtractor);
 			}
 			else {
-				formattedBuilder.fieldExtractor(
-						new MapFieldExtractor(this.properties.getNames()));
+				formattedBuilder.fieldExtractor(new MapFieldExtractor(this.properties.getNames()));
 			}
 		}
 		else if (this.lineAggregator != null) {

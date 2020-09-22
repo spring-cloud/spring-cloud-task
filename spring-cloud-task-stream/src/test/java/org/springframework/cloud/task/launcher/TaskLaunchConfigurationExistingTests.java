@@ -37,8 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {
-		TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class })
+@SpringBootTest(classes = { TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class })
 public class TaskLaunchConfigurationExistingTests {
 
 	private static TaskLauncher testTaskLauncher;

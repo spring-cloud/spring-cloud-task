@@ -51,8 +51,7 @@ public class DatabaseTypeTests {
 
 	@Test
 	public void testInvalidProductName() {
-		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> fromProductName("bad product name"));
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> fromProductName("bad product name"));
 	}
 
 	@Test

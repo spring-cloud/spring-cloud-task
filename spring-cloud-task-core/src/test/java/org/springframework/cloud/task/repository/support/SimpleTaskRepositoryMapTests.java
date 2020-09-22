@@ -53,8 +53,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreEmptyTaskExecution(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -62,8 +61,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -71,12 +69,10 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(UUID.randomUUID().toString());
-		this.taskRepository.updateExternalExecutionId(
-				expectedTaskExecution.getExecutionId(),
+		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -84,12 +80,10 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
-		this.taskRepository.updateExternalExecutionId(
-				expectedTaskExecution.getExecutionId(),
+		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -98,8 +92,7 @@ public class SimpleTaskRepositoryMapTests {
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
-			this.taskRepository.updateExternalExecutionId(-1,
-					expectedTaskExecution.getExternalExecutionId());
+			this.taskRepository.updateExternalExecutionId(-1, expectedTaskExecution.getExternalExecutionId());
 		});
 	}
 
@@ -108,8 +101,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionWithParams(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				getSingleTaskExecutionFromMapRepository(
-						expectedTaskExecution.getExecutionId()));
+				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -117,17 +109,14 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreEmptyTaskExecution(this.taskRepository);
 
-		expectedTaskExecution.setArguments(
-				Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(new Date());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(
-				expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
-				expectedTaskExecution.getExternalExecutionId(),
-				expectedTaskExecution.getParentExecutionId());
+				expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExternalExecutionId(), expectedTaskExecution.getParentExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
@@ -141,9 +130,8 @@ public class SimpleTaskRepositoryMapTests {
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(
-				expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
@@ -159,9 +147,8 @@ public class SimpleTaskRepositoryMapTests {
 		expectedTaskExecution.setParentExecutionId(12345L);
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(
-				expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
+				expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
@@ -173,16 +160,15 @@ public class SimpleTaskRepositoryMapTests {
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setEndTime(new Date());
 		expectedTaskExecution.setExitCode(0);
-		TaskExecution actualTaskExecution = TaskExecutionCreator
-				.completeExecution(this.taskRepository, expectedTaskExecution);
+		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(this.taskRepository,
+				expectedTaskExecution);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
 	}
 
 	private TaskExecution getSingleTaskExecutionFromMapRepository(long taskExecutionId) {
 		Map<Long, TaskExecution> taskMap = ((MapTaskExecutionDao) ((SimpleTaskRepository) this.taskRepository)
 				.getTaskExecutionDao()).getTaskExecutions();
-		assertTrue("taskExecutionId must be in MapTaskExecutionRepository",
-				taskMap.containsKey(taskExecutionId));
+		assertTrue("taskExecutionId must be in MapTaskExecutionRepository", taskMap.containsKey(taskExecutionId));
 		return taskMap.get(taskExecutionId);
 	}
 
@@ -192,8 +178,7 @@ public class SimpleTaskRepositoryMapTests {
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitCode(-1);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
-			TaskExecutionCreator.completeExecution(this.taskRepository,
-					expectedTaskExecution);
+			TaskExecutionCreator.completeExecution(this.taskRepository, expectedTaskExecution);
 		});
 	}
 

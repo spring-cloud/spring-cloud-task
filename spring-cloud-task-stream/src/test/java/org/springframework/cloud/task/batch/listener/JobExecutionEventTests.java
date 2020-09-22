@@ -62,11 +62,9 @@ public class JobExecutionEventTests {
 
 	private static final String JOB_CONFIGURATION_NAME = "FOO_JOB_CONFIG";
 
-	private static final String[] LISTENER_BEAN_NAMES = {
-			BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER,
+	private static final String[] LISTENER_BEAN_NAMES = { BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER,
 			BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER,
-			BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER,
-			BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER,
+			BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER, BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER,
 			BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER,
 			BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER,
 			BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER };
@@ -84,34 +82,28 @@ public class JobExecutionEventTests {
 	@Test
 	public void testBasic() {
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-				this.jobParameters, JOB_CONFIGURATION_NAME);
+		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters, JOB_CONFIGURATION_NAME);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
-		assertThat(jobExecutionEvent.getJobInstance())
-				.as("jobInstance should not be null").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters())
-				.as("jobParameters should not be null").isNotNull();
-		assertThat(jobExecutionEvent.getJobConfigurationName())
-				.as("jobConfigurationName did not match expected")
+		assertThat(jobExecutionEvent.getJobInstance()).as("jobInstance should not be null").isNotNull();
+		assertThat(jobExecutionEvent.getJobParameters()).as("jobParameters should not be null").isNotNull();
+		assertThat(jobExecutionEvent.getJobConfigurationName()).as("jobConfigurationName did not match expected")
 				.isEqualTo(JOB_CONFIGURATION_NAME);
 
-		assertThat(jobExecutionEvent.getJobParameters().getParameters().size())
-				.as("jobParameters size did not match").isEqualTo(0);
-		assertThat(jobExecutionEvent.getJobInstance().getJobName())
-				.as("jobInstance name did not match").isEqualTo(JOB_NAME);
-		assertThat(jobExecutionEvent.getStepExecutions().size())
-				.as("no step executions were expected").isEqualTo(0);
-		assertThat(jobExecutionEvent.getExitStatus().getExitCode())
-				.as("exitStatus did not match expected").isEqualTo("UNKNOWN");
+		assertThat(jobExecutionEvent.getJobParameters().getParameters().size()).as("jobParameters size did not match")
+				.isEqualTo(0);
+		assertThat(jobExecutionEvent.getJobInstance().getJobName()).as("jobInstance name did not match")
+				.isEqualTo(JOB_NAME);
+		assertThat(jobExecutionEvent.getStepExecutions().size()).as("no step executions were expected").isEqualTo(0);
+		assertThat(jobExecutionEvent.getExitStatus().getExitCode()).as("exitStatus did not match expected")
+				.isEqualTo("UNKNOWN");
 	}
 
 	@Test
 	public void testJobParameters() {
 		String[] JOB_PARAM_KEYS = { "A", "B", "C", "D" };
 		Date testDate = new Date();
-		JobParameter[] PARAMETERS = { new JobParameter("FOO", true),
-				new JobParameter(1L, true), new JobParameter(1D, true),
-				new JobParameter(testDate, false) };
+		JobParameter[] PARAMETERS = { new JobParameter("FOO", true), new JobParameter(1L, true),
+				new JobParameter(1D, true), new JobParameter(testDate, false) };
 
 		Map<String, JobParameter> jobParamMap = new LinkedHashMap<>();
 		for (int paramCount = 0; paramCount < JOB_PARAM_KEYS.length; paramCount++) {
@@ -119,34 +111,28 @@ public class JobExecutionEventTests {
 		}
 		this.jobParameters = new JobParameters(jobParamMap);
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-				this.jobParameters, JOB_CONFIGURATION_NAME);
+		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters, JOB_CONFIGURATION_NAME);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
 
-		assertThat(jobExecutionEvent.getJobParameters().getString("A"))
-				.as("Job Parameter A was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getLong("B"))
-				.as("Job Parameter B was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getDouble("C"))
-				.as("Job Parameter C was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getDate("D"))
-				.as("Job Parameter D was expected").isNotNull();
+		assertThat(jobExecutionEvent.getJobParameters().getString("A")).as("Job Parameter A was expected").isNotNull();
+		assertThat(jobExecutionEvent.getJobParameters().getLong("B")).as("Job Parameter B was expected").isNotNull();
+		assertThat(jobExecutionEvent.getJobParameters().getDouble("C")).as("Job Parameter C was expected").isNotNull();
+		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D was expected").isNotNull();
 
-		assertThat(jobExecutionEvent.getJobParameters().getString("A"))
-				.as("Job Parameter A value was not correct").isEqualTo("FOO");
-		assertThat(jobExecutionEvent.getJobParameters().getLong("B"))
-				.as("Job Parameter B value was not correct").isEqualTo(new Long(1));
-		assertThat(jobExecutionEvent.getJobParameters().getDouble("C"))
-				.as("Job Parameter C value was not correct").isEqualTo(new Double(1));
-		assertThat(jobExecutionEvent.getJobParameters().getDate("D"))
-				.as("Job Parameter D value was not correct").isEqualTo(testDate);
+		assertThat(jobExecutionEvent.getJobParameters().getString("A")).as("Job Parameter A value was not correct")
+				.isEqualTo("FOO");
+		assertThat(jobExecutionEvent.getJobParameters().getLong("B")).as("Job Parameter B value was not correct")
+				.isEqualTo(new Long(1));
+		assertThat(jobExecutionEvent.getJobParameters().getDouble("C")).as("Job Parameter C value was not correct")
+				.isEqualTo(new Double(1));
+		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D value was not correct")
+				.isEqualTo(testDate);
 	}
 
 	@Test
 	public void testStepExecutions() {
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-				this.jobParameters, JOB_CONFIGURATION_NAME);
+		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters, JOB_CONFIGURATION_NAME);
 		List<StepExecution> stepsExecutions = new ArrayList<>();
 		stepsExecutions.add(new StepExecution("foo", jobExecution));
 		stepsExecutions.add(new StepExecution("bar", jobExecution));
@@ -154,16 +140,11 @@ public class JobExecutionEventTests {
 		jobExecution.addStepExecutions(stepsExecutions);
 
 		JobExecutionEvent jobExecutionsEvent = new JobExecutionEvent(jobExecution);
-		assertThat(jobExecutionsEvent.getStepExecutions().size())
-				.as("stepExecutions count is incorrect").isEqualTo(3);
-		Iterator<StepExecutionEvent> iter = jobExecutionsEvent.getStepExecutions()
-				.iterator();
-		assertThat(iter.next().getStepName()).as("foo stepExecution is not present")
-				.isEqualTo("foo");
-		assertThat(iter.next().getStepName()).as("bar stepExecution is not present")
-				.isEqualTo("bar");
-		assertThat(iter.next().getStepName()).as("baz stepExecution is not present")
-				.isEqualTo("baz");
+		assertThat(jobExecutionsEvent.getStepExecutions().size()).as("stepExecutions count is incorrect").isEqualTo(3);
+		Iterator<StepExecutionEvent> iter = jobExecutionsEvent.getStepExecutions().iterator();
+		assertThat(iter.next().getStepName()).as("foo stepExecution is not present").isEqualTo("foo");
+		assertThat(iter.next().getStepName()).as("bar stepExecution is not present").isEqualTo("bar");
+		assertThat(iter.next().getStepName()).as("baz stepExecution is not present").isEqualTo("baz");
 	}
 
 	@Test
@@ -224,21 +205,17 @@ public class JobExecutionEventTests {
 		final String EXCEPTION_MESSAGE = "TEST EXCEPTION";
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
 		assertThat(jobExecutionEvent.getFailureExceptions().size()).isEqualTo(0);
-		jobExecutionEvent
-				.addFailureException(new IllegalStateException(EXCEPTION_MESSAGE));
+		jobExecutionEvent.addFailureException(new IllegalStateException(EXCEPTION_MESSAGE));
 		assertThat(jobExecutionEvent.getFailureExceptions().size()).isEqualTo(1);
 		assertThat(jobExecutionEvent.getAllFailureExceptions().size()).isEqualTo(1);
-		assertThat(EXCEPTION_MESSAGE)
-				.isEqualTo(jobExecutionEvent.getFailureExceptions().get(0).getMessage());
-		assertThat(EXCEPTION_MESSAGE).isEqualTo(
-				jobExecutionEvent.getAllFailureExceptions().get(0).getMessage());
+		assertThat(EXCEPTION_MESSAGE).isEqualTo(jobExecutionEvent.getFailureExceptions().get(0).getMessage());
+		assertThat(EXCEPTION_MESSAGE).isEqualTo(jobExecutionEvent.getAllFailureExceptions().get(0).getMessage());
 	}
 
 	@Test
 	public void testToString() {
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
-		assertThat(jobExecutionEvent.toString().startsWith("JobExecutionEvent:"))
-				.isTrue();
+		assertThat(jobExecutionEvent.toString().startsWith("JobExecutionEvent:")).isTrue();
 	}
 
 	@Test
@@ -275,10 +252,8 @@ public class JobExecutionEventTests {
 		assertThat(jobExecutionEvent.getJobId()).isNull();
 		JobInstanceEvent expectedJobInstanceEvent = new JobInstanceEvent(1L, JOB_NAME);
 		jobExecutionEvent.setJobInstance(expectedJobInstanceEvent);
-		assertThat(jobExecutionEvent.getJobInstance().getJobName())
-				.isEqualTo(expectedJobInstanceEvent.getJobName());
-		assertThat(jobExecutionEvent.getJobId())
-				.isEqualTo(expectedJobInstanceEvent.getId());
+		assertThat(jobExecutionEvent.getJobInstance().getJobName()).isEqualTo(expectedJobInstanceEvent.getJobName());
+		assertThat(jobExecutionEvent.getJobId()).isEqualTo(expectedJobInstanceEvent.getId());
 	}
 
 	@Test
@@ -288,8 +263,7 @@ public class JobExecutionEventTests {
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
 		assertThat(jobExecutionEvent.getExecutionContext()).isNotNull();
 		jobExecutionEvent.setExecutionContext(executionContext);
-		assertThat(jobExecutionEvent.getExecutionContext().getString("hello"))
-				.isEqualTo("world");
+		assertThat(jobExecutionEvent.getExecutionContext().getString("hello")).isEqualTo("world");
 	}
 
 	@Test
@@ -313,16 +287,12 @@ public class JobExecutionEventTests {
 	@Test
 	public void testOrderConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(
-						EventJobExecutionConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						TestSupportBinderAutoConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(EventJobExecutionConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class, TestSupportBinderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(
-						BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
-						"--spring.main.web-environment=false",
-						"--spring.cloud.task.batch.events.chunk-order=5",
+						"--spring.main.web-environment=false", "--spring.cloud.task.batch.events.chunk-order=5",
 						"--spring.cloud.task.batch.events.item-process-order=5",
 						"--spring.cloud.task.batch.events.item-read-order=5",
 						"--spring.cloud.task.batch.events.item-write-order=5",
@@ -332,8 +302,7 @@ public class JobExecutionEventTests {
 		applicationContextRunner.run((context) -> {
 			for (String beanName : LISTENER_BEAN_NAMES) {
 				Ordered ordered = (Ordered) context.getBean(beanName);
-				assertThat(5).as("Expected order value of 5 for " + beanName)
-						.isEqualTo(ordered.getOrder());
+				assertThat(5).as("Expected order value of 5 for " + beanName).isEqualTo(ordered.getOrder());
 			}
 
 		});
@@ -342,13 +311,10 @@ public class JobExecutionEventTests {
 	private void testDisabledConfiguration(String property, String disabledListener) {
 		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(
-						EventJobExecutionConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						TestSupportBinderAutoConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(EventJobExecutionConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class, TestSupportBinderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(
-						BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
 						"--spring.main.web-environment=false", disabledPropertyArg);
 		applicationContextRunner.run((context) -> {
@@ -361,8 +327,7 @@ public class JobExecutionEventTests {
 					catch (NoSuchBeanDefinitionException nsbde) {
 						exceptionThrown = true;
 					}
-					assertThat(exceptionThrown).as(
-							String.format("Did not expect %s bean in context", beanName))
+					assertThat(exceptionThrown).as(String.format("Did not expect %s bean in context", beanName))
 							.isTrue();
 				}
 				else {

@@ -48,14 +48,12 @@ public class TaskJobLauncherAutoConfiguration {
 	private TaskBatchProperties properties;
 
 	@Bean
-	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(
-			JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
-			JobRegistry jobRegistry, JobRepository jobRepository,
+	public TaskJobLauncherCommandLineRunnerFactoryBean jobLauncherCommandLineRunner(JobLauncher jobLauncher,
+			JobExplorer jobExplorer, List<Job> jobs, JobRegistry jobRegistry, JobRepository jobRepository,
 			BatchProperties batchProperties) {
 		TaskJobLauncherCommandLineRunnerFactoryBean taskJobLauncherCommandLineRunnerFactoryBean;
-		taskJobLauncherCommandLineRunnerFactoryBean = new TaskJobLauncherCommandLineRunnerFactoryBean(
-				jobLauncher, jobExplorer, jobs, this.properties, jobRegistry,
-				jobRepository, batchProperties);
+		taskJobLauncherCommandLineRunnerFactoryBean = new TaskJobLauncherCommandLineRunnerFactoryBean(jobLauncher,
+				jobExplorer, jobs, this.properties, jobRegistry, jobRepository, batchProperties);
 
 		return taskJobLauncherCommandLineRunnerFactoryBean;
 	}

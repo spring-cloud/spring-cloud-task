@@ -54,9 +54,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Gunnar Hillert
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(
-		classes = { TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class })
+@ContextConfiguration(classes = { TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
+		PropertyPlaceholderAutoConfiguration.class })
 public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	@Autowired
@@ -75,65 +74,52 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	@Test
 	@DirtiesContext
 	public void testStartTaskExecution() {
-		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null,
-				new ArrayList<>(0), null);
+		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<>(0), null);
 
-		expectedTaskExecution.setArguments(
-				Collections.singletonList("foo=" + UUID.randomUUID().toString()));
+		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(new Date());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
-		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void createTaskExecution() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils
-				.createSampleTaskExecutionNoArg();
-		expectedTaskExecution = this.dao.createTaskExecution(
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void createEmptyTaskExecution() {
-		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null,
-				new ArrayList<>(0), null);
+		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<>(0), null);
 
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
 	@DirtiesContext
 	public void completeTaskExecution() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils
-				.endSampleTaskExecutionNoArg();
-		expectedTaskExecution = this.dao.createTaskExecution(
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(),
+		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
+		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
-		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getExitCode(), expectedTaskExecution.getEndTime(),
-				expectedTaskExecution.getExitMessage());
+		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getExitCode(),
+				expectedTaskExecution.getEndTime(), expectedTaskExecution.getExitMessage());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -141,13 +127,10 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	public void completeTaskExecutionWithNoCreate() {
 		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
 
-		TaskExecution expectedTaskExecution = TestVerifierUtils
-				.endSampleTaskExecutionNoArg();
+		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
 		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
-			dao.completeTaskExecution(expectedTaskExecution.getExecutionId(),
-					expectedTaskExecution.getExitCode(),
-					expectedTaskExecution.getEndTime(),
-					expectedTaskExecution.getExitMessage());
+			dao.completeTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getExitCode(),
+					expectedTaskExecution.getEndTime(), expectedTaskExecution.getExitMessage());
 		});
 	}
 
@@ -187,12 +170,10 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	public void testStartExecutionWithNullExternalExecutionIdExisting() {
 		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
-		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(), null);
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(), null);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	@Test
@@ -200,25 +181,20 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	public void testStartExecutionWithNullExternalExecutionIdNonExisting() {
 		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
-		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(),
-				expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
-				expectedTaskExecution.getArguments(), "BAR");
+		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
+				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(), "BAR");
 		expectedTaskExecution.setExternalExecutionId("BAR");
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
-						expectedTaskExecution.getExecutionId()));
+				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {
-		TaskExecution expectedTaskExecution = TestVerifierUtils
-				.createSampleTaskExecutionNoArg();
-		return this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
-				expectedTaskExecution.getStartTime(),
+		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
+		return this.dao.createTaskExecution(expectedTaskExecution.getTaskName(), expectedTaskExecution.getStartTime(),
 				expectedTaskExecution.getArguments(), "FOO1");
 	}
 
-	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize,
-			Sort sort) {
+	private Iterator<TaskExecution> getPageIterator(int pageNum, int pageSize, Sort sort) {
 		Pageable pageable = (sort == null) ? PageRequest.of(pageNum, pageSize)
 				: PageRequest.of(pageNum, pageSize, sort);
 		Page<TaskExecution> page = this.dao.findAll(pageable);

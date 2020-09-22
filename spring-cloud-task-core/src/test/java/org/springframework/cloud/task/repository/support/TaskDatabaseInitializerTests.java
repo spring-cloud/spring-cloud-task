@@ -54,21 +54,18 @@ public class TaskDatabaseInitializerTests {
 	@Test
 	public void testDefaultContext() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register(TestConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
+		this.context.register(TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
-		assertThat(new JdbcTemplate(this.context.getBean(DataSource.class))
-				.queryForList("select * from TASK_EXECUTION").size()).isEqualTo(0);
+		assertThat(new JdbcTemplate(this.context.getBean(DataSource.class)).queryForList("select * from TASK_EXECUTION")
+				.size()).isEqualTo(0);
 	}
 
 	@Test
 	public void testNoDatabase() {
 		this.context = new AnnotationConfigApplicationContext(EmptyConfiguration.class);
-		SimpleTaskRepository repository = new SimpleTaskRepository(
-				new TaskExecutionDaoFactoryBean());
-		assertThat(repository.getTaskExecutionDao())
-				.isInstanceOf(MapTaskExecutionDao.class);
+		SimpleTaskRepository repository = new SimpleTaskRepository(new TaskExecutionDaoFactoryBean());
+		assertThat(repository.getTaskExecutionDao()).isInstanceOf(MapTaskExecutionDao.class);
 		MapTaskExecutionDao dao = (MapTaskExecutionDao) repository.getTaskExecutionDao();
 		assertThat(dao.getTaskExecutions().size()).isEqualTo(0);
 	}
@@ -76,19 +73,16 @@ public class TaskDatabaseInitializerTests {
 	@Test
 	public void testNoTaskConfiguration() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register(EmptyConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
+		this.context.register(EmptyConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
-		assertThat(this.context.getBeanNamesForType(SimpleTaskRepository.class).length)
-				.isEqualTo(0);
+		assertThat(this.context.getBeanNamesForType(SimpleTaskRepository.class).length).isEqualTo(0);
 	}
 
 	@Test
 	public void testMultipleDataSourcesContext() {
 		this.context = new AnnotationConfigApplicationContext();
-		this.context.register(SimpleTaskAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class,
+		this.context.register(SimpleTaskAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 		DataSource dataSource = mock(DataSource.class);
 		this.context.getBeanFactory().registerSingleton("mockDataSource", dataSource);

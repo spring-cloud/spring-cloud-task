@@ -41,8 +41,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemWriteListener implements ItemWriteListener, Ordered {
 
-	private static final Log logger = LogFactory
-			.getLog(EventEmittingItemWriteListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemWriteListener.class);
 
 	private MessagePublisher<String> messagePublisher;
 
@@ -76,8 +75,7 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onWriteError: " + exception.getMessage(), exception);
 		}
-		String payload = "Exception while " + items.size()
-				+ " items are attempted to be written.";
+		String payload = "Exception while " + items.size() + " items are attempted to be written.";
 		this.messagePublisher.publishWithThrowableHeader(payload, exception.getMessage());
 	}
 

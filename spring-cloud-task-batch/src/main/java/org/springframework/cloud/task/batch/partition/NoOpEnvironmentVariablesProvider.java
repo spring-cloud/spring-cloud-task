@@ -36,8 +36,7 @@ public class NoOpEnvironmentVariablesProvider implements EnvironmentVariablesPro
 	 * @return an empty {@link Map}
 	 */
 	@Override
-	public Map<String, String> getEnvironmentVariables(
-			ExecutionContext executionContext) {
+	public Map<String, String> getEnvironmentVariables(ExecutionContext executionContext) {
 		return Collections.emptyMap();
 	}
 

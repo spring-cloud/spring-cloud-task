@@ -67,20 +67,17 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 
 	private TaskProperties taskProperties;
 
-	public SingleInstanceTaskListener(LockRegistry lockRegistry,
-			TaskNameResolver taskNameResolver, TaskProperties taskProperties,
-			ApplicationEventPublisher applicationEventPublisher) {
+	public SingleInstanceTaskListener(LockRegistry lockRegistry, TaskNameResolver taskNameResolver,
+			TaskProperties taskProperties, ApplicationEventPublisher applicationEventPublisher) {
 		this.lockRegistry = lockRegistry;
 		this.taskNameResolver = taskNameResolver;
 		this.taskProperties = taskProperties;
-		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(
-				this.lockRegistry);
+		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(this.lockRegistry);
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
-	public SingleInstanceTaskListener(DataSource dataSource,
-			TaskNameResolver taskNameResolver, TaskProperties taskProperties,
-			ApplicationEventPublisher applicationEventPublisher) {
+	public SingleInstanceTaskListener(DataSource dataSource, TaskNameResolver taskNameResolver,
+			TaskProperties taskProperties, ApplicationEventPublisher applicationEventPublisher) {
 		this.taskNameResolver = taskNameResolver;
 		this.applicationEventPublisher = applicationEventPublisher;
 		this.dataSource = dataSource;
@@ -92,12 +89,9 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 		if (this.lockRegistry == null) {
 			this.lockRegistry = getDefaultLockRegistry(taskExecution.getExecutionId());
 		}
-		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(
-				this.lockRegistry,
-				new DefaultCandidate(String.valueOf(taskExecution.getExecutionId()),
-						this.taskNameResolver.getTaskName()));
-		this.lockRegistryLeaderInitiator
-				.setApplicationEventPublisher(this.applicationEventPublisher);
+		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(this.lockRegistry, new DefaultCandidate(
+				String.valueOf(taskExecution.getExecutionId()), this.taskNameResolver.getTaskName()));
+		this.lockRegistryLeaderInitiator.setApplicationEventPublisher(this.applicationEventPublisher);
 		this.lockRegistryLeaderInitiator.setPublishFailedEvents(true);
 		this.lockRegistryLeaderInitiator.start();
 		while (!this.lockReady) {
@@ -108,15 +102,13 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 				logger.warn("Thread Sleep Failed", ex);
 			}
 			if (this.lockFailed) {
-				String errorMessage = String.format(
-						"Task with name \"%s\" is already running.",
+				String errorMessage = String.format("Task with name \"%s\" is already running.",
 						this.taskNameResolver.getTaskName());
 				try {
 					this.lockRegistryLeaderInitiator.destroy();
 				}
 				catch (Exception exception) {
-					throw new TaskExecutionException("Failed to destroy lock.",
-							exception);
+					throw new TaskExecutionException("Failed to destroy lock.", exception);
 				}
 				throw new TaskExecutionException(errorMessage);
 			}
@@ -129,8 +121,7 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 	}
 
 	@FailedTask
-	public void unlockTaskOnError(TaskExecution taskExecution, Throwable throwable)
-			throws Exception {
+	public void unlockTaskOnError(TaskExecution taskExecution, Throwable throwable) throws Exception {
 		this.lockRegistryLeaderInitiator.destroy();
 	}
 
@@ -145,8 +136,7 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 	}
 
 	private LockRegistry getDefaultLockRegistry(long executionId) {
-		DefaultLockRepository lockRepository = new DefaultLockRepository(this.dataSource,
-				String.valueOf(executionId));
+		DefaultLockRepository lockRepository = new DefaultLockRepository(this.dataSource, String.valueOf(executionId));
 		lockRepository.setPrefix(this.taskProperties.getTablePrefix());
 		lockRepository.setTimeToLive(this.taskProperties.getSingleInstanceLockTtl());
 		lockRepository.afterPropertiesSet();

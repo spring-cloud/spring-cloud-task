@@ -57,19 +57,15 @@ import org.springframework.util.SocketUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(
-		classes = { TaskLauncherSinkApplication.class,
-				TaskLauncherSinkTests.TaskLauncherConfiguration.class },
-		properties = {
-				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
+@SpringBootTest(classes = { TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class },
+		properties = { "maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
 
 	private final static int MAX_WAIT_TIME = 120000;
 
-	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:2.0.0.RELEASE";
+	private final static String URL = "maven://org.springframework.cloud.task.app:" + "timestamp-task:2.0.0.RELEASE";
 
 	private final static String DATASOURCE_URL;
 
@@ -85,10 +81,9 @@ public class TaskLauncherSinkTests {
 
 	static {
 		randomPort = SocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
-				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
-				.withExposedPorts(5672);
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
+				+ "DB_CLOSE_ON_EXIT=FALSE";
+		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3").withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
 		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
@@ -106,8 +101,7 @@ public class TaskLauncherSinkTests {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		this.taskExplorer = new SimpleTaskExplorer(
-				new TaskExecutionDaoFactoryBean(dataSource));
+		this.taskExplorer = new SimpleTaskExplorer(new TaskExecutionDaoFactoryBean(dataSource));
 	}
 
 	@BeforeEach
@@ -116,8 +110,7 @@ public class TaskLauncherSinkTests {
 		this.properties.put("spring.datasource.url", DATASOURCE_URL);
 		this.properties.put("spring.datasource.username", DATASOURCE_USER_NAME);
 		this.properties.put("spring.datasource.password", DATASOURCE_USER_PASSWORD);
-		this.properties.put("spring.datasource.driverClassName",
-				DATASOURCE_DRIVER_CLASS_NAME);
+		this.properties.put("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
 		this.properties.put("spring.application.name", TASK_NAME);
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
@@ -127,8 +120,7 @@ public class TaskLauncherSinkTests {
 
 		initializer.setDataSource(this.dataSource);
 		ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-		databasePopulator.addScript(
-				new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
+		databasePopulator.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-h2.sql"));
 		initializer.setDatabasePopulator(databasePopulator);
 
 		initializer.afterPropertiesSet();
@@ -139,20 +131,17 @@ public class TaskLauncherSinkTests {
 		launchTask(URL);
 		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = this.taskExplorer
-				.findAll(PageRequest.of(0, 10));
-		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
-				.isEqualTo(1);
+		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(waitForTaskToComplete()).isTrue();
-		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
-				.as("return code should be 0").isEqualTo(0);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
+				.isEqualTo(0);
 	}
 
 	private boolean tableExists() throws SQLException {
 		boolean result;
 		try (Connection conn = this.dataSource.getConnection();
-				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
-						new String[] { "TABLE" })) {
+				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION", new String[] { "TABLE" })) {
 			result = res.next();
 		}
 		return result;
@@ -185,8 +174,7 @@ public class TaskLauncherSinkTests {
 
 	private void launchTask(String artifactURL) {
 
-		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
-				this.properties, null, null);
+		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null, this.properties, null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.sink.input().send(message);
 	}
@@ -206,8 +194,8 @@ public class TaskLauncherSinkTests {
 		public Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers",
-						"-tcpPort", String.valueOf(randomPort)).start();
+				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+						String.valueOf(randomPort)).start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);

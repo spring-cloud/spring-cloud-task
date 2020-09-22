@@ -77,13 +77,10 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(JobConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								FlatFileItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.savestate=true",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, FlatFileItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.flatfilereader.savestate=true",
 						"spring.batch.job.flatfilereader.name=fullDelimitedConfiguration",
 						"spring.batch.job.flatfilereader.maxItemCount=5",
 						"spring.batch.job.flatfilereader.currentItemCount=2",
@@ -92,8 +89,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 						"spring.batch.job.flatfilereader.strict=true",
 						"spring.batch.job.flatfilereader.encoding=UTF-16",
 						"spring.batch.job.flatfilereader.linesToSkip=1",
-						"spring.batch.job.flatfilereader.delimited=true",
-						"spring.batch.job.flatfilereader.delimiter=@",
+						"spring.batch.job.flatfilereader.delimited=true", "spring.batch.job.flatfilereader.delimiter=@",
 						"spring.batch.job.flatfilereader.quoteCharacter=%",
 						"spring.batch.job.flatfilereader.includedFields=1,3,5",
 						"spring.batch.job.flatfilereader.names=foo,bar,baz",
@@ -133,14 +129,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public void testFixedWidthConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(JobConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(
-						PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class,
-						SingleStepJobAutoConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.savestate=true",
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.flatfilereader.savestate=true",
 						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
 						"spring.batch.job.flatfilereader.comments=#,$",
 						"spring.batch.job.flatfilereader.resource=/test.txt",
@@ -194,13 +187,10 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(CustomLineMapperConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								FlatFileItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, FlatFileItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
 						"spring.batch.job.flatfilereader.resource=/test.txt",
 						"spring.batch.job.flatfilereader.strict=true");
 
@@ -231,16 +221,12 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@Test
 	public void testCustomRecordSeparatorAndSkippedLines() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-						RecordSeparatorAndSkippedLinesJobConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(
-						PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class,
-						SingleStepJobAutoConfiguration.class,
+				.withUserConfiguration(RecordSeparatorAndSkippedLinesJobConfiguration.class)
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
 						"spring.batch.job.flatfilereader.resource=/test.txt",
 						"spring.batch.job.flatfilereader.linesToSkip=2",
 						"spring.batch.job.flatfilereader.fixedLength=true",
@@ -263,8 +249,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			ListLineCallbackHandler callbackHandler = context
-					.getBean(ListLineCallbackHandler.class);
+			ListLineCallbackHandler callbackHandler = context.getBean(ListLineCallbackHandler.class);
 
 			assertThat(callbackHandler.getLines().size()).isEqualTo(2);
 
@@ -278,14 +263,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public void testCustomMapping() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(CustomMappingConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(
-						PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class,
-						SingleStepJobAutoConfiguration.class,
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
 						"spring.batch.job.flatfilereader.resource=/test.txt",
 						"spring.batch.job.flatfilereader.maxItemCount=1",
 						"spring.batch.job.flatfilereader.strict=true");
@@ -333,8 +315,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 		@Bean
 		public LineTokenizer lineTokenizer() {
-			return line -> new DefaultFieldSet(
-					new String[] { line.substring(0, 5), line.substring(6) },
+			return line -> new DefaultFieldSet(new String[] { line.substring(0, 5), line.substring(6) },
 					new String[] { "one", "two" });
 		}
 

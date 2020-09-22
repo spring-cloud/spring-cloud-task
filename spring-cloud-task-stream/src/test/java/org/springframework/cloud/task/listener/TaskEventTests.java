@@ -44,21 +44,15 @@ public class TaskEventTests {
 	@Test
 	public void testDefaultConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(
-						EmbeddedDataSourceConfiguration.class,
-						TaskEventAutoConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class,
-						TestSupportBinderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
-						BindingServiceConfiguration.class))
-				.withUserConfiguration(TaskEventsConfiguration.class)
-				.withPropertyValues("spring.cloud.task.closecontext_enabled=false",
-						"spring.main.web-environment=false");
+				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+						TaskEventAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
+						TestSupportBinderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+						SingleTaskConfiguration.class, BindingServiceConfiguration.class))
+				.withUserConfiguration(TaskEventsConfiguration.class).withPropertyValues(
+						"spring.cloud.task.closecontext_enabled=false", "spring.main.web-environment=false");
 		applicationContextRunner.run((context) -> {
 			assertThat(context.getBean("taskEventListener")).isNotNull();
-			assertThat(
-					context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class))
-							.isNotNull();
+			assertThat(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class)).isNotNull();
 		});
 	}
 

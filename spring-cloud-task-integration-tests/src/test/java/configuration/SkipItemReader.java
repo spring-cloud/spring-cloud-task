@@ -31,8 +31,7 @@ public class SkipItemReader implements ItemReader {
 	boolean finished = false;
 
 	@Override
-	public Object read() throws Exception, UnexpectedInputException, ParseException,
-			NonTransientResourceException {
+	public Object read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		String result = "1";
 		if (this.failCount < 2) {
 			this.failCount++;

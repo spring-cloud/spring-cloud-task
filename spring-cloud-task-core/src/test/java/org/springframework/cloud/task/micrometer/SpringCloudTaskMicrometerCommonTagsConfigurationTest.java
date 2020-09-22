@@ -35,18 +35,14 @@ public class SpringCloudTaskMicrometerCommonTagsConfigurationTest {
 		public void testDefaultTagValues() {
 			assertThat(meter.getId().getTag("task.name")).isEqualTo("unknown");
 			assertThat(meter.getId().getTag("task.execution.id")).isEqualTo("unknown");
-			assertThat(meter.getId().getTag("task.parent.execution.id"))
-					.isEqualTo("unknown");
-			assertThat(meter.getId().getTag("task.external.execution.id"))
-					.isEqualTo("unknown");
+			assertThat(meter.getId().getTag("task.parent.execution.id")).isEqualTo("unknown");
+			assertThat(meter.getId().getTag("task.external.execution.id")).isEqualTo("unknown");
 		}
 
 	}
 
-	@TestPropertySource(properties = { "spring.cloud.task.name=myTask",
-			"spring.cloud.task.executionid=123",
-			"spring.cloud.task.parent-execution-id=999",
-			"spring.cloud.task.external-execution-id=696" })
+	@TestPropertySource(properties = { "spring.cloud.task.name=myTask", "spring.cloud.task.executionid=123",
+			"spring.cloud.task.parent-execution-id=999", "spring.cloud.task.external-execution-id=696" })
 	public static class TestPresetTagValues extends AbstractMicrometerTest {
 
 		@Test
@@ -54,14 +50,12 @@ public class SpringCloudTaskMicrometerCommonTagsConfigurationTest {
 			assertThat(meter.getId().getTag("task.name")).isEqualTo("myTask");
 			assertThat(meter.getId().getTag("task.execution.id")).isEqualTo("123");
 			assertThat(meter.getId().getTag("task.parent.execution.id")).isEqualTo("999");
-			assertThat(meter.getId().getTag("task.external.execution.id"))
-					.isEqualTo("696");
+			assertThat(meter.getId().getTag("task.external.execution.id")).isEqualTo("696");
 		}
 
 	}
 
-	@TestPropertySource(
-			properties = { "spring.cloud.task.metrics.common.tags.enabled=false" })
+	@TestPropertySource(properties = { "spring.cloud.task.metrics.common.tags.enabled=false" })
 	public static class TestDisabledTagValues extends AbstractMicrometerTest {
 
 		@Test

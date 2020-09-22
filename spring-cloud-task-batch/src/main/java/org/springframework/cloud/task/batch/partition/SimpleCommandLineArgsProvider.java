@@ -32,8 +32,7 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @since 1.1.0
  */
-public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport
-		implements CommandLineArgsProvider {
+public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport implements CommandLineArgsProvider {
 
 	private TaskExecution taskExecution;
 

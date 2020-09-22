@@ -76,8 +76,7 @@ import org.springframework.util.StringUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-public class DeployerPartitionHandler
-		implements PartitionHandler, EnvironmentAware, InitializingBean {
+public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware, InitializingBean {
 
 	/**
 	 * ID of Spring Cloud Task job execution.
@@ -158,8 +157,8 @@ public class DeployerPartitionHandler
 	 * this constructor's set of parameters.
 	 */
 	@Deprecated
-	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-			Resource resource, String stepName) {
+	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer, Resource resource,
+			String stepName) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
@@ -171,8 +170,8 @@ public class DeployerPartitionHandler
 		this.stepName = stepName;
 	}
 
-	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-			Resource resource, String stepName, TaskRepository taskRepository) {
+	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer, Resource resource,
+			String stepName, TaskRepository taskRepository) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
@@ -190,8 +189,7 @@ public class DeployerPartitionHandler
 	 * Used to provide any environment variables to be set on each worker launched.
 	 * @param environmentVariablesProvider an {@link EnvironmentVariablesProvider}
 	 */
-	public void setEnvironmentVariablesProvider(
-			EnvironmentVariablesProvider environmentVariablesProvider) {
+	public void setEnvironmentVariablesProvider(EnvironmentVariablesProvider environmentVariablesProvider) {
 		this.environmentVariablesProvider = environmentVariablesProvider;
 	}
 
@@ -208,8 +206,7 @@ public class DeployerPartitionHandler
 	 * Used to provide any command line arguements to be passed to each worker launched.
 	 * @param commandLineArgsProvider {@link CommandLineArgsProvider}
 	 */
-	public void setCommandLineArgsProvider(
-			CommandLineArgsProvider commandLineArgsProvider) {
+	public void setCommandLineArgsProvider(CommandLineArgsProvider commandLineArgsProvider) {
 		this.commandLineArgsProvider = commandLineArgsProvider;
 	}
 
@@ -271,19 +268,17 @@ public class DeployerPartitionHandler
 		this.taskExecution = taskExecution;
 
 		if (this.commandLineArgsProvider == null) {
-			SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
-					taskExecution);
+			SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
 			this.commandLineArgsProvider = provider;
 
 		}
 	}
 
 	@Override
-	public Collection<StepExecution> handle(StepExecutionSplitter stepSplitter,
-			StepExecution stepExecution) throws Exception {
+	public Collection<StepExecution> handle(StepExecutionSplitter stepSplitter, StepExecution stepExecution)
+			throws Exception {
 
-		final Set<StepExecution> tempCandidates = stepSplitter.split(stepExecution,
-				this.gridSize);
+		final Set<StepExecution> tempCandidates = stepSplitter.split(stepExecution, this.gridSize);
 
 		// Following two lines due to https://jira.spring.io/browse/BATCH-2490
 		final Set<StepExecution> candidates = new HashSet<>(tempCandidates.size());
@@ -306,8 +301,7 @@ public class DeployerPartitionHandler
 		return pollReplies(stepExecution, executed, candidates, partitions);
 	}
 
-	private void launchWorkers(Set<StepExecution> candidates,
-			Set<StepExecution> executed) {
+	private void launchWorkers(Set<StepExecution> candidates, Set<StepExecution> executed) {
 		for (StepExecution execution : candidates) {
 			if (this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
 				launchWorker(execution);
@@ -321,8 +315,7 @@ public class DeployerPartitionHandler
 	private void launchWorker(StepExecution workerStepExecution) {
 		List<String> arguments = new ArrayList<>();
 
-		ExecutionContext copyContext = new ExecutionContext(
-				workerStepExecution.getExecutionContext());
+		ExecutionContext copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
 
 		arguments.addAll(this.commandLineArgsProvider.getCommandLineArgs(copyContext));
 
@@ -332,22 +325,19 @@ public class DeployerPartitionHandler
 			partitionTaskExecution = this.taskRepository.createTaskExecution();
 		}
 		else {
-			logger.warn(
-					"TaskRepository was not set so external execution id will not be recorded.");
+			logger.warn("TaskRepository was not set so external execution id will not be recorded.");
 		}
 
 		if (!this.defaultArgsAsEnvironmentVars) {
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
 					String.valueOf(workerStepExecution.getJobExecution().getId())));
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getId())));
+			arguments.add(
+					formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(workerStepExecution.getId())));
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
-			arguments
-					.add(formatArgument(SPRING_CLOUD_TASK_NAME,
-							String.format("%s_%s_%s", this.taskExecution.getTaskName(),
-									workerStepExecution.getJobExecution().getJobInstance()
-											.getJobName(),
-									workerStepExecution.getStepName())));
+			arguments.add(formatArgument(SPRING_CLOUD_TASK_NAME,
+					String.format("%s_%s_%s", this.taskExecution.getTaskName(),
+							workerStepExecution.getJobExecution().getJobInstance().getJobName(),
+							workerStepExecution.getStepName())));
 			arguments.add(formatArgument(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
 					String.valueOf(this.taskExecution.getExecutionId())));
 
@@ -365,37 +355,31 @@ public class DeployerPartitionHandler
 		if (this.defaultArgsAsEnvironmentVars) {
 			environmentVariables.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
 					String.valueOf(workerStepExecution.getJobExecution().getId()));
-			environmentVariables.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getId()));
+			environmentVariables.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(workerStepExecution.getId()));
 			environmentVariables.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
-			environmentVariables
-					.put(SPRING_CLOUD_TASK_NAME,
-							String.format("%s_%s_%s", this.taskExecution.getTaskName(),
-									workerStepExecution.getJobExecution().getJobInstance()
-											.getJobName(),
-									workerStepExecution.getStepName()));
+			environmentVariables.put(SPRING_CLOUD_TASK_NAME,
+					String.format("%s_%s_%s", this.taskExecution.getTaskName(),
+							workerStepExecution.getJobExecution().getJobInstance().getJobName(),
+							workerStepExecution.getStepName()));
 			environmentVariables.put(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
 					String.valueOf(this.taskExecution.getExecutionId()));
 			environmentVariables.put(SPRING_CLOUD_TASK_EXECUTION_ID,
 					String.valueOf(partitionTaskExecution.getExecutionId()));
 		}
 
-		AppDefinition definition = new AppDefinition(resolveApplicationName(),
-				environmentVariables);
+		AppDefinition definition = new AppDefinition(resolveApplicationName(), environmentVariables);
 
-		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource,
-				this.deploymentProperties, arguments);
+		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource, this.deploymentProperties,
+				arguments);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(
-					"Requesting the launch of the following application: " + request);
+			logger.debug("Requesting the launch of the following application: " + request);
 		}
 
 		String externalExecutionId = this.taskLauncher.launch(request);
 
 		if (this.taskRepository != null) {
-			this.taskRepository.updateExternalExecutionId(
-					partitionTaskExecution.getExecutionId(), externalExecutionId);
+			this.taskRepository.updateExternalExecutionId(partitionTaskExecution.getExecutionId(), externalExecutionId);
 		}
 	}
 
@@ -413,8 +397,7 @@ public class DeployerPartitionHandler
 	}
 
 	private Collection<StepExecution> pollReplies(final StepExecution masterStepExecution,
-			final Set<StepExecution> executed, final Set<StepExecution> candidates,
-			final int size) throws Exception {
+			final Set<StepExecution> executed, final Set<StepExecution> candidates, final int size) throws Exception {
 
 		final Collection<StepExecution> result = new ArrayList<>(executed.size());
 
@@ -426,8 +409,7 @@ public class DeployerPartitionHandler
 				for (StepExecution curStepExecution : executed) {
 					if (!result.contains(curStepExecution)) {
 						StepExecution partitionStepExecution = DeployerPartitionHandler.this.jobExplorer
-								.getStepExecution(masterStepExecution.getJobExecutionId(),
-										curStepExecution.getId());
+								.getStepExecution(masterStepExecution.getJobExecutionId(), curStepExecution.getId());
 
 						BatchStatus batchStatus = partitionStepExecution.getStatus();
 						if (batchStatus != null && isComplete(batchStatus)) {
@@ -466,8 +448,7 @@ public class DeployerPartitionHandler
 	}
 
 	private boolean isComplete(BatchStatus status) {
-		return status.equals(BatchStatus.COMPLETED)
-				|| status.isGreaterThan(BatchStatus.STARTED);
+		return status.equals(BatchStatus.COMPLETED) || status.isGreaterThan(BatchStatus.STARTED);
 	}
 
 	@Override
@@ -478,8 +459,7 @@ public class DeployerPartitionHandler
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (this.environmentVariablesProvider == null) {
-			this.environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(
-					this.environment);
+			this.environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
 
 		}
 	}

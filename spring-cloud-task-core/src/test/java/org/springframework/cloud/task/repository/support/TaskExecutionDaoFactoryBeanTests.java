@@ -51,8 +51,7 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 	@Test
 	public void testGetObjectType() {
-		assertThat(TaskExecutionDao.class)
-				.isEqualTo(new TaskExecutionDaoFactoryBean().getObjectType());
+		assertThat(TaskExecutionDao.class).isEqualTo(new TaskExecutionDaoFactoryBean().getObjectType());
 	}
 
 	@Test
@@ -81,13 +80,11 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 	@Test
 	public void testDefaultDataSourceConfiguration() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(
-				DefaultDataSourceConfiguration.class);
+		this.context = new AnnotationConfigApplicationContext(DefaultDataSourceConfiguration.class);
 
 		DataSource dataSource = this.context.getBean(DataSource.class);
 
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(
-				dataSource);
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
 		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
 
 		assertThat(taskExecutionDao instanceof JdbcTaskExecutionDao).isTrue();
@@ -99,17 +96,14 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 	@Test
 	public void testSettingTablePrefix() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(
-				DefaultDataSourceConfiguration.class);
+		this.context = new AnnotationConfigApplicationContext(DefaultDataSourceConfiguration.class);
 
 		DataSource dataSource = this.context.getBean(DataSource.class);
 
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(
-				dataSource, "foo_");
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource, "foo_");
 		TaskExecutionDao taskExecutionDao = factoryBean.getObject();
 
-		assertThat(ReflectionTestUtils.getField(taskExecutionDao, "tablePrefix"))
-				.isEqualTo("foo_");
+		assertThat(ReflectionTestUtils.getField(taskExecutionDao, "tablePrefix")).isEqualTo("foo_");
 	}
 
 	@Configuration
@@ -117,8 +111,7 @@ public class TaskExecutionDaoFactoryBeanTests {
 
 		@Bean
 		public DataSource dataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2);
+			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2);
 			return builder.build();
 		}
 

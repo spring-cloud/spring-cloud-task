@@ -69,8 +69,8 @@ public class AbstractMicrometerTest {
 		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
 		assertThat(simpleMeterRegistry).isNotNull();
 		meter = simpleMeterRegistry.find("spring.integration.handlers").meter();
-		assertThat(meter).isNotNull().withFailMessage(
-				"The spring.integration.handlers meter must be present in SpringBoot apps!");
+		assertThat(meter).isNotNull()
+				.withFailMessage("The spring.integration.handlers meter must be present in SpringBoot apps!");
 	}
 
 	@AfterEach
@@ -80,8 +80,8 @@ public class AbstractMicrometerTest {
 
 	@BeforeAll
 	public static void setup() throws IOException {
-		String serviceJson = StreamUtils.copyToString(new DefaultResourceLoader()
-				.getResource("classpath:/micrometer/pcf-scs-info.json").getInputStream(),
+		String serviceJson = StreamUtils.copyToString(
+				new DefaultResourceLoader().getResource("classpath:/micrometer/pcf-scs-info.json").getInputStream(),
 				Charset.forName("UTF-8"));
 		mockVcapServicesFromString(serviceJson);
 	}
@@ -95,8 +95,8 @@ public class AbstractMicrometerTest {
 					return serviceJson;
 				}
 				else {
-					return name.equalsIgnoreCase("VCAP_APPLICATION")
-							? "{\"instance_id\":\"123\"}" : (String) env.get(name);
+					return name.equalsIgnoreCase("VCAP_APPLICATION") ? "{\"instance_id\":\"123\"}"
+							: (String) env.get(name);
 				}
 			}
 

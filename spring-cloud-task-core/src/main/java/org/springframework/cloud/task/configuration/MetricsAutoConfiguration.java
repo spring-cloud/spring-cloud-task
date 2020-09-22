@@ -46,8 +46,7 @@ import org.springframework.core.env.Environment;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Timed.class)
-@AutoConfigureBefore(name = {
-		"org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration" })
+@AutoConfigureBefore(name = { "org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration" })
 public class MetricsAutoConfiguration {
 
 	@Bean
@@ -61,8 +60,7 @@ public class MetricsAutoConfiguration {
 		return new MeterRegistryPostProcessor();
 	}
 
-	static class MeterRegistryPostProcessor
-			implements BeanPostProcessor, EnvironmentAware {
+	static class MeterRegistryPostProcessor implements BeanPostProcessor, EnvironmentAware {
 
 		private Environment environment;
 
@@ -100,25 +98,19 @@ public class MetricsAutoConfiguration {
 		private String instanceIndex;
 
 		@Override
-		public Object postProcessAfterInitialization(Object bean, String beanName)
-				throws BeansException {
+		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
 			if (bean instanceof MeterRegistry) {
 				MeterRegistry registry = (MeterRegistry) bean;
 
-				if (Arrays.asList(this.environment.getActiveProfiles())
-						.contains("cloud")) {
-					registry.config().commonTags("cf.org.name", organizationName)
-							.commonTags("cf.space.id", spaceId)
-							.commonTags("cf.space.name", spaceName)
-							.commonTags("cf.app.id", applicationId)
-							.commonTags("cf.app.name", applicationName)
-							.commonTags("cf.app.version", applicationVersion)
+				if (Arrays.asList(this.environment.getActiveProfiles()).contains("cloud")) {
+					registry.config().commonTags("cf.org.name", organizationName).commonTags("cf.space.id", spaceId)
+							.commonTags("cf.space.name", spaceName).commonTags("cf.app.id", applicationId)
+							.commonTags("cf.app.name", applicationName).commonTags("cf.app.version", applicationVersion)
 							.commonTags("cf.instance.index", instanceIndex);
 				}
 
-				registry.config().commonTags("task.name", taskName)
-						.commonTags("task.execution.id", taskExecutionId)
+				registry.config().commonTags("task.name", taskName).commonTags("task.execution.id", taskExecutionId)
 						.commonTags("task.external.execution.id", taskExternalExecutionId)
 						.commonTags("task.parent.execution.id", taskParentExecutionId);
 			}
