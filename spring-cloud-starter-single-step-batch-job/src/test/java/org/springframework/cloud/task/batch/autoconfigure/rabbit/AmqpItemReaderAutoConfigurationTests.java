@@ -52,7 +52,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AmqpItemReaderAutoConfigurationTests {
 
@@ -156,32 +155,6 @@ public class AmqpItemReaderAutoConfigurationTests {
 			}
 			validateBasicTest(context.getBean(ListItemWriter.class).getWrittenItems());
 		});
-	}
-
-	@Test
-	void missingDefaultQueueTest() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								AmqpItemReaderAutoConfiguration.class,
-								RabbitAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=integrationJob",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.amqpitemreader.enabled=true",
-						"spring.batch.job.amqpitemreader.jsonConverterEnabled=false",
-						"spring.rabbitmq.host=" + host,
-						"spring.rabbitmq.port=" + amqpPort);
-
-		assertThatThrownBy(() -> {
-			applicationContextRunner.run((context) -> {
-				context.getBean(JobLauncher.class);
-			});
-		}).isInstanceOf(IllegalStateException.class).getRootCause()
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("DefaultReceiveQueue must not be empty nor null");
 	}
 
 	@Test
