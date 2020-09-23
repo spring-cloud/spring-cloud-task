@@ -60,9 +60,10 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 			JobRepository jobRepository, BatchProperties batchProperties) {
 		Assert.notNull(taskBatchProperties, "taskBatchProperties must not be null");
 		Assert.notNull(batchProperties, "batchProperties must not be null");
+		Assert.notEmpty(jobs, "jobs must not be null nor empty");
+
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
-		Assert.notEmpty(jobs, "jobs must not be null nor empty");
 		this.jobs = jobs;
 		this.jobNames = taskBatchProperties.getJobNames();
 		this.jobRegistry = jobRegistry;
