@@ -19,7 +19,6 @@ package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 import java.util.Map;
 
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.batch.item.amqp.AmqpItemReader;
@@ -28,12 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 /**
  * Autconfiguration for a {@code AmqpItemReader}.
@@ -54,18 +51,6 @@ public class AmqpItemReaderAutoConfiguration {
 	@Bean
 	public AmqpItemReaderProperties amqpItemReaderProperties() {
 		return new AmqpItemReaderProperties();
-	}
-
-	@ConditionalOnBean(RabbitProperties.class)
-	@Bean
-	public Queue defaultQueue() {
-		if (!StringUtils
-				.hasText(this.rabbitProperties.getTemplate().getDefaultReceiveQueue())) {
-			throw new IllegalArgumentException(
-					"DefaultReceiveQueue must not be empty nor null");
-		}
-		return new Queue(this.rabbitProperties.getTemplate().getDefaultReceiveQueue(),
-				true);
 	}
 
 	@Bean
