@@ -1,4 +1,4 @@
-= Timestamp Task
+= Single Step Batch JOb
 
 This is a Spring Cloud Task application that autoconfigures a single step Spring Batch job based on the profiles that are active.
 

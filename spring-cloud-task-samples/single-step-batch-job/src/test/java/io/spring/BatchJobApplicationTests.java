@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.util.SocketUtils;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,8 +71,8 @@ public class BatchJobApplicationTests {
 	private File outputFile;
 
 	@BeforeEach
-	public void setup() {
-		outputFile = new File("./result.txt");
+	public void setup() throws Exception {
+		outputFile = new File("result.txt");
 		initH2TCPServer();
 	}
 
@@ -130,29 +130,26 @@ public class BatchJobApplicationTests {
 		validateFileResult();
 	}
 
-	public Server initH2TCPServer() {
-		Server server = null;
-		try {
-			if (defaultServer == null) {
-				server = Server.createTcpServer("-ifNotExists", "-tcp",
-					"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-					.start();
-				defaultServer = server;
-				DriverManagerDataSource dataSource = new DriverManagerDataSource();
-				dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
-				dataSource.setUrl(DATASOURCE_URL);
-				dataSource.setUsername(DATASOURCE_USER_NAME);
-				dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-				ClassPathResource setupResource = new ClassPathResource(
-					"schema-h2.sql");
-				ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
-					setupResource);
-				resourceDatabasePopulator.execute(dataSource);
-			}
+	public Server initH2TCPServer() throws SQLException {
+		Server server;
+
+		if (defaultServer == null) {
+			server = Server.createTcpServer("-ifNotExists", "-tcp",
+				"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+				.start();
+			defaultServer = server;
+			DriverManagerDataSource dataSource = new DriverManagerDataSource();
+			dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
+			dataSource.setUrl(DATASOURCE_URL);
+			dataSource.setUsername(DATASOURCE_USER_NAME);
+			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
+			ClassPathResource setupResource = new ClassPathResource(
+				"schema-h2.sql");
+			ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
+				setupResource);
+			resourceDatabasePopulator.execute(dataSource);
 		}
-		catch (SQLException e) {
-			throw new IllegalStateException(e);
-		}
+
 		return defaultServer;
 	}
 
