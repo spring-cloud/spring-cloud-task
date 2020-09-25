@@ -35,7 +35,7 @@ public class MultiDataSourcesApplicationTests {
 	@Test
 	public void testTimeStampApp(CapturedOutput capturedOutput) throws Exception {
 
-		SpringApplication.run(MultipleDataSourcesApplication.class, new String[0]);
+		SpringApplication.run(MultipleDataSourcesApplication.class, "--spring.profiles.active=embedded");
 
 		String output = capturedOutput.toString();
 

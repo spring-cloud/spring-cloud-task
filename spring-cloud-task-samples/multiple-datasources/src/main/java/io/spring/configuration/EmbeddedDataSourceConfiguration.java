@@ -20,14 +20,19 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
+ * Creates two data sources that use embedded databases.
+ *
  * @author Michael Minella
+ * @author Glenn Renfro
  */
 @Configuration
-public class DataSourceConfiguration {
+@Profile("embedded")
+public class EmbeddedDataSourceConfiguration {
 
 	@Bean
 	public DataSource dataSource() {

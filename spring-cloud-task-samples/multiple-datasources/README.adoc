@@ -11,7 +11,9 @@ which one to be used for the Spring Cloud Task repository.
 
 * `MultipleDataSourcesApplication` - the Spring Boot Main Application.
 * `SampleCommandLineRunner` - the `CommandLineRunner` implementation for this task.  It outputs the number of `DataSource` beans found in the context (should be 2).
-* `DataSourceConfiguration` - Configures two `DataSource` beans.
+* `EmbeddedDataSourceConfiguration` - Configures two `DataSource` beans using embedded databases.
+* `ExternalDataSourceConfiguration` - Configures two `DataSource` beans using external databases.
+
 * `CustomTaskConfigurer` - Uses a Spring `@Qualifier` to specify the correct `DataSource` to use.
 
 == Build:
@@ -21,9 +23,26 @@ which one to be used for the Spring Cloud Task repository.
 $ mvn clean package
 ----
 
-== Run:
+== Execute sample using 2 embedded databases (default):
 
 [source,shell,indent=2]
 ----
-$ java -jar target/multiple-datasources-2.2.2.RELEASE.jar
+$ java -jar target/multiple-datasources-2.3.0-RELEASE.jar
+----
+
+== Execute sample using 2 external databases:
+
+Using the `external` profile, users will be able to establish both the default `spring.datasource` data source and a `second.datasource` data source.
+For example:
+[source,shell,indent=2]
+----
+export spring_datasource_url=<your db url>
+export spring_datasource_username=<your db user name>
+export spring_datasource_password=<your db user password>
+export spring_datasource_driverClassName=org.mariadb.jdbc.Driver
+export second_datasource_url=jdbc:<your db url>
+export second_datasource_username=<your db user name>
+export second_datasource_password=<your db user password>
+export second_datasource_driverClassName=org.mariadb.jdbc.Driver
+java -jar target/multiple-datasources-2.3.0-RELEASE.jar --spring.profiles.active=external
 ----
