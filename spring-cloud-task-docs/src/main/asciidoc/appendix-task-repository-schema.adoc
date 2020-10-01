@@ -45,9 +45,9 @@ Stores the parameters used for a task execution
 [width="80%", cols="1,1,1,1", options="header"]
 |=========================================================
 |Column Name |Required |Type |Field Length
-|TASK_EXECUTION_ID |TRUE |BIGINT | X |
+|TASK_EXECUTION_ID |TRUE |BIGINT | X 
 
-|TASK_PARAM |FALSE | VARCHAR | 2500 |
+|TASK_PARAM |FALSE | VARCHAR | 2500 
 
 |=========================================================
 
@@ -57,9 +57,9 @@ Used to link the task execution to the batch execution.
 |=========================================================
 |Column Name |Required |Type |Field Length
 
-|TASK_EXECUTION_ID |TRUE |BIGINT | X |
+|TASK_EXECUTION_ID |TRUE |BIGINT | X 
 
-|JOB_EXECUTION_ID |TRUE | BIGINT | X |
+|JOB_EXECUTION_ID |TRUE | BIGINT | X 
 
 |=========================================================
 
