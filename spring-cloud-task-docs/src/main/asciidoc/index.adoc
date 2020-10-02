@@ -10,7 +10,7 @@ Michael Minella, Glenn Renfro, Jay Bryant
 :spring-cloud-task-repo: snapshot
 :github-tag: master
 :spring-cloud-task-docs-version: current
-:spring-cloud-task-docs: https://docs.spring.io/spring-cloud-task/docs/{version}/reference
+:spring-cloud-task-docs: https://docs.spring.io/spring-cloud-task/docs/{spring-cloud-task-docs-version}/reference
 :spring-cloud-task-docs-current: https://docs.spring.io/spring-cloud-task/docs/current-SNAPSHOT/reference/html/
 :github-repo: spring-cloud/spring-cloud-task
 :github-raw: https://raw.github.com/{github-repo}/{github-tag}
