@@ -8,9 +8,9 @@ Think of it as a map for the rest of the document. You can read this reference g
 linear fashion or you can skip sections if something does not interest you.
 
 == About the documentation
-The Spring Cloud Task reference guide is available in {spring-cloud-task-docs}/html[html],
-{spring-cloud-task-docs}/pdf/spring-cloud-task-reference.pdf[pdf]
-and {spring-cloud-task-docs}/epub/spring-cloud-task-reference.epub[epub] formats. The
+The Spring Cloud Task reference guide is available in {spring-cloud-task-docs}[html] 
+and {spring-cloud-task-docs}/index.pdf[pdf],
+{spring-cloud-task-docs}/index.epub[epub] . The
 latest copy is available at {spring-cloud-task-docs-current}.
 
 Copies of this document may be made for your own use and for distribution to others,
