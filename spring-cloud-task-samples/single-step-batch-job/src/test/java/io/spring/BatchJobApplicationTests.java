@@ -86,8 +86,6 @@ public class BatchJobApplicationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("TRUNCATE TABLE item");
-		jdbcTemplate.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION CASCADE");
-		jdbcTemplate.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE CASCADE");
 	}
 
 	@Test
@@ -97,7 +95,8 @@ public class BatchJobApplicationTests {
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
-			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD);
+			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD,
+			"foo=testFileReaderJdbcWriter");
 		validateDBResult();
 	}
 
@@ -108,7 +107,8 @@ public class BatchJobApplicationTests {
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
-			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD);
+			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD,
+			"foo=testJdbcReaderJdbcWriter");
 		validateDBResult();
 	}
 
@@ -119,14 +119,16 @@ public class BatchJobApplicationTests {
 			"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 			"--spring.datasource.url=" + DATASOURCE_URL,
 			"--spring.datasource.driver-class-name=" + DATASOURCE_DRIVER_CLASS_NAME,
-			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD);
+			"--spring.datasource.password=" + DATASOURCE_USER_PASSWORD,
+			"foo=testJdbcReaderFlatfileWriter");
 		validateFileResult();
 	}
 
 	@Test
 	public void testFileReaderFileWriter() throws Exception {
 		getSpringApplication().run(SingleStepBatchJobApplication.class,
-			"--spring.profiles.active=ffreader,ffwriter");
+			"--spring.profiles.active=ffreader,ffwriter",
+			"foo=testFileReaderFileWriter");
 		validateFileResult();
 	}
 
