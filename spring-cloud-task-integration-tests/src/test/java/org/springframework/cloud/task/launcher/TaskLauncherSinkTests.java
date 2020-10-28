@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -87,7 +88,7 @@ public class TaskLauncherSinkTests {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);

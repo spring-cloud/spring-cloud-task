@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -36,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BatchEventsApplicationTests {
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
 			.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);

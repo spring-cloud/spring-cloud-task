@@ -13,8 +13,8 @@
 	<artifactId>spring-cloud-task-integration-tests</artifactId>
 
 	<properties>
-		<test.containers.version>1.14.3</test.containers.version>
-		<test.rabbit.containers.version>1.14.3</test.rabbit.containers.version>
+		<test.containers.version>1.15.0-rc2</test.containers.version>
+		<test.rabbit.containers.version>1.15.0-rc2</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 	</properties>
 
