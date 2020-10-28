@@ -26,6 +26,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -50,7 +51,7 @@ public class BatchExecutionEventTests {
 	private static final String TASK_NAME = "jobEventTest";
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);

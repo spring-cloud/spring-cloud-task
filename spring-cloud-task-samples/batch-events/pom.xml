@@ -20,8 +20,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<test.containers.version>1.14.3</test.containers.version>
-		<test.rabbit.containers.version>1.14.3</test.rabbit.containers.version>
+		<test.containers.version>1.15.0-rc2</test.containers.version>
+		<test.rabbit.containers.version>1.15.0-rc2</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 	</properties>
 

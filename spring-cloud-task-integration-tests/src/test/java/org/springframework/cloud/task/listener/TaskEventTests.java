@@ -23,6 +23,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -56,7 +57,7 @@ public class TaskEventTests {
 	private static final String TASK_NAME = "taskEventTest";
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);

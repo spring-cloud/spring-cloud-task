@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -64,7 +65,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 	private ConnectionFactory connectionFactory;
 
 	static {
-		GenericContainer rabbitmq = new GenericContainer("rabbitmq:3.5.3")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
