@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,12 +45,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Executes unit tests on JdbcTaskExecutionDao.
  *
  * @author Glenn Renfro
  * @author Gunnar Hillert
+ * @author Michael Minella
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(
@@ -203,6 +205,39 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				TestDBUtils.getTaskExecutionFromDB(this.dataSource,
 						expectedTaskExecution.getExecutionId()));
+	}
+
+	@Test
+	@DirtiesContext
+	public void testFindRunningTaskExecutions() {
+		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
+		assertThat(this.dao
+				.findRunningTaskExecutions("FOO1",
+						PageRequest.of(1, Integer.MAX_VALUE, Sort.by("START_TIME")))
+				.getTotalElements()).isEqualTo(4);
+	}
+
+	@Test
+	@DirtiesContext
+	public void testFindRunningTaskExecutionsIllegalSort() {
+		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
+		assertThatThrownBy(
+				() -> this.dao
+						.findRunningTaskExecutions("FOO1",
+								PageRequest.of(1, Integer.MAX_VALUE,
+										Sort.by("ILLEGAL_SORT")))
+						.getTotalElements()).isInstanceOf(IllegalArgumentException.class)
+								.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
+	}
+
+	@Test
+	@DirtiesContext
+	public void testFindRunningTaskExecutionsSortWithDifferentCase() {
+		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
+		assertThat(this.dao
+				.findRunningTaskExecutions("FOO1",
+						PageRequest.of(1, Integer.MAX_VALUE, Sort.by("StArT_TiMe")))
+				.getTotalElements()).isEqualTo(4);
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {

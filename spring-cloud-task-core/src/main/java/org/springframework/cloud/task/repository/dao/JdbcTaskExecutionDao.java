@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ import org.springframework.util.StringUtils;
  * @author Gunnar Hillert
  * @author David Turanski
  * @author Ilayaperumal Gopinathan
+ * @author Michael Minella
  */
 public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
@@ -160,6 +162,21 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	private LinkedHashMap<String, Order> orderMap;
 
 	private DataFieldMaxValueIncrementer taskIncrementer;
+
+	private static final Set<String> validSortColumns = new HashSet<>(10);
+
+	static {
+		validSortColumns.add("TASK_EXECUTION_ID");
+		validSortColumns.add("START_TIME");
+		validSortColumns.add("END_TIME");
+		validSortColumns.add("TASK_NAME");
+		validSortColumns.add("EXIT_CODE");
+		validSortColumns.add("EXIT_MESSAGE");
+		validSortColumns.add("ERROR_MESSAGE");
+		validSortColumns.add("LAST_UPDATED");
+		validSortColumns.add("EXTERNAL_EXECUTION_ID");
+		validSortColumns.add("PARENT_EXECUTION_ID");
+	}
 
 	/**
 	 * Initializes the JdbcTaskExecutionDao.
@@ -511,8 +528,14 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		if (sort != null) {
 			for (Sort.Order sortOrder : sort) {
-				sortOrderMap.put(sortOrder.getProperty(),
-						sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
+				if (validSortColumns.contains(sortOrder.getProperty().toUpperCase())) {
+					sortOrderMap.put(sortOrder.getProperty(),
+							sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
+				}
+				else {
+					throw new IllegalArgumentException(String.format(
+							"Invalid sort option selected: %s", sortOrder.getProperty()));
+				}
 			}
 		}
 
