@@ -228,6 +228,14 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 			.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
 	}
 
+	@Test
+	@DirtiesContext
+	public void testFindRunningTaskExecutionsSortWithDifferentCase() {
+		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
+		assertThat(this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("StArT_TiMe"))).getTotalElements())
+			.isEqualTo(4);
+	}
+
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {
 		TaskExecution expectedTaskExecution = TestVerifierUtils
 				.createSampleTaskExecutionNoArg();

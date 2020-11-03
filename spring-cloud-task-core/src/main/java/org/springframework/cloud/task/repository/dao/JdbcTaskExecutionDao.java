@@ -528,7 +528,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		if (sort != null) {
 			for (Sort.Order sortOrder : sort) {
-				if (validSortColumns.contains(sortOrder.getProperty())) {
+				if (validSortColumns.contains(sortOrder.getProperty().toUpperCase())) {
 					sortOrderMap.put(sortOrder.getProperty(),
 						sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
 				}
