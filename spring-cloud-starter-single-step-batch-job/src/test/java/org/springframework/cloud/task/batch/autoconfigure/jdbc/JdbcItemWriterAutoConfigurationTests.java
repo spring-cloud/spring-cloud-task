@@ -87,8 +87,12 @@ public class JdbcItemWriterAutoConfigurationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("TRUNCATE TABLE item");
-		jdbcTemplate.execute("DROP TABLE BATCH_JOB_EXECUTION CASCADE");
-		jdbcTemplate.execute("DROP TABLE BATCH_JOB_INSTANCE CASCADE");
+		jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION_CONTEXT");
+		jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION");
+		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_PARAMS");
+		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_CONTEXT");
+		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION");
+		jdbcTemplate.execute("DELETE FROM BATCH_JOB_INSTANCE");
 	}
 
 	@Test
