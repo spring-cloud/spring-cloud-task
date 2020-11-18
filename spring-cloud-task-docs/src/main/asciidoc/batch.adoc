@@ -118,7 +118,7 @@ which the über-jar is located. Both the manager and worker are expected to have
 into the same data store being used as the job repository and task repository. Once the
 underlying infrastructure has bootstrapped the Spring Boot jar and Spring Boot has
 launched the `DeployerStepExecutionHandler`, the step handler executes the requested
-`Step`. The following example shows how to configure the `DefaultStepExecutionHandler`:
+`Step`. The following example shows how to configure the `DeployerStepExecutionHandler`:
 
 [source,java]
 ----
