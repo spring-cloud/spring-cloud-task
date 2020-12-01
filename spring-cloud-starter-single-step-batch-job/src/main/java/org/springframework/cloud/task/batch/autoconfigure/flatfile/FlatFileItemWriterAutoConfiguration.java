@@ -49,10 +49,10 @@ public class FlatFileItemWriterAutoConfiguration {
 	private FlatFileItemWriterProperties properties;
 
 	@Autowired(required = false)
-	private LineAggregator<Map<Object, Object>> lineAggregator;
+	private LineAggregator<Map<String, Object>> lineAggregator;
 
 	@Autowired(required = false)
-	private FieldExtractor<Map<Object, Object>> fieldExtractor;
+	private FieldExtractor<Map<String, Object>> fieldExtractor;
 
 	@Autowired(required = false)
 	private FlatFileHeaderCallback headerCallback;
@@ -67,7 +67,7 @@ public class FlatFileItemWriterAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.flatfilewriter", name = "name")
-	public FlatFileItemWriter<Map<Object, Object>> itemWriter() {
+	public FlatFileItemWriter<Map<String, Object>> itemWriter() {
 
 		if (this.properties.isDelimited() && this.properties.isFormatted()) {
 			throw new IllegalStateException(
@@ -80,7 +80,7 @@ public class FlatFileItemWriterAutoConfiguration {
 					+ "output is not formatted or delimited");
 		}
 
-		FlatFileItemWriterBuilder<Map<Object, Object>> builder = new FlatFileItemWriterBuilder<Map<Object, Object>>()
+		FlatFileItemWriterBuilder<Map<String, Object>> builder = new FlatFileItemWriterBuilder<Map<String, Object>>()
 				.name(this.properties.getName()).resource(this.properties.getResource())
 				.append(this.properties.isAppend())
 				.encoding(this.properties.getEncoding())
@@ -93,7 +93,7 @@ public class FlatFileItemWriterAutoConfiguration {
 				.headerCallback(this.headerCallback).footerCallback(this.footerCallback);
 
 		if (this.properties.isDelimited()) {
-			FlatFileItemWriterBuilder.DelimitedBuilder<Map<Object, Object>> delimitedBuilder = builder
+			FlatFileItemWriterBuilder.DelimitedBuilder<Map<String, Object>> delimitedBuilder = builder
 					.delimited().delimiter(this.properties.getDelimiter());
 
 			if (this.fieldExtractor != null) {
@@ -105,7 +105,7 @@ public class FlatFileItemWriterAutoConfiguration {
 			}
 		}
 		else if (this.properties.isFormatted()) {
-			FlatFileItemWriterBuilder.FormattedBuilder<Map<Object, Object>> formattedBuilder = builder
+			FlatFileItemWriterBuilder.FormattedBuilder<Map<String, Object>> formattedBuilder = builder
 					.formatted().format(this.properties.getFormat())
 					.locale(this.properties.getLocale())
 					.maximumLength(this.properties.getMaximumLength())
@@ -127,10 +127,10 @@ public class FlatFileItemWriterAutoConfiguration {
 	}
 
 	/**
-	 * A {@code FieldExtractor} that converts a {@code Map<Object, Object>} to the ordered
+	 * A {@code FieldExtractor} that converts a {@code Map<String, Object>} to the ordered
 	 * {@code Object[]} required to populate an output record.
 	 */
-	public static class MapFieldExtractor implements FieldExtractor<Map<Object, Object>> {
+	public static class MapFieldExtractor implements FieldExtractor<Map<String, Object>> {
 
 		private String[] names;
 
@@ -139,7 +139,7 @@ public class FlatFileItemWriterAutoConfiguration {
 		}
 
 		@Override
-		public Object[] extract(Map<Object, Object> item) {
+		public Object[] extract(Map<String, Object> item) {
 
 			List<Object> fields = new ArrayList<>(item.size());
 

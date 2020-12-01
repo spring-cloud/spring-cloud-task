@@ -54,7 +54,7 @@ public class JdbcCursorItemReaderAutoConfiguration {
 	private PreparedStatementSetter preparedStatementSetter;
 
 	@Autowired(required = false)
-	private RowMapper<Map<Object, Object>> rowMapper;
+	private RowMapper<Map<String, Object>> rowMapper;
 
 	public JdbcCursorItemReaderAutoConfiguration(
 			JdbcCursorItemReaderProperties properties, DataSource dataSource) {
@@ -64,8 +64,8 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public JdbcCursorItemReader<Map<Object, Object>> itemReader() {
-		return new JdbcCursorItemReaderBuilder<Map<Object, Object>>()
+	public JdbcCursorItemReader<Map<String, Object>> itemReader() {
+		return new JdbcCursorItemReaderBuilder<Map<String, Object>>()
 				.name(this.properties.getName())
 				.currentItemCount(this.properties.getCurrentItemCount())
 				.dataSource(this.dataSource)
@@ -86,15 +86,15 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public RowMapper<Map<Object, Object>> rowMapper() {
+	public RowMapper<Map<String, Object>> rowMapper() {
 		return new MapRowMapper();
 	}
 
-	public static class MapRowMapper implements RowMapper<Map<Object, Object>> {
+	public static class MapRowMapper implements RowMapper<Map<String, Object>> {
 
 		@Override
-		public Map<Object, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Map<Object, Object> item = new HashMap<>(rs.getMetaData().getColumnCount());
+		public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Map<String, Object> item = new HashMap<>(rs.getMetaData().getColumnCount());
 
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
 				item.put(rs.getMetaData().getColumnName(i), rs.getObject(i));

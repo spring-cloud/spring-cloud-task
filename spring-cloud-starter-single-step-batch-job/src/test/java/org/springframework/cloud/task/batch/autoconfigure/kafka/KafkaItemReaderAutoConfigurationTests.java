@@ -102,7 +102,7 @@ public class KafkaItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> writtenItems = itemWriter.getWrittenItems();
+			List<Map<String, Object>> writtenItems = itemWriter.getWrittenItems();
 
 			assertThat(writtenItems.size()).isEqualTo(4);
 			assertThat(writtenItems.get(0).get("first_name")).isEqualTo("jane");
@@ -197,7 +197,7 @@ public class KafkaItemReaderAutoConfigurationTests {
 	}
 
 	private void basicValidation(ListItemWriter itemWriter) {
-		List<Map<Object, Object>> writtenItems = itemWriter.getWrittenItems();
+		List<Map<String, Object>> writtenItems = itemWriter.getWrittenItems();
 		assertThat(writtenItems.size()).isEqualTo(4);
 		List<Object> results = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
@@ -212,7 +212,7 @@ public class KafkaItemReaderAutoConfigurationTests {
 				KafkaTestUtils.producerProps(embeddedKafkaBroker));
 		Producer<String, Object> producer = new DefaultKafkaProducerFactory<>(configps,
 				new StringSerializer(), new JsonSerializer<>()).createProducer();
-		Map<Object, Object> testMap = new HashMap<>();
+		Map<String, Object> testMap = new HashMap<>();
 		testMap.put("first_name", "jane");
 		producer.send(new ProducerRecord<>(topic, "my-aggregate-id", testMap));
 		testMap = new HashMap<>();
@@ -232,7 +232,7 @@ public class KafkaItemReaderAutoConfigurationTests {
 	@Configuration
 	public static class CustomMappingConfiguration {
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 	}

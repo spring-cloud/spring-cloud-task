@@ -307,7 +307,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> writtenItems = itemWriter.getWrittenItems();
+			List<Map<String, Object>> writtenItems = itemWriter.getWrittenItems();
 
 			assertThat(writtenItems.size()).isEqualTo(1);
 			assertThat(writtenItems.get(0).get("one")).isEqualTo("1 2 3");
@@ -329,7 +329,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		private FlatFileItemReader itemReader;
 
 		@Bean
-		public ListItemWriter<Map> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 
@@ -341,8 +341,8 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		}
 
 		@Bean
-		public FieldSetMapper<Map<Object, Object>> fieldSetMapper() {
-			return fieldSet -> fieldSet.getProperties();
+		public FieldSetMapper<Map<String, Object>> fieldSetMapper() {
+			return fieldSet -> new HashMap<String, Object>((Map) fieldSet.getProperties());
 		}
 
 	}
@@ -352,7 +352,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public static class JobConfiguration {
 
 		@Bean
-		public ListItemWriter<Map> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 
@@ -397,7 +397,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		}
 
 		@Bean
-		public ListItemWriter<Map> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 
@@ -408,9 +408,9 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public static class CustomLineMapperConfiguration {
 
 		@Bean
-		public LineMapper<Map<Object, Object>> lineMapper() {
+		public LineMapper<Map<String, Object>> lineMapper() {
 			return (line, lineNumber) -> {
-				Map<Object, Object> item = new HashMap<>(1);
+				Map<String, Object> item = new HashMap<>(1);
 
 				item.put("line", line);
 				item.put("lineNumber", lineNumber);
@@ -420,7 +420,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 		}
 
 		@Bean
-		public ListItemWriter<Map> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 

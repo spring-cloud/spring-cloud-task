@@ -39,6 +39,7 @@ import org.springframework.util.StringUtils;
  * AutoConfiguration for a {@code KafkaItemReader}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.3
  */
 @Configuration
@@ -52,7 +53,7 @@ public class KafkaItemReaderAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemreader", name = "name")
-	public KafkaItemReader<Object, Map<Object, Object>> kafkaItemReader(
+	public KafkaItemReader<Object, Map<String, Object>> kafkaItemReader(
 			KafkaItemReaderProperties kafkaItemReaderProperties) {
 		Properties consumerProperties = new Properties();
 		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties());
@@ -62,7 +63,7 @@ public class KafkaItemReaderAutoConfiguration {
 			kafkaItemReaderProperties.setPartitions(new ArrayList<>(1));
 			kafkaItemReaderProperties.getPartitions().add(0);
 		}
-		return new KafkaItemReaderBuilder<Object, Map<Object, Object>>()
+		return new KafkaItemReaderBuilder<Object, Map<String, Object>>()
 				.partitions(kafkaItemReaderProperties.getPartitions())
 				.consumerProperties(consumerProperties)
 				.name(kafkaItemReaderProperties.getName())

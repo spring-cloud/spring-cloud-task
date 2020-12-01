@@ -95,9 +95,9 @@ public class KafkaItemWriterTests {
 		ConsumerRecords<String, Object> consumerRecords = KafkaTestUtils
 				.getRecords(consumer);
 		assertThat(consumerRecords.count()).isEqualTo(5);
-		List<Map<Object, Object>> result = new ArrayList<>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		consumerRecords.forEach(cs -> {
-			result.add((Map<Object, Object>) cs.value());
+			result.add((Map<String, Object>) cs.value());
 		});
 		List<String> firstNames = new ArrayList<>();
 		result.forEach(s -> firstNames.add((String) s.get("first_name")));
@@ -125,8 +125,8 @@ public class KafkaItemWriterTests {
 	public static class CustomMappingConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemWriter() {
-			List<Map<Object, Object>> list = new ArrayList<>(5);
+		public ListItemReader<Map<String, Object>> itemReader() {
+			List<Map<String, Object>> list = new ArrayList<>(5);
 			addNameToReaderList(list, "Jane");
 			addNameToReaderList(list, "John");
 			addNameToReaderList(list, "Liz");
@@ -135,9 +135,9 @@ public class KafkaItemWriterTests {
 			return new ListItemReader<>(list);
 		}
 
-		private void addNameToReaderList(List<Map<Object, Object>> itemReaderList,
+		private void addNameToReaderList(List<Map<String, Object>> itemReaderList,
 				String value) {
-			Map<Object, Object> prepMap = new HashMap<>();
+			Map<String, Object> prepMap = new HashMap<>();
 			prepMap.put("first_name", value);
 			itemReaderList.add(prepMap);
 		}

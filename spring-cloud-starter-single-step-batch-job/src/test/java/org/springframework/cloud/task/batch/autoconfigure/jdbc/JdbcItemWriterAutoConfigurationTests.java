@@ -239,9 +239,9 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public static class DelimitedJobConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item_name", "foo"));
 			items.add(Collections.singletonMap("item_name", "bar"));
@@ -257,9 +257,9 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public static class DelimitedDifferentKeyNameJobConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item_foo", "foo"));
 			items.add(Collections.singletonMap("item_foo", "bar"));
@@ -275,7 +275,7 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public static class CustomSqlParameterSourceProviderConfiguration {
 
 		@Bean
-		public ItemSqlParameterSourceProvider<Map<Object, Object>> itemSqlParameterSourceProvider() {
+		public ItemSqlParameterSourceProvider<Map<String, Object>> itemSqlParameterSourceProvider() {
 			return item -> new MapSqlParameterSource(new HashMap<String, Object>() {
 				{
 					put("item_name", item.get("item_foo"));

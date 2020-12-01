@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * Autconfiguration for a {@code JdbcBatchItemWriter}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.3
  */
 @Configuration
@@ -63,9 +64,9 @@ public class JdbcItemWriterAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcwriter", name = "name")
-	public ItemWriter<Map<Object, Object>> itemWriter() {
+	public ItemWriter<Map<String, Object>> itemWriter() {
 
-		JdbcBatchItemWriterBuilder<Map<Object, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<Object, Object>>()
+		JdbcBatchItemWriterBuilder<Map<String, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
 				.dataSource(this.dataSource).sql(this.properties.getSql());
 		if (this.itemPreparedStatementSetter != null) {
 			jdbcBatchItemWriterBuilder

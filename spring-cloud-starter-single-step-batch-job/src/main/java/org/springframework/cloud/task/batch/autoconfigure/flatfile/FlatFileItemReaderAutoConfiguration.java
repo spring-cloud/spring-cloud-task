@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -53,10 +54,10 @@ public class FlatFileItemReaderAutoConfiguration {
 	private LineTokenizer lineTokenizer;
 
 	@Autowired(required = false)
-	private FieldSetMapper<Map<Object, Object>> fieldSetMapper;
+	private FieldSetMapper<Map<String, Object>> fieldSetMapper;
 
 	@Autowired(required = false)
-	private LineMapper<Map<Object, Object>> lineMapper;
+	private LineMapper<Map<String, Object>> lineMapper;
 
 	@Autowired(required = false)
 	private LineCallbackHandler skippedLinesCallback;
@@ -71,8 +72,8 @@ public class FlatFileItemReaderAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.flatfilereader", name = "name")
-	public FlatFileItemReader<Map<Object, Object>> itemReader() {
-		FlatFileItemReaderBuilder<Map<Object, Object>> mapFlatFileItemReaderBuilder = new FlatFileItemReaderBuilder<Map<Object, Object>>()
+	public FlatFileItemReader<Map<String, Object>> itemReader() {
+		FlatFileItemReaderBuilder<Map<String, Object>> mapFlatFileItemReaderBuilder = new FlatFileItemReaderBuilder<Map<String, Object>>()
 				.name(this.properties.getName()).resource(this.properties.getResource())
 				.saveState(this.properties.isSaveState())
 				.maxItemCount(this.properties.getMaxItemCount())
@@ -127,13 +128,13 @@ public class FlatFileItemReaderAutoConfiguration {
 
 	/**
 	 * A {@link FieldSetMapper} that takes a {@code FieldSet} and returns the
-	 * {@code Map<Object, Object>} of its contents.
+	 * {@code Map<String, Object>} of its contents.
 	 */
-	public static class MapFieldSetMapper implements FieldSetMapper<Map<Object, Object>> {
+	public static class MapFieldSetMapper implements FieldSetMapper<Map<String, Object>> {
 
 		@Override
-		public Map<Object, Object> mapFieldSet(FieldSet fieldSet) {
-			return fieldSet.getProperties();
+		public Map<String, Object> mapFieldSet(FieldSet fieldSet) {
+			return new HashMap<String, Object>((Map) fieldSet.getProperties());
 		}
 
 	}

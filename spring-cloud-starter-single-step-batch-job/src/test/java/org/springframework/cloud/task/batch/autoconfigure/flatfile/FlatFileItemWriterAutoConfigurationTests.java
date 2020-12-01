@@ -395,9 +395,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class DelimitedJobConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -413,9 +413,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class LineAggregatorConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -425,7 +425,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 		}
 
 		@Bean
-		public LineAggregator<Map<Object, Object>> lineAggregator() {
+		public LineAggregator<Map<String, Object>> lineAggregator() {
 			return new PassThroughLineAggregator<>();
 		}
 
@@ -436,9 +436,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class HeaderFooterConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -464,9 +464,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class FieldExtractorConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -476,7 +476,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 		}
 
 		@Bean
-		public FieldExtractor<Map<Object, Object>> lineAggregator() {
+		public FieldExtractor<Map<String, Object>> lineAggregator() {
 			return item -> {
 				List<String> fields = new ArrayList<>(1);
 
@@ -492,9 +492,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class FormattedJobConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -510,7 +510,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class FormattedFieldExtractorJobConfiguration {
 
 		@Bean
-		public FieldExtractor<Map<Object, Object>> lineAggregator() {
+		public FieldExtractor<Map<String, Object>> lineAggregator() {
 			return item -> {
 				List<String> fields = new ArrayList<>(1);
 
@@ -520,9 +520,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 		}
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
+		public ListItemReader<Map<String, Object>> itemReader() {
 
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));

@@ -81,7 +81,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 		AmqpAdmin admin = new RabbitAdmin(this.connectionFactory);
 		admin.declareQueue(new Queue("foo"));
 
-		Map<Object, Object> testMap = new HashMap<>();
+		Map<String, Object> testMap = new HashMap<>();
 		testMap.put("ITEM_NAME", "foo");
 		this.template.convertAndSend("foo", testMap);
 		testMap = new HashMap<>();
@@ -186,7 +186,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 		return jobLauncher.run(job, new JobParameters());
 	}
 
-	private void validateBasicTest(List<Map<Object, Object>> items) {
+	private void validateBasicTest(List<Map<String, Object>> items) {
 		assertThat(items.size()).isEqualTo(3);
 		assertThat(items.get(0).get("ITEM_NAME")).isEqualTo("foo");
 		assertThat(items.get(1).get("ITEM_NAME")).isEqualTo("bar");
@@ -216,7 +216,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 	public static class BaseConfiguration {
 
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 

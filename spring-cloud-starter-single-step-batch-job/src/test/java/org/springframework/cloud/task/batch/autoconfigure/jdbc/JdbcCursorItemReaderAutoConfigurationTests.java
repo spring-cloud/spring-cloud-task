@@ -116,7 +116,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> items = context.getBean(ListItemWriter.class)
+			List<Map<String, Object>> items = context.getBean(ListItemWriter.class)
 					.getWrittenItems();
 
 			assertThat(items.size()).isEqualTo(3);
@@ -154,7 +154,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> items = context.getBean(ListItemWriter.class)
+			List<Map<String, Object>> items = context.getBean(ListItemWriter.class)
 					.getWrittenItems();
 
 			assertThat(items.size()).isEqualTo(3);
@@ -191,7 +191,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 		applicationContextRunner.run((context) -> {
 
-			JdbcCursorItemReader<Map<Object, Object>> itemReader = context
+			JdbcCursorItemReader<Map<String, Object>> itemReader = context
 					.getBean(JdbcCursorItemReader.class);
 
 			validateBean(itemReader);
@@ -340,7 +340,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	public static class BaseConfiguration {
 
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 
@@ -351,9 +351,9 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	public static class RowMapperConfiguration {
 
 		@Bean
-		public RowMapper<Map<Object, Object>> rowMapper() {
+		public RowMapper<Map<String, Object>> rowMapper() {
 			return (rs, rowNum) -> {
-				Map<Object, Object> item = new HashMap<>();
+				Map<String, Object> item = new HashMap<>();
 
 				item.put("item", rs.getString("item_name"));
 
@@ -362,7 +362,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		}
 
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 

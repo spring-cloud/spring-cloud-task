@@ -127,7 +127,7 @@ public class SingleStepJobAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<Object, Object>> writtenItems = itemWriter.getWrittenItems();
+			List<Map<String, Object>> writtenItems = itemWriter.getWrittenItems();
 
 			assertThat(writtenItems.size()).isEqualTo(3);
 
@@ -142,8 +142,8 @@ public class SingleStepJobAutoConfigurationTests {
 	public static class SimpleConfiguration {
 
 		@Bean
-		public ListItemReader<Map<Object, Object>> itemReader() {
-			List<Map<Object, Object>> items = new ArrayList<>(3);
+		public ListItemReader<Map<String, Object>> itemReader() {
+			List<Map<String, Object>> items = new ArrayList<>(3);
 
 			items.add(Collections.singletonMap("item", "foo"));
 			items.add(Collections.singletonMap("item", "bar"));
@@ -153,7 +153,7 @@ public class SingleStepJobAutoConfigurationTests {
 		}
 
 		@Bean
-		public ListItemWriter<Map<Object, Object>> itemWriter() {
+		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
 

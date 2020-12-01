@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * Autconfiguration for a {@code AmqpItemWriter}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.3
  */
 @Configuration
@@ -44,8 +45,8 @@ import org.springframework.context.annotation.Configuration;
 public class AmqpItemWriterAutoConfiguration {
 
 	@Bean
-	public AmqpItemWriter<Map<Object, Object>> amqpItemWriter(AmqpTemplate amqpTemplate) {
-		return new AmqpItemWriterBuilder<Map<Object, Object>>().amqpTemplate(amqpTemplate)
+	public AmqpItemWriter<Map<String, Object>> amqpItemWriter(AmqpTemplate amqpTemplate) {
+		return new AmqpItemWriterBuilder<Map<String, Object>>().amqpTemplate(amqpTemplate)
 				.build();
 	}
 

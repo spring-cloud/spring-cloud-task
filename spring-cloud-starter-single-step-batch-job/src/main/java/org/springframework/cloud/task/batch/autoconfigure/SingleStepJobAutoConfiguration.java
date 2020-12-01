@@ -55,7 +55,7 @@ public class SingleStepJobAutoConfiguration {
 	private SingleStepJobProperties properties;
 
 	@Autowired(required = false)
-	private ItemProcessor<Map<Object, Object>, Map<Object, Object>> itemProcessor;
+	private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
 
 	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory,
 			StepBuilderFactory stepBuilderFactory, SingleStepJobProperties properties,
@@ -79,12 +79,12 @@ public class SingleStepJobAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job", name = "jobName")
-	public Job job(ItemReader<Map<Object, Object>> itemReader,
-			ItemWriter<Map<Object, Object>> itemWriter) {
+	public Job job(ItemReader<Map<String, Object>> itemReader,
+			ItemWriter<Map<String, Object>> itemWriter) {
 
-		SimpleStepBuilder<Map<Object, Object>, Map<Object, Object>> stepBuilder = this.stepBuilderFactory
+		SimpleStepBuilder<Map<String, Object>, Map<String, Object>> stepBuilder = this.stepBuilderFactory
 				.get(this.properties.getStepName())
-				.<Map<Object, Object>, Map<Object, Object>>chunk(
+				.<Map<String, Object>, Map<String, Object>>chunk(
 						this.properties.getChunkSize())
 				.reader(itemReader);
 

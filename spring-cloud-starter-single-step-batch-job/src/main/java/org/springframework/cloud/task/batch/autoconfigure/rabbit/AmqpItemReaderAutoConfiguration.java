@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
  * Autconfiguration for a {@code AmqpItemReader}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.3
  */
 @Configuration
@@ -54,9 +55,9 @@ public class AmqpItemReaderAutoConfiguration {
 	}
 
 	@Bean
-	public AmqpItemReader<Map<Object, Object>> amqpItemReader(AmqpTemplate amqpTemplate,
+	public AmqpItemReader<Map<String, Object>> amqpItemReader(AmqpTemplate amqpTemplate,
 			@Autowired(required = false) Class itemType) {
-		AmqpItemReaderBuilder<Map<Object, Object>> builder = new AmqpItemReaderBuilder<Map<Object, Object>>()
+		AmqpItemReaderBuilder<Map<String, Object>> builder = new AmqpItemReaderBuilder<Map<String, Object>>()
 				.amqpTemplate(amqpTemplate);
 		if (itemType != null) {
 			builder.itemType(itemType);

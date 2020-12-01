@@ -43,6 +43,7 @@ import org.springframework.util.Assert;
  * Autconfiguration for a {@code KafkaItemReader}.
  *
  * @author Glenn Renfro
+ * @author Michael Minella
  * @since 2.3
  */
 @Configuration
@@ -56,25 +57,25 @@ public class KafkaItemWriterAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemwriter", name = "topic")
-	public KafkaItemWriter<Object, Map<Object, Object>> kafkaItemWriter(
+	public KafkaItemWriter<Object, Map<String, Object>> kafkaItemWriter(
 			KafkaItemWriterProperties kafkaItemWriterProperties,
-			ProducerFactory<Object, Map<Object, Object>> producerFactory,
-			@Qualifier("batchItemKeyMapper") Converter<Object, Object> itemKeyMapper) {
+			ProducerFactory<Object, Map<String, Object>> producerFactory,
+			@Qualifier("batchItemKeyMapper") Converter<Map<String, Object>, Object> itemKeyMapper) {
 
 		validateProperties(kafkaItemWriterProperties);
 		KafkaTemplate template = new KafkaTemplate(producerFactory);
 		template.setDefaultTopic(kafkaItemWriterProperties.getTopic());
-		return new KafkaItemWriterBuilder<Object, Map<Object, Object>>()
+		return new KafkaItemWriterBuilder<Object, Map<String, Object>>()
 				.delete(kafkaItemWriterProperties.isDelete()).kafkaTemplate(template)
 				.itemKeyMapper(itemKeyMapper).build();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(name = "batchItemKeyMapper")
-	public Converter<Object, Object> batchItemKeyMapper() {
-		return new Converter<Object, Object>() {
+	public Converter<Map<String, Object>, Object> batchItemKeyMapper() {
+		return new Converter<Map<String, Object>, Object>() {
 			@Override
-			public Object convert(Object source) {
+			public Object convert(Map<String, Object> source) {
 				return source;
 			}
 		};
@@ -82,11 +83,11 @@ public class KafkaItemWriterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ProducerFactory<Object, Map<Object, Object>> producerFactory() {
+	ProducerFactory<Object, Map<String, Object>> producerFactory() {
 		Map<String, Object> configs = new HashMap<>();
 		configs.putAll(this.kafkaProperties.getProducer().buildProperties());
-		return new DefaultKafkaProducerFactory<Object, Map<Object, Object>>(configs, null,
-				new JsonSerializer<>());
+		return new DefaultKafkaProducerFactory<>(configs, null,
+			new JsonSerializer<>());
 	}
 
 	private void validateProperties(KafkaItemWriterProperties kafkaItemWriterProperties) {

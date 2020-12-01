@@ -69,7 +69,7 @@ public class AmqpItemWriterAutoConfigurationTests {
 
 	private static String host;
 
-	private static List<Map<Object, Object>> sampleData;
+	private static List<Map<String, Object>> sampleData;
 
 	private RabbitTemplate template;
 
@@ -92,9 +92,9 @@ public class AmqpItemWriterAutoConfigurationTests {
 		addNameToReaderList(sampleData, "Judy");
 	}
 
-	private static void addNameToReaderList(List<Map<Object, Object>> itemReaderList,
+	private static void addNameToReaderList(List<Map<String, Object>> itemReaderList,
 			String value) {
-		Map<Object, Object> prepMap = new HashMap<>();
+		Map<String, Object> prepMap = new HashMap<>();
 		prepMap.put("first_name", value);
 		itemReaderList.add(prepMap);
 	}
@@ -144,8 +144,8 @@ public class AmqpItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			for (Map<Object, Object> sampleEntry : sampleData) {
-				Map<Object, Object> map = (Map<Object, Object>) template
+			for (Map<String, Object> sampleEntry : sampleData) {
+				Map<String, Object> map = (Map<String, Object>) template
 						.receiveAndConvert(QUEUE_NAME);
 				assertThat(map.get("first_name"))
 						.isEqualTo(sampleEntry.get("first_name"));
@@ -199,9 +199,9 @@ public class AmqpItemWriterAutoConfigurationTests {
 	public static class ItemWriterConfiguration {
 
 		@Bean
-		public RowMapper<Map<Object, Object>> rowMapper() {
+		public RowMapper<Map<String, Object>> rowMapper() {
 			return (rs, rowNum) -> {
-				Map<Object, Object> item = new HashMap<>();
+				Map<String, Object> item = new HashMap<>();
 
 				item.put("item", rs.getString("item_name"));
 
@@ -210,7 +210,7 @@ public class AmqpItemWriterAutoConfigurationTests {
 		}
 
 		@Bean
-		public ItemReader<Map<Object, Object>> itemWriter() {
+		public ItemReader<Map<String, Object>> itemWriter() {
 
 			return new ListItemReader<>(sampleData);
 		}
