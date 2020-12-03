@@ -1,4 +1,4 @@
-= Single Step Batch JOb
+= Single Step Batch Job
 
 This is a Spring Cloud Task application that autoconfigures a single step Spring Batch job based on the profiles that are active.
 
@@ -8,6 +8,10 @@ The profiles that are available are:
 * `ffwriter` - Activates a FlatFileItemWriter that writes to the `result.txt` file.
 * `jdbcreader` - Activates a JdbcCursorItemReader that reads from the `item_sample` table.
 * `jdbcwriter` - Activates a JdbcItemReader that writes to the `item` table.
+* `amqpreader` - Activates a AmqpItemReader that reads from the `samplequeue` queue.
+* `amqpwriter` - Activates a AmqpItemWriter that writes to the `sampleexchange` exchange.
+* `kafkareader` - Activates a KafkaItemReader that reads from the `sampletopic` topic.
+* `kafkawriter` - Activates a KafkaItemWriter that writes to the `sampletopic` topic.
 
 == Requirements:
 
@@ -97,4 +101,42 @@ INSERT INTO item_sample (item_name) VALUES ('baz');
 INSERT INTO item_sample (item_name) VALUES ('boo');
 INSERT INTO item_sample (item_name) VALUES ('qux');
 INSERT INTO item_sample (item_name) VALUES ('Job');
+```
+
+=== FlatfileItemReader with AmqpItemWriter batch job
+In this example the batch job will read from the `test.txt` file and write the result to the `sampleexchange` exchange.
+```
+java -Dspring.profiles.active=ffreader,amqpwriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+NOTE: Before running create an exchange named `sampleexchange`.
+
+=== AmqpItemReader with FlatfileItemWriter batch job
+In this example the batch job will read from the `samplequeue` queue and write the result to the `result.txt` in the current directory.
+```
+java -Dspring.profiles.active=amqpreader,ffwriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+NOTE: Before running create and populate a queue named `samplequeue`.
+
+=== FlatfileItemReader with KafkaItemWriter batch job
+In this example the batch job will read from the `test.txt` file and write the result to the `sampletopic` topic.
+```
+java -Dspring.profiles.active=ffreader,kafkawriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+Before running create a topic named `sampletopic`.   For example:
+```
+kafka-topics.sh --create --topic sampletopic --bootstrap-server localhost:9092
+```
+
+=== KafkaItemReader with FlatfileItemWriter batch job
+In this example the batch job will read from the `sampletopic` topic and write the result to the `result.txt` in the current directory.
+```
+java -Dspring.profiles.active=kafkareader,ffwriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
+```
+
+Before running populate the topic named `sampletopic`.   For example populate it using the FlatfileItemReader and KafkaItemWriter from above:
+```
+java -Dspring.profiles.active=ffreader,kafkawriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
 ```
