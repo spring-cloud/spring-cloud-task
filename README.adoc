@@ -23,6 +23,7 @@ $ ./mvnw clean install
 [source,java,indent=2]
 ----
 @SpringBootApplication
+@EnableTask
 public class MyApp {
 
 	@Bean
@@ -34,10 +35,10 @@ public class MyApp {
 		SpringApplication.run(MyApp.class);
 	}
 
-	public static class MyTaskApplication implements CommandLineRunner {
+	public static class MyTaskApplication implements ApplicationRunner {
 
 		@Override
-		public void run(String... strings) throws Exception {
+		public void run(ApplicationArguments args) throws Exception {
 			System.out.println("Hello World");
 		}
 	}

@@ -21,7 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipInstall>true</skipInstall>
-		<spring-cloud-stream>3.1.0-SNAPSHOT</spring-cloud-stream>
+		<spring-cloud-stream>3.1.0-RC1</spring-cloud-stream>
 	</properties>
 
 	<dependencyManagement>

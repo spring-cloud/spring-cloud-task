@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.0-RC1</version>
 		<relativePath />
 	</parent>
 
@@ -110,11 +110,11 @@
 	</modules>
 
 	<properties>
-		<spring-cloud-stream.version>3.1.0-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-stream.version>3.1.0-RC1</spring-cloud-stream.version>
 		<spring-cloud-deployer.version>2.5.0</spring-cloud-deployer.version>
 		<spring-cloud-deployer-local.version>2.5.0
 		</spring-cloud-deployer-local.version>
-		<spring-cloud-stream-binder-rabbit.version>3.1.0-SNAPSHOT
+		<spring-cloud-stream-binder-rabbit.version>3.1.0-RC1
 		</spring-cloud-stream-binder-rabbit.version>
 		<commons-logging.version>1.1</commons-logging.version>
 		<java-ee-api.version>8.0</java-ee-api.version>
