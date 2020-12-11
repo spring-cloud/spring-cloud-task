@@ -103,11 +103,11 @@ public class TaskEventsApplication {
 	public static class TaskConfiguration {
 
 		@Bean
-		public CommandLineRunner commandLineRunner() {
-			return new CommandLineRunner() {
+		public ApplicationRunner applicationRunner() {
+			return new ApplicationRunner() {
 				@Override
-				public void run(String... args) throws Exception {
-					System.out.println("The CommandLineRunner was executed");
+				public void run(ApplicationArguments args) throws Exception {
+					System.out.println("The ApplicationRunner was executed");
 				}
 			};
 		}
