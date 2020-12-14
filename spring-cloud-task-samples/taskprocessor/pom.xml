@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-			<version>3.0.8.RELEASE</version>
+			<version>3.0.9.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-support</artifactId>
-			<version>3.0.8.RELEASE</version>
+			<version>3.0.9.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

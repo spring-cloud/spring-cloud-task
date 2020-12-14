@@ -23,6 +23,7 @@ $ ./mvnw clean install
 [source,java,indent=2]
 ----
 @SpringBootApplication
+@EnableTask
 public class MyApp {
 
 	@Bean
