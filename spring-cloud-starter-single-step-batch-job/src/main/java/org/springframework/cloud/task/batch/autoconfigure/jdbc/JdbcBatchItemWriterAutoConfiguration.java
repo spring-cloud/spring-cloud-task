@@ -20,9 +20,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -41,9 +41,9 @@ import org.springframework.context.annotation.Configuration;
  * @since 2.3
  */
 @Configuration
-@EnableConfigurationProperties(JdbcItemWriterProperties.class)
+@EnableConfigurationProperties(JdbcBatchItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-public class JdbcItemWriterAutoConfiguration {
+public class JdbcBatchItemWriterAutoConfiguration {
 
 	@Autowired(required = false)
 	private ItemPreparedStatementSetter itemPreparedStatementSetter;
@@ -51,20 +51,20 @@ public class JdbcItemWriterAutoConfiguration {
 	@Autowired(required = false)
 	private ItemSqlParameterSourceProvider itemSqlParameterSourceProvider;
 
-	private JdbcItemWriterProperties properties;
+	private JdbcBatchItemWriterProperties properties;
 
 	private DataSource dataSource;
 
-	public JdbcItemWriterAutoConfiguration(DataSource dataSource,
-			JdbcItemWriterProperties properties) {
+	public JdbcBatchItemWriterAutoConfiguration(DataSource dataSource,
+			JdbcBatchItemWriterProperties properties) {
 		this.dataSource = dataSource;
 		this.properties = properties;
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcwriter", name = "name")
-	public ItemWriter<Map<String, Object>> itemWriter() {
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcbatchitemwriter", name = "name")
+	public JdbcBatchItemWriter<Map<String, Object>> itemWriter() {
 
 		JdbcBatchItemWriterBuilder<Map<String, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
 				.dataSource(this.dataSource).sql(this.properties.getSql());

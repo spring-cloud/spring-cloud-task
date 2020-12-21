@@ -85,21 +85,21 @@ public class FlatFileItemReaderAutoConfigurationTests {
 								FlatFileItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.savestate=true",
-						"spring.batch.job.flatfilereader.name=fullDelimitedConfiguration",
-						"spring.batch.job.flatfilereader.maxItemCount=5",
-						"spring.batch.job.flatfilereader.currentItemCount=2",
-						"spring.batch.job.flatfilereader.comments=#,$",
-						"spring.batch.job.flatfilereader.resource=/testUTF16.csv",
-						"spring.batch.job.flatfilereader.strict=true",
-						"spring.batch.job.flatfilereader.encoding=UTF-16",
-						"spring.batch.job.flatfilereader.linesToSkip=1",
-						"spring.batch.job.flatfilereader.delimited=true",
-						"spring.batch.job.flatfilereader.delimiter=@",
-						"spring.batch.job.flatfilereader.quoteCharacter=%",
-						"spring.batch.job.flatfilereader.includedFields=1,3,5",
-						"spring.batch.job.flatfilereader.names=foo,bar,baz",
-						"spring.batch.job.flatfilereader.parsingStrict=false");
+						"spring.batch.job.flatfileitemreader.savestate=true",
+						"spring.batch.job.flatfileitemreader.name=fullDelimitedConfiguration",
+						"spring.batch.job.flatfileitemreader.maxItemCount=5",
+						"spring.batch.job.flatfileitemreader.currentItemCount=2",
+						"spring.batch.job.flatfileitemreader.comments=#,$",
+						"spring.batch.job.flatfileitemreader.resource=/testUTF16.csv",
+						"spring.batch.job.flatfileitemreader.strict=true",
+						"spring.batch.job.flatfileitemreader.encoding=UTF-16",
+						"spring.batch.job.flatfileitemreader.linesToSkip=1",
+						"spring.batch.job.flatfileitemreader.delimited=true",
+						"spring.batch.job.flatfileitemreader.delimiter=@",
+						"spring.batch.job.flatfileitemreader.quoteCharacter=%",
+						"spring.batch.job.flatfileitemreader.includedFields=1,3,5",
+						"spring.batch.job.flatfileitemreader.names=foo,bar,baz",
+						"spring.batch.job.flatfileitemreader.parsingStrict=false");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -142,15 +142,15 @@ public class FlatFileItemReaderAutoConfigurationTests {
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.savestate=true",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
-						"spring.batch.job.flatfilereader.comments=#,$",
-						"spring.batch.job.flatfilereader.resource=/test.txt",
-						"spring.batch.job.flatfilereader.strict=true",
-						"spring.batch.job.flatfilereader.fixedLength=true",
-						"spring.batch.job.flatfilereader.ranges=3-4,7-8,11",
-						"spring.batch.job.flatfilereader.names=foo,bar,baz",
-						"spring.batch.job.flatfilereader.parsingStrict=false");
+						"spring.batch.job.flatfileitemreader.savestate=true",
+						"spring.batch.job.flatfileitemreader.name=fixedWidthConfiguration",
+						"spring.batch.job.flatfileitemreader.comments=#,$",
+						"spring.batch.job.flatfileitemreader.resource=/test.txt",
+						"spring.batch.job.flatfileitemreader.strict=true",
+						"spring.batch.job.flatfileitemreader.fixedLength=true",
+						"spring.batch.job.flatfileitemreader.ranges=3-4,7-8,11",
+						"spring.batch.job.flatfileitemreader.names=foo,bar,baz",
+						"spring.batch.job.flatfileitemreader.parsingStrict=false");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -202,9 +202,9 @@ public class FlatFileItemReaderAutoConfigurationTests {
 								FlatFileItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
-						"spring.batch.job.flatfilereader.resource=/test.txt",
-						"spring.batch.job.flatfilereader.strict=true");
+						"spring.batch.job.flatfileitemreader.name=fixedWidthConfiguration",
+						"spring.batch.job.flatfileitemreader.resource=/test.txt",
+						"spring.batch.job.flatfileitemreader.strict=true");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -242,13 +242,13 @@ public class FlatFileItemReaderAutoConfigurationTests {
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
-						"spring.batch.job.flatfilereader.resource=/test.txt",
-						"spring.batch.job.flatfilereader.linesToSkip=2",
-						"spring.batch.job.flatfilereader.fixedLength=true",
-						"spring.batch.job.flatfilereader.ranges=3-4,7-8,11",
-						"spring.batch.job.flatfilereader.names=foo,bar,baz",
-						"spring.batch.job.flatfilereader.strict=true");
+						"spring.batch.job.flatfileitemreader.name=fixedWidthConfiguration",
+						"spring.batch.job.flatfileitemreader.resource=/test.txt",
+						"spring.batch.job.flatfileitemreader.linesToSkip=2",
+						"spring.batch.job.flatfileitemreader.fixedLength=true",
+						"spring.batch.job.flatfileitemreader.ranges=3-4,7-8,11",
+						"spring.batch.job.flatfileitemreader.names=foo,bar,baz",
+						"spring.batch.job.flatfileitemreader.strict=true");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -287,10 +287,10 @@ public class FlatFileItemReaderAutoConfigurationTests {
 						FlatFileItemReaderAutoConfiguration.class, RangeConverter.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilereader.name=fixedWidthConfiguration",
-						"spring.batch.job.flatfilereader.resource=/test.txt",
-						"spring.batch.job.flatfilereader.maxItemCount=1",
-						"spring.batch.job.flatfilereader.strict=true");
+						"spring.batch.job.flatfileitemreader.name=fixedWidthConfiguration",
+						"spring.batch.job.flatfileitemreader.resource=/test.txt",
+						"spring.batch.job.flatfileitemreader.maxItemCount=1",
+						"spring.batch.job.flatfileitemreader.strict=true");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);

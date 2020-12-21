@@ -28,7 +28,7 @@ import org.springframework.core.io.Resource;
  * @author Michael Minella
  * @since 2.3
  */
-@ConfigurationProperties(prefix = "spring.batch.job.flatfilewriter")
+@ConfigurationProperties(prefix = "spring.batch.job.flatfileitemwriter")
 public class FlatFileItemWriterProperties {
 
 	private Resource resource;

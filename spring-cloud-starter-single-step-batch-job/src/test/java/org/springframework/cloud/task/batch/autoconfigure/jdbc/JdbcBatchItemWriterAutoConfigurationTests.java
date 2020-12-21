@@ -60,7 +60,7 @@ import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JdbcItemWriterAutoConfigurationTests {
+public class JdbcBatchItemWriterAutoConfigurationTests {
 
 	private final static String DATASOURCE_URL;
 
@@ -99,13 +99,13 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						TaskLauncherConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -115,14 +115,14 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void customSqlParameterSourceTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
 						TaskLauncherConfiguration.class,
 						CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner);
@@ -132,14 +132,14 @@ public class JdbcItemWriterAutoConfigurationTests {
 	public void preparedStatementSetterTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						TaskLauncherConfiguration.class,
 						ItemPreparedStatementSetterConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class));
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 		runTest(applicationContextRunner);
 	}
@@ -148,8 +148,8 @@ public class JdbcItemWriterAutoConfigurationTests {
 			ApplicationContextRunner applicationContextRunner) {
 		return applicationContextRunner.withPropertyValues("spring.batch.job.jobName=job",
 				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-				"spring.batch.job.jdbcwriter.name=fooWriter",
-				"spring.batch.job.jdbcwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)");
+				"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
+				"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)");
 	}
 
 	private void validateResultAndBean(ApplicationContext context) {

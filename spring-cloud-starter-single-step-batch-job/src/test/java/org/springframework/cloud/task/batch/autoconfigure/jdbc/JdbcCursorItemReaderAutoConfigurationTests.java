@@ -100,8 +100,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 								JdbcCursorItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursorreader.name=fooReader",
-						"spring.batch.job.jdbccursorreader.sql=select item_name from item");
+						"spring.batch.job.jdbccursoritemreader.name=fooReader",
+						"spring.batch.job.jdbccursoritemreader.sql=select item_name from item");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -138,8 +138,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 								JdbcCursorItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=rowMapperJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursorreader.name=fooReader",
-						"spring.batch.job.jdbccursorreader.sql=select * from item");
+						"spring.batch.job.jdbccursoritemreader.name=fooReader",
+						"spring.batch.job.jdbccursoritemreader.sql=select * from item");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -176,18 +176,18 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 								JdbcCursorItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=roseyJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursorreader.saveState=false",
-						"spring.batch.job.jdbccursorreader.name=fooReader",
-						"spring.batch.job.jdbccursorreader.maxItemCount=15",
-						"spring.batch.job.jdbccursorreader.currentItemCount=2",
-						"spring.batch.job.jdbccursorreader.fetchSize=4",
-						"spring.batch.job.jdbccursorreader.maxRows=6",
-						"spring.batch.job.jdbccursorreader.queryTimeout=8",
-						"spring.batch.job.jdbccursorreader.ignoreWarnings=true",
-						"spring.batch.job.jdbccursorreader.verifyCursorPosition=true",
-						"spring.batch.job.jdbccursorreader.driverSupportsAbsolute=true",
-						"spring.batch.job.jdbccursorreader.useSharedExtendedConnection=true",
-						"spring.batch.job.jdbccursorreader.sql=select * from foo");
+						"spring.batch.job.jdbccursoritemreader.saveState=false",
+						"spring.batch.job.jdbccursoritemreader.name=fooReader",
+						"spring.batch.job.jdbccursoritemreader.maxItemCount=15",
+						"spring.batch.job.jdbccursoritemreader.currentItemCount=2",
+						"spring.batch.job.jdbccursoritemreader.fetchSize=4",
+						"spring.batch.job.jdbccursoritemreader.maxRows=6",
+						"spring.batch.job.jdbccursoritemreader.queryTimeout=8",
+						"spring.batch.job.jdbccursoritemreader.ignoreWarnings=true",
+						"spring.batch.job.jdbccursoritemreader.verifyCursorPosition=true",
+						"spring.batch.job.jdbccursoritemreader.driverSupportsAbsolute=true",
+						"spring.batch.job.jdbccursoritemreader.useSharedExtendedConnection=true",
+						"spring.batch.job.jdbccursoritemreader.sql=select * from foo");
 
 		applicationContextRunner.run((context) -> {
 
@@ -260,7 +260,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 								JdbcCursorItemReaderAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursorreader.name=fooReader");
+						"spring.batch.job.jdbccursoritemreader.name=fooReader");
 
 		assertThatThrownBy(() -> {
 			runTest(applicationContextRunner);

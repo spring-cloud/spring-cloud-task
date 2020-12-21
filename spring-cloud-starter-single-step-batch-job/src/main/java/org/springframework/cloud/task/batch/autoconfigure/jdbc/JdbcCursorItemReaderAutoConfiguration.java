@@ -43,7 +43,7 @@ import org.springframework.jdbc.core.RowMapper;
 @Configuration
 @EnableConfigurationProperties(JdbcCursorItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursorreader", name = "name")
+@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader", name = "name")
 public class JdbcCursorItemReaderAutoConfiguration {
 
 	private final JdbcCursorItemReaderProperties properties;

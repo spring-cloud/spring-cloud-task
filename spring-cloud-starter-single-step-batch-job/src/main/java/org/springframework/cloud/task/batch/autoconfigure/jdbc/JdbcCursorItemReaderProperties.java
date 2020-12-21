@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Michael Minella
  * @since 2.3
  */
-@ConfigurationProperties(prefix = "spring.batch.job.jdbccursorreader")
+@ConfigurationProperties(prefix = "spring.batch.job.jdbccursoritemreader")
 public class JdbcCursorItemReaderProperties {
 
 	private boolean saveState = true;

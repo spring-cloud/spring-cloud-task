@@ -31,7 +31,7 @@ import org.springframework.core.io.Resource;
  * @author Michael Minella
  * @since 2.3
  */
-@ConfigurationProperties(prefix = "spring.batch.job.flatfilereader")
+@ConfigurationProperties(prefix = "spring.batch.job.flatfileitemreader")
 public class FlatFileItemReaderProperties {
 
 	private boolean saveState = true;
