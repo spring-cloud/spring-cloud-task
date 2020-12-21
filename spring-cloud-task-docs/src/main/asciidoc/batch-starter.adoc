@@ -4,16 +4,16 @@
 
 [[partintro]]
 --
-This section goes into how to develop a Spring Batch `Job` with a single `Step` using the
-starter included in Spring Cloud Task. This starter allows users to use configuration
-to define an `ItemReader`, an `ItemWriter`, or a full single step Spring Batch `Job`.
-To read more about Spring Batch and its capabilities, read its documentation
-https://spring.io/projects/spring-batch[here].
+This section goes into how to develop a Spring Batch `Job` with a single `Step` by using the
+starter included in Spring Cloud Task. This starter lets you use configuration
+to define an `ItemReader`, an `ItemWriter`, or a full single-step Spring Batch `Job`.
+For more about Spring Batch and its capabilities, see the
+https://spring.io/projects/spring-batch[Spring Batch documentation].
 --
 
-To obtain the starter, add the following to your build:
+To obtain the starter for Maven, add the following to your build:
 
-Maven:
+====
 [source,xml]
 ----
 <dependency>
@@ -22,24 +22,28 @@ Maven:
     <version>2.3.0</version>
 </dependency>
 ----
+====
 
-Gradle:
+To obtain the starter for Gradle, add the following to your build:
+
+====
 [source,groovy]
 ----
 compile "org.springframework.cloud:spring-cloud-starter-single-step-batch-job:2.3.0"
 ----
+====
 
 [[job-definition]]
 == Defining a Job
 
-You can use the starter to define as little as an `ItemReader`, `ItemWriter`, or as much as a full `Job`.
-In this section, we will define what properties are required to be defined to configure a
+You can use the starter to define as little as an `ItemReader` or an `ItemWriter` or as much as a full `Job`.
+In this section, we define which properties are required to be defined to configure a
 `Job`.
 
 [[job-definition-properties]]
 === Properties
 
-To begin, the starter provides a set of properties to be able to configure the basics of a Job with one Step.
+To begin, the starter provides a set of properties that let you configure the basics of a Job with one Step:
 
 .Job Properties
 |===
@@ -61,36 +65,36 @@ To begin, the starter provides a set of properties to be able to configure the b
 | The number of items to be processed per transaction.
 |===
 
-With the above properties configured, you will have a job with a single, chunk based step.
-This chunk based step will read, process, and write `Map<String, Object>` instances as the
-items. However, the step won't do anything yet. You need to configure an `ItemReader`, an
+With the above properties configured, you have a job with a single, chunk-based step.
+This chunk-based step reads, processes, and writes `Map<String, Object>` instances as the
+items. However, the step does not yet do anything. You need to configure an `ItemReader`, an
 optional `ItemProcessor`, and an `ItemWiter` to give it something to do. To configure one
 of these, you can either use properties and configure one of the options that has provided
-auto configuration, or you can configure your own via standard Spring configuration
+autoconfiguration or you can configure your own with the standard Spring configuration
 mechanisms.
 
-NOTE: If you configure your own, the input/output types must match the others in the step.
+NOTE: If you configure your own, the input and output types must match the others in the step.
 The `ItemReader` implementations and `ItemWriter` implementations in this starter all use
-a `Map<String, Object>` as the input/output item.
+a `Map<String, Object>` as the input and the output item.
 
 [[item-readers]]
-== Autoconfiguration for ItemReader implementations
+== Autoconfiguration for ItemReader Implementations
 
 This starter provides autoconfiguration for four different `ItemReader` implementations:
-`AmqpItemReader`, `FlatFileItemReader`, `JdbcCursorItemReader`, and the `KafkaItemReader`.
-In this section we will outline how to configure each of these using the provided
+`AmqpItemReader`, `FlatFileItemReader`, `JdbcCursorItemReader`, and `KafkaItemReader`.
+In this section, we outline how to configure each of these by using the provided
 autoconfiguration.
 
 [[amqpitemreader]]
 === AmqpItemReader
 
-Reading from a queue or topic via AMQP can be done via the `AmqpItemReader`. The
+You can read from a queue or topic with AMQP by using the `AmqpItemReader`. The
 autoconfiguration for this `ItemReader` implementation is dependent upon two sets of
-configuration. The first is the configuration of an `AmqpTemplate`. This can be done either
-yourself  or via the autoconfiguratino provided by Spring Boot. Documentation for that can
-be found https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[here].
-Once the `AmqpTemplate` is configured, enabling the batch capabilities to support it can
-be accomplished via the properties below.
+configuration. The first is the configuration of an `AmqpTemplate`. You can either
+configure this yourself or use the autoconfiguration provided by Spring Boot. See the
+ https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[Spring Boot AMQP documentation].
+Once you have configured the `AmqpTemplate`, you can enable the batch capabilities to support it
+by setting the following properties:
 
 .`AmqpItemReader` Properties
 |===
@@ -107,16 +111,16 @@ be accomplished via the properties below.
 | Indicates if the `Jackson2JsonMessageConverter` should be registered to parse messages.
 |===
 
-To read more about the `AmqpItemReader`, you can read its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/amqp/AmqpItemReader.html[here]
+For more information, see the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/amqp/AmqpItemReader.html[`AmqpItemReader` documentation].
 
 [[flatfileitemreader]]
 === FlatFileItemReader
 
-The `FlatFileItemReader` provides the capability to read from flat files such as CSVs
-and other file formats. In order to read from a file, you can provide some components
-yourself via normal Spring configuration (`LineTokenizer`, `RecordSeparatorPolicy`,
+`FlatFileItemReader` lets you read from flat files (such as CSVs
+and other file formats). To read from a file, you can provide some components
+yourself through normal Spring configuration (`LineTokenizer`, `RecordSeparatorPolicy`,
 `FieldSetMapper`, `LineMapper`, or `SkippedLinesCallback`). You can also use the
-following properties to configure the reader as required.
+following properties to configure the reader:
 
 .`FlatFileItemReader` Properties
 |===
@@ -155,7 +159,7 @@ following properties to configure the reader as required.
 | `spring.batch.job.flatfileitemreader.strict`
 | `boolean`
 | `true`
-| If set to true, the reader will throw an exception if the resource is not found.
+| If set to `true`, the reader throws an exception if the resource is not found.
 
 | `spring.batch.job.flatfileitemreader.encoding`
 | `String`
@@ -170,7 +174,7 @@ following properties to configure the reader as required.
 | `spring.batch.job.flatfileitemreader.delimited`
 | `boolean`
 | `false`
-| Indicates if the file is a delimited file (CSV, etc). Only this property or `spring.batch.job.flatfileitemreader.fixedLength` can be `true` at the same time.
+| Indicates whether the file is a delimited file (CSV and other formats). Only one of this property or `spring.batch.job.flatfileitemreader.fixedLength` can be `true` at the same time.
 
 | `spring.batch.job.flatfileitemreader.delimiter`
 | `String`
@@ -180,22 +184,22 @@ following properties to configure the reader as required.
 | `spring.batch.job.flatfileitemreader.quoteCharacter`
 | `char`
 | `DelimitedLineTokenizer.DEFAULT_QUOTE_CHARACTER`
-| Used to determine what character is used to quote values.
+| Used to determine the character used to quote values.
 
 | `spring.batch.job.flatfileitemreader.includedFields`
 | `List<Integer>`
 | empty list
-| A list of indicies of which fields in a record to include in the item.
+| A list of indices to determine which fields in a record to include in the item.
 
 | `spring.batch.job.flatfileitemreader.fixedLength`
 | `boolean`
 | `false`
-| Indicates if a file's records are parsed via column numbers. Only this property or `spring.batch.job.flatfileitemreader.delimited` can be `true` at the same time.
+| Indicates if a file's records are parsed by column numbers. Only one of this property or `spring.batch.job.flatfileitemreader.delimited` can be `true` at the same time.
 
 | `spring.batch.job.flatfileitemreader.ranges`
 | `List<Range>`
 | empty list
-| List of column ranges to parse a fixed width record by. Read about Range https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/transform/Range.html[here].
+| List of column ranges by which to parse a fixed width record. See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/transform/Range.html[Range documentation].
 
 | `spring.batch.job.flatfileitemreader.names`
 | `String []`
@@ -205,18 +209,18 @@ following properties to configure the reader as required.
 | `spring.batch.job.flatfileitemreader.parsingStrict`
 | `boolean`
 | `true`
-| If set to `true`, mapping will fail if fields cannot be mapped.
+| If set to `true`, the mapping fails if the fields cannot be mapped.
 |===
 
-To read more about the `FlatFileItemReader`, you can find its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/FlatFileItemReader.html[here].
+See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/FlatFileItemReader.html[`FlatFileItemReader` documentation].
 
 [[jdbcCursorItemReader]]
 === JdbcCursorItemReader
 
-The `JdbcCursorItemReader` executes a query against a relational database and iterates over
+The `JdbcCursorItemReader` runs a query against a relational database and iterates over
 the resulting cursor (`ResultSet`) to provide the resulting items. This autoconfiguration
-allows a user to provide a `PreparedStatementSetter` and/or a `RowMapper` if required. They
-can also use the properties available to configure a `JdbcCursorItemReader` are as follows.
+lets you provide a `PreparedStatementSetter`, a `RowMapper`, or both. You
+can also use the following properties to configure a `JdbcCursorItemReader`:
 
 .`JdbcCursorItemReader` Properties
 |===
@@ -225,7 +229,7 @@ can also use the properties available to configure a `JdbcCursorItemReader` are 
 | `spring.batch.job.jdbccursoritemreader.saveState`
 | `boolean`
 | `true`
-| Determines if the state should be saved for restarts.
+| Determines whether the state should be saved for restarts.
 
 | `spring.batch.job.jdbccursoritemreader.name`
 | `String`
@@ -245,7 +249,7 @@ can also use the properties available to configure a `JdbcCursorItemReader` are 
 | `spring.batch.job.jdbccursoritemreader.fetchSize`
 | `int`
 |
-| A hint to the driver on how many records to retrieve per call to the database system. For best performance, this usually will want to be configured to match the chunk size.
+| A hint to the driver to indicate how many records to retrieve per call to the database system. For best performance, you usually want to set it to match the chunk size.
 
 | `spring.batch.job.jdbccursoritemreader.maxRows`
 | `int`
@@ -260,41 +264,41 @@ can also use the properties available to configure a `JdbcCursorItemReader` are 
 | `spring.batch.job.jdbccursoritemreader.ignoreWarnings`
 | `boolean`
 | `true`
-| Determines if the reader should ignore SQL warnings when processing.
+| Determines whether the reader should ignore SQL warnings when processing.
 
 | `spring.batch.job.jdbccursoritemreader.verifyCursorPosition`
 | `boolean`
 | `true`
-| Indicates if the cursor's position should be verified after each read to verify that the `RowMapper` did not advance the cursor.
+| Indicates whether the cursor's position should be verified after each read to verify that the `RowMapper` did not advance the cursor.
 
 | `spring.batch.job.jdbccursoritemreader.driverSupportsAbsolute`
 | `boolean`
 | `false`
-| Indicates if the driver supports absolute positioning of a cursor.
+| Indicates whether the driver supports absolute positioning of a cursor.
 
 | `spring.batch.job.jdbccursoritemreader.useSharedExtendedConnection`
 | `boolean`
 | `false`
-| Indicates if the connection is shared with other processing (and therefor part of a transaction).
+| Indicates whether the connection is shared with other processing (and is therefore part of a transaction).
 
 | `spring.batch.job.jdbccursoritemreader.sql`
 | `String`
 | `null`
-| SQL query to read from.
+| SQL query from which to read.
 |===
 
-For more information about the `JdbcCursorItemReader`, refer to its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcCursorItemReader.html[here]
+See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcCursorItemReader.html[`JdbcCursorItemReader` documentation].
 
 [[kafkaItemReader]]
 === KafkaItemReader
 
 Ingesting a partition of data from a Kafka topic is useful and exactly what the
-`KafkaItemReader` can do. In order to configure a `KafkaItemReader`, two pieces
-of configuration are required. First, configuring Kafka via Spring Boot's Kafka
-autoconfiguration is required (you can read more about that
-https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[here]).
-Once the Kafka properties from Spring Boot are configured, the `KafkaItemReader`
-itself can be configured via the following properties.
+`KafkaItemReader` can do. To configure a `KafkaItemReader`, two pieces
+of configuration are required. First, configuring Kafka with Spring Boot's Kafka
+autoconfiguration is required (see the
+https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[Spring Boot Kafka documentation]).
+Once you have configured the Kafka properties from Spring Boot, you can configure the `KafkaItemReader`
+itself by setting the following properties:
 
 .`KafkaItemReader` Properties
 |===
@@ -308,12 +312,12 @@ itself can be configured via the following properties.
 | `spring.batch.job.kafkaitemreader.topic`
 | `String`
 | `null`
-| Name of the topic to read from.
+| Name of the topic from which to read.
 
 | `spring.batch.job.kafkaitemreader.partitions`
 | `List<Integer>`
 | empty list
-| List of partition indicies to read from.
+| List of partition indices from which to read.
 
 | `spring.batch.job.kafkaitemreader.pollTimeOutInSeconds`
 | `long`
@@ -323,36 +327,35 @@ itself can be configured via the following properties.
 | `spring.batch.job.kafkaitemreader.saveState`
 | `boolean`
 | `true`
-| Determines if the state should be saved for restarts.
+| Determines whether the state should be saved for restarts.
 |===
 
-You can read more about the `KafkaItemReader` via its documentation
-https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemReader.html[here].
+See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemReader.html[`KafkaItemReader` documentation].
 
 [[item-processors]]
 == ItemProcessor Configuration
 
-The single step batch job autoconfiguration will accept an `ItemProcessor` if one
+The single-step batch job autoconfiguration accepts an `ItemProcessor` if one
 is available within the `ApplicationContext`. If one is found of the correct type
-(`ItemProcessor<Map<String, Object>, Map<String, Object>>`, it will be autowired
+(`ItemProcessor<Map<String, Object>, Map<String, Object>>`), it is autowired
 into the step.
 
 [[item-writers]]
 == Autoconfiguration for ItemWriter implementations
 
 This starter provides autoconfiguration for `ItemWriter` implementations that
-match those `ItemReader` implementations supported: `AmqpItemWriter`,
-`FlatFileItemWriter`, `JdbcItemWriter`, and `KafkaItemWriter`. This section will
-cover how to use the autoconfiguration to configure a supported `ItemWriter`.
+match the supported `ItemReader` implementations: `AmqpItemWriter`,
+`FlatFileItemWriter`, `JdbcItemWriter`, and `KafkaItemWriter`. This section
+covers how to use autoconfiguration to configure a supported `ItemWriter`.
 
 [[amqpitemwriter]]
 === AmqpItemWriter
 
-To write to a RabbitMQ queue, two sets of configuration are required. First, an
-`AmqpTemplate` is required. The easiest way to get this is via Spring Boot's
-RabbitMQ autoconfiguration. You can read about Spring Boot's RabbitMQ support https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[here].
-Once the `AmqpTemplate` is configured, you can configure the `AmqpItemWriter` via the
-properties below.
+To write to a RabbitMQ queue, you need two sets of configuration. First, you need an
+`AmqpTemplate`. The easiest way to get this is by using Spring Boot's
+RabbitMQ autoconfiguration. See the https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[Spring Boot RabbitMQ documentation].
+Once you have configured the `AmqpTemplate`, you can configure the `AmqpItemWriter` by setting the
+following properties:
 
 .`AmqpItemWriter` Properties
 |===
@@ -361,21 +364,21 @@ properties below.
 | `spring.batch.job.amqpitemwriter.enabled`
 | `boolean`
 | `false`
-| If `true`, the autoconfiguration will execute.
+| If `true`, the autoconfiguration runs.
 
 | `spring.batch.job.amqpitemwriter.jsonConverterEnabled`
 | `boolean`
 | `true`
-| Indicates if the `Jackson2JsonMessageConverter` should be registered to convert messages.
+| Indicates whether `Jackson2JsonMessageConverter` should be registered to convert messages.
 |===
 
 [[flatfileitemwriter]]
 === FlatFileItemWriter
 
-To write a file as the output of the step, the `FlatFileItemWriter` can be configured.
-Autoconfiguration will accept components configured explicitly (like a `LineAggregator`,
-`FieldExtractor`, `FlatFileHeaderCallback`, or a `FlatFileFooterCallback`) as well as
-be configured using the properties specified below.
+To write a file as the output of the step, you can configure `FlatFileItemWriter`.
+Autoconfiguration accepts components that have been explicitly configured (such as `LineAggregator`,
+`FieldExtractor`, `FlatFileHeaderCallback`, or a `FlatFileFooterCallback`) and
+components that have been configured by setting the following properties specified:
 
 .`FlatFileItemWriter` Properties
 |===
@@ -389,27 +392,27 @@ be configured using the properties specified below.
 | `spring.batch.job.flatfileitemwriter.delimited`
 | `boolean`
 | `false`
-| Indicates if the output file will be a delimited file or not. If `true`, `spring.batch.job.flatfileitemwriter.formatted` must be `false`.
+| Indicates whether the output file is a delimited file. If `true`, `spring.batch.job.flatfileitemwriter.formatted` must be `false`.
 
 | `spring.batch.job.flatfileitemwriter.formatted`
 | `boolean`
 | `false`
-| Indicates if the output file will be a formatted file or not. If `true`, `spring.batch.job.flatfileitemwriter.delimited` must be `false`.
+| Indicates whether the output file a formatted file. If `true`, `spring.batch.job.flatfileitemwriter.delimited` must be `false`.
 
 | `spring.batch.job.flatfileitemwriter.format`
 | `String`
 | `null`
-| The format used to generate the output for a formatted file. Formatting performed via `String.format`.
+| The format used to generate the output for a formatted file. The formatting is performed by using `String.format`.
 
 | `spring.batch.job.flatfileitemwriter.locale`
 | `Locale`
 | `Locale.getDefault()`
-| The Locale to be used when generating the file.
+| The `Locale` to be used when generating the file.
 
 | `spring.batch.job.flatfileitemwriter.maximumLength`
 | `int`
 | 0
-| Max length the record can be. If 0, the size is unbound.
+| Max length of the record. If 0, the size is unbounded.
 
 | `spring.batch.job.flatfileitemwriter.minimumLength`
 | `int`
@@ -419,32 +422,32 @@ be configured using the properties specified below.
 | `spring.batch.job.flatfileitemwriter.delimiter`
 | `String`
 | `,`
-| The String used to delimit fields in a delimited file.
+| The `String` used to delimit fields in a delimited file.
 
 | `spring.batch.job.flatfileitemwriter.encoding`
 | `String`
 | `FlatFileItemReader.DEFAULT_CHARSET`
-| Encoding to be used when writing the file.
+| Encoding to use when writing the file.
 
 | `spring.batch.job.flatfileitemwriter.forceSync`
 | `boolean`
 | `false`
-| Indicates if a file should be force-synced to the disk on flush.
+| Indicates whether a file should be force-synced to the disk on flush.
 
 | `spring.batch.job.flatfileitemwriter.names`
 | `String []`
 | `null`
-| List of names for each field parsed from a record. These names are the keys in the `Map<String, Object>` in the items received by this `ItemWriter`.
+| List of names for each field parsed from a record. These names are the keys in the `Map<String, Object>` for the items received by this `ItemWriter`.
 
 | `spring.batch.job.flatfileitemwriter.append`
 | `boolean`
 | `false`
-| Indicates if a file should be appended to if the output file is found.
+| Indicates whether a file should be appended to if the output file is found.
 
 | `spring.batch.job.flatfileitemwriter.lineSeparator`
 | `String`
 | `FlatFileItemWriter.DEFAULT_LINE_SEPARATOR`
-| What String to use to separate lines in the output file.
+| What `String` to use to separate lines in the output file.
 
 | `spring.batch.job.flatfileitemwriter.name`
 | `String`
@@ -454,33 +457,33 @@ be configured using the properties specified below.
 | `spring.batch.job.flatfileitemwriter.saveState`
 | `boolean`
 | `true`
-| Determines if the state should be saved for restarts.
+| Determines whether the state should be saved for restarts.
 
 | `spring.batch.job.flatfileitemwriter.shouldDeleteIfEmpty`
 | `boolean`
 | `false`
-| If set to true, if there is no output (resulting file is empty) it will be deleted when the job completes.
+| If set to `true`, an empty file (there is no output) is deleted when the job completes.
 
 | `spring.batch.job.flatfileitemwriter.shouldDeleteIfExists`
 | `boolean`
 | `true`
-| If set to true and a file is found where the output file should be, it will be deleted before the step begins.
+| If set to `true` and a file is found where the output file should be, it is deleted before the step begins.
 
 | `spring.batch.job.flatfileitemwriter.transactional`
 | `boolean`
 | `FlatFileItemWriter.DEFAULT_TRANSACTIONAL`
-| Indicates if the reader is a transactional queue (indicating that the items read will be returned to the queue upon a failure).
+| Indicates whether the reader is a transactional queue (indicating that the items read are returned to the queue upon a failure).
 |===
 
-To read more about how to configure the `FlatFileItemWriter` you can refer to its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/FlatFileItemWriter.html[here].
+See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/file/FlatFileItemWriter.html[`FlatFileItemWriter` documentation].
 
 [[jdbcitemwriter]]
 === JdbcBatchItemWriter
 
 To write the output of a step to a relational database, this starter provides the ability
-to autoconfigure a `JdbcBatchItemWriter`. The autoconfiguration allows a user to provide their
-own `ItemPreparedStatementSetter` or `ItemSqlParameterSourceProvider` as well as
-configuration options via properties specified below.
+to autoconfigure a `JdbcBatchItemWriter`. The autoconfiguration lets you provide your
+own `ItemPreparedStatementSetter` or `ItemSqlParameterSourceProvider` and
+configuration options by setting the following properties:
 
 .`JdbcBatchItemWriter` Properties
 |===
@@ -499,19 +502,18 @@ configuration options via properties specified below.
 | `spring.batch.job.jdbcbatchitemwriter.assertUpdates`
 | `boolean`
 | `true`
-| Verify that every insert results in the update of at least one record.
+| Whether to verify that every insert results in the update of at least one record.
 |===
 
-To read more about the configuration of the `JdbcBatchItemWriter` you can refer to its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcBatchItemWriter.html[here]
+See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcBatchItemWriter.html[`JdbcBatchItemWriter` documentation].
 
 [[kafkaitemwriter]]
 === KafkaItemWriter
 
-To write step output to a Kafka topic, a `KafkaItemWriter` is required. This starter
-provides autoconfiguration for a `KafkaItemWriter` using facilities from two places.
-First, Spring Boot's Kafka autoconfiguration. You can read more about it
-https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[here].
-Second, there are two properties that this starter allows you to configure on the writer.
+To write step output to a Kafka topic, you need `KafkaItemWriter`. This starter
+provides autoconfiguration for a `KafkaItemWriter` by using facilities from two places.
+The first is Spring Boot's Kafka autoconfiguration. (See the https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[Spring Boot Kafka documentation].)
+Second, this starter lets you configure two properties on the writer.
 
 .`KafkaItemWriter` Properties
 |===
@@ -520,13 +522,12 @@ Second, there are two properties that this starter allows you to configure on th
 | `spring.batch.job.kafkaitemwriter.topic`
 | `String`
 | `null`
-| The Kafka topic to write to.
+| The Kafka topic to which to write.
 
 | `spring.batch.job.kafkaitemwriter.delete`
 | `boolean`
 | `false`
-| Indicates if the items being passed to the writer are all to be sent as delete events to the topic.
+| Whether the items being passed to the writer are all to be sent as delete events to the topic.
 |===
 
-To read more about the configuration options for the `KafkaItemWiter`, you can read
-its documentation https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[here].
+For more about the configuration options for the `KafkaItemWiter`, see the  https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[`KafkaItemWiter` documentation].
