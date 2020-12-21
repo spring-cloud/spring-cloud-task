@@ -54,6 +54,8 @@ include::features.adoc[]
 
 include::batch.adoc[]
 
+include::batch-starter.adoc[]
+
 include::stream.adoc[]
 
 include::appendix.adoc[]

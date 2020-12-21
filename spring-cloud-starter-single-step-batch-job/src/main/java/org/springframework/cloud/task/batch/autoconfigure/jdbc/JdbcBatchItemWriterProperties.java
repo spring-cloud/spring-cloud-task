@@ -19,13 +19,13 @@ package org.springframework.cloud.task.batch.autoconfigure.jdbc;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties to configure a {@code JdbcItemWriter}.
+ * Properties to configure a {@code JdbcBatchItemWriter}.
  *
  * @author Glenn Renfro
  * @since 2.3
  */
-@ConfigurationProperties(prefix = "spring.batch.job.jdbcwriter")
-public class JdbcItemWriterProperties {
+@ConfigurationProperties(prefix = "spring.batch.job.jdbcbatchitemwriter")
+public class JdbcBatchItemWriterProperties {
 
 	private String name;
 

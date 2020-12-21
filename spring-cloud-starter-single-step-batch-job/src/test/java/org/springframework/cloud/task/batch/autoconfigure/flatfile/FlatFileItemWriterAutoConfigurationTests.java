@@ -144,19 +144,19 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-16",
-						"spring.batch.job.flatfilewriter.saveState=false",
-						"spring.batch.job.flatfilewriter.shouldDeleteIfEmpty=true",
-						"spring.batch.job.flatfilewriter.delimited=true",
-						"spring.batch.job.flatfilewriter.names=item",
-						"spring.batch.job.flatfilewriter.append=true",
-						"spring.batch.job.flatfilewriter.forceSync=true",
-						"spring.batch.job.flatfilewriter.shouldDeleteIfExists=false",
-						"spring.batch.job.flatfilewriter.transactional=false");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-16",
+						"spring.batch.job.flatfileitemwriter.saveState=false",
+						"spring.batch.job.flatfileitemwriter.shouldDeleteIfEmpty=true",
+						"spring.batch.job.flatfileitemwriter.delimited=true",
+						"spring.batch.job.flatfileitemwriter.names=item",
+						"spring.batch.job.flatfileitemwriter.append=true",
+						"spring.batch.job.flatfileitemwriter.forceSync=true",
+						"spring.batch.job.flatfileitemwriter.shouldDeleteIfExists=false",
+						"spring.batch.job.flatfileitemwriter.transactional=false");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -200,16 +200,16 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=2",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-8",
-						"spring.batch.job.flatfilewriter.formatted=true",
-						"spring.batch.job.flatfilewriter.names=item",
-						"spring.batch.job.flatfilewriter.format=item = %s",
-						"spring.batch.job.flatfilewriter.minimumLength=8",
-						"spring.batch.job.flatfilewriter.maximumLength=10");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-8",
+						"spring.batch.job.flatfileitemwriter.formatted=true",
+						"spring.batch.job.flatfileitemwriter.names=item",
+						"spring.batch.job.flatfileitemwriter.format=item = %s",
+						"spring.batch.job.flatfileitemwriter.minimumLength=8",
+						"spring.batch.job.flatfileitemwriter.maximumLength=10");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -243,14 +243,14 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-8",
-						"spring.batch.job.flatfilewriter.formatted=true",
-						"spring.batch.job.flatfilewriter.names=item",
-						"spring.batch.job.flatfilewriter.format=item = %s");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-8",
+						"spring.batch.job.flatfileitemwriter.formatted=true",
+						"spring.batch.job.flatfileitemwriter.names=item",
+						"spring.batch.job.flatfileitemwriter.format=item = %s");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -284,12 +284,12 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-8",
-						"spring.batch.job.flatfilewriter.delimited=true");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-8",
+						"spring.batch.job.flatfileitemwriter.delimited=true");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -323,11 +323,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-8");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-8");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -361,13 +361,13 @@ public class FlatFileItemWriterAutoConfigurationTests {
 								FlatFileItemWriterAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.flatfilewriter.name=fooWriter",
+						"spring.batch.job.flatfileitemwriter.name=fooWriter",
 						String.format(
-								"spring.batch.job.flatfilewriter.resource=file://%s",
+								"spring.batch.job.flatfileitemwriter.resource=file://%s",
 								this.outputFile.getAbsolutePath()),
-						"spring.batch.job.flatfilewriter.encoding=UTF-8",
-						"spring.batch.job.flatfilewriter.delimited=true",
-						"spring.batch.job.flatfilewriter.names=item");
+						"spring.batch.job.flatfileitemwriter.encoding=UTF-8",
+						"spring.batch.job.flatfileitemwriter.delimited=true",
+						"spring.batch.job.flatfileitemwriter.names=item");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);

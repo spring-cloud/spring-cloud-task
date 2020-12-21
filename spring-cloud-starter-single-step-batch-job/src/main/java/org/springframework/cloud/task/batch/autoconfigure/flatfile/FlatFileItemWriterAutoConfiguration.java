@@ -66,7 +66,7 @@ public class FlatFileItemWriterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "spring.batch.job.flatfilewriter", name = "name")
+	@ConditionalOnProperty(prefix = "spring.batch.job.flatfileitemwriter", name = "name")
 	public FlatFileItemWriter<Map<String, Object>> itemWriter() {
 
 		if (this.properties.isDelimited() && this.properties.isFormatted()) {
