@@ -88,7 +88,7 @@ public class TaskLauncherSinkTests {
 		randomPort = SocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
-		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);

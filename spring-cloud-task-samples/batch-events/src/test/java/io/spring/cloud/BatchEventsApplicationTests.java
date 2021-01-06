@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BatchEventsApplicationTests {
 
 	static {
-		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.7")
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")
 			.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
