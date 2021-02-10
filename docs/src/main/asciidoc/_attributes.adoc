@@ -1,12 +1,20 @@
-= Spring Cloud Task Reference Guide
-Michael Minella, Glenn Renfro, Jay Bryant
 :doctype: book
-:toc:
+:idprefix:
+:idseparator: -
+:toc: left
 :toclevels: 4
-:source-highlighter: prettify
+:tabsize: 4
 :numbered:
+:sectanchors:
+:sectnums:
 :icons: font
 :hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+:project-full-name: Spring Cloud Task
+
+// project-specific attributes
 :spring-cloud-task-repo: snapshot
 :github-tag: master
 :spring-cloud-task-docs-version: current
@@ -37,27 +45,3 @@ Michael Minella, Glenn Renfro, Jay Bryant
 :propdeps-plugin: https://github.com/spring-projects/gradle-plugins/tree/master/propdeps-plugin
 :ant-manual: https://ant.apache.org/manual
 :attributes: allow-uri-read
-// ======================================================================================
-
-(C) 2009-2020 VMware, Inc. All rights reserved.
-
-Copies of this document may be made for your own use and for distribution to
-others, provided that you do not charge any fee for such copies and further
-provided that each copy contains this Copyright Notice, whether distributed in
-print or electronically.
-
-include::preface.adoc[]
-
-include::getting-started.adoc[]
-
-include::features.adoc[]
-
-include::batch.adoc[]
-
-include::batch-starter.adoc[]
-
-include::stream.adoc[]
-
-include::appendix.adoc[]
-
-// ======================================================================================
