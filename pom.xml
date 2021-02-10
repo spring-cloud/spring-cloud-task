@@ -105,7 +105,7 @@
 		<module>spring-cloud-starter-task</module>
 		<module>spring-cloud-task-samples</module>
 		<module>spring-cloud-task-integration-tests</module>
-		<module>spring-cloud-task-docs</module>
+		<module>docs</module>
 	</modules>
 
 	<properties>

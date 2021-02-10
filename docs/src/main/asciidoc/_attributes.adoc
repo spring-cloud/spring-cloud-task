@@ -1,12 +1,20 @@
-= Spring Cloud Task Reference Guide
-Michael Minella, Glenn Renfro, Jay Bryant
 :doctype: book
-:toc:
+:idprefix:
+:idseparator: -
+:toc: left
 :toclevels: 4
-:source-highlighter: prettify
+:tabsize: 4
 :numbered:
+:sectanchors:
+:sectnums:
 :icons: font
 :hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+:project-full-name: Spring Cloud Task
+
+// project-specific attributes
 :spring-cloud-task-repo: snapshot
 :github-tag: master
 :spring-cloud-task-docs-version: current
