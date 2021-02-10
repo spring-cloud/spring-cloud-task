@@ -72,6 +72,9 @@
 									<sourceDocumentExtensions>
 										<sourceDocumentExtension>.epubadoc</sourceDocumentExtension>
 									</sourceDocumentExtensions>
+									<outputDirectory>
+										${project.build.directory}/generated-docs/reference/epub
+									</outputDirectory>
 									<backend>epub3</backend>
 									<sourceHighlighter>coderay</sourceHighlighter>
 									<attributes>
@@ -88,15 +91,15 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>javadocs</id>
+								<id>copying-javadocs</id>
 								<phase>prepare-package</phase>
 								<goals>
 									<goal>run</goal>
 								</goals>
 								<configuration>
 									<target>
-										<copy todir="${project.basedir}/target/generated-docs/">
-											<fileset dir="${project.basedir}/target/site/apidocs"/>
+										<copy todir="${project.basedir}/target/generated-docs/apidocs">
+											<fileset dir="${maven.multiModuleProjectDirectory}/target/site/apidocs"/>
 										</copy>
 									</target>
 								</configuration>
