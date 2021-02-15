@@ -1,35 +1,35 @@
 |===
 |Name | Default | Description
 
-|spring.cloud.task.batch.command-line-runner-order | `0` | The order for the {@code CommandLineRunner} used to run batch jobs when {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as the {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}).
+|spring.cloud.task.batch.command-line-runner-order | 0 | The order for the {@code CommandLineRunner} used to run batch jobs when {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as the {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}).
 |spring.cloud.task.batch.events.chunk-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.ChunkListener}.
-|spring.cloud.task.batch.events.chunk.enabled | `true` | This property is used to determine if a task should listen for batch chunk events.
-|spring.cloud.task.batch.events.enabled | `true` | This property is used to determine if a task should listen for batch events.
+|spring.cloud.task.batch.events.chunk.enabled | true | This property is used to determine if a task should listen for batch chunk events.
+|spring.cloud.task.batch.events.enabled | true | This property is used to determine if a task should listen for batch events.
 |spring.cloud.task.batch.events.item-process-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.ItemProcessListener}.
-|spring.cloud.task.batch.events.item-process.enabled | `true` | This property is used to determine if a task should listen for batch item processed events.
+|spring.cloud.task.batch.events.item-process.enabled | true | This property is used to determine if a task should listen for batch item processed events.
 |spring.cloud.task.batch.events.item-read-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.ItemReadListener}.
-|spring.cloud.task.batch.events.item-read.enabled | `true` | This property is used to determine if a task should listen for batch item read events.
+|spring.cloud.task.batch.events.item-read.enabled | true | This property is used to determine if a task should listen for batch item read events.
 |spring.cloud.task.batch.events.item-write-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.ItemWriteListener}.
-|spring.cloud.task.batch.events.item-write.enabled | `true` | This property is used to determine if a task should listen for batch item write events.
+|spring.cloud.task.batch.events.item-write.enabled | true | This property is used to determine if a task should listen for batch item write events.
 |spring.cloud.task.batch.events.job-execution-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.JobExecutionListener}.
-|spring.cloud.task.batch.events.job-execution.enabled | `true` | This property is used to determine if a task should listen for batch job execution events.
+|spring.cloud.task.batch.events.job-execution.enabled | true | This property is used to determine if a task should listen for batch job execution events.
 |spring.cloud.task.batch.events.skip-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.SkipListener}.
-|spring.cloud.task.batch.events.skip.enabled | `true` | This property is used to determine if a task should listen for batch skip events.
+|spring.cloud.task.batch.events.skip.enabled | true | This property is used to determine if a task should listen for batch skip events.
 |spring.cloud.task.batch.events.step-execution-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.StepExecutionListener}.
-|spring.cloud.task.batch.events.step-execution.enabled | `true` | This property is used to determine if a task should listen for batch step execution events.
-|spring.cloud.task.batch.fail-on-job-failure | `false` | This property is used to determine if a task app should return with a non zero exit code if a batch job fails.
-|spring.cloud.task.batch.fail-on-job-failure-poll-interval | `5000` | Fixed delay in milliseconds that Spring Cloud Task will wait when checking if {@link org.springframework.batch.core.JobExecution}s have completed, when spring.cloud.task.batch.failOnJobFailure is set to true. Defaults to 5000.
+|spring.cloud.task.batch.events.step-execution.enabled | true | This property is used to determine if a task should listen for batch step execution events.
+|spring.cloud.task.batch.fail-on-job-failure | false | This property is used to determine if a task app should return with a non zero exit code if a batch job fails.
+|spring.cloud.task.batch.fail-on-job-failure-poll-interval | 5000 | Fixed delay in milliseconds that Spring Cloud Task will wait when checking if {@link org.springframework.batch.core.JobExecution}s have completed, when spring.cloud.task.batch.failOnJobFailure is set to true. Defaults to 5000.
 |spring.cloud.task.batch.job-names |  | Comma-separated list of job names to execute on startup (for instance, `job1,job2`). By default, all Jobs found in the context are executed. @deprecated use spring.batch.job.names instead of spring.cloud.task.batch.jobNames.
-|spring.cloud.task.batch.listener.enabled | `true` | This property is used to determine if a task will be linked to the batch jobs that are run.
-|spring.cloud.task.closecontext-enabled | `false` | When set to true the context is closed at the end of the task. Else the context remains open.
-|spring.cloud.task.events.enabled | `true` | This property is used to determine if a task app should emit task events.
+|spring.cloud.task.batch.listener.enabled | true | This property is used to determine if a task will be linked to the batch jobs that are run.
+|spring.cloud.task.closecontext-enabled | false | When set to true the context is closed at the end of the task. Else the context remains open.
+|spring.cloud.task.events.enabled | true | This property is used to determine if a task app should emit task events.
 |spring.cloud.task.executionid |  | An id that will be used by the task when updating the task execution.
 |spring.cloud.task.external-execution-id |  | An id that can be associated with a task.
 |spring.cloud.task.initialize-enabled |  | If set to true then tables are initialized. If set to false tables are not initialized. Defaults to null. The requirement for it to be defaulted to null is so that we can support the <code>spring.cloud.task.initialize.enable</code> until it is removed.
 |spring.cloud.task.parent-execution-id |  | The id of the parent task execution id that launched this task execution. Defaults to null if task execution had no parent.
-|spring.cloud.task.single-instance-enabled | `false` | This property is used to determine if a task will execute if another task with the same app name is running.
-|spring.cloud.task.single-instance-lock-check-interval | `500` | Declares the time (in millis) that a task execution will wait between checks. Default time is: 500 millis.
+|spring.cloud.task.single-instance-enabled | false | This property is used to determine if a task will execute if another task with the same app name is running.
+|spring.cloud.task.single-instance-lock-check-interval | 500 | Declares the time (in millis) that a task execution will wait between checks. Default time is: 500 millis.
 |spring.cloud.task.single-instance-lock-ttl |  | Declares the maximum amount of time (in millis) that a task execution can hold a lock to prevent another task from executing with a specific task name when the single-instance-enabled is set to true. Default time is: Integer.MAX_VALUE.
-|spring.cloud.task.table-prefix | `TASK_` | The prefix to append to the table names created by Spring Cloud Task.
+|spring.cloud.task.table-prefix | TASK_ | The prefix to append to the table names created by Spring Cloud Task.
 
 |===
