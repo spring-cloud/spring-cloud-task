@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.springframework.cloud.task.batch.handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +148,7 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 			if (incrementer != null) {
 				JobParameters nextParameters = new JobParametersBuilder(jobParameters,
 						this.taskJobExplorer).getNextJobParameters(job).toJobParameters();
-				parameters = merge(nextParameters, jobParameters);
+				parameters = merge(removeNonIdentifying(nextParameters), jobParameters);
 			}
 		}
 		JobExecution execution = this.taskJobLauncher.run(job, parameters);
@@ -165,8 +164,6 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 
 	private void monitorJobExecutions() {
 		RepeatTemplate template = new RepeatTemplate();
-
-		Date startDate = new Date();
 
 		template.iterate(context -> {
 

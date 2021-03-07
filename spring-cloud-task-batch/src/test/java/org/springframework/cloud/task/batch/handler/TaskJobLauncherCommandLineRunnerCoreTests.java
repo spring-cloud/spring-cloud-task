@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.springframework.cloud.task.batch.handler;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
@@ -115,6 +119,25 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		this.runner.execute(this.job, new JobParameters());
 		this.runner.execute(this.job, new JobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
+	}
+
+	@DirtiesContext
+	@Test
+	public void incrementExistingExecutionWithNonIdentifyingParameter() throws Exception {
+		this.job = this.jobs.get("job").start(this.step)
+			.incrementer(new RunIdIncrementer()).build();
+		JobParameters nonIdentifyingParameter = new JobParametersBuilder()
+			.addString("foo", "bar", false).toJobParameters();
+		this.runner.execute(this.job, nonIdentifyingParameter);
+		this.runner.execute(this.job, new JobParameters());
+
+		List<JobExecution> jobExecutions = this.jobExplorer.getJobInstances("job", 0, 100).stream()
+			.flatMap(instance -> jobExplorer.getJobExecutions(instance).stream())
+			.collect(Collectors.toList());
+		assertThat(jobExecutions).hasSize(2);
+		assertThat(jobExecutions.get(0).getJobParameters().getParameters()).doesNotContainKey("foo");
+		assertThat(jobExecutions.get(1).getJobParameters().getParameters())
+			.containsEntry("foo", new JobParameter("bar", false));
 	}
 
 	@DirtiesContext
