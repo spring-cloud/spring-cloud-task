@@ -100,6 +100,7 @@ public class SimpleTaskAutoConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public TaskNameResolver taskNameResolver() {
 		return new SimpleTaskNameResolver();
 	}
