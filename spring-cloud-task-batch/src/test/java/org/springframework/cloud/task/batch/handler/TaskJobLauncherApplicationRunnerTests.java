@@ -67,7 +67,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Glenn Renfro
  */
-public class TaskJobLauncherCommandLineRunnerTests {
+public class TaskJobLauncherApplicationRunnerTests {
 
 	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n"
 			+ "Job jobA failed during execution for job instance id 1 with jobExecutionId of 1 \n";
@@ -86,7 +86,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true" };
 		validateForFail(DEFAULT_ERROR_MESSAGE,
-				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class,
+				TaskJobLauncherApplicationRunnerTests.JobWithFailureConfiguration.class,
 				enabledArgs);
 	}
 
@@ -99,7 +99,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true" };
 		validateForFail(DEFAULT_ERROR_MESSAGE,
-				TaskJobLauncherCommandLineRunnerTests.JobWithFailureAnnotatedConfiguration.class,
+				TaskJobLauncherApplicationRunnerTests.JobWithFailureAnnotatedConfiguration.class,
 				enabledArgs);
 	}
 
@@ -109,7 +109,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
 				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500" };
 		validateForFail(DEFAULT_ERROR_MESSAGE,
-				TaskJobLauncherCommandLineRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
+				TaskJobLauncherApplicationRunnerTests.JobWithFailureTaskExecutorConfiguration.class,
 				enabledArgs);
 	}
 
@@ -120,7 +120,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500",
 				"--spring.batch.job.enabled=false" };
 		this.applicationContext = SpringApplication.run(new Class[] {
-				TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+				TaskJobLauncherApplicationRunnerTests.JobWithFailureConfiguration.class },
 				enabledArgs);
 		JobExplorer jobExplorer = this.applicationContext.getBean(JobExplorer.class);
 		assertThat(jobExplorer.getJobNames().size()).isEqualTo(0);
@@ -134,7 +134,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication.run(new Class[] {
-					TaskJobLauncherCommandLineRunnerTests.JobWithFailureConfiguration.class },
+					TaskJobLauncherApplicationRunnerTests.JobWithFailureConfiguration.class },
 					enabledArgs);
 		}
 		catch (IllegalStateException exception) {
@@ -145,22 +145,22 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	}
 
 	@Test
-	public void testCommandLineRunnerSetToFalse() {
+	public void testApplicationRunnerSetToFalse() {
 		String[] enabledArgs = new String[] {};
 		this.applicationContext = SpringApplication.run(
 				new Class[] {
-						TaskJobLauncherCommandLineRunnerTests.JobConfiguration.class },
+						TaskJobLauncherApplicationRunnerTests.JobConfiguration.class },
 				enabledArgs);
 		validateContext();
 		assertThat(this.applicationContext.getBean(JobLauncherApplicationRunner.class))
 				.isNotNull();
 
 		Executable executable = () -> this.applicationContext
-				.getBean(TaskJobLauncherCommandLineRunner.class);
+				.getBean(TaskJobLauncherApplicationRunner.class);
 
 		assertThatExceptionOfType(NoSuchBeanDefinitionException.class)
 				.isThrownBy(executable::execute).withMessage("No qualifying bean of type "
-						+ "'org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner' available");
+						+ "'org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner' available");
 		validateContext();
 	}
 
