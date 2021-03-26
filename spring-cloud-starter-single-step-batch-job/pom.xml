@@ -14,7 +14,7 @@
 		<test.rabbit.containers.version>1.15.2</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 		<spring-kafka-version>2.6.6</spring-kafka-version>
-		<spring-cloud-stream.version>3.1.2</spring-cloud-stream.version>
+		<spring-cloud-stream.version>3.1.3-SNAPSHOT</spring-cloud-stream.version>
 	</properties>
 
 	<dependencies>
