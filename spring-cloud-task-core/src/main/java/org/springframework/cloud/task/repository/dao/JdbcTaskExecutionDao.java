@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 the original author or authors.
+ * Copyright 2015-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,17 +152,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID = "SELECT JOB_EXECUTION_ID "
 			+ "FROM %PREFIX%TASK_BATCH WHERE TASK_EXECUTION_ID = :taskExecutionId";
-
-	private final NamedParameterJdbcTemplate jdbcTemplate;
-
-	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
-
-	private DataSource dataSource;
-
-	private LinkedHashMap<String, Order> orderMap;
-
-	private DataFieldMaxValueIncrementer taskIncrementer;
-
 	private static final Set<String> validSortColumns = new HashSet<>(10);
 
 	static {
@@ -177,6 +166,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		validSortColumns.add("EXTERNAL_EXECUTION_ID");
 		validSortColumns.add("PARENT_EXECUTION_ID");
 	}
+
+	private final NamedParameterJdbcTemplate jdbcTemplate;
+	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
+	private DataSource dataSource;
+	private LinkedHashMap<String, Order> orderMap;
+	private DataFieldMaxValueIncrementer taskIncrementer;
 
 	/**
 	 * Initializes the JdbcTaskExecutionDao.
@@ -530,10 +525,11 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			for (Sort.Order sortOrder : sort) {
 				if (validSortColumns.contains(sortOrder.getProperty().toUpperCase())) {
 					sortOrderMap.put(sortOrder.getProperty(),
-						sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
+							sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
 				}
 				else {
-					throw new IllegalArgumentException(String.format("Invalid sort option selected: %s", sortOrder.getProperty()));
+					throw new IllegalArgumentException(
+							String.format("Invalid sort option selected: %s", sortOrder.getProperty()));
 				}
 			}
 		}
@@ -576,8 +572,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	/**
-	 * Convenience method that inserts an individual records into the
-	 * TASK_EXECUTION_PARAMS table.
+	 * Convenience method that inserts an individual records into the TASK_EXECUTION_PARAMS
+	 * table.
 	 * @param taskExecutionId id of a task execution
 	 * @param taskParam task parameters
 	 */

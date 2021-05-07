@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.jdbc.support.incrementer.SqlServerMaxValueIncrementer;
 import org.springframework.util.Assert;
 
 /**
@@ -106,8 +109,36 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
-				.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+		String incrementerName = this.tablePrefix + "SEQ";
+		DataFieldMaxValueIncrementer incrementer = incrementerFactory
+			.getIncrementer(databaseType, incrementerName);
+		if (incrementer instanceof SqlServerMaxValueIncrementer) {
+			if (!isSqlServerTableSequenceAvailable(incrementerName)) {
+				incrementer = new TaskSqlServerSequenceMaxValueIncrementer(dataSource, this.tablePrefix + "SEQ");
+			}
+		}
+		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementer);
+	}
+
+	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {
+		boolean result = true;
+		try {
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dataSource);
+			jdbcTemplate.queryForMap("select count(*) from " + incrementerName);
+		}
+		catch (Exception ise) {
+			Throwable currentCause = ise;
+			while (!(currentCause instanceof org.springframework.jdbc.BadSqlGrammarException) && currentCause.getCause() != null) {
+				currentCause = currentCause.getCause();
+			}
+			if (currentCause instanceof org.springframework.jdbc.BadSqlGrammarException) {
+				result = false;
+			}
+			else {
+				throw ise;
+			}
+		}
+		return result;
 	}
 
 }
