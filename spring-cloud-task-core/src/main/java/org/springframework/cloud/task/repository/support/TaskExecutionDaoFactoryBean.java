@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,24 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.configuration.TaskProperties;
+import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * A {@link FactoryBean} implementation that creates the appropriate
@@ -81,7 +88,26 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 				this.dao = new MapTaskExecutionDao();
 			}
 		}
-
+		if (this.dataSource != null) {
+			String databaseType = null;
+			try {
+				databaseType = DatabaseType.fromMetaData(dataSource).name();
+			}
+			catch (MetaDataAccessException e) {
+				throw new IllegalStateException(e);
+			}
+			if (StringUtils.hasText(databaseType) && databaseType.equals("SQLSERVER")) {
+				String incrementerName = this.tablePrefix + "SEQ";
+				DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(
+						dataSource);
+				DataFieldMaxValueIncrementer incrementer = incrementerFactory
+						.getIncrementer(databaseType, incrementerName);
+				if (!isSqlServerTableSequenceAvailable(incrementerName)) {
+					incrementer = new SqlServerSequenceMaxValueIncrementer(dataSource, this.tablePrefix + "SEQ");
+				}
+				((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementer);
+			}
+		}
 		return this.dao;
 	}
 
@@ -107,7 +133,27 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 			throw new IllegalStateException(e);
 		}
 		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
-				.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+			.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+	}
+
+	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {
+		boolean result = false;
+		DatabaseMetaData metaData = null;
+		try {
+			metaData = dataSource.getConnection().getMetaData();
+			String[] types = { "TABLE" };
+			ResultSet tables = metaData.getTables(null, null, "%", types);
+			while (tables.next()) {
+				if (tables.getString("TABLE_NAME").equals(incrementerName)) {
+					result = true;
+					break;
+				}
+			}
+		}
+		catch (SQLException sqe) {
+			throw new TaskException(sqe.getMessage());
+		}
+		return result;
 	}
 
 }

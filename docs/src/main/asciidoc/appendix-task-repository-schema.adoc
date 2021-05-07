@@ -83,3 +83,16 @@ Used for the `single-instance-enabled` feature discussed <<features-single-insta
 
 NOTE: The DDL for setting up tables for each database type can be found https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task[here].
 --
+
+=== SQL Server
+By default Spring Cloud Task uses a sequence table for determining the `TASK_EXECUTION_ID` for the `TASK_EXECUTION` table.
+However, when launching multiple tasks simultaneously while using SQL Server, this can cause a deadlock to occur on the `TASK_SEQ` table.
+The resolution is to drop the `TASK_EXECUTION_SEQ` table and create a sequence using the same name.   For example:
+```
+DROP TABLE TASK_SEQ;
+
+CREATE SEQUENCE [DBO].[TASK_SEQ] AS BIGINT
+ START WITH 1
+ INCREMENT BY 1;
+```
+NOTE: Set the `START WITH`  to a higher value than your current execution id.
