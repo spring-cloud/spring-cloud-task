@@ -16,20 +16,24 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.configuration.TaskProperties;
+import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-import org.springframework.jdbc.support.incrementer.SqlServerMaxValueIncrementer;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * A {@link FactoryBean} implementation that creates the appropriate
@@ -84,7 +88,26 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 				this.dao = new MapTaskExecutionDao();
 			}
 		}
-
+		if (this.dataSource != null) {
+			String databaseType = null;
+			try {
+				databaseType = DatabaseType.fromMetaData(dataSource).name();
+			}
+			catch (MetaDataAccessException e) {
+				throw new IllegalStateException(e);
+			}
+			if (StringUtils.hasText(databaseType) && databaseType.equals("SQLSERVER")) {
+				String incrementerName = this.tablePrefix + "SEQ";
+				DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(
+						dataSource);
+				DataFieldMaxValueIncrementer incrementer = incrementerFactory
+						.getIncrementer(databaseType, incrementerName);
+				if (!isSqlServerTableSequenceAvailable(incrementerName)) {
+					incrementer = new SqlServerSequenceMaxValueIncrementer(dataSource, this.tablePrefix + "SEQ");
+				}
+				((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementer);
+			}
+		}
 		return this.dao;
 	}
 
@@ -109,34 +132,26 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
 		}
-		String incrementerName = this.tablePrefix + "SEQ";
-		DataFieldMaxValueIncrementer incrementer = incrementerFactory
-			.getIncrementer(databaseType, incrementerName);
-		if (incrementer instanceof SqlServerMaxValueIncrementer) {
-			if (!isSqlServerTableSequenceAvailable(incrementerName)) {
-				incrementer = new TaskSqlServerSequenceMaxValueIncrementer(dataSource, this.tablePrefix + "SEQ");
-			}
-		}
-		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementer);
+		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
+			.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
 
 	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {
-		boolean result = true;
+		boolean result = false;
+		DatabaseMetaData metaData = null;
 		try {
-			JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dataSource);
-			jdbcTemplate.queryForMap("select count(*) from " + incrementerName);
+			metaData = dataSource.getConnection().getMetaData();
+			String[] types = { "TABLE" };
+			ResultSet tables = metaData.getTables(null, null, "%", types);
+			while (tables.next()) {
+				if (tables.getString("TABLE_NAME").equals(incrementerName)) {
+					result = true;
+					break;
+				}
+			}
 		}
-		catch (Exception ise) {
-			Throwable currentCause = ise;
-			while (!(currentCause instanceof org.springframework.jdbc.BadSqlGrammarException) && currentCause.getCause() != null) {
-				currentCause = currentCause.getCause();
-			}
-			if (currentCause instanceof org.springframework.jdbc.BadSqlGrammarException) {
-				result = false;
-			}
-			else {
-				throw ise;
-			}
+		catch (SQLException sqe) {
+			throw new TaskException(sqe.getMessage());
 		}
 		return result;
 	}

@@ -25,8 +25,9 @@ import org.springframework.jdbc.support.incrementer.AbstractSequenceMaxValueIncr
  * @author Glenn Renfro
  * @since 2.3.2
  */
-public class TaskSqlServerSequenceMaxValueIncrementer extends AbstractSequenceMaxValueIncrementer {
-	TaskSqlServerSequenceMaxValueIncrementer(DataSource dataSource, String incrementerName) {
+public class SqlServerSequenceMaxValueIncrementer extends AbstractSequenceMaxValueIncrementer {
+
+	SqlServerSequenceMaxValueIncrementer(DataSource dataSource, String incrementerName) {
 		super(dataSource, incrementerName);
 	}
 	@Override
