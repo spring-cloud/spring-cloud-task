@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.springframework.cloud.task;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -30,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.LazyInitializationBeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -58,15 +58,6 @@ import static org.mockito.Mockito.mock;
  * @author Michael Minella
  */
 public class SimpleTaskAutoConfigurationTests {
-
-	private ConfigurableApplicationContext context;
-
-	@AfterEach
-	public void tearDown() {
-		if (this.context != null) {
-			this.context.close();
-		}
-	}
 
 	@Test
 	public void testRepository() {
@@ -109,6 +100,22 @@ public class SimpleTaskAutoConfigurationTests {
 						PropertyPlaceholderAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
 				.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
+		applicationContextRunner.run((context) -> {
+			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
+			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1L);
+		});
+	}
+
+	@Test
+	public void testRepositoryInitializedWithLazyInitialization() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withInitializer((context) -> context
+				.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor()))
+			.withConfiguration(AutoConfigurations.of(
+				EmbeddedDataSourceConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
 		applicationContextRunner.run((context) -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
 			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1L);
