@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListener;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.configuration.TaskProperties;
+import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  */
 @Configuration
-@ConditionalOnBean({ Job.class })
+@ConditionalOnBean({Job.class, TaskLifecycleListener.class})
 @ConditionalOnProperty(
 		name = { "spring.cloud.task.batch.listener.enable",
 				"spring.cloud.task.batch.listener.enabled" },
