@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,16 +28,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.SimpleJob;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -64,6 +62,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Michael Minella
@@ -149,6 +148,16 @@ public class TaskBatchExecutionListenerTests {
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next())
 				.getExecutionId()).isEqualTo(1);
 
+	}
+
+	@Test
+	public void testNoListenerIfTaskNotEnabled() {
+		this.applicationContext = SpringApplication.run(TaskNotEnabledConfiguration.class, ARGS);
+		assertThat(applicationContext.getBean(Job.class)).isNotNull();
+		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListenerBeanPostProcessor.class))
+			.isInstanceOf(NoSuchBeanDefinitionException.class);
+		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListener.class))
+			.isInstanceOf(NoSuchBeanDefinitionException.class);
 	}
 
 	@Test
@@ -297,14 +306,32 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job")
-					.start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext) throws Exception {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
+					.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
 					}).build()).build();
+		}
+
+	}
+
+	@EnableBatchProcessing
+	@TaskBatchTest
+	@Import(EmbeddedDataSourceConfiguration.class)
+	public static class TaskNotEnabledConfiguration {
+
+		@Autowired
+		private JobBuilderFactory jobBuilderFactory;
+
+		@Autowired
+		private StepBuilderFactory stepBuilderFactory;
+
+		@Bean
+		public Job job() {
+			return this.jobBuilderFactory.get("job")
+				.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}).build()).build();
 		}
 
 	}
@@ -325,18 +352,12 @@ public class TaskBatchExecutionListenerTests {
 		public FactoryBean<Job> job() {
 			return new FactoryBean<Job>() {
 				@Override
-				public Job getObject() throws Exception {
+				public Job getObject() {
 					return JobFactoryBeanConfiguration.this.jobBuilderFactory.get("job")
 							.start(JobFactoryBeanConfiguration.this.stepBuilderFactory
-									.get("step1").tasklet(new Tasklet() {
-										@Override
-										public RepeatStatus execute(
-												StepContribution contribution,
-												ChunkContext chunkContext)
-												throws Exception {
-											System.out.println("Executed");
-											return RepeatStatus.FINISHED;
-										}
+									.get("step1").tasklet((contribution, chunkContext) -> {
+										System.out.println("Executed");
+										return RepeatStatus.FINISHED;
 									}).build())
 							.build();
 				}
@@ -370,13 +391,9 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job")
-					.start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext) throws Exception {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
+					.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
 					}).build()).build();
 		}
 
@@ -422,26 +439,18 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job1() {
 			return this.jobBuilderFactory.get("job1").start(
-					this.stepBuilderFactory.get("job1step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext) throws Exception {
-							System.out.println("Executed job1");
-							return RepeatStatus.FINISHED;
-						}
+					this.stepBuilderFactory.get("job1step1").tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed job1");
+						return RepeatStatus.FINISHED;
 					}).build()).build();
 		}
 
 		@Bean
 		public Job job2() {
 			return this.jobBuilderFactory.get("job2").start(
-					this.stepBuilderFactory.get("job2step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext) throws Exception {
-							System.out.println("Executed job2");
-							return RepeatStatus.FINISHED;
-						}
+					this.stepBuilderFactory.get("job2step1").tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed job2");
+						return RepeatStatus.FINISHED;
 					}).build()).build();
 		}
 
