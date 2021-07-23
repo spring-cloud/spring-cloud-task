@@ -99,8 +99,9 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
-						TaskLauncherConfiguration.class)
+					TaskLauncherConfiguration.class,
+					JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class
+						)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
@@ -115,8 +116,8 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	public void customSqlParameterSourceTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcBatchItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
 						TaskLauncherConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
 						CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
@@ -132,8 +133,8 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	public void preparedStatementSetterTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(
-						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						TaskLauncherConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						ItemPreparedStatementSetterConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,

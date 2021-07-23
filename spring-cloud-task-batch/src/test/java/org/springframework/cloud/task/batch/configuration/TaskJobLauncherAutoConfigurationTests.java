@@ -26,7 +26,6 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner;
-import org.springframework.cloud.task.batch.handler.TaskJobLauncherCommandLineRunner;
 import org.springframework.cloud.task.batch.listener.TaskBatchExecutionListenerTests;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -102,7 +101,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLRDisabled() {
 		this.contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(JobLauncherApplicationRunner.class);
-			assertThat(context).doesNotHaveBean(TaskJobLauncherCommandLineRunner.class);
+			assertThat(context).doesNotHaveBean(TaskJobLauncherApplicationRunner.class);
 		});
 	}
 

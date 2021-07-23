@@ -60,8 +60,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-		classes = { TaskJobLauncherCommandLineRunnerCoreTests.BatchConfiguration.class })
-public class TaskJobLauncherCommandLineRunnerCoreTests {
+		classes = { TaskJobLauncherApplicationRunnerCoreTests.BatchConfiguration.class })
+public class TaskJobLauncherApplicationRunnerCoreTests {
 
 	@Autowired
 	private JobRepository jobRepository;
@@ -75,7 +75,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 
-	private TaskJobLauncherCommandLineRunner runner;
+	private TaskJobLauncherApplicationRunner runner;
 
 	private JobBuilderFactory jobs;
 
@@ -92,7 +92,7 @@ public class TaskJobLauncherCommandLineRunnerCoreTests {
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.runner = new TaskJobLauncherCommandLineRunner(this.jobLauncher,
+		this.runner = new TaskJobLauncherApplicationRunner(this.jobLauncher,
 				this.jobExplorer, this.jobRepository, new TaskBatchProperties());
 
 	}

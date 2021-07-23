@@ -91,8 +91,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	@Test
 	public void testIntegration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class,
-						TaskLauncherConfiguration.class)
+				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
@@ -129,8 +128,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	@Test
 	public void testCustomRowMapper() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(RowMapperConfiguration.class,
-						TaskLauncherConfiguration.class)
+				.withUserConfiguration(TaskLauncherConfiguration.class, RowMapperConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
@@ -167,8 +165,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	@Test
 	public void testRoseyScenario() {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class,
-						TaskLauncherConfiguration.class)
+				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
@@ -231,8 +228,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	@Test
 	public void testNoName() {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class,
-						TaskLauncherConfiguration.class)
+				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
@@ -251,8 +247,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	@Test
 	public void testSqlName() {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class,
-						TaskLauncherConfiguration.class)
+				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
