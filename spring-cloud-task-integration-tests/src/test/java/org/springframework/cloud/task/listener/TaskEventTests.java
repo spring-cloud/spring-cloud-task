@@ -33,7 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
+import org.springframework.cloud.stream.binder.rabbit.config.RabbitConfiguration;
 import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -72,7 +72,7 @@ public class TaskEventTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(TaskEventAutoConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
-						RabbitServiceAutoConfiguration.class,
+						RabbitConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
 						BindingServiceConfiguration.class))
 				.withUserConfiguration(TaskEventsConfiguration.class)

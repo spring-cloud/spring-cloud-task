@@ -23,7 +23,7 @@
 		<test.containers.version>1.15.3</test.containers.version>
 		<test.rabbit.containers.version>1.15.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<spring.cloud.stream>3.1.4-SNAPSHOT</spring.cloud.stream>
+		<spring.cloud.stream>3.2.0-SNAPSHOT</spring.cloud.stream>
 	</properties>
 
 	<dependencyManagement>
