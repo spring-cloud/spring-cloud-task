@@ -112,6 +112,25 @@ public class SingleStepJobAutoConfigurationTests {
 						"spring.batch.job.stepName=step1",
 						"spring.batch.job.chunkSize=5");
 
+		validateConfiguration(applicationContextRunner);
+	}
+
+	@Test
+	public void testSimpleConfigurationKabobStyle() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withUserConfiguration(SimpleConfiguration.class)
+			.withConfiguration(
+				AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					BatchAutoConfiguration.class,
+					SingleStepJobAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.job-name=job",
+				"spring.batch.job.step-name=step1",
+				"spring.batch.job.chunk-size=5");
+
+			validateConfiguration(applicationContextRunner);
+	}
+
+	private void validateConfiguration(ApplicationContextRunner applicationContextRunner) {
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
 

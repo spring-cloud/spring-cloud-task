@@ -78,7 +78,7 @@ public class SingleStepJobAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "spring.batch.job", name = "jobName")
+	@ConditionalOnProperty(prefix = "spring.batch.job", name = "job-name")
 	public Job job(ItemReader<Map<String, Object>> itemReader,
 			ItemWriter<Map<String, Object>> itemWriter) {
 
@@ -95,5 +95,4 @@ public class SingleStepJobAutoConfiguration {
 		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step)
 				.build();
 	}
-
 }
