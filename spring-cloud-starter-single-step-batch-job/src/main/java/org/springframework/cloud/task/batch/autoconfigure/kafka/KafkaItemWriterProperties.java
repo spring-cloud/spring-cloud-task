@@ -27,8 +27,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.kafkaitemwriter")
 public class KafkaItemWriterProperties {
 
+	/**
+	 * The topic name from which the messages are written.
+	 */
 	private String topic;
 
+	/**
+	 * Indicate whether the items being passed to the writer are all to be sent as delete
+	 * events to the topic. Defaults to {@code false}.
+	 */
 	private boolean delete;
 
 	/**
@@ -40,7 +47,7 @@ public class KafkaItemWriterProperties {
 	}
 
 	/**
-	 * The topic name from which the messages will be read.
+	 * The topic name from which the messages are written.
 	 * @param topic name of the topic
 	 */
 	public void setTopic(String topic) {

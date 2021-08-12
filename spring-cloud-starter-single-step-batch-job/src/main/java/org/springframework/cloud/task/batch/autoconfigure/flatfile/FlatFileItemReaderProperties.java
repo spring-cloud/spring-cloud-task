@@ -34,38 +34,95 @@ import org.springframework.core.io.Resource;
 @ConfigurationProperties(prefix = "spring.batch.job.flatfileitemreader")
 public class FlatFileItemReaderProperties {
 
+	/**
+	 * Determines whether the state of the reader is persisted. Default is {@code true}.
+	 */
 	private boolean saveState = true;
 
+	/**
+	 * The name used to calculate the key within the
+	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
+	 * {@link #setSaveState} is set to {@code true}.
+	 */
 	private String name;
 
+	/**
+	 * Configure the maximum number of items to be read.
+	 */
 	private int maxItemCount = Integer.MAX_VALUE;
 
+	/**
+	 * Index for the current item. Also used on restarts to indicate where to start from.
+	 */
 	private int currentItemCount = 0;
 
+	/**
+	 * A list of {@code String} elements used to indicate which records are comments.
+	 */
 	private List<String> comments = new ArrayList<>();
 
+	/**
+	 * The {@link Resource} to be used as input.
+	 */
 	private Resource resource;
 
+	/**
+	 * Configure whether the reader should be in strict mode (require the input
+	 * {@link Resource} to exist).
+	 */
 	private boolean strict = true;
 
+	/**
+	 * Configure the encoding used by the reader to read the input source. The default value
+	 * is {@link FlatFileItemReader#DEFAULT_CHARSET}.
+	 */
 	private String encoding = FlatFileItemReader.DEFAULT_CHARSET;
 
+	/**
+	 * The number of lines to skip at the beginning of reading the file.
+	 */
 	private int linesToSkip = 0;
 
+	/**
+	 * Indicates that a {@link DelimitedLineTokenizer} should be used to parse each line.
+	 */
 	private boolean delimited = false;
 
+	/**
+	 * Define the delimiter for the file.
+	 */
 	private String delimiter = DelimitedLineTokenizer.DELIMITER_COMMA;
 
+	/**
+	 * Define the character used to quote fields.
+	 */
 	private char quoteCharacter = DelimitedLineTokenizer.DEFAULT_QUOTE_CHARACTER;
 
+	/**
+	 * A list of indices of the fields within a delimited file to be included.
+	 */
 	private List<Integer> includedFields = new ArrayList<>();
 
+	/**
+	 * Indicates that a
+	 * {@link org.springframework.batch.item.file.transform.FixedLengthTokenizer} should
+	 * be used to parse the records in the file.
+	 */
 	private boolean fixedLength = false;
 
+	/**
+	 * The column ranges to be used to parse a fixed width file.
+	 */
 	private List<Range> ranges = new ArrayList<>();
 
+	/**
+	 * The names of the fields to be parsed from the file.
+	 */
 	private String[] names;
 
+	/**
+	 * Indicates whether the number of tokens must match the number of configured fields.
+	 */
 	private boolean parsingStrict = true;
 
 	/**

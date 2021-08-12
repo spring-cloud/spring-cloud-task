@@ -28,8 +28,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.amqpitemreader")
 public class AmqpItemReaderProperties {
 
+	/**
+	 * Enables or disables the {@code AmqpItemReader}. Defaults to {@code false}.
+	 */
 	private boolean enabled;
 
+	/**
+	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a
+	 * message converter. Defaults to {@code true}.
+	 */
 	private boolean jsonConverterEnabled = true;
 
 	/**

@@ -26,21 +26,28 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.amqpitemwriter")
 public class AmqpItemWriterProperties {
 
+	/**
+	 * Enables or disables the AmqpItemWriter. Defaults to {@code false}.
+	 */
 	private boolean enabled;
 
+	/**
+	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a
+	 * message converter. Defaults to {@code true}.
+	 */
 	private boolean jsonConverterEnabled = true;
 
 	/**
 	 * The state of the enabled flag.
-	 * @return true if AmqpItemWriter is enabled. Otherwise false.
+	 * @return {@code true} if {@code AmqpItemWriter} is enabled. Otherwise {@code false}.
 	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 
 	/**
-	 * Enables or disables the AmqpItemReader.
-	 * @param enabled if true then AmqpItemWriter will be enabled. Defaults to false.
+	 * Enables or disables the {@code AmqpItemWriter}.
+	 * @param enabled if {@code true} then {@code AmqpItemWriter} is enabled. Defaults to {@code false}.
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
