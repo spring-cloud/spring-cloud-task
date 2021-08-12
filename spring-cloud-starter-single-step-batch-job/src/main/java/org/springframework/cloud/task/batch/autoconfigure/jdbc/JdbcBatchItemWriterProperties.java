@@ -27,10 +27,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.jdbcbatchitemwriter")
 public class JdbcBatchItemWriterProperties {
 
+	/**
+	 * The name used to calculate the key within the
+	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 */
 	private String name;
 
+	/**
+	 * The sql statement to be used to update the database.
+	 */
 	private String sql;
 
+	/**
+	 * If set to true, confirms that every insert results in the update of at least one
+	 * row in the database. Defaults to true.
+	 */
 	private boolean assertUpdates = true;
 
 	/**

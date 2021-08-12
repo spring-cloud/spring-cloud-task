@@ -27,10 +27,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job")
 public class SingleStepJobProperties {
 
+	/**
+	 * Name of the step in the single step job.
+	 */
 	private String stepName;
 
+	/**
+	 * The number of items to process per transaction/chunk.
+	 */
 	private Integer chunkSize;
 
+	/**
+	 * The name of the job.
+	 */
 	private String jobName;
 
 	/**

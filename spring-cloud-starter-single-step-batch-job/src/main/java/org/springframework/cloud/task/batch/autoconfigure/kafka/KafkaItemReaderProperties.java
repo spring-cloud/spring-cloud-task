@@ -30,14 +30,33 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.batch.job.kafkaitemreader")
 public class KafkaItemReaderProperties {
 
+	/**
+	 * The name used to calculate the key within the
+	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 */
 	private String name;
 
+	/**
+	 * The topic name from which the messages will be read.
+	 */
 	private String topic;
 
+	/**
+	 * A list of partitions to manually assign to the consumer. Defaults to a single entry
+	 * value of 1.
+	 */
 	private List<Integer> partitions = new ArrayList<>();
 
+	/**
+	 * Establish the pollTimeout for the poll() operations. Defaults to 30 seconds.
+	 */
 	private long pollTimeOutInSeconds = 30L;
 
+	/**
+	 * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport}
+	 * should be persisted within the {@link org.springframework.batch.item.ExecutionContext}
+	 * for restart purposes.  Defaults to true.
+	 */
 	private boolean saveState = true;
 
 	/**

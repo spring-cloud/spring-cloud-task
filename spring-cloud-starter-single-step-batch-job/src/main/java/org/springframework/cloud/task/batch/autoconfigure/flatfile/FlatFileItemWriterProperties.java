@@ -31,40 +31,99 @@ import org.springframework.core.io.Resource;
 @ConfigurationProperties(prefix = "spring.batch.job.flatfileitemwriter")
 public class FlatFileItemWriterProperties {
 
+	/**
+	 * The {@link Resource} to be used as output.
+	 */
 	private Resource resource;
 
+	/**
+	 * Configure the use of the {@code DelimitedLineAggregator} to generate the output per item.
+	 * Default is false.
+	 */
 	private boolean delimited;
 
+	/**
+	 * Indicates to use a {@code FormatterLineAggregator} to generate the output per item.
+	 * Default is false.
+	 */
 	private boolean formatted;
 
+	/**
+	 * Configure the format the {@code FormatterLineAggregator} will use for each item.
+	 */
 	private String format;
 
+	/**
+	 * Configure the {@code Locale} to use when generating the output.
+	 */
 	private Locale locale = Locale.getDefault();
 
+	/**
+	 * Configure the maximum record length. If 0, the size is unbounded.
+	 */
 	private int maximumLength = 0;
 
+	/**
+	 * Configure the minimum record length.
+ 	 */
 	private int minimumLength = 0;
 
+	/**
+	 * Configure the {@code String} used to delimit the fields in the output file.
+	 */
 	private String delimiter = ",";
 
+	/**
+	 * File encoding for the output file.  Defaults to {@code FlatFileItemWriter.DEFAULT_CHARSET})
+	 */
 	private String encoding = FlatFileItemWriter.DEFAULT_CHARSET;
 
+	/**
+	 * A flag indicating that changes should be force-synced to disk on flush. Defaults to false.
+	 */
 	private boolean forceSync = false;
 
+	/**
+	 * Names of the fields to be extracted into the output.
+	 */
 	private String[] names;
 
+	/**
+	 * Configure if the output file is found if it should be appended to. Defaults to false.
+	 */
 	private boolean append = false;
 
+	/**
+	 * String used to separate lines in output. Defaults to the System property line.separator.
+	 */
 	private String lineSeparator = FlatFileItemWriter.DEFAULT_LINE_SEPARATOR;
 
+	/**
+	 * The name used to calculate the key within the
+	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
+	 * {@link #setSaveState} is set to true.
+	 */
 	private String name;
 
+	/**
+	 * Returns the configured value of if the state of the reader will be persisted.
+	 */
 	private boolean saveState = true;
 
+	/**
+	 * Indicates if the output file should be deleted if no output was written to it.
+	 * Defaults to false.
+	 */
 	private boolean shouldDeleteIfEmpty = false;
 
+	/**
+	 * Indicates if an existing output file should be deleted on startup. Defaults to true.
+	 */
 	private boolean shouldDeleteIfExists = true;
 
+	/**
+	 * Indicates if flushing the buffer should be delayed while a transaction is active.  Defaults to true.
+	 */
 	private boolean transactional = FlatFileItemWriter.DEFAULT_TRANSACTIONAL;
 
 	/**
