@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ package org.springframework.cloud.task.listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
@@ -43,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@link TaskListenerExecutor}.
  *
  * @author Glenn Renfro
+ * @author Isik Erhan
  * @since 2.1.0
  */
 @ExtendWith(SpringExtension.class)
@@ -71,55 +71,161 @@ public class TaskListenerExecutorObjectFactoryTests {
 	 */
 	public static List<TaskExecution> taskExecutionListenerResults = new ArrayList<>(3);
 
-	@Autowired
-	private ConfigurableApplicationContext context;
-
 	private TaskListenerExecutor taskListenerExecutor;
 
 	private TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory;
 
-	@BeforeEach
-	public void setup() {
+	public void setup(ConfigurableApplicationContext context) {
 		taskExecutionListenerResults.clear();
 		this.taskListenerExecutorObjectFactory = new TaskListenerExecutorObjectFactory(
-				this.context);
+				context);
 		this.taskListenerExecutor = this.taskListenerExecutorObjectFactory.getObject();
 	}
 
 	@Test
 	public void verifyTaskStartupListener() {
-		this.taskListenerExecutor
-				.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
-		validateSingleEntry(BEFORE_LISTENER);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(TaskExecutionListenerConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+			validateSingleEntry(BEFORE_LISTENER);
+		});
 	}
 
 	@Test
 	public void verifyTaskFailedListener() {
-		this.taskListenerExecutor.onTaskFailed(createSampleTaskExecution(FAIL_LISTENER),
-				new IllegalStateException("oops"));
-		validateSingleEntry(FAIL_LISTENER);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(TaskExecutionListenerConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor.onTaskFailed(
+					createSampleTaskExecution(FAIL_LISTENER),
+					new IllegalStateException("oops"));
+			validateSingleEntry(FAIL_LISTENER);
+		});
 	}
 
 	@Test
 	public void verifyTaskEndListener() {
-		this.taskListenerExecutor.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
-		validateSingleEntry(AFTER_LISTENER);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(TaskExecutionListenerConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
+			validateSingleEntry(AFTER_LISTENER);
+		});
 	}
 
 	@Test
 	public void verifyAllListener() {
-		this.taskListenerExecutor
-				.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
-		this.taskListenerExecutor.onTaskFailed(createSampleTaskExecution(FAIL_LISTENER),
-				new IllegalStateException("oops"));
-		this.taskListenerExecutor.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
-		assertThat(taskExecutionListenerResults.size()).isEqualTo(3);
-		assertThat(taskExecutionListenerResults.get(0).getTaskName())
-				.isEqualTo(BEFORE_LISTENER);
-		assertThat(taskExecutionListenerResults.get(1).getTaskName())
-				.isEqualTo(FAIL_LISTENER);
-		assertThat(taskExecutionListenerResults.get(2).getTaskName())
-				.isEqualTo(AFTER_LISTENER);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(TaskExecutionListenerConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+			this.taskListenerExecutor.onTaskFailed(
+					createSampleTaskExecution(FAIL_LISTENER),
+					new IllegalStateException("oops"));
+			this.taskListenerExecutor
+					.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
+			assertThat(taskExecutionListenerResults.size()).isEqualTo(3);
+			assertThat(taskExecutionListenerResults.get(0).getTaskName())
+					.isEqualTo(BEFORE_LISTENER);
+			assertThat(taskExecutionListenerResults.get(1).getTaskName())
+					.isEqualTo(FAIL_LISTENER);
+			assertThat(taskExecutionListenerResults.get(2).getTaskName())
+					.isEqualTo(AFTER_LISTENER);
+		});
+	}
+
+	@Test
+	public void verifyTaskStartupListenerWithMultipleInstances() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(
+						TaskExecutionListenerMultipleInstanceConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+			validateSingleEventWithMultipleInstances(BEFORE_LISTENER);
+		});
+	}
+
+	@Test
+	public void verifyTaskFailedListenerWithMultipleInstances() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(
+						TaskExecutionListenerMultipleInstanceConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor.onTaskFailed(
+					createSampleTaskExecution(FAIL_LISTENER),
+					new IllegalStateException("oops"));
+			validateSingleEventWithMultipleInstances(FAIL_LISTENER);
+		});
+	}
+
+	@Test
+	public void verifyTaskEndListenerWithMultipleInstances() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(
+						TaskExecutionListenerMultipleInstanceConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
+			validateSingleEventWithMultipleInstances(AFTER_LISTENER);
+		});
+	}
+
+	@Test
+	public void verifyAllListenerWithMultipleInstances() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withUserConfiguration(
+						TaskExecutionListenerMultipleInstanceConfiguration.class);
+
+		applicationContextRunner.run((context) -> {
+			setup(context);
+
+			this.taskListenerExecutor
+					.onTaskStartup(createSampleTaskExecution(BEFORE_LISTENER));
+			this.taskListenerExecutor.onTaskFailed(
+					createSampleTaskExecution(FAIL_LISTENER),
+					new IllegalStateException("oops"));
+			this.taskListenerExecutor
+					.onTaskEnd(createSampleTaskExecution(AFTER_LISTENER));
+			assertThat(taskExecutionListenerResults.size()).isEqualTo(6);
+			assertThat(taskExecutionListenerResults.get(0).getTaskName())
+					.isEqualTo(BEFORE_LISTENER);
+			assertThat(taskExecutionListenerResults.get(1).getTaskName())
+					.isEqualTo(BEFORE_LISTENER);
+			assertThat(taskExecutionListenerResults.get(2).getTaskName())
+					.isEqualTo(FAIL_LISTENER);
+			assertThat(taskExecutionListenerResults.get(3).getTaskName())
+					.isEqualTo(FAIL_LISTENER);
+			assertThat(taskExecutionListenerResults.get(4).getTaskName())
+					.isEqualTo(AFTER_LISTENER);
+			assertThat(taskExecutionListenerResults.get(5).getTaskName())
+					.isEqualTo(AFTER_LISTENER);
+		});
 	}
 
 	private TaskExecution createSampleTaskExecution(String taskName) {
@@ -133,6 +239,12 @@ public class TaskListenerExecutorObjectFactoryTests {
 		assertThat(taskExecutionListenerResults.get(0).getTaskName()).isEqualTo(event);
 	}
 
+	private void validateSingleEventWithMultipleInstances(String event) {
+		assertThat(taskExecutionListenerResults.size()).isEqualTo(2);
+		assertThat(taskExecutionListenerResults)
+				.allSatisfy(task -> assertThat(task.getTaskName()).isEqualTo(event));
+	}
+
 	@Configuration
 	public static class TaskExecutionListenerConfiguration {
 
@@ -141,6 +253,20 @@ public class TaskListenerExecutorObjectFactoryTests {
 			return new TaskRunComponent();
 		}
 
+	}
+
+	@Configuration
+	public static class TaskExecutionListenerMultipleInstanceConfiguration {
+
+		@Bean
+		public TaskRunComponent taskRunComponent() {
+			return new TaskRunComponent();
+		}
+
+		@Bean
+		public TaskRunComponent otherTaskRunComponent() {
+			return new TaskRunComponent();
+		}
 	}
 
 	public static class TaskRunComponent {

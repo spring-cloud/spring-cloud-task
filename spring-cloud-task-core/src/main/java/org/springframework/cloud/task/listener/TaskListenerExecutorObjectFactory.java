@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,6 +46,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  * Initializes TaskListenerExecutor for a task.
  *
  * @author Glenn Renfro
+ * @author Isik Erhan
  * @since 2.1.0
  */
 public class TaskListenerExecutorObjectFactory
@@ -57,11 +59,11 @@ public class TaskListenerExecutorObjectFactory
 
 	private ConfigurableApplicationContext context;
 
-	private Map<Method, Object> beforeTaskInstances;
+	private Map<Method, Set<Object>> beforeTaskInstances;
 
-	private Map<Method, Object> afterTaskInstances;
+	private Map<Method, Set<Object>> afterTaskInstances;
 
-	private Map<Method, Object> failedTaskInstances;
+	private Map<Method, Set<Object>> failedTaskInstances;
 
 	public TaskListenerExecutorObjectFactory(ConfigurableApplicationContext context) {
 		this.context = context;
@@ -141,20 +143,23 @@ public class TaskListenerExecutorObjectFactory
 			}
 			if (!beforeTaskMethods.isEmpty()) {
 				for (Method beforeTaskMethod : beforeTaskMethods.keySet()) {
-					this.beforeTaskInstances.put(beforeTaskMethod,
-							this.context.getBean(beanName));
+					this.beforeTaskInstances
+							.computeIfAbsent(beforeTaskMethod, k -> new LinkedHashSet<>())
+							.add(this.context.getBean(beanName));
 				}
 			}
 			if (!afterTaskMethods.isEmpty()) {
 				for (Method afterTaskMethod : afterTaskMethods.keySet()) {
-					this.afterTaskInstances.put(afterTaskMethod,
-							this.context.getBean(beanName));
+					this.afterTaskInstances
+							.computeIfAbsent(afterTaskMethod, k -> new LinkedHashSet<>())
+							.add(this.context.getBean(beanName));
 				}
 			}
 			if (!failedTaskMethods.isEmpty()) {
 				for (Method failedTaskMethod : failedTaskMethods.keySet()) {
-					this.failedTaskInstances.put(failedTaskMethod,
-							this.context.getBean(beanName));
+					this.failedTaskInstances
+							.computeIfAbsent(failedTaskMethod, k -> new LinkedHashSet<>())
+							.add(this.context.getBean(beanName));
 				}
 			}
 		}

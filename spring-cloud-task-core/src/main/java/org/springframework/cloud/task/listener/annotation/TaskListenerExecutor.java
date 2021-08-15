@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,18 +31,19 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * appropriate time.
  *
  * @author Glenn Renfro
+ * @author Isik Erhan
  */
 public class TaskListenerExecutor implements TaskExecutionListener {
 
-	private Map<Method, Object> beforeTaskInstances;
+	private Map<Method, Set<Object>> beforeTaskInstances;
 
-	private Map<Method, Object> afterTaskInstances;
+	private Map<Method, Set<Object>> afterTaskInstances;
 
-	private Map<Method, Object> failedTaskInstances;
+	private Map<Method, Set<Object>> failedTaskInstances;
 
-	public TaskListenerExecutor(Map<Method, Object> beforeTaskInstances,
-			Map<Method, Object> afterTaskInstances,
-			Map<Method, Object> failedTaskInstances) {
+	public TaskListenerExecutor(Map<Method, Set<Object>> beforeTaskInstances,
+			Map<Method, Set<Object>> afterTaskInstances,
+			Map<Method, Set<Object>> failedTaskInstances) {
 
 		this.beforeTaskInstances = beforeTaskInstances;
 		this.afterTaskInstances = afterTaskInstances;
@@ -81,48 +82,55 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	}
 
 	private void executeTaskListener(TaskExecution taskExecution, Set<Method> methods,
-			Map<Method, Object> instances) {
+			Map<Method, Set<Object>> instances) {
 		for (Method method : methods) {
-			try {
-				method.invoke(instances.get(method), taskExecution);
-			}
-			catch (IllegalAccessException e) {
-				throw new TaskExecutionException(
-						"@BeforeTask and @AfterTask annotated methods must be public.",
-						e);
-			}
-			catch (InvocationTargetException e) {
-				throw new TaskExecutionException(String.format(
-						"Failed to process @BeforeTask or @AfterTask"
-								+ " annotation because: %s",
-						e.getTargetException().getMessage()), e);
-			}
-			catch (IllegalArgumentException e) {
-				throw new TaskExecutionException("taskExecution parameter "
-						+ "is required for @BeforeTask and @AfterTask annotated methods",
-						e);
+			for (Object instance : instances.get(method)) {
+				try {
+					method.invoke(instance, taskExecution);
+				}
+				catch (IllegalAccessException e) {
+					throw new TaskExecutionException(
+							"@BeforeTask and @AfterTask annotated methods must be public.",
+							e);
+				}
+				catch (InvocationTargetException e) {
+					throw new TaskExecutionException(String.format(
+							"Failed to process @BeforeTask or @AfterTask"
+									+ " annotation because: %s",
+							e.getTargetException().getMessage()), e);
+				}
+				catch (IllegalArgumentException e) {
+					throw new TaskExecutionException("taskExecution parameter "
+							+ "is required for @BeforeTask and @AfterTask annotated methods",
+							e);
+				}
 			}
 		}
 	}
 
 	private void executeTaskListenerWithThrowable(TaskExecution taskExecution,
-			Throwable throwable, Set<Method> methods, Map<Method, Object> instances) {
+			Throwable throwable, Set<Method> methods,
+			Map<Method, Set<Object>> instances) {
 		for (Method method : methods) {
-			try {
-				method.invoke(instances.get(method), taskExecution, throwable);
-			}
-			catch (IllegalAccessException e) {
-				throw new TaskExecutionException(
-						"@FailedTask annotated methods must be public.", e);
-			}
-			catch (InvocationTargetException e) {
-				throw new TaskExecutionException(String.format(
-						"Failed to process @FailedTask " + "annotation because: %s",
-						e.getTargetException().getMessage()), e);
-			}
-			catch (IllegalArgumentException e) {
-				throw new TaskExecutionException("taskExecution and throwable parameters "
-						+ "are required for @FailedTask annotated methods", e);
+			for (Object instance : instances.get(method)) {
+				try {
+					method.invoke(instance, taskExecution, throwable);
+				}
+				catch (IllegalAccessException e) {
+					throw new TaskExecutionException(
+							"@FailedTask annotated methods must be public.", e);
+				}
+				catch (InvocationTargetException e) {
+					throw new TaskExecutionException(String.format(
+							"Failed to process @FailedTask " + "annotation because: %s",
+							e.getTargetException().getMessage()), e);
+				}
+				catch (IllegalArgumentException e) {
+					throw new TaskExecutionException(
+							"taskExecution and throwable parameters "
+									+ "are required for @FailedTask annotated methods",
+							e);
+				}
 			}
 		}
 	}
