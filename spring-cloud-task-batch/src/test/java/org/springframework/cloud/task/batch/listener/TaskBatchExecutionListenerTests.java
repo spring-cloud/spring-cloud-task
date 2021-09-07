@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,16 +361,11 @@ public class TaskBatchExecutionListenerTests {
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfigurationMultipleDataSources {
 
-		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
 
 		@Bean
-		public Job job() {
-			return this.jobBuilderFactory.get("job")
-					.start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+		public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+			return jobBuilderFactory.get("job")
+					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution,
 								ChunkContext chunkContext) throws Exception {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 the original author or authors.
+ * Copyright 2019-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
  * Autconfiguration for a {@code FlatFileItemReader}.
  *
  * @author Michael Minella
+ * @author Glenn Renfro
  * @since 2.3
  */
 @Configuration
@@ -50,21 +51,6 @@ public class FlatFileItemReaderAutoConfiguration {
 
 	private final FlatFileItemReaderProperties properties;
 
-	@Autowired(required = false)
-	private LineTokenizer lineTokenizer;
-
-	@Autowired(required = false)
-	private FieldSetMapper<Map<String, Object>> fieldSetMapper;
-
-	@Autowired(required = false)
-	private LineMapper<Map<String, Object>> lineMapper;
-
-	@Autowired(required = false)
-	private LineCallbackHandler skippedLinesCallback;
-
-	@Autowired(required = false)
-	private RecordSeparatorPolicy recordSeparatorPolicy;
-
 	public FlatFileItemReaderAutoConfiguration(FlatFileItemReaderProperties properties) {
 		this.properties = properties;
 	}
@@ -72,7 +58,12 @@ public class FlatFileItemReaderAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.flatfileitemreader", name = "name")
-	public FlatFileItemReader<Map<String, Object>> itemReader() {
+	public FlatFileItemReader<Map<String, Object>> itemReader(
+		@Autowired(required = false) LineTokenizer lineTokenizer,
+		@Autowired(required = false) FieldSetMapper<Map<String, Object>> fieldSetMapper,
+		@Autowired(required = false) LineMapper<Map<String, Object>> lineMapper,
+		@Autowired(required = false) LineCallbackHandler skippedLinesCallback,
+		@Autowired(required = false) RecordSeparatorPolicy recordSeparatorPolicy) {
 		FlatFileItemReaderBuilder<Map<String, Object>> mapFlatFileItemReaderBuilder = new FlatFileItemReaderBuilder<Map<String, Object>>()
 				.name(this.properties.getName()).resource(this.properties.getResource())
 				.saveState(this.properties.isSaveState())
@@ -84,26 +75,14 @@ public class FlatFileItemReaderAutoConfiguration {
 				.comments(this.properties.getComments()
 						.toArray(new String[this.properties.getComments().size()]));
 
-		if (this.lineTokenizer != null) {
-			mapFlatFileItemReaderBuilder.lineTokenizer(this.lineTokenizer);
-		}
-
-		if (this.recordSeparatorPolicy != null) {
+		mapFlatFileItemReaderBuilder.lineTokenizer(lineTokenizer);
+		if (recordSeparatorPolicy != null) {
 			mapFlatFileItemReaderBuilder
-					.recordSeparatorPolicy(this.recordSeparatorPolicy);
+					.recordSeparatorPolicy(recordSeparatorPolicy);
 		}
-
-		if (this.fieldSetMapper != null) {
-			mapFlatFileItemReaderBuilder.fieldSetMapper(this.fieldSetMapper);
-		}
-
-		if (this.lineMapper != null) {
-			mapFlatFileItemReaderBuilder.lineMapper(this.lineMapper);
-		}
-
-		if (this.skippedLinesCallback != null) {
-			mapFlatFileItemReaderBuilder.skippedLinesCallback(skippedLinesCallback);
-		}
+		mapFlatFileItemReaderBuilder.fieldSetMapper(fieldSetMapper);
+		mapFlatFileItemReaderBuilder.lineMapper(lineMapper);
+		mapFlatFileItemReaderBuilder.skippedLinesCallback(skippedLinesCallback);
 
 		if (this.properties.isDelimited()) {
 			mapFlatFileItemReaderBuilder.delimited()

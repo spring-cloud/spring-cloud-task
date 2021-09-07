@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 /**
  * @author Michael Minella
+ * @author Glenn Renfro
  * @since 2.3
  */
 @Configuration
@@ -50,12 +51,6 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 	private final DataSource dataSource;
 
-	@Autowired(required = false)
-	private PreparedStatementSetter preparedStatementSetter;
-
-	@Autowired(required = false)
-	private RowMapper<Map<String, Object>> rowMapper;
-
 	public JdbcCursorItemReaderAutoConfiguration(
 			JdbcCursorItemReaderProperties properties, DataSource dataSource) {
 		this.properties = properties;
@@ -64,7 +59,8 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public JdbcCursorItemReader<Map<String, Object>> itemReader() {
+	public JdbcCursorItemReader<Map<String, Object>> itemReader(@Autowired(required = false) RowMapper<Map<String, Object>> rowMapper,
+		@Autowired(required = false) PreparedStatementSetter preparedStatementSetter) {
 		return new JdbcCursorItemReaderBuilder<Map<String, Object>>()
 				.name(this.properties.getName())
 				.currentItemCount(this.properties.getCurrentItemCount())
@@ -76,8 +72,8 @@ public class JdbcCursorItemReaderAutoConfiguration {
 				.maxRows(this.properties.getMaxRows())
 				.queryTimeout(this.properties.getQueryTimeout())
 				.saveState(this.properties.isSaveState()).sql(this.properties.getSql())
-				.rowMapper(this.rowMapper)
-				.preparedStatementSetter(this.preparedStatementSetter)
+				.rowMapper(rowMapper)
+				.preparedStatementSetter(preparedStatementSetter)
 				.verifyCursorPosition(this.properties.isVerifyCursorPosition())
 				.useSharedExtendedConnection(
 						this.properties.isUseSharedExtendedConnection())
