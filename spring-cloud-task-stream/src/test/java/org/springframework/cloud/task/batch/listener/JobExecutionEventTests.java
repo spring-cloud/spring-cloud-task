@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -336,6 +337,27 @@ public class JobExecutionEventTests {
 						.isEqualTo(ordered.getOrder());
 			}
 
+		});
+	}
+
+	@Test
+	public void singleStepBatchJobSkip() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(
+				EventJobExecutionConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class,
+				TestSupportBinderAutoConfiguration.class,
+				SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(
+				BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+			.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
+				"--spring.main.web-environment=false", "spring.batch.job.jobName=FOO");
+		applicationContextRunner.run((context) -> {
+			NoSuchBeanDefinitionException exception = Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> {
+				context.getBean("jobExecutionEventsListener");
+			});
+			assertThat(exception.getMessage()).contains(
+					String.format("No bean named 'jobExecutionEventsListener' available"));
 		});
 	}
 
