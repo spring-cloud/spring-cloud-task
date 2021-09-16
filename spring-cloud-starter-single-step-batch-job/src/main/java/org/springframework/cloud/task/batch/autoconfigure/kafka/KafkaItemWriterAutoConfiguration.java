@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.util.Map;
 
 import org.springframework.batch.item.kafka.KafkaItemWriter;
 import org.springframework.batch.item.kafka.builder.KafkaItemWriterBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -47,12 +47,10 @@ import org.springframework.util.Assert;
  * @since 2.3
  */
 @Configuration
-@EnableConfigurationProperties({ KafkaProperties.class, KafkaItemWriterProperties.class })
+@EnableConfigurationProperties({ KafkaItemWriterProperties.class })
 @AutoConfigureAfter(BatchAutoConfiguration.class)
+@ConditionalOnClass(name = {"org.springframework.kafka.core.DefaultKafkaProducerFactory"})
 public class KafkaItemWriterAutoConfiguration {
-
-	@Autowired
-	private KafkaProperties kafkaProperties;
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -83,9 +81,9 @@ public class KafkaItemWriterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ProducerFactory<Object, Map<String, Object>> producerFactory() {
+	ProducerFactory<Object, Map<String, Object>> producerFactory(KafkaProperties properties) {
 		Map<String, Object> configs = new HashMap<>();
-		configs.putAll(this.kafkaProperties.getProducer().buildProperties());
+		configs.putAll(properties.getProducer().buildProperties());
 		return new DefaultKafkaProducerFactory<>(configs, null,
 			new JsonSerializer<>());
 	}

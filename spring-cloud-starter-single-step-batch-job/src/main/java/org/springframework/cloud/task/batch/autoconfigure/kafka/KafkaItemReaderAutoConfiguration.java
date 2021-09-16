@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.springframework.batch.item.kafka.KafkaItemReader;
 import org.springframework.batch.item.kafka.builder.KafkaItemReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,21 +42,18 @@ import org.springframework.util.StringUtils;
  * @since 2.3
  */
 @Configuration
-@EnableConfigurationProperties({ KafkaProperties.class, KafkaItemReaderProperties.class })
+@EnableConfigurationProperties({ KafkaItemReaderProperties.class })
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class KafkaItemReaderAutoConfiguration {
-
-	@Autowired
-	private KafkaProperties kafkaProperties;
 
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemreader", name = "name")
 	public KafkaItemReader<Object, Map<String, Object>> kafkaItemReader(
-			KafkaItemReaderProperties kafkaItemReaderProperties) {
+			KafkaItemReaderProperties kafkaItemReaderProperties, KafkaProperties kafkaProperties) {
 		Properties consumerProperties = new Properties();
-		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties());
-		validateProperties(kafkaItemReaderProperties);
+		consumerProperties.putAll(kafkaProperties.getConsumer().buildProperties());
+		validateProperties(kafkaItemReaderProperties, kafkaProperties);
 		if (kafkaItemReaderProperties.getPartitions() == null
 				|| kafkaItemReaderProperties.getPartitions().size() == 0) {
 			kafkaItemReaderProperties.setPartitions(new ArrayList<>(1));
@@ -72,18 +68,18 @@ public class KafkaItemReaderAutoConfiguration {
 				.saveState(kafkaItemReaderProperties.isSaveState()).topic(kafkaItemReaderProperties.getTopic()).build();
 	}
 
-	private void validateProperties(KafkaItemReaderProperties kafkaItemReaderProperties) {
+	private void validateProperties(KafkaItemReaderProperties kafkaItemReaderProperties, KafkaProperties kafkaProperties) {
 		if (!StringUtils.hasText(kafkaItemReaderProperties.getName())) {
 			throw new IllegalArgumentException("Name must not be empty or null");
 		}
 		if (!StringUtils.hasText(kafkaItemReaderProperties.getTopic())) {
 			throw new IllegalArgumentException("Topic must not be empty or null");
 		}
-		if (!StringUtils.hasText(this.kafkaProperties.getConsumer().getGroupId())) {
+		if (!StringUtils.hasText(kafkaProperties.getConsumer().getGroupId())) {
 			throw new IllegalArgumentException("GroupId must not be empty or null");
 		}
-		if (this.kafkaProperties.getBootstrapServers() == null
-				|| this.kafkaProperties.getBootstrapServers().size() == 0) {
+		if (kafkaProperties.getBootstrapServers() == null
+				|| kafkaProperties.getBootstrapServers().size() == 0) {
 			throw new IllegalArgumentException("Bootstrap Servers must be configured");
 		}
 	}
