@@ -37,7 +37,7 @@ public class KafkaItemReaderProperties {
 	private String name;
 
 	/**
-	 * The topic name from which the messages will be read.
+	 * The topic name from which the messages is read.
 	 */
 	private String topic;
 
@@ -48,14 +48,14 @@ public class KafkaItemReaderProperties {
 	private List<Integer> partitions = new ArrayList<>();
 
 	/**
-	 * Establish the pollTimeout for the poll() operations. Defaults to 30 seconds.
+	 * Establish the {@code pollTimeout} for the {@code poll()} operations. Defaults to 30 seconds.
 	 */
 	private long pollTimeOutInSeconds = 30L;
 
 	/**
-	 * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport}
+	 * Configure whether the state of the {@link org.springframework.batch.item.ItemStreamSupport}
 	 * should be persisted within the {@link org.springframework.batch.item.ExecutionContext}
-	 * for restart purposes.  Defaults to true.
+	 * for restart purposes.  Defaults to {@code true}.
 	 */
 	private boolean saveState = true;
 

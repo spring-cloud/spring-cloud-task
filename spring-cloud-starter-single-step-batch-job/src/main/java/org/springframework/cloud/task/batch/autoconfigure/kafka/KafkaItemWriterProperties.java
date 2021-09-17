@@ -28,13 +28,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class KafkaItemWriterProperties {
 
 	/**
-	 * The topic name from which the messages will be written.
+	 * The topic name from which the messages are written.
 	 */
 	private String topic;
 
 	/**
-	 * Indicate if the items being passed to the writer are all to be sent as delete
-	 * events to the topic.  Defaults to false.
+	 * Indicate whether the items being passed to the writer are all to be sent as delete
+	 * events to the topic. Defaults to {@code false}.
 	 */
 	private boolean delete;
 
@@ -47,7 +47,7 @@ public class KafkaItemWriterProperties {
 	}
 
 	/**
-	 * The topic name from which the messages will be written.
+	 * The topic name from which the messages are written.
 	 * @param topic name of the topic
 	 */
 	public void setTopic(String topic) {

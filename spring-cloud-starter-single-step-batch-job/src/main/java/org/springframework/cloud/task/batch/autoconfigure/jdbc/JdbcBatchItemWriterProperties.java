@@ -34,13 +34,13 @@ public class JdbcBatchItemWriterProperties {
 	private String name;
 
 	/**
-	 * The sql statement to be used to update the database.
+	 * The SQL statement to be used to update the database.
 	 */
 	private String sql;
 
 	/**
-	 * If set to true, confirms that every insert results in the update of at least one
-	 * row in the database. Defaults to true.
+	 * If set to {@code true}, confirms that every insert results in the update of at least one
+	 * row in the database. Defaults to {@code true}.
 	 */
 	private boolean assertUpdates = true;
 

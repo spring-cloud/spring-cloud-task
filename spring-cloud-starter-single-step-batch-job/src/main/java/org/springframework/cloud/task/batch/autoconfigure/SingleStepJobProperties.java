@@ -33,7 +33,7 @@ public class SingleStepJobProperties {
 	private String stepName;
 
 	/**
-	 * The number of items to process per transaction/chunk.
+	 * The number of items to process per transaction or chunk.
 	 */
 	private Integer chunkSize;
 

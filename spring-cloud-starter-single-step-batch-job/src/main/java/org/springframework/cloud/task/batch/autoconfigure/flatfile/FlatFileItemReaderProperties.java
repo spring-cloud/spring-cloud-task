@@ -35,19 +35,19 @@ import org.springframework.core.io.Resource;
 public class FlatFileItemReaderProperties {
 
 	/**
-	 * Determines if the state of the reader will be persisted.  Default is true.
+	 * Determines whether the state of the reader is persisted. Default is {@code true}.
 	 */
 	private boolean saveState = true;
 
 	/**
 	 * The name used to calculate the key within the
 	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
-	 * {@link #setSaveState} is set to true.
+	 * {@link #setSaveState} is set to {@code true}.
 	 */
 	private String name;
 
 	/**
-	 * Configure the max number of items to be read.
+	 * Configure the maximum number of items to be read.
 	 */
 	private int maxItemCount = Integer.MAX_VALUE;
 
@@ -57,7 +57,7 @@ public class FlatFileItemReaderProperties {
 	private int currentItemCount = 0;
 
 	/**
-	 * A list of {@code String} elements used to indicate what records are comments.
+	 * A list of {@code String} elements used to indicate which records are comments.
 	 */
 	private List<String> comments = new ArrayList<>();
 
@@ -67,13 +67,13 @@ public class FlatFileItemReaderProperties {
 	private Resource resource;
 
 	/**
-	 * Configure if the reader should be in strict mode (require the input
+	 * Configure whether the reader should be in strict mode (require the input
 	 * {@link Resource} to exist).
 	 */
 	private boolean strict = true;
 
 	/**
-	 * Configure the encoding used by the reader to read the input source. Default value
+	 * Configure the encoding used by the reader to read the input source. The default value
 	 * is {@link FlatFileItemReader#DEFAULT_CHARSET}.
 	 */
 	private String encoding = FlatFileItemReader.DEFAULT_CHARSET;
@@ -111,7 +111,7 @@ public class FlatFileItemReaderProperties {
 	private boolean fixedLength = false;
 
 	/**
-	 * The column ranges to be used to parsed a fixed width file.
+	 * The column ranges to be used to parse a fixed width file.
 	 */
 	private List<Range> ranges = new ArrayList<>();
 
@@ -121,7 +121,7 @@ public class FlatFileItemReaderProperties {
 	private String[] names;
 
 	/**
-	 * Indicates if the number of tokens must match the number of configured fields.
+	 * Indicates whether the number of tokens must match the number of configured fields.
 	 */
 	private boolean parsingStrict = true;
 
