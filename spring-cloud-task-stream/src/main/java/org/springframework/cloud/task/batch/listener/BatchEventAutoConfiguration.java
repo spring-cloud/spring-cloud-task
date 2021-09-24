@@ -60,7 +60,7 @@ import org.springframework.messaging.MessageChannel;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Job.class)
 @ConditionalOnBean({ Job.class, TaskLifecycleListener.class })
 // @checkstyle:off
@@ -177,7 +177,7 @@ public class BatchEventAutoConfiguration {
 	/**
 	 * Configuration for Job Execution Listener.
 	 */
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(EnableBinding.class)
 	@EnableBinding(BatchEventsChannels.class)
 	@EnableConfigurationProperties(TaskEventProperties.class)

@@ -116,7 +116,7 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableAutoConfiguration
 	public static class TestConfiguration {
 

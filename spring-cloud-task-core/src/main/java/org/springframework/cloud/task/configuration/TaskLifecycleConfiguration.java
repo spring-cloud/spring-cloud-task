@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  * @since 2.1
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TaskLifecycleConfiguration {
 
 	protected static final Log logger = LogFactory
@@ -67,7 +67,6 @@ public class TaskLifecycleConfiguration {
 			ConfigurableApplicationContext context, TaskRepository taskRepository,
 			TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
 			ObjectProvider<ApplicationArguments> applicationArguments) {
-
 		this.taskProperties = taskProperties;
 		this.context = context;
 		this.taskRepository = taskRepository;

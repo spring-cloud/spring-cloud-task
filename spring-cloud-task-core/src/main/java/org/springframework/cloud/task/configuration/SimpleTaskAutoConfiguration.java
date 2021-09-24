@@ -50,7 +50,7 @@ import org.springframework.util.CollectionUtils;
  * @author Glenn Renfro
  * @author Michael Minella
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableTransactionManagement
 @EnableConfigurationProperties({ TaskProperties.class })
 // @checkstyle:off

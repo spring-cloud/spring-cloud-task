@@ -31,7 +31,7 @@ public class TaskEventsApplication {
 		SpringApplication.run(TaskEventsApplication.class, args);
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	public static class TaskConfiguration {
 
 		@Bean

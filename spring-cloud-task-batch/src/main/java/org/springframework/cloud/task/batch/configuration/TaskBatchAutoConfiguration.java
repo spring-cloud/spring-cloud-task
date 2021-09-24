@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Michael Minella
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnBean({ Job.class })
 @ConditionalOnProperty(
 		name = { "spring.cloud.task.batch.listener.enable",
@@ -55,7 +55,7 @@ public class TaskBatchAutoConfiguration {
 	/**
 	 * Auto configuration for {@link TaskBatchExecutionListener}.
 	 */
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnMissingBean(name = "taskBatchExecutionListener")
 	@EnableConfigurationProperties(TaskProperties.class)
 	public static class TaskBatchExecutionListenerAutoconfiguration {

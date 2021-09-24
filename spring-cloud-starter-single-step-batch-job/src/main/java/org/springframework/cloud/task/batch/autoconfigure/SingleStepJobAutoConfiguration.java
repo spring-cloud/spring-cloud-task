@@ -43,7 +43,7 @@ import org.springframework.util.Assert;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SingleStepJobProperties.class)
 @AutoConfigureBefore(BatchAutoConfiguration.class)
 public class SingleStepJobAutoConfiguration {

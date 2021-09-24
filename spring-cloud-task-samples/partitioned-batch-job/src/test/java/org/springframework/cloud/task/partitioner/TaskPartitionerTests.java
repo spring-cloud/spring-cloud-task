@@ -113,7 +113,7 @@ public class TaskPartitionerTests {
 		}
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	public static class TaskLauncherConfiguration {
 
 		@Bean(destroyMethod = "stop")

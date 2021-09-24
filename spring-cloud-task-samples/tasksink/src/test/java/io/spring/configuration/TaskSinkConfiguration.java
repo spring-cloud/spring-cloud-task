@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Glenn Renfro
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TaskSinkConfiguration {
 
 	@Bean

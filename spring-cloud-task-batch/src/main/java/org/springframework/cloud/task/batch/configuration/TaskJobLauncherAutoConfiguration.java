@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Glenn Renfro
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Conditional(JobLaunchCondition.class)
 @EnableConfigurationProperties(TaskBatchProperties.class)
 @AutoConfigureBefore(BatchAutoConfiguration.class)

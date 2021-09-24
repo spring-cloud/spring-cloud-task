@@ -33,7 +33,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  * Creates two data sources that use external databases.
  * @author Glenn Renfro
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Profile("external")
 public class ExternalDataSourceConfiguration {
 

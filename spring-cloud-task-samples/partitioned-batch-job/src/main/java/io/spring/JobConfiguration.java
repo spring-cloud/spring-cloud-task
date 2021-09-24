@@ -57,7 +57,7 @@ import org.springframework.core.io.Resource;
 /**
  * @author Michael Minella
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class JobConfiguration {
 
 	private static final int GRID_SIZE = 4;

@@ -46,7 +46,7 @@ import org.springframework.util.Assert;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ KafkaProperties.class, KafkaItemWriterProperties.class })
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class KafkaItemWriterAutoConfiguration {

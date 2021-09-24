@@ -373,7 +373,7 @@ public class JobExecutionEventTests {
 
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	public static class EventJobExecutionConfiguration {
 
 	}

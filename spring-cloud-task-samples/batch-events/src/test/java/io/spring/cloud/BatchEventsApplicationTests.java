@@ -65,7 +65,7 @@ public class BatchEventsApplicationTests {
 
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:io/spring/task/listener/job-listener-sink-channel.properties")
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	public static class JobExecutionListenerBinding {
 
 		@StreamListener(Sink.INPUT)

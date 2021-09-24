@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(FlatFileItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class FlatFileItemWriterAutoConfiguration {

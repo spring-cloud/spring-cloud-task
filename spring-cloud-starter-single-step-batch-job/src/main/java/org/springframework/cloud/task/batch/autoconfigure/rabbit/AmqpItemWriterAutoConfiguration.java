@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(AmqpItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 @ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.enabled",

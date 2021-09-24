@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(FlatFileItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class FlatFileItemReaderAutoConfiguration {

@@ -70,7 +70,7 @@ public class TimestampTaskPropertiesTests {
 			.isEqualTo(FORMAT);
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableConfigurationProperties(TimestampTaskProperties.class)
 	static class Conf {
 	}

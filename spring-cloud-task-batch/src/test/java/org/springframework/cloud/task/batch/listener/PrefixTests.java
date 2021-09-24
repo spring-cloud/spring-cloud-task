@@ -66,7 +66,7 @@ public class PrefixTests {
 		assertThat(jobIds.contains(1L));
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask

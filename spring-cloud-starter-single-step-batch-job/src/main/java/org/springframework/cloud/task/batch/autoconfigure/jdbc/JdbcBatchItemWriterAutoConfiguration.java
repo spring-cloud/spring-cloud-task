@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(JdbcBatchItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class JdbcBatchItemWriterAutoConfiguration {

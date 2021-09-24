@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.RowMapper;
  * @author Glenn Renfro
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(JdbcCursorItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader", name = "name")

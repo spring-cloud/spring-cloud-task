@@ -34,7 +34,7 @@ import org.springframework.integration.support.locks.PassThruLockRegistry;
  */
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(prefix = "spring.cloud.task", name = "single-instance-enabled",
 		havingValue = "true")
 public class SingleTaskConfiguration {

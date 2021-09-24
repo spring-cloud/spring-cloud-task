@@ -30,7 +30,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Profile("embedded")
 public class EmbeddedDataSourceConfiguration {
 

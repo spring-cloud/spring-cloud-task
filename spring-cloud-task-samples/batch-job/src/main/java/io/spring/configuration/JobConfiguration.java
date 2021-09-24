@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Michael Minella
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class JobConfiguration {
 
 	private static final Log logger = LogFactory.getLog(JobConfiguration.class);

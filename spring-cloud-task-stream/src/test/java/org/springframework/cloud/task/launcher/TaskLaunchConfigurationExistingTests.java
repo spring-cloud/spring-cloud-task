@@ -54,7 +54,7 @@ public class TaskLaunchConfigurationExistingTests {
 		assertThat(taskLauncher).isEqualTo(testTaskLauncher);
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	protected static class TestTaskDeployerConfiguration {
 
 		@Bean

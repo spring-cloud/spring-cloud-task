@@ -34,7 +34,7 @@ import org.springframework.messaging.MessageChannel;
 /**
  * @author Michael Minella
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(EnableBinding.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
 // @checkstyle:off
@@ -64,7 +64,7 @@ public class TaskEventAutoConfiguration {
 	/**
 	 * Configuration for a {@link TaskExecutionListener}.
 	 */
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	@EnableBinding(TaskEventChannels.class)
 	public static class ListenerConfiguration {
 

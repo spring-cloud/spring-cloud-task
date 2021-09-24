@@ -42,7 +42,7 @@ import org.springframework.util.StringUtils;
  * @author Michael Minella
  * @since 2.3
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ KafkaProperties.class, KafkaItemReaderProperties.class })
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class KafkaItemReaderAutoConfiguration {

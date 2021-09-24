@@ -87,7 +87,7 @@ public class MultiDataSourcesExternalApplicationTests {
 			.as("Unable to find update task message: " + output).isTrue();
 	}
 
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	public static class TaskLauncherConfiguration {
 
 		private static Server defaultServer;

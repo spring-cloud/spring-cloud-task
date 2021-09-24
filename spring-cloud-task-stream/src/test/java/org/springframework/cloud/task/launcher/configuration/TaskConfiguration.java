@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Glenn Renfro
  */
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TaskConfiguration {
 
 	@Bean
