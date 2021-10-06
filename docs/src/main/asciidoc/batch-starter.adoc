@@ -68,7 +68,7 @@ To begin, the starter provides a set of properties that let you configure the ba
 With the above properties configured, you have a job with a single, chunk-based step.
 This chunk-based step reads, processes, and writes `Map<String, Object>` instances as the
 items. However, the step does not yet do anything. You need to configure an `ItemReader`, an
-optional `ItemProcessor`, and an `ItemWiter` to give it something to do. To configure one
+optional `ItemProcessor`, and an `ItemWriter` to give it something to do. To configure one
 of these, you can either use properties and configure one of the options that has provided
 autoconfiguration or you can configure your own with the standard Spring configuration
 mechanisms.
@@ -530,4 +530,4 @@ Second, this starter lets you configure two properties on the writer.
 | Whether the items being passed to the writer are all to be sent as delete events to the topic.
 |===
 
-For more about the configuration options for the `KafkaItemWiter`, see the  https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[`KafkaItemWiter` documentation].
+For more about the configuration options for the `KafkaItemWriter`, see the  https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[`KafkaItemWiter` documentation].
