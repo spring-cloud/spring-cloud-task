@@ -13,7 +13,7 @@
 		<test.containers.version>1.15.3</test.containers.version>
 		<test.rabbit.containers.version>1.15.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<spring-kafka-version>2.8.0-M1</spring-kafka-version>
+		<spring-kafka-version>2.8.0-SNAPSHOT</spring-kafka-version>
 		<spring-cloud-stream.version>3.2.0-SNAPSHOT</spring-cloud-stream.version>
 	</properties>
 
