@@ -208,15 +208,15 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private JobParameters removeNonIdentifying(JobParameters parameters) {
 		Map<String, JobParameter> parameterMap = parameters.getParameters();
-		HashMap<String, JobParameter> copy = new HashMap<>(parameterMap);
+		HashMap<String, JobParameter> copy = new HashMap<>();
 
-		for (Map.Entry<String, JobParameter> parameter : copy.entrySet()) {
-			if (!parameter.getValue().isIdentifying()) {
-				parameterMap.remove(parameter.getKey());
+		for (Map.Entry<String, JobParameter> parameter : parameterMap.entrySet()) {
+			if (parameter.getValue().isIdentifying()) {
+				copy.put(parameter.getKey(), parameter.getValue());
 			}
 		}
 
-		return new JobParameters(parameterMap);
+		return new JobParameters(copy);
 	}
 
 	private boolean isStoppedOrFailed(JobExecution execution) {
