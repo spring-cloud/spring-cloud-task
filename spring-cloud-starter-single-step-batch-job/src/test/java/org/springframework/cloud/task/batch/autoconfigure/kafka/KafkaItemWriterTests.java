@@ -24,6 +24,8 @@ import java.util.Map;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -43,23 +45,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
-// @EmbeddedKafka(partitions = 1, topics = { "topic1" })
+@EmbeddedKafka(partitions = 1, topics = { "topic1" })
 public class KafkaItemWriterTests {
 
 	private static EmbeddedKafkaBroker embeddedKafkaBroker;
 
-// 	@BeforeAll
+	@BeforeAll
 	public static void setupTest(EmbeddedKafkaBroker embeddedKafka) {
 		embeddedKafkaBroker = embeddedKafka;
 		embeddedKafka.addTopics("topic2");
 	}
 
-//	@Test
+	@Test
 	public void testBaseKafkaItemWriter() {
 		final String topicName = "topic1";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
