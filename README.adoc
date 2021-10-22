@@ -5,7 +5,7 @@ Edit the files in the src/main/asciidoc/ directory instead.
 ////
 
 
-= Spring Cloud Task image:https://build.spring.io/plugins/servlet/wittified/build-status/SCT-STASK[Build Status, link=https://build.spring.io/browse/SCT-STASK]
+= Spring Cloud Task
 
 Is a project centered around the idea of processing on demand.  A user is able to develop
 a “task” that can be deployed, executed and removed on demand, yet the result of the
