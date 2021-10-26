@@ -19,7 +19,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-cloud-deployer>2.5.0</spring-cloud-deployer>
+		<spring-cloud-deployer>2.7.0</spring-cloud-deployer>
 	</properties>
 
 	<dependencyManagement>
