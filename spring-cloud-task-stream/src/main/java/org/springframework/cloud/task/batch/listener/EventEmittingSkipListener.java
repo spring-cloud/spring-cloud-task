@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
@@ -43,17 +43,22 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(EventEmittingSkipListener.class);
 
-	private MessagePublisher<Object> messagePublisher;
+	private final MessagePublisher<Object> messagePublisher;
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	public EventEmittingSkipListener(MessageChannel output) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+	private TaskEventProperties properties;
+
+	public EventEmittingSkipListener(MessagePublisher messagePublisher, TaskEventProperties properties) {
+		Assert.notNull(messagePublisher, "messagePublisher is required");
+		Assert.notNull(properties, "properties is required");
+
+		this.messagePublisher = messagePublisher;
+		this.properties = properties;
 	}
 
-	public EventEmittingSkipListener(MessageChannel output, int order) {
-		this(output);
+	public EventEmittingSkipListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+		this(messagePublisher, properties);
 		this.order = order;
 	}
 
@@ -62,8 +67,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInRead: " + t.getMessage(), t);
 		}
-		this.messagePublisher.publishWithThrowableHeader("Skipped when reading.",
-				t.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(), "Skipped when reading.", t.getMessage());
 	}
 
 	@Override
@@ -71,7 +75,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInWrite: " + t.getMessage(), t);
 		}
-		this.messagePublisher.publishWithThrowableHeader(item, t.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(), item, t.getMessage());
 	}
 
 	@Override
@@ -79,7 +83,7 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInProcess: " + t.getMessage(), t);
 		}
-		this.messagePublisher.publishWithThrowableHeader(item, t.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(), item, t.getMessage());
 	}
 
 	@Override

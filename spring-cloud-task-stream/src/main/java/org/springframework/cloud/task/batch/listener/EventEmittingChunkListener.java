@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 the original author or authors.
+ * Copyright 2017-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
@@ -38,30 +35,34 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingChunkListener implements ChunkListener, Ordered {
 
-	private static final Log logger = LogFactory.getLog(EventEmittingChunkListener.class);
-
-	private MessagePublisher<String> messagePublisher;
-
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	public EventEmittingChunkListener(MessageChannel output) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher(output);
+	private MessagePublisher messagePublisher;
+
+	private TaskEventProperties properties;
+
+	public EventEmittingChunkListener(MessagePublisher messagePublisher, TaskEventProperties properties) {
+		Assert.notNull(messagePublisher, "messagePublisher is required");
+		Assert.notNull(properties, "properties is required");
+		this.messagePublisher = messagePublisher;
+		this.properties = properties;
 	}
 
-	public EventEmittingChunkListener(MessageChannel output, int order) {
-		this(output);
+	public EventEmittingChunkListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+		this(messagePublisher, properties);
 		this.order = order;
 	}
 
 	@Override
 	public void beforeChunk(ChunkContext context) {
-		this.messagePublisher.publish("Before Chunk Processing");
+		this.messagePublisher.publish(this.properties.getChunkEventBindingName(),
+			"Before Chunk Processing");
 	}
 
 	@Override
 	public void afterChunk(ChunkContext context) {
-		this.messagePublisher.publish("After Chunk Processing");
+		this.messagePublisher.publish(this.properties.getChunkEventBindingName(),
+			"After Chunk Processing");
 	}
 
 	@Override

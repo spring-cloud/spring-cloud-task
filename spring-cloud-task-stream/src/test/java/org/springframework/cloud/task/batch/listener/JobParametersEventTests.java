@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.cloud.task.batch.listener.support.JobParametersEvent;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -55,7 +53,7 @@ public class JobParametersEventTests {
 	public void testDefaultConstructor() {
 		JobParametersEvent jobParametersEvent = new JobParametersEvent();
 		assertThat(jobParametersEvent.getParameters().size()).isEqualTo(0);
-		assertTrue(jobParametersEvent.isEmpty());
+		assertThat(jobParametersEvent.isEmpty()).isTrue();
 	}
 
 	@Test
@@ -74,10 +72,10 @@ public class JobParametersEventTests {
 
 	@Test
 	public void testEquals() {
-		assertTrue(getPopulatedParametersEvent().equals(getPopulatedParametersEvent()));
+		assertThat(getPopulatedParametersEvent().equals(getPopulatedParametersEvent())).isTrue();
 		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
-		assertFalse(jobParametersEvent.equals("FOO"));
-		assertTrue(jobParametersEvent.equals(jobParametersEvent));
+		assertThat(jobParametersEvent.equals("FOO")).isFalse();
+		assertThat(jobParametersEvent.equals(jobParametersEvent)).isTrue();
 	}
 
 	@Test

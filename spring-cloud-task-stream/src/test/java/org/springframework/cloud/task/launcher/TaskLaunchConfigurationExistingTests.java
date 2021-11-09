@@ -19,14 +19,13 @@ package org.springframework.cloud.task.launcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,25 +36,23 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Glenn Renfro
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {
-		TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class })
 public class TaskLaunchConfigurationExistingTests {
 
 	private static TaskLauncher testTaskLauncher;
 
-	@Autowired
-	private ApplicationContext context;
-
 	@Test
 	public void testTaskLauncher() {
-		LocalTaskLauncher taskLauncher = this.context.getBean(LocalTaskLauncher.class);
-		assertThat(testTaskLauncher).isNotNull();
-		assertThat(taskLauncher).isNotNull();
-		assertThat(taskLauncher).isEqualTo(testTaskLauncher);
+		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
+			TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class).web(WebApplicationType.NONE).run(
+			"--spring.jmx.enabled=false")) {
+			LocalTaskLauncher taskLauncher = context.getBean(LocalTaskLauncher.class);
+			assertThat(testTaskLauncher).isNotNull();
+			assertThat(taskLauncher).isNotNull();
+			assertThat(taskLauncher).isEqualTo(testTaskLauncher);
+		}
 	}
 
-	@Configuration(proxyBeanMethods = false)
-	protected static class TestTaskDeployerConfiguration {
+	private static class TestTaskDeployerConfiguration {
 
 		@Bean
 		public TaskLauncher taskLauncher() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
@@ -44,23 +44,29 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 	private static final Log logger = LogFactory
 			.getLog(EventEmittingItemWriteListener.class);
 
-	private MessagePublisher<String> messagePublisher;
-
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	public EventEmittingItemWriteListener(MessageChannel output) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+	private final MessagePublisher<String> messagePublisher;
+
+	private TaskEventProperties properties;
+
+	public EventEmittingItemWriteListener(MessagePublisher messagePublisher, TaskEventProperties properties) {
+		Assert.notNull(messagePublisher, "messagePublisher is required");
+		Assert.notNull(properties, "properties is required");
+
+		this.messagePublisher = messagePublisher;
+		this.properties = properties;
 	}
 
-	public EventEmittingItemWriteListener(MessageChannel output, int order) {
-		this(output);
+	public EventEmittingItemWriteListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+		this(messagePublisher, properties);
 		this.order = order;
 	}
 
 	@Override
 	public void beforeWrite(List items) {
-		this.messagePublisher.publish(items.size() + " items to be written.");
+		this.messagePublisher.publish(this.properties.getItemWriteEventBindingName(),
+			items.size() + " items to be written.");
 	}
 
 	@Override
@@ -68,7 +74,8 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing afterWrite: " + items);
 		}
-		this.messagePublisher.publish(items.size() + " items have been written.");
+		this.messagePublisher.publish(this.properties.getItemWriteEventBindingName(),
+			items.size() + " items have been written.");
 	}
 
 	@Override
@@ -78,7 +85,8 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		}
 		String payload = "Exception while " + items.size()
 				+ " items are attempted to be written.";
-		this.messagePublisher.publishWithThrowableHeader(payload, exception.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(
+			this.properties.getItemWriteEventBindingName(), payload, exception.getMessage());
 	}
 
 	@Override

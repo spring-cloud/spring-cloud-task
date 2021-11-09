@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
@@ -37,28 +37,32 @@ import org.springframework.util.Assert;
 public class EventEmittingStepExecutionListener
 		implements StepExecutionListener, Ordered {
 
-	private MessagePublisher<StepExecutionEvent> messagePublisher;
-
+	private final MessagePublisher<StepExecutionEvent> messagePublisher;
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	public EventEmittingStepExecutionListener(MessageChannel output) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+	private TaskEventProperties properties;
+
+	public EventEmittingStepExecutionListener(MessagePublisher messagePublisher, TaskEventProperties properties) {
+		Assert.notNull(messagePublisher, "messagePublisher is required");
+		Assert.notNull(properties, "properties is required");
+
+		this.messagePublisher = messagePublisher;
+		this.properties = properties;
 	}
 
-	public EventEmittingStepExecutionListener(MessageChannel output, int order) {
-		this(output);
+	public EventEmittingStepExecutionListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+		this(messagePublisher, properties);
 		this.order = order;
 	}
 
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(new StepExecutionEvent(stepExecution));
+		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(), new StepExecutionEvent(stepExecution));
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(new StepExecutionEvent(stepExecution));
+		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(), new StepExecutionEvent(stepExecution));
 
 		return stepExecution.getExitStatus();
 	}

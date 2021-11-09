@@ -23,6 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipInstall>true</skipInstall>
 		<spring-cloud-stream>3.2.0-SNAPSHOT</spring-cloud-stream>
+		<spring-cloud-deployer-version>2.7.0</spring-cloud-deployer-version>
 	</properties>
 
 	<dependencyManagement>
@@ -55,13 +56,21 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-deployer-local</artifactId>
+			<version>${spring-cloud-deployer-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+			<version>${spring-cloud-stream}</version>
+			<type>test-jar</type>
+			<classifier>test-binder</classifier>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

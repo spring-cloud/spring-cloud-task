@@ -22,22 +22,22 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.config.BindingServiceConfiguration;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
+import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.integration.gateway.GatewayProxyFactoryBean;
-import org.springframework.messaging.MessageChannel;
 
 /**
  * @author Michael Minella
  * @author Glenn Renfro
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(EnableBinding.class)
+@ConditionalOnClass(StreamBridge.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
 @ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${spring.batch.job.jobName:}')")
 // @checkstyle:off
@@ -47,38 +47,32 @@ import org.springframework.messaging.MessageChannel;
 @PropertySource("classpath:/org/springframework/cloud/task/application.properties")
 @AutoConfigureBefore(BindingServiceConfiguration.class)
 @AutoConfigureAfter(SimpleTaskAutoConfiguration.class)
+@EnableConfigurationProperties(TaskEventProperties.class)
 public class TaskEventAutoConfiguration {
-
-	/**
-	 * Task Event channels definition.
-	 */
-	public interface TaskEventChannels {
-
-		/**
-		 * Name of the default task events channel.
-		 */
-		String TASK_EVENTS = "task-events";
-
-		@Output(TASK_EVENTS)
-		MessageChannel taskEvents();
-
-	}
 
 	/**
 	 * Configuration for a {@link TaskExecutionListener}.
 	 */
 	@Configuration(proxyBeanMethods = false)
-	@EnableBinding(TaskEventChannels.class)
 	public static class ListenerConfiguration {
-
 		@Bean
-		public GatewayProxyFactoryBean taskEventListener() {
-			GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(
-					TaskExecutionListener.class);
+		public TaskExecutionListener taskEventEmitter(StreamBridge streamBridge, TaskEventProperties taskEventProperties) {
+			return new TaskExecutionListener() {
+				@Override
+				public void onTaskStartup(TaskExecution taskExecution) {
+					streamBridge.send(taskEventProperties.getTaskEventBindingName(), taskExecution);
+				}
 
-			factoryBean.setDefaultRequestChannelName(TaskEventChannels.TASK_EVENTS);
+				@Override
+				public void onTaskEnd(TaskExecution taskExecution) {
+					streamBridge.send(taskEventProperties.getTaskEventBindingName(), taskExecution);
+				}
 
-			return factoryBean;
+				@Override
+				public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
+					streamBridge.send(taskEventProperties.getTaskEventBindingName(), taskExecution);
+				}
+			};
 		}
 
 	}

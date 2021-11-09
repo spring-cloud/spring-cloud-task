@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 the original author or authors.
+ * Copyright 2017-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,15 @@ public class TaskEventProperties {
 	 */
 	private int skipOrder = Ordered.LOWEST_PRECEDENCE;
 
+	private String jobExecutionEventBindingName = "job-execution-events";
+	private String skipEventBindingName = "skip-events";
+	private String chunkEventBindingName = "chunk-events";
+	private String itemProcessEventBindingName = "item-process-events";
+	private String itemReadEventBindingName = "item-read-events";
+	private String itemWriteEventBindingName = "item-write-events";
+	private String stepExecutionEventBindingName = "step-execution-events";
+	private String taskEventBindingName = "task-events";
+
 	public int getJobExecutionOrder() {
 		return this.jobExecutionOrder;
 	}
@@ -123,4 +132,68 @@ public class TaskEventProperties {
 		this.skipOrder = skipOrder;
 	}
 
+
+	public String getJobExecutionEventBindingName() {
+		return jobExecutionEventBindingName;
+	}
+
+	public void setJobExecutionEventBindingName(String jobExecutionEventBindingName) {
+		this.jobExecutionEventBindingName = jobExecutionEventBindingName;
+	}
+
+	public String getSkipEventBindingName() {
+		return skipEventBindingName;
+	}
+
+	public void setSkipEventBindingName(String skipEventBindingName) {
+		this.skipEventBindingName = skipEventBindingName;
+	}
+
+	public String getChunkEventBindingName() {
+		return chunkEventBindingName;
+	}
+
+	public void setChunkEventBindingName(String chunkEventBindingName) {
+		this.chunkEventBindingName = chunkEventBindingName;
+	}
+
+	public String getItemProcessEventBindingName() {
+		return itemProcessEventBindingName;
+	}
+
+	public void setItemProcessEventBindingName(String itemProcessEventBindingName) {
+		this.itemProcessEventBindingName = itemProcessEventBindingName;
+	}
+
+	public String getItemReadEventBindingName() {
+		return itemReadEventBindingName;
+	}
+
+	public void setItemReadEventBindingName(String itemReadEventBindingName) {
+		this.itemReadEventBindingName = itemReadEventBindingName;
+	}
+
+	public String getItemWriteEventBindingName() {
+		return itemWriteEventBindingName;
+	}
+
+	public void setItemWriteEventBindingName(String itemWriteEventBindingName) {
+		this.itemWriteEventBindingName = itemWriteEventBindingName;
+	}
+
+	public String getStepExecutionEventBindingName() {
+		return stepExecutionEventBindingName;
+	}
+
+	public void setStepExecutionEventBindingName(String stepExecutionEventBindingName) {
+		this.stepExecutionEventBindingName = stepExecutionEventBindingName;
+	}
+
+	public String getTaskEventBindingName() {
+		return taskEventBindingName;
+	}
+
+	public void setTaskEventBindingName(String taskEventBindingName) {
+		this.taskEventBindingName = taskEventBindingName;
+	}
 }

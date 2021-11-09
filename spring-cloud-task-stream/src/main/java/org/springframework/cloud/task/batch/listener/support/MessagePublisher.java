@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.Assert;
 
@@ -29,31 +29,32 @@ import org.springframework.util.Assert;
  */
 public class MessagePublisher<P> {
 
-	private final MessageChannel listenerEventsChannel;
 
-	public MessagePublisher(MessageChannel listenerEventsChannel) {
-		Assert.notNull(listenerEventsChannel, "listenerEventsChannel must not be null");
-		this.listenerEventsChannel = listenerEventsChannel;
+	private final StreamBridge streamBridge;
+
+	public MessagePublisher(StreamBridge streamBridge) {
+		Assert.notNull(streamBridge, "streamBridge must not be null");
+		this.streamBridge = streamBridge;
 	}
 
-	public final void publish(P payload) {
+	public final void publish(String bindingName, P payload) {
 		if (payload instanceof Message) {
-			this.publishMessage((Message<?>) payload);
+			this.publishMessage(bindingName, (Message<?>) payload);
 		}
 		else {
 			Message<P> message = MessageBuilder.withPayload(payload).build();
-			this.listenerEventsChannel.send(message);
+			this.streamBridge.send(bindingName, message);
 		}
 	}
 
-	private void publishMessage(Message<?> message) {
-		this.listenerEventsChannel.send(message);
+	private void publishMessage(String bindingName, Message<?> message) {
+		this.streamBridge.send(bindingName, message);
 	}
 
-	public void publishWithThrowableHeader(P payload, String header) {
+	public void publishWithThrowableHeader(String bindingName, P payload, String header) {
 		Message<P> message = MessageBuilder.withPayload(payload)
 				.setHeader(BatchJobHeaders.BATCH_EXCEPTION, header).build();
-		publishMessage(message);
+		publishMessage(bindingName, message);
 	}
 
 }

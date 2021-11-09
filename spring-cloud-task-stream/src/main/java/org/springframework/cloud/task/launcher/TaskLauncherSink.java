@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.launcher;
 
+import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +26,9 @@ import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoa
 import org.springframework.cloud.deployer.spi.core.AppDefinition;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
-import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.messaging.Message;
 import org.springframework.util.Assert;
 
 /**
@@ -36,7 +37,6 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  */
 
-@EnableBinding(Sink.class)
 public class TaskLauncherSink {
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLauncherSink.class);
@@ -52,13 +52,13 @@ public class TaskLauncherSink {
 
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
-	 * @param taskLaunchRequest is a TaskLaunchRequest containing the information required
-	 * to launch a task.
-	 * @throws Exception if error occurs during task launch.
+	 * @return the {@link Consumer} that will retrieve messages from binder.
 	 */
-	@ServiceActivator(inputChannel = Sink.INPUT)
-	public void taskLauncherSink(TaskLaunchRequest taskLaunchRequest) throws Exception {
-		launchTask(taskLaunchRequest);
+	@Bean
+	public Consumer<Message<TaskLaunchRequest>> taskLauncherSink() {
+		return messagePayload -> {
+			launchTask(messagePayload.getPayload());
+		};
 	}
 
 	private void launchTask(TaskLaunchRequest taskLaunchRequest) {

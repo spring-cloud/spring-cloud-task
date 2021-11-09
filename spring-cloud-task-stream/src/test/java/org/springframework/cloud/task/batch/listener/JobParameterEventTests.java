@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.cloud.task.batch.listener.support.JobParameterEvent;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -37,7 +35,7 @@ public class JobParameterEventTests {
 		JobParameterEvent jobParameterEvent = new JobParameterEvent();
 		assertThat(jobParameterEvent.getValue()).isNull();
 		assertThat(jobParameterEvent.getType()).isNull();
-		assertFalse(jobParameterEvent.isIdentifying());
+		assertThat(jobParameterEvent.isIdentifying()).isFalse();
 		assertThat(jobParameterEvent).isEqualTo(new JobParameterEvent());
 	}
 
@@ -50,15 +48,15 @@ public class JobParameterEventTests {
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_VALUE);
 		assertThat(jobParameterEvent.getType())
 				.isEqualTo(JobParameterEvent.ParameterType.STRING);
-		assertTrue(jobParameterEvent.isIdentifying());
+		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 
 		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, true);
 		jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_DATE_VALUE);
 		assertThat(jobParameterEvent.getType())
 				.isEqualTo(JobParameterEvent.ParameterType.DATE);
-		assertTrue(jobParameterEvent.isIdentifying());
-		assertTrue(new JobParameterEvent(jobParameter).equals(jobParameterEvent));
+		assertThat(jobParameterEvent.isIdentifying()).isTrue();
+		assertThat(new JobParameterEvent(jobParameter).equals(jobParameterEvent)).isTrue();
 	}
 
 	@Test
@@ -68,9 +66,9 @@ public class JobParameterEventTests {
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		JobParameterEvent anotherJobParameterEvent = new JobParameterEvent(jobParameter);
 
-		assertTrue(jobParameterEvent.equals(jobParameterEvent));
-		assertFalse(jobParameterEvent.equals("nope"));
-		assertTrue(jobParameterEvent.equals(anotherJobParameterEvent));
+		assertThat(jobParameterEvent.equals(jobParameterEvent)).isTrue();
+		assertThat(jobParameterEvent.equals("nope")).isFalse();
+		assertThat(jobParameterEvent.equals(anotherJobParameterEvent)).isTrue();
 	}
 
 	@Test

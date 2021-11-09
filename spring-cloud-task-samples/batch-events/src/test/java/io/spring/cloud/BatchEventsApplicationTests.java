@@ -16,66 +16,92 @@
 
 package io.spring.cloud;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Tag;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.RabbitMQContainer;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.stream.binder.test.OutputDestination;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Import;
+import org.springframework.messaging.Message;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("DockerRequired")
 public class BatchEventsApplicationTests {
+	private static final String TASK_NAME = "taskEventTest";
 
-	static {
-		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")
-			.withExposedPorts(5672);
-		rabbitmq.start();
-		final Integer mappedPort = rabbitmq.getMappedPort(5672);
-		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
-		rabbitPort = mappedPort.toString();
+	private ConfigurableApplicationContext applicationContext;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	private final TaskEventProperties taskEventProperties = new TaskEventProperties();
+
+	@BeforeEach
+	public void setup() {
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	// Count for two job execution events per task
-	static CountDownLatch jobExecutionLatch = new CountDownLatch(2);
-
-	private static String rabbitPort;
+	@AfterEach
+	public void tearDown() {
+		if (this.applicationContext != null && this.applicationContext.isActive()) {
+			this.applicationContext.close();
+		}
+	}
 
 	@Test
 	public void testExecution() throws Exception {
-		SpringApplication
-			.run(JobExecutionListenerBinding.class, "--spring.main.web-environment=false");
-		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
-			"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
-			"--spring.jmx.default-domain=fakedomain",
-			"--spring.main.webEnvironment=false",
-			"--spring.rabbitmq.port=" + rabbitPort);
-		assertThat(jobExecutionLatch.await(60, TimeUnit.SECONDS))
-			.as("The latch did not count down to zero before timeout").isTrue();
+		List<Message<byte[]>> result = testListener(
+			taskEventProperties.getJobExecutionEventBindingName(), 1);
+		JobExecutionEvent jobExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
+			JobExecutionEvent.class);
+		assertThat(jobExecutionEvent.getJobInstance().getJobName())
+			.isEqualTo("job").as("Job name should be job");
 	}
 
-	@EnableBinding(Sink.class)
-	@PropertySource("classpath:io/spring/task/listener/job-listener-sink-channel.properties")
-	@Configuration(proxyBeanMethods = false)
-	public static class JobExecutionListenerBinding {
+	private String[] getCommandLineParams(boolean enableFailJobConfig) {
+		String jobConfig = enableFailJobConfig ?
+			"--spring.cloud.task.test.enable-job-configuration=true" :
+			"--spring.cloud.task.test.enable-fail-job-configuration=true";
+		return new String[]{"--spring.cloud.task.closecontext_enable=false",
+			"--spring.cloud.task.name=" + TASK_NAME,
+			"--spring.main.web-environment=false",
+			"--spring.cloud.stream.defaultBinder=rabbit",
+			"--spring.cloud.stream.bindings.task-events.destination=test",
+			jobConfig,
+			"foo=" + UUID.randomUUID()};
+	}
 
-		@StreamListener(Sink.INPUT)
-		public void receive(JobExecutionEvent execution) {
-			BDDAssertions.then(execution.getJobInstance().getJobName())
-				.isEqualTo("job").as("Job name should be job");
-			jobExecutionLatch.countDown();
+	private List<Message<byte[]>> testListener(String bindingName, int numberToRead) {
+		List<Message<byte[]>> results = new ArrayList<>();
+		this.applicationContext = new SpringApplicationBuilder()
+			.sources(TestChannelBinderConfiguration
+				.getCompleteConfiguration(BatchEventsTestApplication.class)).web(WebApplicationType.NONE).build()
+			.run(getCommandLineParams(true));
+		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
+		for (int i = 0; i < numberToRead; i++) {
+			results.add(target.receive(10000, bindingName));
 		}
+		return results;
+	}
+
+	@SpringBootApplication
+	@Import({BatchEventsApplication.class})
+	public static class BatchEventsTestApplication {
 	}
 
 }

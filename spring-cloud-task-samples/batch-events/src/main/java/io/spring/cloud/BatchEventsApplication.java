@@ -47,7 +47,7 @@ public class BatchEventsApplication {
 		SpringApplication.run(BatchEventsApplication.class, args);
 	}
 
-	@Configuration(proxyBeanMethods = false)
+	@Configuration
 	public static class JobConfiguration {
 
 		private static final int DEFAULT_CHUNK_COUNT = 3;

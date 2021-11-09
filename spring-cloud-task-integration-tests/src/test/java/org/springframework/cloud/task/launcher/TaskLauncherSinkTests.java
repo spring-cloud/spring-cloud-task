@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
 import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.task.launcher.app.TaskLauncherSinkApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -62,7 +62,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 		classes = { TaskLauncherSinkApplication.class,
 				TaskLauncherSinkTests.TaskLauncherConfiguration.class },
 		properties = {
-				"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release" })
+			"maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release",
+			"spring.cloud.stream.function.bindings.taskLauncherSink-in-0=input",
+			"spring.cloud.stream.bindings.input.destination=taskLauncherSinkExchange" })
 public class TaskLauncherSinkTests {
 
 	private final static int WAIT_INTERVAL = 500;
@@ -70,7 +72,7 @@ public class TaskLauncherSinkTests {
 	private final static int MAX_WAIT_TIME = 120000;
 
 	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:2.0.0.RELEASE";
+			+ "timestamp-task:2.1.1.RELEASE";
 
 	private final static String DATASOURCE_URL;
 
@@ -96,7 +98,7 @@ public class TaskLauncherSinkTests {
 	}
 
 	@Autowired
-	private Sink sink;
+	private StreamBridge streamBridge;
 
 	private DataSource dataSource;
 
@@ -185,11 +187,10 @@ public class TaskLauncherSinkTests {
 	}
 
 	private void launchTask(String artifactURL) {
-
 		TaskLaunchRequest request = new TaskLaunchRequest(artifactURL, null,
 				this.properties, null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
-		this.sink.input().send(message);
+		this.streamBridge.send("taskLauncherSinkExchange", message);
 	}
 
 	@Configuration

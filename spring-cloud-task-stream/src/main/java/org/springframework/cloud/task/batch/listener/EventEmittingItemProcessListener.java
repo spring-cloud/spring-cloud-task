@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 
 package org.springframework.cloud.task.batch.listener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
+import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
 /**
@@ -40,17 +43,24 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemProcessListener implements ItemProcessListener, Ordered {
 
-	private MessagePublisher<String> messagePublisher;
+	private static final Log logger = LogFactory
+		.getLog(EventEmittingItemProcessListener.class);
+
+	private MessagePublisher messagePublisher;
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	public EventEmittingItemProcessListener(MessageChannel output) {
-		Assert.notNull(output, "An output channel is required");
-		this.messagePublisher = new MessagePublisher<>(output);
+	private TaskEventProperties properties;
+
+	public EventEmittingItemProcessListener(MessagePublisher messagePublisher, TaskEventProperties properties) {
+		Assert.notNull(messagePublisher, "messagePublisher is required");
+		Assert.notNull(properties, "properties is required");
+		this.messagePublisher = messagePublisher;
+		this.properties = properties;
 	}
 
-	public EventEmittingItemProcessListener(MessageChannel output, int order) {
-		this(output);
+	public EventEmittingItemProcessListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+		this(messagePublisher, properties);
 		this.order = order;
 	}
 
@@ -61,20 +71,24 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 	@Override
 	public void afterProcess(Object item, Object result) {
 		if (result == null) {
-			this.messagePublisher.publish("1 item was filtered");
+			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "1 item was filtered");
 		}
 		else if (item.equals(result)) {
-			this.messagePublisher.publish("item equaled result after processing");
+			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "item equaled result after processing");
 		}
 		else {
-			this.messagePublisher.publish("item did not equal result after processing");
+			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "item did not equal result after processing");
 		}
 	}
 
 	@Override
 	public void onProcessError(Object item, Exception e) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Executing onProcessError: " + e.getMessage(), e);
+		}
 		this.messagePublisher.publishWithThrowableHeader(
-				"Exception while item was being processed", e.getMessage());
+			this.properties.getItemProcessEventBindingName(),
+			"Exception while item was being processed", e.getMessage());
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package io.spring;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.task.launcher.TaskLaunchRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.support.GenericMessage;
@@ -49,11 +48,10 @@ public class TaskSinkApplicationTests {
 	ApplicationContext context;
 
 	@Autowired
-	private Sink sink;
+	private StreamBridge streamBridge;
 
 	@Test
-	public void testLaunch() throws IOException {
-		assertThat(this.sink.input()).isNotNull();
+	public void testLaunch() {
 
 		TaskLauncher testTaskLauncher =
 			this.context.getBean(TaskLauncher.class);
@@ -65,8 +63,7 @@ public class TaskSinkApplicationTests {
 				+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
 			null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
-		this.sink.input().send(message);
-
+		this.streamBridge.send("taskLauncherSink-in-0", message);
 		ArgumentCaptor<AppDeploymentRequest> deploymentRequest = ArgumentCaptor
 			.forClass(AppDeploymentRequest.class);
 
