@@ -5,7 +5,9 @@ include::_attributes.adoc[]
 
 // ======================================================================================
 
-(C) 2009-2020 VMware, Inc. All rights reserved.
+Version {project-version}
+
+(C) 2009-2021 VMware, Inc. All rights reserved.
 
 Copies of this document may be made for your own use and for distribution to
 others, provided that you do not charge any fee for such copies and further

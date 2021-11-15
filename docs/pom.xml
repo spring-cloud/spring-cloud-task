@@ -82,6 +82,7 @@
 										<pagenums />
 										<sectnums />
 										<toc />
+										<project-version>${project.version}</project-version>
 									</attributes>
 								</configuration>
 							</execution>
