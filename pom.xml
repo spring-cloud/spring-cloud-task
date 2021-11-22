@@ -17,7 +17,7 @@
 	<description>Spring Cloud Task Build</description>
 	<url>https://cloud.spring.io/spring-cloud-task/</url>
 	<organization>
-		<name>Pivotal Software, Inc.</name>
+		<name>VMware, Inc.</name>
 		<url>https://www.spring.io</url>
 	</organization>
 	<licenses>
@@ -33,8 +33,8 @@
 		<developer>
 			<id>mminella</id>
 			<name>Michael Minella</name>
-			<email>mminella at pivotal.io</email>
-			<organization>Pivotal Software, Inc.</organization>
+			<email>mminella at vmware.com</email>
+			<organization>VMware, Inc.</organization>
 			<organizationUrl>https://www.spring.io</organizationUrl>
 			<roles>
 				<role>Project Lead</role>
@@ -43,8 +43,8 @@
 		<developer>
 			<id>cppwfs</id>
 			<name>Glenn Renfro</name>
-			<email>grenfro at pivotal.io</email>
-			<organization>Pivotal Software, Inc.</organization>
+			<email>grenfro at vmware</email>
+			<organization>VMware, Inc.</organization>
 			<organizationUrl>https://www.spring.io</organizationUrl>
 		</developer>
 	</developers>
