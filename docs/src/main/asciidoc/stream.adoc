@@ -29,7 +29,7 @@ NOTE: If the payload is of a different type, the sink throws an exception.
 For example, a stream can be created that has a processor that takes in data from an
 HTTP source and creates a `GenericMessage` that contains the `TaskLaunchRequest` and sends
 the message to its output channel. The task sink would then receive the message from its
-input channnel and then launch the task.
+input channel and then launch the task.
 
 To create a taskSink, you need only create a Spring Boot application that includes the
 `EnableTaskLauncher` annotation, as shown in the following example:
@@ -103,11 +103,11 @@ public class TaskEventsApplication {
 	public static class TaskConfiguration {
 
 		@Bean
-		public CommandLineRunner commandLineRunner() {
-			return new CommandLineRunner() {
+		public ApplicationRunner applicationRunner() {
+			return new ApplicationRunner() {
 				@Override
-				public void run(String... args) throws Exception {
-					System.out.println("The CommandLineRunner was executed");
+				public void run(ApplicationArguments args) {
+					System.out.println("The ApplicationRunner was executed");
 				}
 			};
 		}
@@ -172,7 +172,7 @@ if `StepExecutionListener` needs to emit its messages to another channel called
 `my-step-execution-events` instead of the default `step-execution-events`, you can add the
 following configuration:
 
-`spring.cloud.stream.bindings.step-execution-events.destination=my-step-execution-events`
+`spring.cloud.task.batch.events.step-execution-events-binding-name=my-step-execution-events`
 
 === Disabling Batch Events
 To disable the listener functionality for all batch events, use the following
