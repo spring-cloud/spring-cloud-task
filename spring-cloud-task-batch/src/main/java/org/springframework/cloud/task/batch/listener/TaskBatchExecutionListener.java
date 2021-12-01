@@ -23,6 +23,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
 /**
@@ -31,7 +32,7 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  */
-public class TaskBatchExecutionListener implements JobExecutionListener {
+public class TaskBatchExecutionListener implements JobExecutionListener,  Ordered {
 
 	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
 
@@ -67,4 +68,8 @@ public class TaskBatchExecutionListener implements JobExecutionListener {
 		}
 	}
 
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE;
+	}
 }
