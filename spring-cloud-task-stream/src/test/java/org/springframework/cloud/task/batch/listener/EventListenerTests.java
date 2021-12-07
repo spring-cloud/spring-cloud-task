@@ -131,7 +131,7 @@ public class EventListenerTests {
 			new RuntimeException("Test Exception"));
 
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
-				.isEqualTo("\"Exception while item was being processed\"");
+				.isEqualTo("Exception while item was being processed");
 	}
 
 	@Test
@@ -139,15 +139,15 @@ public class EventListenerTests {
 		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS_EQUAL",
 				"HELLO_AFTER_PROCESS_EQUAL");
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
-			.isEqualTo("\"item equaled result after processing\"");
+			.isEqualTo("item equaled result after processing");
 
 		this.eventEmittingItemProcessListener.afterProcess("HELLO_NOT_EQUAL", "WORLD");
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
-				.isEqualTo("\"item did not equal result after processing\"");
+				.isEqualTo("item did not equal result after processing");
 
 		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS", null);
 		assertThat(getStringFromDestination(this.taskEventProperties.
-			getItemProcessEventBindingName())).isEqualTo("\"1 item was filtered\"");
+			getItemProcessEventBindingName())).isEqualTo("1 item was filtered");
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class EventListenerTests {
 	public void EventEmittingSkipListenerSkipRead() {
 		this.eventEmittingSkipListener.onSkipInRead(new RuntimeException("Text Exception"));
 		assertThat(getStringFromDestination(this.taskEventProperties.
-			getSkipEventBindingName())).isEqualTo("\"Skipped when reading.\"");
+			getSkipEventBindingName())).isEqualTo("Skipped when reading.");
 	}
 
 	@Test
@@ -185,7 +185,7 @@ public class EventListenerTests {
 	public void EventEmittingItemReadListener() {
 		this.eventEmittingItemReadListener.onReadError(new RuntimeException("Text Exception"));
 		assertThat(getStringFromDestination(this.taskEventProperties.
-			getItemReadEventBindingName())).isEqualTo("\"Exception while item was being read\"");
+			getItemReadEventBindingName())).isEqualTo("Exception while item was being read");
 	}
 
 	@Test
@@ -204,14 +204,14 @@ public class EventListenerTests {
 	public void EventEmittingItemWriteListenerBeforeWrite() {
 		this.eventEmittingItemWriteListener.beforeWrite(getSampleList());
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemWriteEventBindingName()))
-			.isEqualTo("\"3 items to be written.\"");
+			.isEqualTo("3 items to be written.");
 	}
 
 	@Test
 	public void EventEmittingItemWriteListenerAfterWrite() {
 		this.eventEmittingItemWriteListener.afterWrite(getSampleList());
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemWriteEventBindingName()))
-			.isEqualTo("\"3 items have been written.\"");
+			.isEqualTo("3 items have been written.");
 	}
 
 	@Test
@@ -220,7 +220,7 @@ public class EventListenerTests {
 		this.eventEmittingItemWriteListener.onWriteError(exception, getSampleList());
 
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemWriteEventBindingName()))
-				.isEqualTo("\"Exception while 3 items are attempted to be written.\"");
+				.isEqualTo("Exception while 3 items are attempted to be written.");
 	}
 
 	@Test
@@ -274,7 +274,7 @@ public class EventListenerTests {
 
 	@Test
 	public void EventEmittingChunkExecutionListenerBeforeChunk() {
-		final String CHUNK_MESSAGE = "\"Before Chunk Processing\"";
+		final String CHUNK_MESSAGE = "Before Chunk Processing";
 		this.eventEmittingChunkListener.beforeChunk(getChunkContext());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);
@@ -282,7 +282,7 @@ public class EventListenerTests {
 
 	@Test
 	public void EventEmittingChunkExecutionListenerAfterChunk() {
-		final String CHUNK_MESSAGE = "\"After Chunk Processing\"";
+		final String CHUNK_MESSAGE = "After Chunk Processing";
 		this.eventEmittingChunkListener.afterChunk(getChunkContext());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);

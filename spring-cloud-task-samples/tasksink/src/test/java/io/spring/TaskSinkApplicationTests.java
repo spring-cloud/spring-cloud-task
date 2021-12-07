@@ -64,6 +64,7 @@ public class TaskSinkApplicationTests {
 			null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<>(request);
 		this.streamBridge.send("taskLauncherSink-in-0", message);
+
 		ArgumentCaptor<AppDeploymentRequest> deploymentRequest = ArgumentCaptor
 			.forClass(AppDeploymentRequest.class);
 

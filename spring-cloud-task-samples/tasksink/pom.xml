@@ -4,7 +4,7 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>tasksink</artifactId>
-	<version>2.4.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Task Sink Sample Application</name>
@@ -23,6 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipInstall>true</skipInstall>
 		<spring-cloud-stream>3.2.0-SNAPSHOT</spring-cloud-stream>
+		<spring-cloud-task>3.0.0-SNAPSHOT</spring-cloud-task>
 		<spring-cloud-deployer-version>2.7.0</spring-cloud-deployer-version>
 	</properties>
 

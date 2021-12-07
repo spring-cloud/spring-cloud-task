@@ -130,7 +130,7 @@ public class BatchExecutionEventTests {
 			"--spring.cloud.task.batch.events.itemProcessEventBindingName=" + bindingName,
 			bindingName, 1);
 		String value = new String(result.get(0).getPayload());
-		assertThat(value).isEqualTo("\"item did not equal result after processing\"");
+		assertThat(value).isEqualTo("item did not equal result after processing");
 
 	}
 
@@ -142,9 +142,9 @@ public class BatchExecutionEventTests {
 			"--spring.cloud.task.batch.events.chunkEventBindingName=" + bindingName,
 			bindingName, 2);
 		String value = new String(result.get(0).getPayload());
-		assertThat(value).isEqualTo("\"Before Chunk Processing\"");
+		assertThat(value).isEqualTo("Before Chunk Processing");
 		value = new String(result.get(1).getPayload());
-		assertThat(value).isEqualTo("\"After Chunk Processing\"");
+		assertThat(value).isEqualTo("After Chunk Processing");
 	}
 
 	@Test
@@ -155,9 +155,9 @@ public class BatchExecutionEventTests {
 			"--spring.cloud.task.batch.events.itemWriteEventBindingName=" + bindingName,
 			bindingName, 2);
 		String value = new String(result.get(0).getPayload());
-		assertThat(value).isEqualTo("\"3 items to be written.\"");
+		assertThat(value).isEqualTo("3 items to be written.");
 		value = new String(result.get(1).getPayload());
-		assertThat(value).isEqualTo("\"3 items have been written.\"");
+		assertThat(value).isEqualTo("3 items have been written.");
 	}
 
 	private String[] getCommandLineParams(String sinkChannelParam) {
@@ -210,14 +210,14 @@ public class BatchExecutionEventTests {
 			"--spring.cloud.task.batch.events.itemReadEventBindingName=" + bindingName,
 			bindingName, 1);
 		String exceptionMessage = new String(result.get(0).getPayload());
-		assertThat(exceptionMessage).isEqualTo("\"Exception while item was being read\"");
+		assertThat(exceptionMessage).isEqualTo("Exception while item was being read");
 	}
 
 	@Test
 	public void testSkipEventListener() {
-		final String SKIPPING_READ_MESSAGE = "\"Skipped when reading.\"";
+		final String SKIPPING_READ_MESSAGE = "Skipped when reading.";
 
-		final String SKIPPING_WRITE_CONTENT = "\"-1\"";
+		final String SKIPPING_WRITE_CONTENT = "-1";
 		final String bindingName = "skip-event-foobar";
 		List<Message<byte[]>> result = testListenerSkip(
 			"--spring.cloud.task.batch.events.skipEventBindingName=" + bindingName,
