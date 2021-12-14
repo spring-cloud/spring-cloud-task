@@ -214,11 +214,11 @@ public class TaskJobLauncherCommandLineRunner extends JobLauncherCommandLineRunn
 
 		for (Map.Entry<String, JobParameter> parameter : copy.entrySet()) {
 			if (!parameter.getValue().isIdentifying()) {
-				parameterMap.remove(parameter.getKey());
+				copy.put(parameter.getKey(), parameter.getValue());
 			}
 		}
 
-		return new JobParameters(parameterMap);
+		return new JobParameters(copy);
 	}
 
 	private boolean isStoppedOrFailed(JobExecution execution) {
