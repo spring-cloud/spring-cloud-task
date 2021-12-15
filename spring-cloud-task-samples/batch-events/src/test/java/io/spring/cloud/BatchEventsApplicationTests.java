@@ -20,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.core.api.BDDAssertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.RabbitMQContainer;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.PropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("DockerRequired")
 public class BatchEventsApplicationTests {
 
 	static {

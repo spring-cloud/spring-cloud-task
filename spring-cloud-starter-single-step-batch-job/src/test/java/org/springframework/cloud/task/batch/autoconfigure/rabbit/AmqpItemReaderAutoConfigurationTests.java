@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
@@ -54,6 +55,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("DockerRequired")
 public class AmqpItemReaderAutoConfigurationTests {
 
 	private static int amqpPort;

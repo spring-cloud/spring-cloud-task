@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
@@ -59,6 +60,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("DockerRequired")
 public class AmqpItemWriterAutoConfigurationTests {
 
 	private final static String QUEUE_NAME = "foo";
