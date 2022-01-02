@@ -84,6 +84,31 @@
 				<artifactId>spring-cloud-stream</artifactId>
 				<version>${spring-cloud-stream.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>5.3.15-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-core</artifactId>
+				<version>${spring-batch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-infrastructure</artifactId>
+				<version>${spring-batch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-integration</artifactId>
+				<version>${spring-batch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-test</artifactId>
+				<version>${spring-batch.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -100,6 +125,7 @@
 	</modules>
 
 	<properties>
+		<spring-batch.version>4.3.5-SNAPSHOT</spring-batch.version>
 		<spring-cloud-stream.version>3.2.1</spring-cloud-stream.version>
 		<spring-cloud-deployer.version>2.7.0</spring-cloud-deployer.version>
 		<spring-cloud-deployer-local.version>2.7.0
