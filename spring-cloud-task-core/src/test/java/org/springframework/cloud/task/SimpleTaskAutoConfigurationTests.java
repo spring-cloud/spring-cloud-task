@@ -133,12 +133,6 @@ public class SimpleTaskAutoConfigurationTests {
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class,
-				"Failed to start " + "bean 'taskLifecycleListener'; nested exception is "
-						+ "org.springframework.dao.DataAccessResourceFailureException: "
-						+ "Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLSyntaxErrorException: "
-						+ "Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL\"; "
-						+ "expected \"identifier\"; SQL statement:\n"
-						+ "select foobarlessSEQ.nextval from dual [42001-200]",
 				applicationContextRunner);
 	}
 
@@ -174,6 +168,17 @@ public class SimpleTaskAutoConfigurationTests {
 						+ "one DataSource, found 2",
 				applicationContextRunner);
 
+	}
+
+	public void verifyExceptionThrownDefaultExecutable(Class classToCheck, ApplicationContextRunner applicationContextRunner) {
+		Executable executable = () -> {
+			applicationContextRunner.run((context) -> {
+				Throwable expectedException = context.getStartupFailure();
+				assertThat(expectedException).isNotNull();
+				throw expectedException;
+			});
+		};
+		assertThatExceptionOfType(classToCheck).isThrownBy(executable::execute);
 	}
 
 	public void verifyExceptionThrownDefaultExecutable(Class classToCheck, String message,

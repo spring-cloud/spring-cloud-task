@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.fail;
  *
  * @author Gunnar Hillert
  */
-public class BaseTaskExecutionDaoTestCases {
+public abstract class BaseTaskExecutionDaoTestCases {
 
 	protected TaskExecutionDao dao;
 
