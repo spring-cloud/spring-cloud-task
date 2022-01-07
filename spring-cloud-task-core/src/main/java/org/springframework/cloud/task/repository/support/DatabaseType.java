@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.support.DatabaseMetaDataCallback;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.util.StringUtils;
@@ -107,15 +110,27 @@ public enum DatabaseType {
 	 * @throws MetaDataAccessException thrown if failure occurs on metadata lookup.
 	 */
 	public static DatabaseType fromMetaData(DataSource dataSource)
-			throws MetaDataAccessException {
+			throws SQLException, MetaDataAccessException {
 		String databaseProductName = JdbcUtils
-				.extractDatabaseMetaData(dataSource, "getDatabaseProductName").toString();
+				.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
+
+					@Override
+					public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
+						return dbmd.getDatabaseProductName();
+					}
+				}).toString();
 		if (StringUtils.hasText(databaseProductName)
 				&& !databaseProductName.equals("DB2/Linux")
 				&& databaseProductName.startsWith("DB2")) {
 			String databaseProductVersion = JdbcUtils
-					.extractDatabaseMetaData(dataSource, "getDatabaseProductVersion")
-					.toString();
+					.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
+
+						@Override
+						public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
+							return dbmd.getDatabaseProductVersion();
+						}
+					}).toString();
+
 			if (databaseProductVersion.startsWith("ARI")) {
 				databaseProductName = "DB2VSE";
 			}

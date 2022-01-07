@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,22 +154,7 @@ public class DeployerPartitionHandler
 	 * @param jobExplorer used to acquire the status of the job.
 	 * @param resource the url to the app to be launched.
 	 * @param stepName the name of the step.
-	 * @deprecated Use the constructor that accepts {@link TaskRepository} as well as the
-	 * this constructor's set of parameters.
 	 */
-	@Deprecated
-	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-			Resource resource, String stepName) {
-		Assert.notNull(taskLauncher, "A taskLauncher is required");
-		Assert.notNull(jobExplorer, "A jobExplorer is required");
-		Assert.notNull(resource, "A resource is required");
-		Assert.hasText(stepName, "A step name is required");
-
-		this.taskLauncher = taskLauncher;
-		this.jobExplorer = jobExplorer;
-		this.resource = resource;
-		this.stepName = stepName;
-	}
 
 	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
 			Resource resource, String stepName, TaskRepository taskRepository) {

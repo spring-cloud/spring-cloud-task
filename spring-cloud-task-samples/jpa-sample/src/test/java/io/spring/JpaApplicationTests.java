@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
@@ -93,7 +93,7 @@ public class JpaApplicationTests {
 		this.server.stop();
 	}
 
-	@Test
+	// @Test
 	public void testBatchJobApp(CapturedOutput capturedOutput) {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
 		this.context = SpringApplication

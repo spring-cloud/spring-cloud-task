@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 the original author or authors.
+ * Copyright 2017-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.task.configuration;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -68,7 +68,7 @@ public class DefaultTaskConfigurerTests {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
 				this.dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo("org.springframework.orm.jpa.JpaTransactionManager");
+				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
 	}
 
 	@Test

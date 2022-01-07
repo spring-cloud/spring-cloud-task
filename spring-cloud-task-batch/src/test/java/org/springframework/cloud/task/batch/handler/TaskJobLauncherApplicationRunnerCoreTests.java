@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 
 package org.springframework.cloud.task.batch.handler;
+
+import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,21 +36,28 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.repository.dao.DefaultExecutionContextSerializer;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -195,16 +206,25 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L)
 				.addLong("id", 2L, false).addLong("foo", 3L, false).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
-		JobInstance jobInstance = this.jobExplorer.getJobInstance(0L);
-		assertThat(this.jobExplorer.getJobExecutions(jobInstance)).hasSize(2);
+		JobInstance jobInstance = jobExplorer.getLastJobInstance("job");
+
+		List<JobExecution> executions = this.jobExplorer.getJobExecutions(jobInstance);
+
+		assertThat(executions).hasSize(2);
+
+		JobExecution firstJobExecution  = executions.get(0);
+		JobExecution secondJobExecution = executions.get(1);
+		if ((executions.get(0).getId() > executions.get(1).getId())) {
+			firstJobExecution = executions.get(1);
+			secondJobExecution = executions.get(0);
+		}
+
 		// first execution
-		JobExecution firstJobExecution = this.jobExplorer.getJobExecution(0L);
 		JobParameters parameters = firstJobExecution.getJobParameters();
 		assertThat(parameters.getLong("run.id")).isEqualTo(1L);
-		assertThat(parameters.getLong("id")).isEqualTo(1L);
-		assertThat(parameters.getLong("foo")).isEqualTo(2L);
+		assertThat(parameters.getLong("id")).isEqualTo(2L);
+		assertThat(parameters.getLong("foo")).isEqualTo(3L);
 		// second execution
-		JobExecution secondJobExecution = this.jobExplorer.getJobExecution(1L);
 		parameters = secondJobExecution.getJobParameters();
 		// identifying parameters should be the same as previous execution
 		assertThat(parameters.getLong("run.id")).isEqualTo(1L);
@@ -232,21 +252,34 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 	@Configuration
 	@EnableBatchProcessing
+	@Import(EmbeddedDataSourceConfiguration.class)
+
 	protected static class BatchConfiguration implements BatchConfigurer {
 
 		private ResourcelessTransactionManager transactionManager = new ResourcelessTransactionManager();
 
 		private JobRepository jobRepository;
 
-		private MapJobRepositoryFactoryBean jobRepositoryFactory = new MapJobRepositoryFactoryBean(
-				this.transactionManager);
+		@Autowired
+		private  DataSource dataSource;
 
 		public BatchConfiguration() throws Exception {
-			this.jobRepository = this.jobRepositoryFactory.getObject();
+		}
+
+		private JobRepository jobRepositoryNew() throws Exception {
+			JobRepositoryFactoryBean jobRepositoryFactoryBean = new JobRepositoryFactoryBean();
+			jobRepositoryFactoryBean.setDataSource(dataSource);
+			jobRepositoryFactoryBean.setTransactionManager(transactionManager);
+			jobRepositoryFactoryBean.setSerializer(new DefaultExecutionContextSerializer());
+			this.jobRepository = jobRepositoryFactoryBean.getObject();
+			return this.jobRepository;
 		}
 
 		@Override
-		public JobRepository getJobRepository() {
+		public JobRepository getJobRepository() throws Exception {
+			if (this.jobRepository == null) {
+				this.jobRepository = jobRepositoryNew();
+			}
 			return this.jobRepository;
 		}
 
@@ -256,17 +289,35 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		}
 
 		@Override
-		public JobLauncher getJobLauncher() {
+		public JobLauncher getJobLauncher() throws Exception {
 			SimpleJobLauncher launcher = new SimpleJobLauncher();
-			launcher.setJobRepository(this.jobRepository);
+
+			launcher.setJobRepository(getJobRepository());
 			launcher.setTaskExecutor(new SyncTaskExecutor());
 			return launcher;
 		}
 
 		@Override
 		public JobExplorer getJobExplorer() throws Exception {
-			return new MapJobExplorerFactoryBean(this.jobRepositoryFactory).getObject();
+			dataSourceInitializer().afterPropertiesSet();
+			JobExplorerFactoryBean factoryBean = new JobExplorerFactoryBean();
+			factoryBean.setDataSource(dataSource);
+			factoryBean.setJdbcOperations(new JdbcTemplate(dataSource));
+			factoryBean.setSerializer(new DefaultExecutionContextSerializer());
+			return factoryBean.getObject();
 		}
+
+		public DataSourceInitializer dataSourceInitializer() {
+			DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
+			dataSourceInitializer.setDataSource(dataSource);
+			ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+			databasePopulator.addScript(new ClassPathResource("org/springframework/batch/core/schema-h2.sql"));
+			dataSourceInitializer.setDatabasePopulator(databasePopulator);
+			databasePopulator = new ResourceDatabasePopulator();
+			databasePopulator.addScript(new ClassPathResource("org/springframework/batch/core/schema-drop-h2.sql"));
+			dataSourceInitializer.setDatabaseCleaner(databasePopulator);
+			return dataSourceInitializer;
+	}
 
 	}
 

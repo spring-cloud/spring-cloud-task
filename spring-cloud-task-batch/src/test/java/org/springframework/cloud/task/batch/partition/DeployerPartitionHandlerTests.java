@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class DeployerPartitionHandlerTests {
 
 	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.environment = new MockEnvironment();
 		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(),
 				new Date(), "", Collections.emptyList(), null, null, null);
@@ -108,7 +108,7 @@ public class DeployerPartitionHandlerTests {
 				this.resource, null, "A step name is required");
 
 		new DeployerPartitionHandler(this.taskLauncher, this.jobExplorer, this.resource,
-				"step-name");
+				"step-name", this.taskRepository);
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class DeployerPartitionHandlerTests {
 	@Test
 	public void testNoPartitions() throws Exception {
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1");
+				this.jobExplorer, this.resource, "step1", this.taskRepository);
 		handler.setEnvironment(this.environment);
 
 		StepExecution stepExecution = new StepExecution("step1", new JobExecution(1L));

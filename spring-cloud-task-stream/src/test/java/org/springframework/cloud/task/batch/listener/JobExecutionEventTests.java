@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,9 +136,9 @@ public class JobExecutionEventTests {
 		assertThat(jobExecutionEvent.getJobParameters().getString("A"))
 			.as("Job Parameter A value was not correct").isEqualTo("FOO");
 		assertThat(jobExecutionEvent.getJobParameters().getLong("B"))
-			.as("Job Parameter B value was not correct").isEqualTo(new Long(1));
+			.as("Job Parameter B value was not correct").isEqualTo(Long.valueOf(1));
 		assertThat(jobExecutionEvent.getJobParameters().getDouble("C"))
-			.as("Job Parameter C value was not correct").isEqualTo(new Double(1));
+			.as("Job Parameter C value was not correct").isEqualTo(Double.valueOf(1));
 		assertThat(jobExecutionEvent.getJobParameters().getDate("D"))
 			.as("Job Parameter D value was not correct").isEqualTo(testDate);
 	}

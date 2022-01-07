@@ -78,10 +78,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>${java-ee-api.version}</version>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>${jakarta-ee-api.version}</version>
 			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -128,6 +129,6 @@
 			<version>${jmock-version}</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+ </dependencies>
 
 </project>

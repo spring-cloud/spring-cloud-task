@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,12 +111,12 @@ public class JobParametersEventTests {
 	@Test
 	public void testGetterSetterDefaults() {
 		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
-		assertThat(jobParametersEvent.getDouble("FOOBAR")).isEqualTo(new Double(0));
-		assertThat(jobParametersEvent.getLong("FOOBAR")).isEqualTo(new Long(0));
-		assertThat(jobParametersEvent.getDouble("FOOBAR", 5)).isEqualTo(new Double(5));
+		assertThat(jobParametersEvent.getDouble("FOOBAR")).isEqualTo(Double.valueOf(0));
+		assertThat(jobParametersEvent.getLong("FOOBAR")).isEqualTo(Long.valueOf(0));
+		assertThat(jobParametersEvent.getDouble("FOOBAR", 5)).isEqualTo(Double.valueOf(5));
 		assertThat(jobParametersEvent.getDouble(DOUBLE_KEY, 0))
 				.isEqualTo(DOUBLE_PARAM.getValue());
-		assertThat(jobParametersEvent.getLong("FOOBAR", 5)).isEqualTo(new Long(5));
+		assertThat(jobParametersEvent.getLong("FOOBAR", 5)).isEqualTo(Long.valueOf(5));
 		assertThat(jobParametersEvent.getLong(LONG_KEY, 5))
 				.isEqualTo(LONG_PARAM.getValue());
 		assertThat(jobParametersEvent.getString("FOOBAR", "TESTVAL"))

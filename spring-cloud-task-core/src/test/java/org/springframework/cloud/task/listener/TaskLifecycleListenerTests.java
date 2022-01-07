@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.listener;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,7 +110,7 @@ public class TaskLifecycleListenerTests {
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
-				new String[0], this.context));
+				new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, 0);
 	}
@@ -123,7 +124,7 @@ public class TaskLifecycleListenerTests {
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
 				this.context, exception));
 		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context));
+				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, 1, exception, null);
 	}
@@ -142,7 +143,7 @@ public class TaskLifecycleListenerTests {
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
 				this.context, exception));
 		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context));
+				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, exitCode, exception, null);
 		assertThat(TestListener.getStartupOrderList().size()).isEqualTo(2);

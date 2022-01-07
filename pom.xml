@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-build</artifactId>
-		<version>3.1.1-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
@@ -84,31 +84,6 @@
 				<artifactId>spring-cloud-stream</artifactId>
 				<version>${spring-cloud-stream.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jdbc</artifactId>
-				<version>5.3.15-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.batch</groupId>
-				<artifactId>spring-batch-core</artifactId>
-				<version>${spring-batch.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.batch</groupId>
-				<artifactId>spring-batch-infrastructure</artifactId>
-				<version>${spring-batch.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.batch</groupId>
-				<artifactId>spring-batch-integration</artifactId>
-				<version>${spring-batch.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.batch</groupId>
-				<artifactId>spring-batch-test</artifactId>
-				<version>${spring-batch.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -125,15 +100,15 @@
 	</modules>
 
 	<properties>
-		<spring-batch.version>4.3.5-SNAPSHOT</spring-batch.version>
-		<spring-cloud-stream.version>3.2.1</spring-cloud-stream.version>
+
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
 		<spring-cloud-deployer.version>2.7.0</spring-cloud-deployer.version>
 		<spring-cloud-deployer-local.version>2.7.0
 		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
 		<commons-logging.version>1.1</commons-logging.version>
-		<java-ee-api.version>8.0</java-ee-api.version>
+		<jakarta-ee-api.version>9.1.0</jakarta-ee-api.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>
@@ -144,6 +119,7 @@
 		</maven-checkstyle-plugin.failsOnViolation>
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
+		<java.version>17</java.version>
 	</properties>
 
 	<build>
@@ -170,10 +146,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<testSource>1.8</testSource>
-					<testTarget>1.8</testTarget>
+					<source>17</source>
+					<target>17</target>
+					<testSource>17</testSource>
+					<testTarget>17</testTarget>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -256,7 +232,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

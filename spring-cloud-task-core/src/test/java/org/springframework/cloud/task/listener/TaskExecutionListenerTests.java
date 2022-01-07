@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.listener;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -139,7 +140,7 @@ public class TaskExecutionListenerTests {
 				.getBean(
 						AfterTaskErrorAnnotationConfiguration.AnnotatedTaskListener.class);
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
-				new String[0], this.context));
+				new String[0], this.context, Duration.ofSeconds(50)));
 
 		assertThat(taskExecutionListener.isTaskStartup()).isTrue();
 		assertThat(taskExecutionListener.isTaskEnd()).isTrue();
@@ -162,7 +163,7 @@ public class TaskExecutionListenerTests {
 				.getBean(
 						DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
-				new String[0], this.context));
+				new String[0], this.context, Duration.ofSeconds(50)));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", new Date(),
 				new Date(), null, new ArrayList<>(), null, null);
@@ -184,7 +185,7 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
 				this.context, exception));
 		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context));
+				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
 				new Date(), null, new ArrayList<>(), null, null);
@@ -215,7 +216,7 @@ public class TaskExecutionListenerTests {
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener = this.context
 				.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
-				new String[0], this.context));
+				new String[0], this.context, Duration.ofSeconds(50)));
 
 		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", new Date(),
 				new Date(), null, new ArrayList<>(), null, null);
@@ -236,7 +237,7 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
 				this.context, exception));
 		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context));
+				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(),
 				new Date(), null, new ArrayList<>(), null, null);

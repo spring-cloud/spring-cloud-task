@@ -4,7 +4,7 @@
 
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>task-events</artifactId>
-	<version>2.4.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Task Events</name>
@@ -13,14 +13,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.1</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<spring-cloud-stream>3.2.0-SNAPSHOT</spring-cloud-stream>
+		<java.version>17</java.version>
+		<spring-cloud-stream>4.0.0-SNAPSHOT</spring-cloud-stream>
 	</properties>
 
 	<dependencyManagement>
