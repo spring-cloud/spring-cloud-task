@@ -16,18 +16,17 @@
 
 package org.springframework.cloud.task.repository.database.support;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
+import org.h2.engine.Mode.ModeEnum;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
+
 import org.springframework.batch.item.database.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,15 +42,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class H2PagingQueryProviderTests {
 
-	static Stream<Arguments> testH2PagingQueryProvider() {
-		return Arrays.stream(org.h2.engine.Mode.ModeEnum.values())
-			.map(mode -> Arguments.of(mode.toString()));
-	}
-
 	@ParameterizedTest
-	@MethodSource
-	void testH2PagingQueryProvider(String compatibilityMode) {
-		String connectionUrl = String.format("jdbc:h2:mem:%s;MODE=%s", UUID.randomUUID(), compatibilityMode);
+	@EnumSource(ModeEnum.class)
+	void testH2PagingQueryProvider(ModeEnum mode) {
+		String connectionUrl = String.format("jdbc:h2:mem:%s;MODE=%s", UUID.randomUUID(), mode);
 		DataSource dataSource = new SimpleDriverDataSource(new org.h2.Driver(), connectionUrl, "sa", "");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
