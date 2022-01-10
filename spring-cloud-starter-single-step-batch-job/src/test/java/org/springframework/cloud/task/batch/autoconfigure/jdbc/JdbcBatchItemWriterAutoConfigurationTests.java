@@ -150,7 +150,8 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 		return applicationContextRunner.withPropertyValues("spring.batch.job.jobName=job",
 				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 				"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
-				"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)");
+				"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)",
+				"spring.batch.jdbc.initialize-schema=always");
 	}
 
 	private void validateResultAndBean(ApplicationContext context) {

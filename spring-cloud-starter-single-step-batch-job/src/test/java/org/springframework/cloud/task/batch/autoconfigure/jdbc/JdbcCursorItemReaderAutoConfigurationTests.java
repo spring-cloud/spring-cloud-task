@@ -100,7 +100,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				.withPropertyValues("spring.batch.job.jobName=integrationJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.jdbccursoritemreader.name=fooReader",
-						"spring.batch.job.jdbccursoritemreader.sql=select item_name from item");
+						"spring.batch.job.jdbccursoritemreader.sql=select item_name from item",
+						"spring.batch.jdbc.initialize-schema=always");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -137,7 +138,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				.withPropertyValues("spring.batch.job.jobName=rowMapperJob",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.jdbccursoritemreader.name=fooReader",
-						"spring.batch.job.jdbccursoritemreader.sql=select * from item");
+						"spring.batch.job.jdbccursoritemreader.sql=select * from item",
+						"spring.batch.jdbc.initialize-schema=always");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);

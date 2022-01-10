@@ -133,12 +133,11 @@ public class SimpleTaskAutoConfigurationTests {
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class,
-				"Failed to start " + "bean 'taskLifecycleListener'; nested exception is "
+				"Failed to start bean 'taskLifecycleListener'; nested exception is "
 						+ "org.springframework.dao.DataAccessResourceFailureException: "
 						+ "Could not obtain sequence value; nested exception is org.h2.jdbc.JdbcSQLSyntaxErrorException: "
-						+ "Syntax error in SQL statement \"SELECT FOOBARLESSSEQ.NEXTVAL FROM[*] DUAL\"; "
-						+ "expected \"identifier\"; SQL statement:\n"
-						+ "select foobarlessSEQ.nextval from dual [42001-200]",
+						+ "Sequence \"FOOBARLESSSEQ\" not found; SQL statement:\n"
+						+ "values next value for foobarlessSEQ [90036-206]",
 				applicationContextRunner);
 	}
 
