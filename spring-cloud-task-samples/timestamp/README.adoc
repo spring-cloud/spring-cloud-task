@@ -4,7 +4,7 @@ This is a Spring Cloud Task application that logs a timestamp.
 
 == Requirements:
 
-* Java 8 or Above
+* Java 17 or Above
 
 == Classes:
 
@@ -22,5 +22,5 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/timestamp-task-1.1.0.RELEASE.jar
+$ java -jar target/timestamp-task-3.0.0.jar
 ----

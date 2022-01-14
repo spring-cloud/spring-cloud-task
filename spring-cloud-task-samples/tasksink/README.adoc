@@ -5,7 +5,7 @@ launch the task that was specified in the request.
 
 == Requirements:
 
-* Java 7 or Above
+* Java 17 or Above
 
 == Build:
 

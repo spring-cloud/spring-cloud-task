@@ -5,7 +5,7 @@ which one to be used for the Spring Cloud Task repository.
 
 == Requirements:
 
-* Java 8 or Above
+* Java 17 or Above
 
 == Classes:
 
@@ -27,7 +27,7 @@ $ mvn clean package
 
 [source,shell,indent=2]
 ----
-$ java -jar target/multiple-datasources-2.3.0-RELEASE.jar
+$ java -jar target/multiple-datasources-3.0.0.jar
 ----
 
 == Execute sample using 2 external databases:

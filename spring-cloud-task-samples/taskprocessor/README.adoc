@@ -28,7 +28,7 @@ $ ./mvnw clean install
 
 == Requirements:
 
-* Java 7 or Above
+* Java 17 or Above
 
 == Build:
 

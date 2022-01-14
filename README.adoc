@@ -14,7 +14,7 @@ process persists beyond the life of the task for future reporting.
 
 == Requirements:
 
-* Java 8 or Above
+* Java 17 or Above
 
 == Build Main Project:
 
@@ -56,4 +56,4 @@ This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code 
 == Building the Project
 
 This project requires that you invoke the Javadoc engine from the Maven command line. You can do so by appending `javadoc:aggregate` to the rest of your Maven command.
-For example, to build the entire project, you could use `./mvnw -Pfull javadoc:aggregate`.
+For example, to build the entire project, you could use `mvn clean install -DskipTests -P docs`.

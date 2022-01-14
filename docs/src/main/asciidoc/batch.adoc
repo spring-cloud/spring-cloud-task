@@ -151,58 +151,6 @@ dependency for the Spring Cloud Kubernetes Deployer:
 the following regex pattern: `[a-z0-9]([-a-z0-9]*[a-z0-9])`.
 Otherwise, an exception is thrown.
 
-=== Notes on Developing a Batch-partitioned Application for the Cloud Foundry Platform
-
-* When deploying partitioned apps on the Cloud Foundry platform, you must use the
-following dependencies for the Spring Cloud Foundry Deployer:
-+
-[source,xml]
-----
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-deployer-cloudfoundry</artifactId>
-</dependency>
-<dependency>
-    <groupId>io.projectreactor</groupId>
-    <artifactId>reactor-core</artifactId>
-    <version>3.1.5.RELEASE</version>
-</dependency>
-<dependency>
-    <groupId>io.projectreactor.ipc</groupId>
-    <artifactId>reactor-netty</artifactId>
-    <version>0.7.5.RELEASE</version>
-</dependency>
-----
-* When configuring the partition handler, Cloud Foundry Deployment
-environment variables need to be established so that the partition handler
-can start the partitions. The following list shows the required environment
-variables:
-- `spring_cloud_deployer_cloudfoundry_url`
-- `spring_cloud_deployer_cloudfoundry_org`
-- `spring_cloud_deployer_cloudfoundry_space`
-- `spring_cloud_deployer_cloudfoundry_domain`
-- `spring_cloud_deployer_cloudfoundry_username`
-- `spring_cloud_deployer_cloudfoundry_password`
-- `spring_cloud_deployer_cloudfoundry_services`
-- `spring_cloud_deployer_cloudfoundry_taskTimeout`
-
-An example set of deployment environment variables for a partitioned task that
-uses a `mysql` database service might resemble the following:
-
-[source,bash]
-----
-spring_cloud_deployer_cloudfoundry_url=https://api.local.pcfdev.io
-spring_cloud_deployer_cloudfoundry_org=pcfdev-org
-spring_cloud_deployer_cloudfoundry_space=pcfdev-space
-spring_cloud_deployer_cloudfoundry_domain=local.pcfdev.io
-spring_cloud_deployer_cloudfoundry_username=admin
-spring_cloud_deployer_cloudfoundry_password=admin
-spring_cloud_deployer_cloudfoundry_services=mysql
-spring_cloud_deployer_cloudfoundry_taskTimeout=300
-----
-
-NOTE: When using PCF-Dev, the following environment variable is also required:
-`spring_cloud_deployer_cloudfoundry_skipSslValidation=true`
 
 [[batch-informational-messages]]
 == Batch Informational Messages

@@ -296,7 +296,7 @@ Ingesting a partition of data from a Kafka topic is useful and exactly what the
 `KafkaItemReader` can do. To configure a `KafkaItemReader`, two pieces
 of configuration are required. First, configuring Kafka with Spring Boot's Kafka
 autoconfiguration is required (see the
-https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[Spring Boot Kafka documentation]).
+https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#messaging.kafka.additional-properties[Spring Boot Kafka documentation]).
 Once you have configured the Kafka properties from Spring Boot, you can configure the `KafkaItemReader`
 itself by setting the following properties:
 
@@ -512,7 +512,7 @@ See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/b
 
 To write step output to a Kafka topic, you need `KafkaItemWriter`. This starter
 provides autoconfiguration for a `KafkaItemWriter` by using facilities from two places.
-The first is Spring Boot's Kafka autoconfiguration. (See the https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-kafka[Spring Boot Kafka documentation].)
+The first is Spring Boot's Kafka autoconfiguration. (See the https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#messaging.kafka.additional-properties[Spring Boot Kafka documentation].)
 Second, this starter lets you configure two properties on the writer.
 
 .`KafkaItemWriter` Properties

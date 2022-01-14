@@ -5,7 +5,7 @@ An example of the usage of the `DeployerPartitionHandler` and
 
 == Requirements:
 
-* Java 7 or Above
+* Java 17 or Above
 
 == Build:
 
@@ -19,7 +19,7 @@ $ ./mvnw clean install
 [source,shell,indent=2]
 ----
 $ export SPRING_APPLICATION_JSON='{"spring":{"datasource":{"url":"jdbc:mysql://localhost:3306/<your database>","username":"<your username>","password":"<your password>","driverClassName":"org.mariadb.jdbc.Driver"}}}'
-$ java -jar target/partitioned-batch-job-1.2.1.RELEASE.jar
+$ java -jar target/partitioned-batch-job-3.0.0.jar
 ----
 
 NOTE: This example will use require a MySql RDBMS repository and currently uses the mariadb jdbc driver to connect.
