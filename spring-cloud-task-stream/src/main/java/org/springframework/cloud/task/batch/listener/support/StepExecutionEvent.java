@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,19 +41,19 @@ public class StepExecutionEvent extends Entity {
 
 	private BatchStatus status = BatchStatus.STARTING;
 
-	private int readCount = 0;
+	private long readCount = 0;
 
-	private int writeCount = 0;
+	private long writeCount = 0;
 
-	private int commitCount = 0;
+	private long commitCount = 0;
 
-	private int rollbackCount = 0;
+	private long rollbackCount = 0;
 
-	private int readSkipCount = 0;
+	private long readSkipCount = 0;
 
-	private int processSkipCount = 0;
+	private long processSkipCount = 0;
 
-	private int writeSkipCount = 0;
+	private long writeSkipCount = 0;
 
 	private Date startTime = new Date(System.currentTimeMillis());
 
@@ -68,7 +68,7 @@ public class StepExecutionEvent extends Entity {
 
 	private boolean terminateOnly;
 
-	private int filterCount;
+	private long filterCount;
 
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
@@ -133,7 +133,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the current number of commits for this execution.
 	 * @return the current number of commits
 	 */
-	public int getCommitCount() {
+	public long getCommitCount() {
 		return this.commitCount;
 	}
 
@@ -165,7 +165,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the current number of items read for this execution.
 	 * @return the current number of items read for this execution
 	 */
-	public int getReadCount() {
+	public long getReadCount() {
 		return this.readCount;
 	}
 
@@ -181,7 +181,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the current number of items written for this execution.
 	 * @return the current number of items written for this execution
 	 */
-	public int getWriteCount() {
+	public long getWriteCount() {
 		return this.writeCount;
 	}
 
@@ -197,7 +197,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the current number of rollbacks for this execution.
 	 * @return the current number of rollbacks for this execution
 	 */
-	public int getRollbackCount() {
+	public long getRollbackCount() {
 		return this.rollbackCount;
 	}
 
@@ -213,7 +213,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the current number of items filtered out of this execution.
 	 * @return the current number of items filtered out of this execution
 	 */
-	public int getFilterCount() {
+	public long getFilterCount() {
 		return this.filterCount;
 	}
 
@@ -300,7 +300,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the total number of items skipped.
 	 */
-	public int getSkipCount() {
+	public long getSkipCount() {
 		return this.readSkipCount + this.processSkipCount + this.writeSkipCount;
 	}
 
@@ -314,7 +314,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the number of records skipped on read.
 	 */
-	public int getReadSkipCount() {
+	public long getReadSkipCount() {
 		return this.readSkipCount;
 	}
 
@@ -329,7 +329,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the number of records skipped on write
 	 */
-	public int getWriteSkipCount() {
+	public long getWriteSkipCount() {
 		return this.writeSkipCount;
 	}
 
@@ -344,7 +344,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the number of records skipped during processing
 	 */
-	public int getProcessSkipCount() {
+	public long getProcessSkipCount() {
 		return this.processSkipCount;
 	}
 

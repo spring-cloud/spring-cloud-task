@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,8 +64,6 @@ public class JobExecutionEvent extends Entity {
 
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
-	private String jobConfigurationName;
-
 	public JobExecutionEvent() {
 		super();
 	}
@@ -90,7 +88,6 @@ public class JobExecutionEvent extends Entity {
 		this.exitStatus = new ExitStatus(original.getExitStatus());
 		this.executionContext = original.getExecutionContext();
 		this.failureExceptions = original.getFailureExceptions();
-		this.jobConfigurationName = original.getJobConfigurationName();
 		this.setId(original.getId());
 		this.setVersion(original.getVersion());
 	}
@@ -211,10 +208,6 @@ public class JobExecutionEvent extends Entity {
 	 */
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-
-	public String getJobConfigurationName() {
-		return this.jobConfigurationName;
 	}
 
 	/**

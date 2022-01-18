@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
@@ -135,7 +136,8 @@ public class AmqpItemWriterAutoConfigurationTests {
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
 								AmqpItemWriterAutoConfiguration.class,
-								RabbitAutoConfiguration.class))
+								RabbitAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {
@@ -163,7 +165,8 @@ public class AmqpItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								AmqpItemWriterAutoConfiguration.class))
+								AmqpItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {

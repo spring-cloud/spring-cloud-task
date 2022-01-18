@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ public class StepExecutionEventTests {
 	private static final Long JOB_INSTANCE_ID = 1L;
 
 	private static final Long JOB_EXECUTION_ID = 2L;
-
-	private static final String JOB_CONFIGURATION_NAME = "FOO_JOB_CONFIG";
 
 	@Test
 	public void testBasic() {
@@ -238,7 +236,7 @@ public class StepExecutionEventTests {
 		JobInstance jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
 		JobParameters jobParameters = new JobParameters();
 		JobExecution jobExecution = new JobExecution(jobInstance, JOB_EXECUTION_ID,
-				jobParameters, JOB_CONFIGURATION_NAME);
+				jobParameters);
 		return new StepExecution(STEP_NAME, jobExecution);
 	}
 

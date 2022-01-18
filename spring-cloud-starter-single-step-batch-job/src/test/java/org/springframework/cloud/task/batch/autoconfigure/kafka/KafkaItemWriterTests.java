@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -71,7 +72,8 @@ public class KafkaItemWriterTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								KafkaItemWriterAutoConfiguration.class))
+								KafkaItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.kafka.producer.bootstrap-servers="

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2019 the original author or authors.
+ * Copyright 2019-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,8 +116,7 @@ public class TaskMetrics {
 							(this.exception == null) ? "none"
 									: this.exception.getClass().getSimpleName())
 					.tag(TASK_STATUS_TAG,
-							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE)
-					.register(Metrics.globalRegistry));
+							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE));
 			this.taskSample = null;
 		}
 

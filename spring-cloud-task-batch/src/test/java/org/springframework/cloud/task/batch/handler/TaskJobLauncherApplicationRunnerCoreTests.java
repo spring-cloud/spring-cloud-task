@@ -83,7 +83,6 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@Autowired
 	private JobExplorer jobExplorer;
 
-	@Autowired
 	private PlatformTransactionManager transactionManager;
 
 	private TaskJobLauncherApplicationRunner runner;
@@ -98,6 +97,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 	@BeforeEach
 	public void init() {
+		this.transactionManager = new ResourcelessTransactionManager();
 		this.jobs = new JobBuilderFactory(this.jobRepository);
 		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;

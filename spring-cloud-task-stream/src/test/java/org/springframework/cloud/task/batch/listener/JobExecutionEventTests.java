@@ -60,8 +60,6 @@ public class JobExecutionEventTests {
 
 	private static final Long JOB_EXECUTION_ID = 2L;
 
-	private static final String JOB_CONFIGURATION_NAME = "FOO_JOB_CONFIG";
-
 	private static final String[] LISTENER_BEAN_NAMES = {
 		BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER,
 		BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER,
@@ -86,15 +84,12 @@ public class JobExecutionEventTests {
 	public void testBasic() {
 		JobExecution jobExecution;
 		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-			this.jobParameters, JOB_CONFIGURATION_NAME);
+			this.jobParameters);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
 		assertThat(jobExecutionEvent.getJobInstance())
 			.as("jobInstance should not be null").isNotNull();
 		assertThat(jobExecutionEvent.getJobParameters())
 			.as("jobParameters should not be null").isNotNull();
-		assertThat(jobExecutionEvent.getJobConfigurationName())
-			.as("jobConfigurationName did not match expected")
-			.isEqualTo(JOB_CONFIGURATION_NAME);
 
 		assertThat(jobExecutionEvent.getJobParameters().getParameters().size())
 			.as("jobParameters size did not match").isEqualTo(0);
@@ -121,7 +116,7 @@ public class JobExecutionEventTests {
 		this.jobParameters = new JobParameters(jobParamMap);
 		JobExecution jobExecution;
 		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-			this.jobParameters, JOB_CONFIGURATION_NAME);
+			this.jobParameters);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
 
 		assertThat(jobExecutionEvent.getJobParameters().getString("A"))
@@ -147,7 +142,7 @@ public class JobExecutionEventTests {
 	public void testStepExecutions() {
 		JobExecution jobExecution;
 		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID,
-			this.jobParameters, JOB_CONFIGURATION_NAME);
+			this.jobParameters);
 		List<StepExecution> stepsExecutions = new ArrayList<>();
 		stepsExecutions.add(new StepExecution("foo", jobExecution));
 		stepsExecutions.add(new StepExecution("bar", jobExecution));

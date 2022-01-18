@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.springframework.batch.test.AssertFile;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -141,7 +142,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
@@ -197,7 +198,8 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=2",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
@@ -240,7 +242,8 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
@@ -281,7 +284,8 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
@@ -320,7 +324,8 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
@@ -358,7 +363,8 @@ public class FlatFileItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								FlatFileItemWriterAutoConfiguration.class))
+								FlatFileItemWriterAutoConfiguration.class,
+								DataSourceAutoConfiguration.class))
 				.withPropertyValues("spring.batch.job.jobName=job",
 						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 						"spring.batch.job.flatfileitemwriter.name=fooWriter",
