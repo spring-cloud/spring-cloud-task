@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.cloud.task.listener.TaskExecutionListenerSupport;
+import org.springframework.cloud.task.listener.TaskExecutionListener;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.util.Assert;
 
@@ -32,8 +32,7 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @since 1.1.0
  */
-public class SimpleCommandLineArgsProvider extends TaskExecutionListenerSupport
-		implements CommandLineArgsProvider {
+public class SimpleCommandLineArgsProvider implements CommandLineArgsProvider, TaskExecutionListener {
 
 	private TaskExecution taskExecution;
 
