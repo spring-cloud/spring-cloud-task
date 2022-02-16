@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,16 @@ public interface TaskExecutionListener {
 	 * {@link TaskRepository}.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
-	void onTaskStartup(TaskExecution taskExecution);
+	default void onTaskStartup(TaskExecution taskExecution) {
+	}
 
 	/**
 	 * Invoked before the {@link TaskExecution} has been updated in the
 	 * {@link TaskRepository} upon task end.
 	 * @param taskExecution instance containing the information about the current task.
 	 */
-	void onTaskEnd(TaskExecution taskExecution);
+	default void onTaskEnd(TaskExecution taskExecution) {
+	}
 
 	/**
 	 * Invoked if an uncaught exception occurs during a task execution. This invocation
@@ -47,6 +49,7 @@ public interface TaskExecutionListener {
 	 * @param taskExecution instance containing the information about the current task.
 	 * @param throwable the uncaught exception that was thrown during task execution.
 	 */
-	void onTaskFailed(TaskExecution taskExecution, Throwable throwable);
+	default void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
+	}
 
 }
