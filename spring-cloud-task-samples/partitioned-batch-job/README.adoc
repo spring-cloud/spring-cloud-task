@@ -30,4 +30,13 @@ NOTE: Since this example uses the Spring Cloud Deployer Local to launch the part
 == Dependencies:
 
 A datasource (not in memory) must be configured based on normal Spring Boot conventions
-(application.properties/application.yml/environment variables/etc).
+(application.properties, application.yml, environment variables).
+
+== Asynchronous remote partition task launch
+Currently partitions are launched sequentially.   To launch them asynchronously set the following environment variables:
+
+* `spring.cloud.task.closecontextEnabled=true`
+* `io.spring.asynchronous=true`
+
+NOTE: We need to close the context since the use of ThreadPoolTaskExecutor leaves a thread active thus the app will not terminate.
+To close the application appropriately, we will need to set `spring.cloud.task.closecontextEnabled`` to true.

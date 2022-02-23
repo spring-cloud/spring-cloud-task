@@ -62,7 +62,7 @@ most cloud infrastructures. The `DeployerPartitionHandler` and
 Cloud Deployer.
 
 To configure the `DeployerStepExecutionHandler`, you must provide a `Resource`
-representing the Spring Boot über-jar to be executed, a `TaskLauncher`, and a
+representing the Spring Boot über-jar to be executed, a `TaskLauncherHandler`, and a
 `JobExplorer`. You can configure any environment properties as well as the max number of
 workers to be executing at once, the interval to poll for the results (defaults to 10
 seconds), and a timeout (defaults to -1 or no timeout). The following example shows how
@@ -134,6 +134,40 @@ public DeployerStepExecutionHandler stepExecutionHandler(JobExplorer jobExplorer
 NOTE: You can find a sample remote partition application in the samples module of the
 Spring Cloud Task project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/partitioned-batch-job[here].
+
+=== Asynchronously launch remote batch partitions
+
+By default batch partitions are launched sequentially.   However, in some cases this may affect performance as each launch will block until the resource (For example: provisioning a pod in Kubernetes) is provisioned.
+In these cases you can provide a `ThreadPoolTaskExecutor` to the `DeployerPartitionHandler`.   This will launch the remote batch partitions based on the configuration of the `ThreadPoolTaskExecutor`.
+For example:
+
+[source,java]
+----
+	@Bean
+	public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(4);
+		executor.setThreadNamePrefix("default_task_executor_thread");
+		executor.setWaitForTasksToCompleteOnShutdown(true);
+		executor.initialize();
+		return executor;
+	}
+
+	@Bean
+	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
+		TaskRepository taskRepository, ThreadPoolTaskExecutor executor) throws Exception {
+		Resource resource = this.resourceLoader
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:2.2.0.BUILD-SNAPSHOT");
+
+		DeployerPartitionHandler partitionHandler =
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource,
+				"workerStep", taskRepository, executor);
+	...
+	}
+----
+
+NOTE: We need to close the context since the use of `ThreadPoolTaskExecutor` leaves a thread active thus the app will not terminate. To close the application appropriately, we will need to set `spring.cloud.task.closecontextEnabled` property to `true`.
+
 
 === Notes on Developing a Batch-partitioned application for the Kubernetes Platform
 

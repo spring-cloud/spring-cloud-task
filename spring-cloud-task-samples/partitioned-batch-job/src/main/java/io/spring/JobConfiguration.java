@@ -40,6 +40,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
@@ -53,6 +54,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * @author Michael Minella
@@ -79,12 +81,14 @@ public class JobConfiguration {
 	private Environment environment;
 
 	@Bean
-	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer, TaskRepository taskRepository) throws Exception {
+	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
+		TaskRepository taskRepository, @Autowired(required = false) ThreadPoolTaskExecutor executor) throws Exception {
 		Resource resource = this.resourceLoader
-			.getResource("maven://io.spring.cloud:partitioned-batch-job:2.2.0.BUILD-SNAPSHOT");
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler =
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep", taskRepository);
+			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource,
+				"workerStep", taskRepository, executor);
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
@@ -98,6 +102,19 @@ public class JobConfiguration {
 		partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
 		return partitionHandler;
+	}
+
+	@ConditionalOnProperty(  value="io.spring.asynchronous",
+		havingValue = "true",
+		matchIfMissing = false)
+	@Bean
+	public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(2);
+		executor.setThreadNamePrefix("default_task_executor_thread");
+		executor.setWaitForTasksToCompleteOnShutdown(true);
+		executor.initialize();
+		return executor;
 	}
 
 	@Bean

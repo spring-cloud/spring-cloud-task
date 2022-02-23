@@ -51,6 +51,7 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -315,25 +316,39 @@ public class DeployerPartitionHandlerTests {
 	}
 
 	@Test
-	public void testThreePartitions() throws Exception {
+	public void testThreePartitionsSequential() throws Exception {
+		testThreePartitions(null);
+	}
+
+	@Test
+	public void testThreePartitionsAsynchronous() throws Exception {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(4);
+		executor.setThreadNamePrefix("default_task_executor_thread");
+		executor.setWaitForTasksToCompleteOnShutdown(true);
+		executor.initialize();
+		testThreePartitions(executor);
+	}
+
+	private void testThreePartitions(ThreadPoolTaskExecutor threadPoolTaskExecutor) throws Exception {
 
 		StepExecution masterStepExecution = createMasterStepExecution();
 		JobExecution jobExecution = masterStepExecution.getJobExecution();
 
 		StepExecution workerStepExecutionStart1 = getStepExecutionStart(jobExecution, 4L);
 		StepExecution workerStepExecutionFinish1 = getStepExecutionFinish(
-				workerStepExecutionStart1, BatchStatus.COMPLETED);
+			workerStepExecutionStart1, BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart2 = getStepExecutionStart(jobExecution, 5L);
 		StepExecution workerStepExecutionFinish2 = getStepExecutionFinish(
-				workerStepExecutionStart2, BatchStatus.COMPLETED);
+			workerStepExecutionStart2, BatchStatus.COMPLETED);
 
 		StepExecution workerStepExecutionStart3 = getStepExecutionStart(jobExecution, 6L);
 		StepExecution workerStepExecutionFinish3 = getStepExecutionFinish(
-				workerStepExecutionStart3, BatchStatus.COMPLETED);
+			workerStepExecutionStart3, BatchStatus.COMPLETED);
 
 		DeployerPartitionHandler handler = new DeployerPartitionHandler(this.taskLauncher,
-				this.jobExplorer, this.resource, "step1", this.taskRepository);
+			this.jobExplorer, this.resource, "step1", this.taskRepository, threadPoolTaskExecutor);
 		handler.setEnvironment(this.environment);
 
 		TaskExecution taskExecution = new TaskExecution();
@@ -348,23 +363,23 @@ public class DeployerPartitionHandlerTests {
 		when(this.splitter.split(masterStepExecution, 1)).thenReturn(stepExecutions);
 
 		when(this.jobExplorer.getStepExecution(1L, 4L))
-				.thenReturn(workerStepExecutionFinish1);
+			.thenReturn(workerStepExecutionFinish1);
 		when(this.jobExplorer.getStepExecution(1L, 5L))
-				.thenReturn(workerStepExecutionFinish2);
+			.thenReturn(workerStepExecutionFinish2);
 		when(this.jobExplorer.getStepExecution(1L, 6L))
-				.thenReturn(workerStepExecutionFinish3);
+			.thenReturn(workerStepExecutionFinish3);
 
 		handler.afterPropertiesSet();
 
 		handler.beforeTask(taskExecution);
 		Collection<StepExecution> results = handler.handle(this.splitter,
-				masterStepExecution);
-
+			masterStepExecution);
+		Thread.sleep(5000);
 		verify(this.taskLauncher, times(3))
-				.launch(this.appDeploymentRequestArgumentCaptor.capture());
+			.launch(this.appDeploymentRequestArgumentCaptor.capture());
 
 		List<AppDeploymentRequest> allValues = this.appDeploymentRequestArgumentCaptor
-				.getAllValues();
+			.getAllValues();
 
 		validateAppDeploymentRequests(allValues, 3);
 

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -35,13 +34,10 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.StepExecutionSplitter;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.deployer.spi.core.AppDefinition;
-import org.springframework.cloud.deployer.spi.core.AppDeploymentRequest;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -49,9 +45,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -145,19 +141,23 @@ public class DeployerPartitionHandler
 
 	private boolean defaultArgsAsEnvironmentVars = false;
 
+	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+
 	@Autowired
 	private TaskRepository taskRepository;
 
 	/**
 	 * Constructor initializing the DeployerPartitionHandler instance.
-	 * @param taskLauncher the launcher used to execute partitioned tasks.
-	 * @param jobExplorer used to acquire the status of the job.
-	 * @param resource the url to the app to be launched.
-	 * @param stepName the name of the step.
+	 * @param taskLauncher The {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute partitioned tasks.
+	 * @param jobExplorer The {@link JobExplorer} to acquire the status of the job.
+	 * @param resource The {@link Resource} to the app to be launched.
+	 * @param stepName The name of the step.
+	 * @param threadPoolTaskExecutor If task launches should occur asynchronously then provide a {@link ThreadPoolTaskExecutor}.  Default is null.
 	 */
-
-	public DeployerPartitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-			Resource resource, String stepName, TaskRepository taskRepository) {
+	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
+		Resource resource, String stepName, TaskRepository taskRepository,
+		ThreadPoolTaskExecutor threadPoolTaskExecutor) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
@@ -169,6 +169,19 @@ public class DeployerPartitionHandler
 		this.resource = resource;
 		this.stepName = stepName;
 		this.taskRepository = taskRepository;
+		this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+	}
+
+	/**
+	 * Constructor initializing the DeployerPartitionHandler instance.
+	 * @param taskLauncher The {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute partitioned tasks.
+	 * @param jobExplorer The {@link JobExplorer} to acquire the status of the job.
+	 * @param resource The {@link Resource} to the app to be launched.
+	 * @param stepName The name of the step.
+	 */
+	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
+		Resource resource, String stepName, TaskRepository taskRepository) {
+		this(taskLauncher, jobExplorer, resource, stepName, taskRepository, null);
 	}
 
 	/**
@@ -235,8 +248,8 @@ public class DeployerPartitionHandler
 	}
 
 	/**
-	 * Map of deployment properties to be used by the {@link TaskLauncher}.
-	 * @param deploymentProperties properties to be used by the {@link TaskLauncher}
+	 * Map of deployment properties to be used by the {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}.
+	 * @param deploymentProperties properties to be used by the {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}
 	 */
 	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
 		this.deploymentProperties = deploymentProperties;
@@ -293,108 +306,30 @@ public class DeployerPartitionHandler
 
 	private void launchWorkers(Set<StepExecution> candidates,
 			Set<StepExecution> executed) {
+		TaskLauncherHandler taskLauncherHandler = new TaskLauncherHandler(this.commandLineArgsProvider,
+			this.taskRepository, this.defaultArgsAsEnvironmentVars,
+			this.stepName, this.taskExecution, this.environmentVariablesProvider,
+			this.resource, this.deploymentProperties,
+			this.taskLauncher,
+			this.applicationName);
 		for (StepExecution execution : candidates) {
 			if (this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
-				launchWorker(execution);
+				if (this.threadPoolTaskExecutor != null) {
+					TaskLauncherHandler taskLauncherThread = new TaskLauncherHandler(this.commandLineArgsProvider,
+						this.taskRepository, this.defaultArgsAsEnvironmentVars,
+						this.stepName, this.taskExecution, this.environmentVariablesProvider,
+						this.resource, this.deploymentProperties,
+						this.taskLauncher,
+						this.applicationName, execution);
+					this.threadPoolTaskExecutor.execute(taskLauncherThread);
+				}
+				else {
+					taskLauncherHandler.launchWorker(execution);
+				}
 				this.currentWorkers++;
-
 				executed.add(execution);
 			}
 		}
-	}
-
-	private void launchWorker(StepExecution workerStepExecution) {
-		List<String> arguments = new ArrayList<>();
-
-		ExecutionContext copyContext = new ExecutionContext(
-				workerStepExecution.getExecutionContext());
-
-		arguments.addAll(this.commandLineArgsProvider.getCommandLineArgs(copyContext));
-
-		TaskExecution partitionTaskExecution = null;
-
-		if (this.taskRepository != null) {
-			partitionTaskExecution = this.taskRepository.createTaskExecution();
-		}
-		else {
-			logger.warn(
-					"TaskRepository was not set so external execution id will not be recorded.");
-		}
-
-		if (!this.defaultArgsAsEnvironmentVars) {
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getJobExecution().getId())));
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getId())));
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_STEP_NAME, this.stepName));
-			arguments
-					.add(formatArgument(SPRING_CLOUD_TASK_NAME,
-							String.format("%s_%s_%s", this.taskExecution.getTaskName(),
-									workerStepExecution.getJobExecution().getJobInstance()
-											.getJobName(),
-									workerStepExecution.getStepName())));
-			arguments.add(formatArgument(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
-					String.valueOf(this.taskExecution.getExecutionId())));
-
-			if (partitionTaskExecution != null) {
-				arguments.add(formatArgument(SPRING_CLOUD_TASK_EXECUTION_ID,
-						String.valueOf(partitionTaskExecution.getExecutionId())));
-			}
-		}
-
-		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
-
-		Map<String, String> environmentVariables = this.environmentVariablesProvider
-				.getEnvironmentVariables(copyContext);
-
-		if (this.defaultArgsAsEnvironmentVars) {
-			environmentVariables.put(SPRING_CLOUD_TASK_JOB_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getJobExecution().getId()));
-			environmentVariables.put(SPRING_CLOUD_TASK_STEP_EXECUTION_ID,
-					String.valueOf(workerStepExecution.getId()));
-			environmentVariables.put(SPRING_CLOUD_TASK_STEP_NAME, this.stepName);
-			environmentVariables
-					.put(SPRING_CLOUD_TASK_NAME,
-							String.format("%s_%s_%s", this.taskExecution.getTaskName(),
-									workerStepExecution.getJobExecution().getJobInstance()
-											.getJobName(),
-									workerStepExecution.getStepName()));
-			environmentVariables.put(SPRING_CLOUD_TASK_PARENT_EXECUTION_ID,
-					String.valueOf(this.taskExecution.getExecutionId()));
-			environmentVariables.put(SPRING_CLOUD_TASK_EXECUTION_ID,
-					String.valueOf(partitionTaskExecution.getExecutionId()));
-		}
-
-		AppDefinition definition = new AppDefinition(resolveApplicationName(),
-				environmentVariables);
-
-		AppDeploymentRequest request = new AppDeploymentRequest(definition, this.resource,
-				this.deploymentProperties, arguments);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug(
-					"Requesting the launch of the following application: " + request);
-		}
-
-		String externalExecutionId = this.taskLauncher.launch(request);
-
-		if (this.taskRepository != null) {
-			this.taskRepository.updateExternalExecutionId(
-					partitionTaskExecution.getExecutionId(), externalExecutionId);
-		}
-	}
-
-	private String resolveApplicationName() {
-		if (StringUtils.hasText(this.applicationName)) {
-			return this.applicationName;
-		}
-		else {
-			return this.taskExecution.getTaskName();
-		}
-	}
-
-	private String formatArgument(String key, String value) {
-		return String.format("--%s=%s", key, value);
 	}
 
 	private Collection<StepExecution> pollReplies(final StepExecution masterStepExecution,
@@ -468,5 +403,4 @@ public class DeployerPartitionHandler
 
 		}
 	}
-
 }

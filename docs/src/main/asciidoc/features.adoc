@@ -190,9 +190,7 @@ following property:
 === External Task Id
 
 Spring Cloud Task lets you store an external task ID for each
-`TaskExecution`. An example of this would be a task ID provided by
-Cloud Foundry when a task is launched on the platform.
-In order to configure your Task to use a generated `TaskExecutionId`, add the
+`TaskExecution`.  In order to configure your Task to use a generated `TaskExecutionId`, add the
 following property:
 
 `spring.cloud.task.external-execution-id=<externalTaskId>`
