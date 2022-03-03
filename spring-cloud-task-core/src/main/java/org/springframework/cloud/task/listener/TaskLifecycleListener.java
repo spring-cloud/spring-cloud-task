@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +38,7 @@ import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cloud.task.configuration.TaskObservationCloudKeyValues;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -88,13 +91,16 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private final TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory;
 
-	private final TaskMetrics taskMetrics;
+	private final TaskObservations taskObservations;
 
 	@Autowired
 	private ConfigurableApplicationContext context;
 
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListenersFromContext;
+
+	@Autowired(required = false)
+	private Observation.ObservationConvention observationConvention;
 
 	private List<TaskExecutionListener> taskExecutionListeners;
 
@@ -132,7 +138,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
-			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory) {
+			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
+		@Autowired(required = false) ObservationRegistry observationRegistry,
+		TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
@@ -146,7 +154,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
-		this.taskMetrics = new TaskMetrics();
+		observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
+		this.taskObservations = new TaskObservations(observationRegistry, taskObservationCloudKeyValues, observationConvention);
 	}
 
 	/**
@@ -315,7 +324,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskStartup(taskExecution);
+		this.taskObservations.onTaskStartup(taskExecution);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
 				this.taskExecutionListeners);
@@ -338,7 +347,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskEnd(taskExecution);
+		if (this.taskObservations != null) {
+			this.taskObservations.onTaskEnd(taskExecution);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
@@ -362,7 +373,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
-		this.taskMetrics.onTaskFailed(throwable);
+		if (this.taskObservations != null) {
+			this.taskObservations.onTaskFailed(throwable);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {

@@ -53,6 +53,7 @@ class ObservationApplicationRunner implements ApplicationRunner {
 		TaskObservationContext context = new TaskObservationContext(this.beanName);
 		Observation observation = TaskDocumentedObservation.TASK_RUNNER_OBSERVATION.observation(this.taskObservationConvention, INSTANCE, context, registry())
 			.contextualName(this.beanName);
+
 		try (Observation.Scope scope = observation.start().openScope()) {
 			this.delegate.run(args);
 		}
@@ -71,4 +72,5 @@ class ObservationApplicationRunner implements ApplicationRunner {
 		}
 		return this.registry;
 	}
+
 }

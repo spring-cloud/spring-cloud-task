@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2022 the original author or authors.
+ * Copyright 2022-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.task.configuration.observation;
+package io.spring.taskobservations;
 
-import io.micrometer.observation.Observation;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
-/**
- * {@link Observation.ObservationConvention} for Spring Cloud Task.
- *
- * @author Marcin Grzejszczak
- * @since 3.0.0
- */
-public interface TaskObservationConvention extends Observation.ObservationConvention<TaskObservationContext> {
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-	@Override
-	default boolean supportsContext(Observation.Context context) {
-		return context instanceof TaskObservationContext;
+@Configuration
+public class ObservationConfiguration {
+	@Bean
+	public SimpleMeterRegistry meterRegistry() {
+		return new SimpleMeterRegistry();
 	}
 }

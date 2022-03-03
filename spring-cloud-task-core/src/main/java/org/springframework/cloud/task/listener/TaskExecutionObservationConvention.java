@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package io.spring.taskmetrics;
+package org.springframework.cloud.task.listener;
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.observation.Observation;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+/**
+ * {@link Observation.ObservationConvention} for {@link TaskExecutionObservationContext}.
+ *
+ * @author Glenn Renfro
+ * @since 3.0.0
+ */
+public interface TaskExecutionObservationConvention extends Observation.ObservationConvention<TaskExecutionObservationContext> {
 
-@Configuration
-public class MetricConfiguration {
-	@Bean
-	public SimpleMeterRegistry meterRegistry() {
-		return new SimpleMeterRegistry();
+	@Override
+	default boolean supportsContext(Observation.Context context) {
+		return context instanceof TaskExecutionObservationContext;
 	}
 }

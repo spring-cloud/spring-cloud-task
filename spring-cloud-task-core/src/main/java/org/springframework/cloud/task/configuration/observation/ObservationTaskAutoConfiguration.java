@@ -19,8 +19,6 @@ package org.springframework.cloud.task.configuration.observation;
 import io.micrometer.observation.ObservationRegistry;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(ObservationRegistry.class)
 @ConditionalOnProperty(value = "spring.cloud.task.observation.enabled", matchIfMissing = true)
 @ConditionalOnBean(ObservationRegistry.class)
-@AutoConfigureAfter(ObservationAutoConfiguration.class)
 public class ObservationTaskAutoConfiguration {
 
 	@Bean

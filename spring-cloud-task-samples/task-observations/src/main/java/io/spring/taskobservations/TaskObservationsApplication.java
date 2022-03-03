@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.spring.taskmetrics;
+package io.spring.taskobservations;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,35 +32,25 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableTask
-public class TaskMetricsApplication {
+public class TaskObservationsApplication {
 
-	private static final Log logger = LogFactory.getLog(TaskMetricsApplication.class);
+	private static final Log logger = LogFactory.getLog(TaskObservationsApplication.class);
 
 	@Autowired
 	public SimpleMeterRegistry simpleMeterRegistry;
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskMetricsApplication.class, args);
+		SpringApplication.run(TaskObservationsApplication.class, args);
 	}
 
 	@Bean
 	public ApplicationRunner applicationRunner() {
-		return new ApplicationRunner() {
-			@Override
-			public void run(ApplicationArguments args) throws Exception {
-				logger.info("Hello ApplicationRunner Metric's World");
-			}
-		};
+		return args -> logger.info("Hello ApplicationRunner Metric's World");
 	}
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
-		return new CommandLineRunner() {
-			@Override
-			public void run(String... args) throws Exception {
-				logger.info("Hello CommandLineRunner Metric's World");
-			}
-		};
+		return args -> logger.info("Hello CommandLineRunner Metric's World");
 	}
 
 	/**

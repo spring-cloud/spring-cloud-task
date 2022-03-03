@@ -38,6 +38,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.CollectionUtils;
@@ -111,6 +112,13 @@ public class SimpleTaskAutoConfiguration {
 		}
 
 		return taskRepositoryInitializer;
+	}
+
+
+	@Bean
+	@Profile("cloud")
+	TaskObservationCloudKeyValues taskObservationCloudKeyValues() {
+		return new TaskObservationCloudKeyValues();
 	}
 
 	/**

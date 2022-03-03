@@ -13,9 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Task Core</name>
 	<description>Spring Cloud Task</description>
-	<properties>
-		<jmock-version>1.49</jmock-version>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -123,19 +120,8 @@
 			<artifactId>micrometer-observation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<version>${jmock-version}</version>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -144,8 +130,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-test</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
