@@ -71,4 +71,8 @@ class ObservationApplicationRunner implements ApplicationRunner {
 		}
 		return this.registry;
 	}
+	@Override
+	public void setObservationConvention(TaskObservationConvention taskObservationConvention) {
+		this.taskObservationConvention = taskObservationConvention;
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2019 the original author or authors.
+ * Copyright 2019-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,20 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.micrometer.core.instrument.LongTaskTimer;
-import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.observation.TimerObservationHandler;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.core.tck.MeterRegistryAssert;
+import io.micrometer.core.tck.ObservationRegistryAssert;
+import io.micrometer.core.tck.TestObservationRegistry;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.cloud.task.listener.TaskExecutionMeters;
 import org.springframework.cloud.task.listener.TaskMetrics;
 import org.springframework.cloud.task.repository.TaskExecution;
 
@@ -34,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Christian Tzolov
+ * @author Glenn Renfro
  */
 public class TaskMetricsTests {
 
@@ -41,17 +49,21 @@ public class TaskMetricsTests {
 
 	private SimpleMeterRegistry simpleMeterRegistry;
 
+	private ObservationRegistry observationRegistry;
+
 	@BeforeEach
 	public void before() {
-		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
-		simpleMeterRegistry = new SimpleMeterRegistry();
-		Metrics.addRegistry(simpleMeterRegistry);
-		taskMetrics = new TaskMetrics();
+		this.simpleMeterRegistry = new SimpleMeterRegistry();
+		this.observationRegistry = TestObservationRegistry.create();
+		ObservationHandler<Observation.Context> timerObservationHandler = new TimerObservationHandler(this.simpleMeterRegistry);
+		this.observationRegistry.observationConfig().observationHandler(timerObservationHandler);
+		this.taskMetrics = new TaskMetrics(this.observationRegistry);
 	}
 
 	@AfterEach
 	public void after() {
-		Metrics.globalRegistry.getMeters().forEach(Metrics.globalRegistry::remove);
+		this.simpleMeterRegistry.clear();
+		ObservationRegistryAssert.assertThat(this.observationRegistry).doesNotHaveAnyRemainingCurrentObservation();
 	}
 
 	@Test
@@ -63,48 +75,51 @@ public class TaskMetricsTests {
 		// Start Task
 		taskMetrics.onTaskStartup(taskExecution);
 
-		//// Test Long Task Timer while the task is running.
+		// Test Long Task Timer while the task is running.
 		LongTaskTimer longTaskTimer = simpleMeterRegistry
-				.find(TaskMetrics.SPRING_CLOUD_TASK_ACTIVE_METER).longTaskTimer();
+				.find(TaskExecutionMeters.TASK_ACTIVE.getName()).longTaskTimer();
 		assertThat(longTaskTimer)
 				.withFailMessage("LongTask timer should be created on Task start")
 				.isNotNull();
-		// assertThat(longTaskTimer.activeTasks()).isEqualTo(1);
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
+		assertThat(longTaskTimer.activeTasks()).isEqualTo(1);
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName()))
 				.isEqualTo("myTask72");
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName()))
 				.isEqualTo("123");
 
 		// Finish Task
 		taskMetrics.onTaskEnd(taskExecution);
 
 		// Test Timer
-		Timer taskTimer = simpleMeterRegistry.find(TaskMetrics.SPRING_CLOUD_TASK_METER)
-				.timer();
-		assertThat(taskTimer).isNotNull();
-		// assertThat(taskTimer.count()).isEqualTo(1L);
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
-				.isEqualTo("myTask72");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
-				.isEqualTo("123");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXTERNAL_EXECUTION_ID_TAG))
-				.isEqualTo("unknown");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_PARENT_EXECUTION_ID_TAG))
-				.isEqualTo("-1");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXIT_CODE_TAG))
-				.isEqualTo("0");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXCEPTION_TAG))
-				.isEqualTo("none");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_STATUS_TAG))
-				.isEqualTo(TaskMetrics.STATUS_SUCCESS);
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName(), "myTask72"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName(), "123"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_PARENT_EXECUTION_ID_TAG.getKeyName(), "-1"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXIT_CODE_TAG.getKeyName(), "0"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXCEPTION_TAG.getKeyName(), "none"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_STATUS_TAG.getKeyName(), TaskMetrics.STATUS_SUCCESS));
 
 		// Test Long Task Timer after the task has completed.
-		// LongTaskTimer longTaskTimer = simpleMeterRegistry
-		// .find(TaskMetrics.SPRING_CLOUD_TASK_ACTIVE_METER).longTaskTimer();
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(0);
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName()))
 				.isEqualTo("myTask72");
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName()))
 				.isEqualTo("123");
 	}
 
@@ -119,14 +134,14 @@ public class TaskMetricsTests {
 
 		// Test Long Task Timer while the task is running.
 		LongTaskTimer longTaskTimer = simpleMeterRegistry
-				.find(TaskMetrics.SPRING_CLOUD_TASK_ACTIVE_METER).longTaskTimer();
+				.find(TaskExecutionMeters.TASK_ACTIVE.getName()).longTaskTimer();
 		assertThat(longTaskTimer)
 				.withFailMessage("LongTask timer should be created on Task start")
 				.isNotNull();
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(1);
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName()))
 				.isEqualTo("myTask");
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName()))
 				.isEqualTo("123");
 
 		taskMetrics.onTaskFailed(new RuntimeException("Test"));
@@ -134,34 +149,38 @@ public class TaskMetricsTests {
 		// Finish Task. TaskLifecycleListen calls onTaskEnd after the onTaskFailed. Make
 		// sure that the counter status
 		// is not affected by this.
+		taskExecution.setExitCode(1);
 		taskMetrics.onTaskEnd(taskExecution);
 
-		Timer taskTimer = simpleMeterRegistry.find(TaskMetrics.SPRING_CLOUD_TASK_METER)
-				.timer();
-		assertThat(taskTimer).isNotNull();
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName(), "myTask"));
 
-		assertThat(taskTimer).isNotNull();
-		// assertThat(taskTimer.count()).isEqualTo(1L);
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
-				.isEqualTo("myTask");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
-				.isEqualTo("123");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXTERNAL_EXECUTION_ID_TAG))
-				.isEqualTo("unknown");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_PARENT_EXECUTION_ID_TAG))
-				.isEqualTo("-1");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXIT_CODE_TAG))
-				.isEqualTo("0");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXCEPTION_TAG))
-				.isEqualTo("RuntimeException");
-		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_STATUS_TAG))
-				.isEqualTo(TaskMetrics.STATUS_FAILURE);
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName(), "123"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_PARENT_EXECUTION_ID_TAG.getKeyName(), "-1"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXIT_CODE_TAG.getKeyName(), "1"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_EXCEPTION_TAG.getKeyName(), "RuntimeException"));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TaskExecutionMeters.TASK_ACTIVE.getPrefix(),
+				Tags.of(TaskExecutionMeters.TaskTags.TASK_STATUS_TAG.getKeyName(), TaskMetrics.STATUS_FAILURE));
 
 		// Test Long Task Timer after the task has completed.
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(0);
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName()))
 				.isEqualTo("myTask");
-		assertThat(longTaskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName()))
 				.isEqualTo("123");
 	}
 

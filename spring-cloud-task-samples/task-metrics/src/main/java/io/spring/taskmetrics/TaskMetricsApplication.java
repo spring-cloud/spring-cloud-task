@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -46,22 +45,12 @@ public class TaskMetricsApplication {
 
 	@Bean
 	public ApplicationRunner applicationRunner() {
-		return new ApplicationRunner() {
-			@Override
-			public void run(ApplicationArguments args) throws Exception {
-				logger.info("Hello ApplicationRunner Metric's World");
-			}
-		};
+		return args -> logger.info("Hello ApplicationRunner Metric's World");
 	}
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
-		return new CommandLineRunner() {
-			@Override
-			public void run(String... args) throws Exception {
-				logger.info("Hello CommandLineRunner Metric's World");
-			}
-		};
+		return args -> logger.info("Hello CommandLineRunner Metric's World");
 	}
 
 	/**

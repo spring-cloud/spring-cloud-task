@@ -18,6 +18,8 @@ package org.springframework.cloud.task.util;
 
 import javax.sql.DataSource;
 
+import io.micrometer.observation.ObservationRegistry;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -82,10 +84,12 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer) {
+	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer,
+		@Autowired(required = false) io.micrometer.core.instrument.MeterRegistry meterRegistry, @Autowired(required = false) ObservationRegistry observationRegistry) {
+
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
 				this.applicationArguments, taskExplorer, this.taskProperties,
-				taskListenerExecutorObjectProvider(this.context));
+				taskListenerExecutorObjectProvider(this.context), observationRegistry);
 	}
 
 	@Override

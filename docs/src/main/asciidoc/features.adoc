@@ -448,3 +448,27 @@ In these cases the context is held open because a thread has been allocated
 set the `spring.cloud.task.closecontextEnabled` property to `true` when launching your task.
 This will close the application's context once the task is complete.
 Thus allowing the application to terminate.
+
+[[enable-task-metrics]]
+=== Enable Task Metrics
+Spring Cloud Task integrates with Micrometer and collects metrics for both `Observation` and `LongTaskTimer`.
+To enable Task metrics integration, you must add the `spring-boot-starter-actuator`,
+preferred registry implementation, and the micrometer core to your task application.
+An example maven set of dependencies to enable task metrics using Influx would be:
+
+[source,xml]
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-influx</artifactId>
+    <version>1.10.0-SNAPSHOT</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-core</artifactId>
+    <version>1.10.0-SNAPSHOT</version>
+</dependency>

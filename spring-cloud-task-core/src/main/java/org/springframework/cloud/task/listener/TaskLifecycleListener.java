@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -132,7 +133,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
-			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory) {
+			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
+		@Autowired(required = false) ObservationRegistry observationRegistry) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
@@ -146,7 +148,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
-		this.taskMetrics = new TaskMetrics();
+		observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
+		this.taskMetrics = new TaskMetrics(observationRegistry);
 	}
 
 	/**
@@ -315,7 +318,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskStartup(taskExecution);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskStartup(taskExecution);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
 				this.taskExecutionListeners);
@@ -338,7 +343,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskEnd(taskExecution);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskEnd(taskExecution);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
@@ -362,7 +369,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
-		this.taskMetrics.onTaskFailed(throwable);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskFailed(throwable);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {

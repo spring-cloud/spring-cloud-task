@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.task.listener;
 
-import io.micrometer.core.instrument.LongTaskTimer;
-import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.Timer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
@@ -28,19 +26,15 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * Intended for internal use only.
  *
  * @author Christian Tzolov
+ * @author Glenn Renfro
  * @since 2.2
  */
-public class TaskMetrics {
+public class TaskMetrics implements Observation.KeyValuesProviderAware<TaskExecutionKeyValuesProvider> {
+	private ObservationRegistry observationRegistry;
 
-	/**
-	 * Task timer measurements. Records information about task duration and status.
-	 */
-	public static final String SPRING_CLOUD_TASK_METER = "spring.cloud.task";
-
-	/**
-	 * LongTask timer measurement. Records the run-time status of long-time lasting tasks.
-	 */
-	public static final String SPRING_CLOUD_TASK_ACTIVE_METER = "spring.cloud.task.active";
+	public TaskMetrics(ObservationRegistry observationRegistry) {
+		this.observationRegistry = observationRegistry;
+	}
 
 	/**
 	 * Successful task execution status indicator.
@@ -52,88 +46,40 @@ public class TaskMetrics {
 	 */
 	public static final String STATUS_FAILURE = "failure";
 
-	/**
-	 * task name measurement tag.
-	 */
-	public static final String TASK_NAME_TAG = "task.name";
+	private Observation.Scope scope;
 
-	/**
-	 * task execution id tag.
-	 */
-	public static final String TASK_EXECUTION_ID_TAG = "task.execution.id";
+	private TaskExecutionKeyValuesProvider tagsProvider = new DefaultTaskExecutionKeyValuesProvider();
 
-	/**
-	 * task parent execution id tag.
-	 */
-	public static final String TASK_PARENT_EXECUTION_ID_TAG = "task.parent.execution.id";
-
-	/**
-	 * task external execution id tag.
-	 */
-	public static final String TASK_EXTERNAL_EXECUTION_ID_TAG = "task.external.execution.id";
-
-	/**
-	 * task exit code tag.
-	 */
-	public static final String TASK_EXIT_CODE_TAG = "task.exit.code";
-
-	/**
-	 * task status tag. Can be either STATUS_SUCCESS or STATUS_FAILURE
-	 */
-	public static final String TASK_STATUS_TAG = "task.status";
-
-	/**
-	 * task exception tag. Contains the name of the exception class in case of error or
-	 * none otherwise.
-	 */
-	public static final String TASK_EXCEPTION_TAG = "task.exception";
-
-	private Timer.Sample taskSample;
-
-	private LongTaskTimer.Sample longTaskSample;
-
-	private Throwable exception;
+	private TaskExecutionObservationContext taskObservationContext;
 
 	public void onTaskStartup(TaskExecution taskExecution) {
-		LongTaskTimer longTaskTimer = LongTaskTimer
-				.builder(SPRING_CLOUD_TASK_ACTIVE_METER).description("Long task duration")
-				.tags(commonTags(taskExecution)).register(Metrics.globalRegistry);
+		this.taskObservationContext = new TaskExecutionObservationContext(taskExecution);
+		Observation observation = Observation.createNotStarted(TaskExecutionMeters.TASK_ACTIVE.getPrefix(), this.taskObservationContext, this.observationRegistry)
+			.contextualName(String.valueOf(taskExecution.getExecutionId()))
+			.keyValuesProvider(this.tagsProvider)
+			.lowCardinalityKeyValue(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.getKeyName(), taskExecution.getTaskName())
+			.lowCardinalityKeyValue(TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.getKeyName(), "" + taskExecution.getExecutionId())
+			.lowCardinalityKeyValue(TaskExecutionMeters.TaskTags.TASK_PARENT_EXECUTION_ID_TAG.getKeyName(),
+				"" + taskExecution.getParentExecutionId()).start();
 
-		this.longTaskSample = longTaskTimer.start();
-		this.taskSample = Timer.start(Metrics.globalRegistry);
+		this.scope = observation.openScope();
 	}
 
 	public void onTaskFailed(Throwable throwable) {
-		this.exception = throwable;
+			this.taskObservationContext.setExceptionMessage(throwable.getClass().getSimpleName());
+			this.taskObservationContext.setStatus(STATUS_FAILURE);
 	}
 
 	public void onTaskEnd(TaskExecution taskExecution) {
-		if (this.taskSample != null) {
-			this.taskSample.stop(Timer.builder(SPRING_CLOUD_TASK_METER)
-					.description("Task duration").tags(commonTags(taskExecution))
-					.tag(TASK_EXIT_CODE_TAG, "" + taskExecution.getExitCode())
-					.tag(TASK_EXCEPTION_TAG,
-							(this.exception == null) ? "none"
-									: this.exception.getClass().getSimpleName())
-					.tag(TASK_STATUS_TAG,
-							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE).register(Metrics.globalRegistry));
-			this.taskSample = null;
-		}
-
-		if (this.longTaskSample != null) {
-			this.longTaskSample.stop();
-			this.longTaskSample = null;
+		if (this.scope != null) {
+			this.taskObservationContext.getTaskExecution().setExitCode(taskExecution.getExitCode());
+			this.scope.getCurrentObservation().stop();
+			this.scope.close();
 		}
 	}
 
-	private Tags commonTags(TaskExecution taskExecution) {
-		return Tags.of(TASK_NAME_TAG, taskExecution.getTaskName())
-				.and(TASK_EXECUTION_ID_TAG, "" + taskExecution.getExecutionId())
-				.and(TASK_PARENT_EXECUTION_ID_TAG,
-						"" + taskExecution.getParentExecutionId())
-				.and(TASK_EXTERNAL_EXECUTION_ID_TAG,
-						(taskExecution.getExternalExecutionId() == null) ? "unknown"
-								: "" + taskExecution.getExternalExecutionId());
+	@Override
+	public void setKeyValuesProvider(TaskExecutionKeyValuesProvider tagsProvider) {
+		this.tagsProvider = tagsProvider;
 	}
-
 }

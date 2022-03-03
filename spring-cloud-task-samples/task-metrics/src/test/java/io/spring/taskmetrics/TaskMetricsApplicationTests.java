@@ -32,9 +32,10 @@ class TaskMetricsApplicationTests {
 	@Test
 	void contextLoads(CapturedOutput output) {
 		String result = output.getAll();
-		assertThat(result).contains("spring.cloud.task(TIMER)[application=" +
-			"'task-metrics-application-58', service='task-metrics-application', " +
-			"task.exception='none', task.execution.id='");
+		assertThat(result).contains("spring.cloud.task(TIMER)[application='task-metrics-application-58', " +
+			"error='none', service='task-metrics-application', spring.cloud.task.exception='none', " +
+			"spring.cloud.task.execution.id='1', spring.cloud.task.exit.code='0', spring.cloud.task.name='taskmetrics', " +
+			"spring.cloud.task.parent.execution.id='null', spring.cloud.task.status='success'];");
 	}
 
 }

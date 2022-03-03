@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.configuration;
 
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,17 +62,23 @@ public class TaskLifecycleConfiguration {
 
 	private boolean initialized = false;
 
+	private ObservationRegistry observationRegistry;
+
 	@Autowired
 	public TaskLifecycleConfiguration(TaskProperties taskProperties,
-			ConfigurableApplicationContext context, TaskRepository taskRepository,
-			TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
-			ObjectProvider<ApplicationArguments> applicationArguments) {
+		ConfigurableApplicationContext context, TaskRepository taskRepository,
+		TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
+		ObjectProvider<ApplicationArguments> applicationArguments,
+		@Autowired(required = false) ObservationRegistry observationRegistry) {
+
 		this.taskProperties = taskProperties;
 		this.context = context;
 		this.taskRepository = taskRepository;
 		this.taskExplorer = taskExplorer;
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments.getIfAvailable();
+		this.observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
+
 	}
 
 	@Bean
@@ -88,7 +95,8 @@ public class TaskLifecycleConfiguration {
 			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository,
 					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
 					this.taskProperties,
-					new TaskListenerExecutorObjectFactory(this.context));
+					new TaskListenerExecutorObjectFactory(this.context),
+					this.observationRegistry);
 
 			this.initialized = true;
 		}
