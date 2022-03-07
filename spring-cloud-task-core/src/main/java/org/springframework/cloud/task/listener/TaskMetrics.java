@@ -116,7 +116,7 @@ public class TaskMetrics {
 							(this.exception == null) ? "none"
 									: this.exception.getClass().getSimpleName())
 					.tag(TASK_STATUS_TAG,
-							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE));
+							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE).register(Metrics.globalRegistry));
 			this.taskSample = null;
 		}
 
