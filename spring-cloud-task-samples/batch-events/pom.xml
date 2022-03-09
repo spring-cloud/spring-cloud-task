@@ -20,8 +20,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<test.containers.version>1.16.1</test.containers.version>
-		<test.rabbit.containers.version>1.16.1</test.rabbit.containers.version>
+		<test.containers.version>1.16.3</test.containers.version>
+		<test.rabbit.containers.version>1.16.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 		<spring.cloud.stream>4.0.0-M1</spring.cloud.stream>
 		<spring.cloud.task>3.0.0-SNAPSHOT</spring.cloud.task>

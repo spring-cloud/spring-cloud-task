@@ -45,6 +45,7 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +57,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,7 +73,7 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	private static int randomPort;
 
 	static {
-		randomPort = SocketUtils.findAvailableTcpPort();
+		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -53,7 +54,6 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,7 +87,7 @@ public class TaskLauncherSinkTests {
 	private static int randomPort;
 
 	static {
-		randomPort = SocketUtils.findAvailableTcpPort();
+		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")

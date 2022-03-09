@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.SocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,10 +55,10 @@ public class MultiDataSourcesExternalApplicationTests {
 	private static int secondRandomPort;
 
 	static {
-		randomPort = SocketUtils.findAvailableTcpPort();
+		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 			+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
-		secondRandomPort = SocketUtils.findAvailableTcpPort();
+		secondRandomPort = TestSocketUtils.findAvailableTcpPort();
 		SECOND_DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 			+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
 	}

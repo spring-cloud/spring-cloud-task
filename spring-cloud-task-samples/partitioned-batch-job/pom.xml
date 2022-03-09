@@ -17,6 +17,7 @@
 	</parent>
 
 	<properties>
+		<test.cloud.support>4.0.0-SNAPSHOT</test.cloud.support>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-deployer>2.7.0</spring-cloud-deployer>
@@ -69,7 +70,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-test-support</artifactId>
+			<version>${test.cloud.support}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
