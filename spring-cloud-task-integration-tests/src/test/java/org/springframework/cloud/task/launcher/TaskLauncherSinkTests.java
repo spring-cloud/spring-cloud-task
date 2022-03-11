@@ -28,8 +28,6 @@ import org.h2.tools.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.RabbitMQContainer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,8 +69,8 @@ public class TaskLauncherSinkTests {
 
 	private final static int MAX_WAIT_TIME = 120000;
 
-	private final static String URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:2.1.1.RELEASE";
+	private final static String URL = "maven://io.spring.cloud:"
+			+ "timestamp-task:3.0.0-SNAPSHOT";
 
 	private final static String DATASOURCE_URL;
 
@@ -90,11 +88,6 @@ public class TaskLauncherSinkTests {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
 				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
-		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")
-				.withExposedPorts(5672);
-		rabbitmq.start();
-		final Integer mappedPort = rabbitmq.getMappedPort(5672);
-		System.setProperty("spring.rabbitmq.test.port", mappedPort.toString());
 	}
 
 	@Autowired
