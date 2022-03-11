@@ -90,27 +90,27 @@ public class TaskPartitionerTests {
 
 	@Test
 	public void testWithLocalDeployer() throws Exception {
-//		SpringApplication app = new SpringApplication(PartitionedBatchJobApplication.class);
-//		app.setAdditionalProfiles("master");
-//		Properties properties = new Properties();
-//		properties.setProperty("spring.datasource.url", DATASOURCE_URL);
-//		properties.setProperty("spring.datasource.username", DATASOURCE_USER_NAME);
-//		properties.setProperty("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
-//		properties.setProperty("spring.cloud.deployer.local.use-spring-application-json", "false");
-//		app.setDefaultProperties(properties);
-//		app.run();
-//
-//		Page<TaskExecution> taskExecutions = this.taskExplorer
-//			.findAll(PageRequest.of(0, 10));
-//		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected")
-//			.isEqualTo(5);
-//		assertThat(this.taskExplorer
-//			.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
-//			.as("Only One master is expected").isEqualTo(1);
-//		for (TaskExecution taskExecution : taskExecutions) {
-//			assertThat(taskExecution.getExitCode()
-//				.intValue()).as("return code should be 0").isEqualTo(0);
-//		}
+		SpringApplication app = new SpringApplication(PartitionedBatchJobApplication.class);
+		app.setAdditionalProfiles("master");
+		Properties properties = new Properties();
+		properties.setProperty("spring.datasource.url", DATASOURCE_URL);
+		properties.setProperty("spring.datasource.username", DATASOURCE_USER_NAME);
+		properties.setProperty("spring.datasource.driverClassName", DATASOURCE_DRIVER_CLASS_NAME);
+		properties.setProperty("spring.cloud.deployer.local.use-spring-application-json", "false");
+		app.setDefaultProperties(properties);
+		app.run();
+
+		Page<TaskExecution> taskExecutions = this.taskExplorer
+			.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected")
+			.isEqualTo(5);
+		assertThat(this.taskExplorer
+			.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
+			.as("Only One master is expected").isEqualTo(1);
+		for (TaskExecution taskExecution : taskExecutions) {
+			assertThat(taskExecution.getExitCode()
+				.intValue()).as("return code should be 0").isEqualTo(0);
+		}
 	}
 
 	@Configuration(proxyBeanMethods = false)

@@ -20,7 +20,7 @@
 		<test.cloud.support>4.0.0-SNAPSHOT</test.cloud.support>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<spring-cloud-deployer>2.7.0</spring-cloud-deployer>
+		<spring-cloud-deployer>2.8.0-SNAPSHOT</spring-cloud-deployer>
 	</properties>
 
 	<dependencyManagement>
