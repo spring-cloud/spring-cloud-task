@@ -133,12 +133,34 @@ public final class TestVerifierUtils {
 		assertThat(actualTaskExecution.getExecutionId()).as("taskExecutionId must be equal")
 				.isEqualTo(expectedTaskExecution.getExecutionId());
 		if (actualTaskExecution.getStartTime() != null) {
-			assertThat(actualTaskExecution.getStartTime().isEqual(expectedTaskExecution.getStartTime()))
-					.as("startTime must be equal").isTrue();
+			assertThat(actualTaskExecution.getStartTime().getHour() == expectedTaskExecution.getStartTime().getHour())
+					.as("startTime hour must be equal").isTrue();
+			assertThat(
+					actualTaskExecution.getStartTime().getMinute() == expectedTaskExecution.getStartTime().getMinute())
+							.as("startTime minute must be equal").isTrue();
+			assertThat(
+					actualTaskExecution.getStartTime().getSecond() == expectedTaskExecution.getStartTime().getSecond())
+							.as("startTime second must be equal").isTrue();
+			assertThat(actualTaskExecution.getStartTime().getDayOfYear() == expectedTaskExecution.getStartTime()
+					.getDayOfYear()).as("startTime day must be equal").isTrue();
+			assertThat(actualTaskExecution.getStartTime().getYear() == expectedTaskExecution.getStartTime().getYear())
+					.as("startTime year must be equal").isTrue();
+			assertThat(actualTaskExecution.getStartTime().getMonthValue() == expectedTaskExecution.getStartTime()
+					.getMonthValue()).as("startTime month must be equal").isTrue();
 		}
 		if (actualTaskExecution.getEndTime() != null) {
-			assertThat(actualTaskExecution.getEndTime().isEqual(expectedTaskExecution.getEndTime()))
-					.as("endTime must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getHour() == expectedTaskExecution.getEndTime().getHour())
+					.as("endTime hour must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getMinute() == expectedTaskExecution.getEndTime().getMinute())
+					.as("endTime minute must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getSecond() == expectedTaskExecution.getEndTime().getSecond())
+					.as("endTime second must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getDayOfYear() == expectedTaskExecution.getEndTime()
+					.getDayOfYear()).as("endTime day must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getYear() == expectedTaskExecution.getEndTime().getYear())
+					.as("endTime year must be equal").isTrue();
+			assertThat(actualTaskExecution.getEndTime().getMonthValue() == expectedTaskExecution.getEndTime()
+					.getMonthValue()).as("endTime month must be equal").isTrue();
 		}
 		assertThat(actualTaskExecution.getExitCode()).as("exitCode must be equal")
 				.isEqualTo(expectedTaskExecution.getExitCode());
