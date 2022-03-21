@@ -19,9 +19,9 @@ package org.springframework.cloud.task.configuration;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
