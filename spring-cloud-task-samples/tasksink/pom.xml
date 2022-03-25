@@ -24,7 +24,7 @@
 		<skipInstall>true</skipInstall>
 		<spring-cloud-stream>4.0.0-SNAPSHOT</spring-cloud-stream>
 		<spring-cloud-task>4.0.0-SNAPSHOT</spring-cloud-task>
-		<spring-cloud-deployer-version>2.7.3-SNAPSHOT</spring-cloud-deployer-version>
+		<spring-cloud-deployer-version>2.7.3</spring-cloud-deployer-version>
 	</properties>
 
 	<dependencyManagement>
