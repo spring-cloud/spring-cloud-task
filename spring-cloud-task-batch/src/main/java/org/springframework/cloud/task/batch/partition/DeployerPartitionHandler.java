@@ -45,6 +45,8 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -141,7 +143,7 @@ public class DeployerPartitionHandler
 
 	private boolean defaultArgsAsEnvironmentVars = false;
 
-	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+	private TaskExecutor taskExecutor;
 
 
 	@Autowired
@@ -153,11 +155,11 @@ public class DeployerPartitionHandler
 	 * @param jobExplorer The {@link JobExplorer} to acquire the status of the job.
 	 * @param resource The {@link Resource} to the app to be launched.
 	 * @param stepName The name of the step.
-	 * @param threadPoolTaskExecutor If task launches should occur asynchronously then provide a {@link ThreadPoolTaskExecutor}.  Default is null.
+	 * @param taskExecutor If task launches should occur asynchronously then provide a {@link ThreadPoolTaskExecutor}.  Default is null.
 	 */
 	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
 		Resource resource, String stepName, TaskRepository taskRepository,
-		ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+		TaskExecutor taskExecutor) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
@@ -169,7 +171,7 @@ public class DeployerPartitionHandler
 		this.resource = resource;
 		this.stepName = stepName;
 		this.taskRepository = taskRepository;
-		this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+		this.taskExecutor = taskExecutor;
 	}
 
 	/**
@@ -181,7 +183,7 @@ public class DeployerPartitionHandler
 	 */
 	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
 		Resource resource, String stepName, TaskRepository taskRepository) {
-		this(taskLauncher, jobExplorer, resource, stepName, taskRepository, null);
+		this(taskLauncher, jobExplorer, resource, stepName, taskRepository, new SyncTaskExecutor());
 	}
 
 	/**
@@ -314,14 +316,14 @@ public class DeployerPartitionHandler
 			this.applicationName);
 		for (StepExecution execution : candidates) {
 			if (this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
-				if (this.threadPoolTaskExecutor != null) {
+				if (this.taskExecutor != null) {
 					TaskLauncherHandler taskLauncherThread = new TaskLauncherHandler(this.commandLineArgsProvider,
 						this.taskRepository, this.defaultArgsAsEnvironmentVars,
 						this.stepName, this.taskExecution, this.environmentVariablesProvider,
 						this.resource, this.deploymentProperties,
 						this.taskLauncher,
 						this.applicationName, execution);
-					this.threadPoolTaskExecutor.execute(taskLauncherThread);
+					this.taskExecutor.execute(taskLauncherThread);
 				}
 				else {
 					taskLauncherHandler.launchWorker(execution);
