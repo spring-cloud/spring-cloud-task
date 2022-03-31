@@ -13,7 +13,7 @@
 	<artifactId>spring-cloud-task-integration-tests</artifactId>
 
 	<properties>
-		<test.cloud.support>4.0.0-SNAPSHOT</test.cloud.support>
+		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<test.containers.version>1.16.3</test.containers.version>
 		<test.rabbit.containers.version>1.16.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-test-support</artifactId>
-			<version>${test.cloud.support}</version>
+			<version>${spring-cloud-commons.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

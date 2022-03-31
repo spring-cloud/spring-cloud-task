@@ -17,7 +17,7 @@
 	</parent>
 
 	<properties>
-		<test.cloud.support>4.0.0-SNAPSHOT</test.cloud.support>
+		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-deployer>2.7.3</spring-cloud-deployer>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-test-support</artifactId>
-			<version>${test.cloud.support}</version>
+			<version>${spring-cloud-commons.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

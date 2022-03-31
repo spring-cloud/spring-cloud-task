@@ -18,7 +18,7 @@
 	</parent>
 
 	<properties>
-		<test.cloud.support>4.0.0-SNAPSHOT</test.cloud.support>
+		<spring-cloud-commons.version>4.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<skipInstall>true</skipInstall>
 	</properties>
 
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-test-support</artifactId>
-			<version>${test.cloud.support}</version>
+			<version>${spring-cloud-commons.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
