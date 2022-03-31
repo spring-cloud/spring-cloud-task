@@ -22,8 +22,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipInstall>true</skipInstall>
-		<spring-cloud-stream>4.0.0-SNAPSHOT</spring-cloud-stream>
-		<spring-cloud-task>4.0.0-SNAPSHOT</spring-cloud-task>
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-task.version>4.0.0-SNAPSHOT</spring-cloud-task.version>
 		<spring-cloud-deployer-version>2.7.3</spring-cloud-deployer-version>
 	</properties>
 
@@ -39,7 +39,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring-cloud-stream}</version>
+				<version>${spring-cloud-stream.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-			<version>${spring-cloud-stream}</version>
+			<version>${spring-cloud-stream.version}</version>
 			<type>test-jar</type>
 			<classifier>test-binder</classifier>
 			<scope>test</scope>
