@@ -23,8 +23,8 @@
 		<test.containers.version>1.16.3</test.containers.version>
 		<test.rabbit.containers.version>1.16.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<spring.cloud.stream>4.0.0-SNAPSHOT</spring.cloud.stream>
-		<spring.cloud.task>3.0.0-SNAPSHOT</spring.cloud.task>
+		<spring-cloud-stream.version>4.0.0-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-task.version>3.0.0-SNAPSHOT</spring-cloud-task.version>
 	</properties>
 
 	<dependencyManagement>
@@ -39,14 +39,14 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring.cloud.stream}</version>
+				<version>${spring-cloud-stream.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>${spring.cloud.task}</version>
+				<version>${spring-cloud-task.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-			<version>${spring.cloud.stream}</version>
+			<version>${spring-cloud-stream.version}</version>
 			<type>test-jar</type>
 			<classifier>test-binder</classifier>
 			<scope>test</scope>
