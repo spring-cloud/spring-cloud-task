@@ -24,11 +24,7 @@ import org.springframework.cloud.task.util.TestDBUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
-import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
-import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
-import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
-import static org.springframework.cloud.task.repository.support.DatabaseType.fromProductName;
+import static org.springframework.cloud.task.repository.support.DatabaseType.*;
 
 /**
  * Tests that the correct database names are selected from datasource metadata.
@@ -46,7 +42,7 @@ public class DatabaseTypeTests {
 		assertThat(fromProductName("Oracle")).isEqualTo(ORACLE);
 		assertThat(fromProductName("PostgreSQL")).isEqualTo(POSTGRES);
 		assertThat(fromProductName("MySQL")).isEqualTo(MYSQL);
-		assertThat(fromProductName("MariaDB")).isEqualTo(MYSQL);
+		assertThat(fromProductName("MariaDB")).isEqualTo(MARIADB);
 	}
 
 	@Test
@@ -82,7 +78,7 @@ public class DatabaseTypeTests {
 	@Test
 	public void testFromMetaDataForMariaDB() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MariaDB");
-		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MARIADB);
 	}
 
 }
