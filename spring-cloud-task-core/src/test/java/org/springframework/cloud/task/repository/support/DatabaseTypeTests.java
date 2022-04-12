@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import static org.springframework.cloud.task.repository.support.DatabaseType.*;
  * @author Lucas Ward
  * @author Will Schipp
  * @author Glenn Renfro
+ * @author Ben Blinebury
  *
  */
 public class DatabaseTypeTests {

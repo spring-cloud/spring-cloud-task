@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
  * database driver's metadata.
  *
  * @author Glenn Renfro
+ * @author Ben Blinebury
  */
 public enum DatabaseType {
 
