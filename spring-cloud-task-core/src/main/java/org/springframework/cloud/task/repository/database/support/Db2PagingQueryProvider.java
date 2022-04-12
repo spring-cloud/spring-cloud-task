@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
  * database specific features.
  *
  * @author Thomas Schuettel
+ * @author Ryan DCruz
  */
 public class Db2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 
@@ -31,8 +32,7 @@ public class Db2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 	public String getPageQuery(Pageable pageable) {
 		long offset = pageable.getOffset() + 1;
 		return generateRowNumSqlQueryWithNesting(getSelectClause(), false,
-				"TMP_ROW_NUM BETWEEN " + offset + " AND "
-						+ (offset + pageable.getPageSize()));
+			"TMP_ROW_NUM >= " + offset + " AND TMP_ROW_NUM < " + (offset + pageable.getPageSize()));
 	}
 
 	private String generateRowNumSqlQueryWithNesting(String selectClause,
