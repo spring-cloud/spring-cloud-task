@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
  * database driver's metadata.
  *
  * @author Glenn Renfro
+ * @author Ben Blinebury
  */
 public enum DatabaseType {
 
@@ -85,7 +86,12 @@ public enum DatabaseType {
 	/**
 	 * DB2AS400 DB.
 	 */
-	DB2AS400("DB2AS400");
+	DB2AS400("DB2AS400"),
+
+	/**
+	 * MariaDB DB.
+	 */
+	MARIADB("MariaDB");
 
 	private static final Map<String, DatabaseType> dbNameMap;
 
@@ -160,9 +166,6 @@ public enum DatabaseType {
 	 * @throws IllegalArgumentException if none is found.
 	 */
 	public static DatabaseType fromProductName(String productName) {
-		if (productName.equals("MariaDB")) {
-			productName = "MySQL";
-		}
 		if (!dbNameMap.containsKey(productName)) {
 			throw new IllegalArgumentException(
 					"DatabaseType not found for product name: [" + productName + "]");
