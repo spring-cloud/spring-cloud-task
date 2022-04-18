@@ -24,6 +24,11 @@
 			<username>${env.CI_DEPLOY_USERNAME}</username>
 			<password>${env.CI_DEPLOY_PASSWORD}</password>
 		</server>
+<!--		<server>-->
+<!--			<id>localhost</id>-->
+<!--			<username>admin</username>-->
+<!--			<password>password</password>-->
+<!--		</server>-->
 	</servers>
 	<profiles>
 		<profile>

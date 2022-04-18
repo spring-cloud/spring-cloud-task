@@ -39,6 +39,14 @@
 		</dependencies>
 	</dependencyManagement>
 
+<!--	<distributionManagement>-->
+<!--		<snapshotRepository>-->
+<!--			<id>localhost</id>-->
+<!--			<name>d06aa5795487-snapshots</name>-->
+<!--			<url>http://localhost:8088/libs-snapshot-local</url>-->
+<!--		</snapshotRepository>-->
+<!--	</distributionManagement>-->
+
 	<profiles>
 		<profile>
 			<id>spring</id>
