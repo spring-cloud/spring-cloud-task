@@ -111,8 +111,8 @@
 
 	<properties>
 		<spring-cloud-stream.version>3.2.2</spring-cloud-stream.version>
-		<spring-cloud-deployer.version>2.7.0</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.7.0
+		<spring-cloud-deployer.version>2.7.4</spring-cloud-deployer.version>
+		<spring-cloud-deployer-local.version>2.7.4
 		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
