@@ -111,7 +111,7 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 				platform = "postgresql";
 			}
 			if ("oracle".equals(platform)) {
-				platform = "oracle10g";
+				platform = "oracle";
 			}
 			if ("mysql".equals(platform)) {
 				platform = "mysql";
