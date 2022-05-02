@@ -69,6 +69,11 @@ import static org.springframework.test.context.jdbc.SqlConfig.ErrorMode.CONTINUE
 	scripts = "classpath:/org/springframework/cloud/task/schema-db2.sql",
 	config = @SqlConfig(errorMode = CONTINUE_ON_ERROR)
 )
+@Sql(statements = {
+	" DELETE FROM TASK_EXECUTION_PARAMS ",
+	" DELETE FROM TASK_TASK_BATCH ",
+	" DELETE FROM TASK_EXECUTION "
+})
 class Db2PagingQueryProviderTest {
 
 	@Container
@@ -120,6 +125,36 @@ class Db2PagingQueryProviderTest {
 		assertThat(pageRequest.getPageSize())
 			.as("Expected the size of the returned page to equal what was requested")
 			.isEqualTo(page.getNumberOfElements());
+	}
+
+	@DisplayName("Scenario: the page request size is larger than the total number of elements" +
+		"Given the total number of elements is 1" +
+		"And the page request size is 2" +
+		"When the query is executed" +
+		"Then the returned page has 1 element")
+	@Test
+	void pageRequestSinglePageEntries() {
+		// setup test data
+		taskExecutionDao.createTaskExecution(
+			UUID.randomUUID().toString(), new Date(), List.of(), UUID.randomUUID().toString());
+
+		PageRequest pageRequest = PageRequest.of(0, 2);
+
+		// run subject under test
+		Page<TaskExecution> page = simpleTaskExplorer.findAll(pageRequest);
+
+		// assert and verify
+		assertThat(page.getTotalElements())
+			.as("Should only have one record in the table")
+			.isEqualTo(1);
+
+		assertThat(page.getNumberOfElements())
+			.as("Should have one record in the returned page")
+			.isEqualTo(1);
+
+		assertThat(page.getTotalPages())
+			.as("Should expect the total number of pages to be 1")
+			.isEqualTo(1);
 	}
 
 	@TestConfiguration
