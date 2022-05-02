@@ -70,6 +70,7 @@ class Db2PagingQueryProviderTest {
 	@Container
 	public static Db2Container db2Container =
 		new Db2Container(DockerImageName.parse("ibmcom/db2:11.5.7.0"))
+			.acceptLicense()
 			.withDatabaseName("test")
 			.withStartupTimeoutSeconds(30)
 			.withExposedPorts(50000);
