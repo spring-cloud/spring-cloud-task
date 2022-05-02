@@ -119,12 +119,12 @@ class Db2PagingQueryProviderTest {
 
 		// assert and verify
 		assertThat(page.getTotalElements())
-			.as("Expected the total number of elements to exceed the page request size")
-			.isGreaterThan(pageRequest.getPageSize());
+			.as("Expected the total number of records in the table to be 3")
+			.isEqualTo(3);
 
 		assertThat(pageRequest.getPageSize())
-			.as("Expected the size of the returned page to equal what was requested")
-			.isEqualTo(page.getNumberOfElements());
+			.as("Expected the size of the returned page to be 2")
+			.isEqualTo(2);
 	}
 
 	@DisplayName("Scenario: the page request size is larger than the total number of elements" +
@@ -175,5 +175,4 @@ class Db2PagingQueryProviderTest {
 			return taskExecutionDaoFactoryBean.getObject();
 		}
 	}
-
 }
