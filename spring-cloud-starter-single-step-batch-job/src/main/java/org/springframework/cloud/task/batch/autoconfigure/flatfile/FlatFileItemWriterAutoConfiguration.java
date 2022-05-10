@@ -34,6 +34,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.WritableResource;
 
 /**
  * Autoconfiguration for a {@code FlatFileItemWriter}.
@@ -81,7 +82,7 @@ public class FlatFileItemWriterAutoConfiguration {
 		}
 
 		FlatFileItemWriterBuilder<Map<String, Object>> builder = new FlatFileItemWriterBuilder<Map<String, Object>>()
-				.name(this.properties.getName()).resource(this.properties.getResource())
+				.name(this.properties.getName()).resource((WritableResource) this.properties.getResource())
 				.append(this.properties.isAppend())
 				.encoding(this.properties.getEncoding())
 				.forceSync(this.properties.isForceSync())
