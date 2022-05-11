@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.cloud.task.configuration.SingleTaskConfiguration,\
 org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration,\
-org.springframework.cloud.task.configuration.MetricsAutoConfiguration\
+org.springframework.cloud.task.configuration.MetricsAutoConfiguration,\
+org.springframework.cloud.task.configuration.observation.ObservationTaskAutoConfiguration
 
