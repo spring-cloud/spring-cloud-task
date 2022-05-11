@@ -26,18 +26,18 @@ import org.springframework.boot.CommandLineRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservedCommandLineRunnerBeanPostProcessor implements BeanPostProcessor {
+class ObservationCommandLineRunnerBeanPostProcessor implements BeanPostProcessor {
 
 	private final BeanFactory beanFactory;
 
-	ObservedCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {
+	ObservationCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof CommandLineRunner commandLineRunner && !(bean instanceof ObservedCommandLineRunner)) {
-			return new ObservedCommandLineRunner(this.beanFactory, commandLineRunner, beanName);
+		if (bean instanceof CommandLineRunner commandLineRunner && !(bean instanceof ObservationCommandLineRunner)) {
+			return new ObservationCommandLineRunner(this.beanFactory, commandLineRunner, beanName);
 		}
 		return bean;
 	}

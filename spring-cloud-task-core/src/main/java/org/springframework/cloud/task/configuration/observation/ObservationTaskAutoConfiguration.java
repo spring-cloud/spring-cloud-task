@@ -43,19 +43,19 @@ import org.springframework.context.annotation.Configuration;
 public class ObservationTaskAutoConfiguration {
 
 	@Bean
-	ObservedTaskExecutionListener traceTaskExecutionListener(ObservationRegistry registry,
+	ObservationTaskExecutionListener traceTaskExecutionListener(ObservationRegistry registry,
 		@Value("${spring.application.name:default}") String appName) {
-		return new ObservedTaskExecutionListener(registry, appName);
+		return new ObservationTaskExecutionListener(registry, appName);
 	}
 
 	@Bean
-	static ObservedCommandLineRunnerBeanPostProcessor observedCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {
-		return new ObservedCommandLineRunnerBeanPostProcessor(beanFactory);
+	static ObservationCommandLineRunnerBeanPostProcessor observedCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {
+		return new ObservationCommandLineRunnerBeanPostProcessor(beanFactory);
 	}
 
 	@Bean
-	static ObservedApplicationRunnerBeanPostProcessor observedApplicationRunnerBeanPostProcessor(BeanFactory beanFactory) {
-		return new ObservedApplicationRunnerBeanPostProcessor(beanFactory);
+	static ObservationApplicationRunnerBeanPostProcessor observedApplicationRunnerBeanPostProcessor(BeanFactory beanFactory) {
+		return new ObservationApplicationRunnerBeanPostProcessor(beanFactory);
 	}
 
 }

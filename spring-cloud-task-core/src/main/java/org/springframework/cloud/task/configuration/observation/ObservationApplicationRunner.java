@@ -28,7 +28,7 @@ import org.springframework.boot.ApplicationRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservedApplicationRunner implements ApplicationRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
+class ObservationApplicationRunner implements ApplicationRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
 
 	private final BeanFactory beanFactory;
 
@@ -40,7 +40,7 @@ class ObservedApplicationRunner implements ApplicationRunner, Observation.KeyVal
 
 	private TaskKeyValuesProvider keyValuesProvider = new DefaultTaskKeyValuesProvider();
 
-	ObservedApplicationRunner(BeanFactory beanFactory, ApplicationRunner delegate, String beanName) {
+	ObservationApplicationRunner(BeanFactory beanFactory, ApplicationRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;
 		this.delegate = delegate;
 		this.beanName = beanName;

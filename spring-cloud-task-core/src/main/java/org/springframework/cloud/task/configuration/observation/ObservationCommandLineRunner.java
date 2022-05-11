@@ -27,7 +27,7 @@ import org.springframework.boot.CommandLineRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservedCommandLineRunner implements CommandLineRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
+class ObservationCommandLineRunner implements CommandLineRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
 
 	private final BeanFactory beanFactory;
 
@@ -39,7 +39,7 @@ class ObservedCommandLineRunner implements CommandLineRunner, Observation.KeyVal
 
 	private TaskKeyValuesProvider keyValuesProvider = new DefaultTaskKeyValuesProvider();
 
-	ObservedCommandLineRunner(BeanFactory beanFactory, CommandLineRunner delegate, String beanName) {
+	ObservationCommandLineRunner(BeanFactory beanFactory, CommandLineRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;
 		this.delegate = delegate;
 		this.beanName = beanName;

@@ -31,15 +31,15 @@ import org.springframework.core.Ordered;
  * @author Marcin Grzejszczak
  * @since 3.1.0
  */
-class ObservedTaskExecutionListener implements TaskExecutionListener, Ordered {
+class ObservationTaskExecutionListener implements TaskExecutionListener, Ordered {
 
-	private static final Log log = LogFactory.getLog(ObservedTaskExecutionListener.class);
+	private static final Log log = LogFactory.getLog(ObservationTaskExecutionListener.class);
 
 	private final ObservationRegistry registry;
 
 	private final String projectName;
 
-	ObservedTaskExecutionListener(ObservationRegistry registry, String projectName) {
+	ObservationTaskExecutionListener(ObservationRegistry registry, String projectName) {
 		this.registry = registry;
 		this.projectName = projectName;
 	}

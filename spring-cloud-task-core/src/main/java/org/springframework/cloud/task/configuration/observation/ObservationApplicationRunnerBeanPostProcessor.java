@@ -26,18 +26,18 @@ import org.springframework.boot.ApplicationRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservedApplicationRunnerBeanPostProcessor implements BeanPostProcessor {
+class ObservationApplicationRunnerBeanPostProcessor implements BeanPostProcessor {
 
 	private final BeanFactory beanFactory;
 
-	ObservedApplicationRunnerBeanPostProcessor(BeanFactory beanFactory) {
+	ObservationApplicationRunnerBeanPostProcessor(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof ApplicationRunner applicationRunner && !(bean instanceof ObservedApplicationRunner)) {
-			return new ObservedApplicationRunner(this.beanFactory, applicationRunner, beanName);
+		if (bean instanceof ApplicationRunner applicationRunner && !(bean instanceof ObservationApplicationRunner)) {
+			return new ObservationApplicationRunner(this.beanFactory, applicationRunner, beanName);
 		}
 		return bean;
 	}

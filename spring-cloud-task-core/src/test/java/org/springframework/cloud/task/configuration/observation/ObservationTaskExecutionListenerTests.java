@@ -26,12 +26,12 @@ import org.springframework.cloud.task.repository.TaskExecution;
 
 import static io.micrometer.core.tck.TestObservationRegistryAssert.then;
 
-class ObservedTaskExecutionListenerTests {
+class ObservationTaskExecutionListenerTests {
 
 	@Test
 	void testSuccessfulObservation() {
 		TestObservationRegistry registry = TestObservationRegistry.create();
-		ObservedTaskExecutionListener listener = new ObservedTaskExecutionListener(registry, "my-project");
+		ObservationTaskExecutionListener listener = new ObservationTaskExecutionListener(registry, "my-project");
 		TaskExecution taskExecution = taskExecution();
 
 		listener.onTaskStartup(taskExecution);
@@ -46,7 +46,7 @@ class ObservedTaskExecutionListenerTests {
 	@Test
 	void testErrorObservation() {
 		TestObservationRegistry registry = TestObservationRegistry.create();
-		ObservedTaskExecutionListener listener = new ObservedTaskExecutionListener(registry, "my-project");
+		ObservationTaskExecutionListener listener = new ObservationTaskExecutionListener(registry, "my-project");
 		TaskExecution taskExecution = taskExecution();
 
 		listener.onTaskStartup(taskExecution);
