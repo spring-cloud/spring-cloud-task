@@ -321,7 +321,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		}
 
 		@Bean
-		public DataSource dataSource() {
+		public DataSource dataSource(Server server) {
 			DriverManagerDataSource dataSource = new DriverManagerDataSource();
 			dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
 			dataSource.setUrl(DATASOURCE_URL);

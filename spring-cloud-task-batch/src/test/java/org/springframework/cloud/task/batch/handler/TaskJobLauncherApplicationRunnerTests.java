@@ -56,6 +56,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -268,8 +269,9 @@ public class TaskJobLauncherApplicationRunnerTests {
 
 	}
 
-	public static class JobWithFailureTaskExecutorConfiguration
-			extends JobWithFailureConfiguration {
+	@Import(JobWithFailureConfiguration.class)
+	@Configuration
+	public static class JobWithFailureTaskExecutorConfiguration {
 
 		@Bean
 		public BatchConfigurer batchConfigurer(DataSource dataSource) {
