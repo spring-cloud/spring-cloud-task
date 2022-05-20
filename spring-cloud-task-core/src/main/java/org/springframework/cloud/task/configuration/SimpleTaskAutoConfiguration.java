@@ -84,6 +84,7 @@ public class SimpleTaskAutoConfiguration {
 		return this.taskRepository;
 	}
 
+
 	@Bean
 	public PlatformTransactionManager springCloudTaskTransactionManager() {
 		return this.platformTransactionManager;
