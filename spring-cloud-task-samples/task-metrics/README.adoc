@@ -1,0 +1,26 @@
+= Timestamp Task
+
+This is a Spring Cloud Task application that utilizes Micrometer and displays
+metrics at the end of the application using the SimpleMeterRegistry.
+
+== Requirements:
+
+* Java 17 or Above
+
+== Classes:
+
+* TaskMetricsApplication - the Spring Boot Main Application
+
+== Build:
+
+[source,shell,indent=2]
+----
+$ mvn clean package
+----
+
+== Run:
+
+[source,shell,indent=2]
+----
+$ java -jar target/task-metrics-3.0.0-SNAPSHOT.jar
+----

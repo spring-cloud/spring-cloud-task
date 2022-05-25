@@ -391,6 +391,43 @@ application:
 NOTE: The exit code for the application will be 1 if the task fails because this feature
 is enabled and another task is running with the same task name.
 
+=== Enabling Micrometer Metrics and Observations for Spring Cloud Task
+
+Spring Cloud Task captures the following metrics with the following fields:
+
+* spring.cloud.task - Task timer measurements. Records information about task duration and status.
+** application - Name assigned by `management.metrics.tags.application` property.
+** task.exception - Exception that was thrown during task execution.
+** task.exit.code - The exit code of the application.
+** service - Service name assigned by the `management.metrics.tags.service` property.
+** task.execution.id  - The execution id associated with the task execution.
+** task.name - The name associated with the task execution via the `spring.cloud.task.name` property.
+** task.parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
+** count - as recorded by the timer.
+** total_time - as recorded by the timer.
+** max_time - as recorded by the timer.*
+* spring.cloud.task.active - LongTask timer measurement. Records the run-time status of long-time lasting tasks.
+
+==== Observations
+Spring Cloud Task allows user to enable Observations for `CommandLineRunner` and `ApplicationRunner` s.
+
+Spring Cloud Task establishes the following Observation with the following fields:
+
+* spring.cloud.task.runner - Observed representation of a `CommandLineRunner` or `ApplicationRunner`.
+** application - Name assigned by `management.metrics.tags.application` property.
+** error - Exception that was thrown during `ApplicationRunner` or `CommandLineRunner` execution.
+** spring.cloud.task.runner.bean-name - The name of the bean for the `ApplicationRunner` or `CommandLineRunner`
+** task.execution.id  - The execution id associated with the task execution.
+** task.name - The name associated with the task execution via the `spring.cloud.task.name` property.
+** task.parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
+** count - as recorded by the Observation.
+** total_time - as recorded by the Observation.
+** max_time - as recorded by the Observation.
+
+To Enable Task Observations for `ApplicationRunner` s or `CommandLineRunner` s set `spring.cloud.task.observation.enabled` to true.
+
+An example task application with observations enables using the `SimpleMeterRegistry` can be found https://github.com/spring-cloud/spring-cloud-task/tree/main/spring-cloud-task-samples/task-metrics[here].
+
 === Disabling Spring Cloud Task Auto Configuration
 
 In cases where Spring Cloud Task should not be auto configured for an implementation, you can disable Task's auto configuration.

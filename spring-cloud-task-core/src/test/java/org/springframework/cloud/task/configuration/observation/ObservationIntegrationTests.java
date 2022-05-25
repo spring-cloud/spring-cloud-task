@@ -81,8 +81,8 @@ class ObservationIntegrationTests {
 	}
 
 	@Configuration
-	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, ObservationAutoConfiguration.class, ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class, CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class})
 	@EnableTask
+	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, ObservationAutoConfiguration.class, ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class, CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class})
 	static class Config {
 		private static final Logger log = LoggerFactory.getLogger(Config.class);
 
