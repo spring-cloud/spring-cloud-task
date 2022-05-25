@@ -85,7 +85,7 @@ public class AmqpItemWriterAutoConfigurationTests {
 				.withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
-		host = rabbitmq.getContainerIpAddress();
+		host = rabbitmq.getHost();
 		amqpPort = mappedPort;
 		sampleData = new ArrayList<>(5);
 		addNameToReaderList(sampleData, "Jane");
