@@ -14,6 +14,8 @@
 		<main.basedir>${basedir}/..</main.basedir>
 		<configprops.inclusionPattern>spring.cloud.task.*</configprops.inclusionPattern>
 		<upload-docs-zip.phase>deploy</upload-docs-zip.phase>
+		<!-- Don't upload docs jar to central / repo.spring.io -->
+		<maven-deploy-plugin-default.phase>none</maven-deploy-plugin-default.phase>
 		<asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
 	</properties>
 	<dependencies>
