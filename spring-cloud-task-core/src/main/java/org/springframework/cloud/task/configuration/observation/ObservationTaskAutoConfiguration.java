@@ -19,7 +19,6 @@ package org.springframework.cloud.task.configuration.observation;
 import io.micrometer.observation.ObservationRegistry;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -41,12 +40,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(ObservationRegistry.class)
 @AutoConfigureAfter(ObservationAutoConfiguration.class)
 public class ObservationTaskAutoConfiguration {
-
-	@Bean
-	ObservationTaskExecutionListener traceTaskExecutionListener(ObservationRegistry registry,
-		@Value("${spring.application.name:default}") String appName) {
-		return new ObservationTaskExecutionListener(registry, appName);
-	}
 
 	@Bean
 	static ObservationCommandLineRunnerBeanPostProcessor observedCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {

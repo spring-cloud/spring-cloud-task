@@ -47,6 +47,8 @@ import org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingA
 import org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -79,7 +81,8 @@ class ObservationIntegrationTests {
 	}
 
 	@Configuration
-	@ImportAutoConfiguration({ObservationAutoConfiguration.class, ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class, CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class})
+	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, ObservationAutoConfiguration.class, ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class, CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class})
+	@EnableTask
 	static class Config {
 		private static final Logger log = LoggerFactory.getLogger(Config.class);
 

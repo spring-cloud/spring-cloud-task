@@ -39,22 +39,6 @@ enum TaskDocumentedObservation implements DocumentedObservation {
 		public String getPrefix() {
 			return "spring.cloud.task";
 		}
-	},
-
-	/**
-	 * Observation created within the lifecycle of a task.
-	 */
-	TASK_EXECUTION_LISTENER_OBSERVATION {
-		@Override
-		public String getName() {
-			return "spring.cloud.task.execution";
-		}
-
-
-		@Override
-		public String getPrefix() {
-			return "spring.cloud.task";
-		}
 	};
 
 	/**
