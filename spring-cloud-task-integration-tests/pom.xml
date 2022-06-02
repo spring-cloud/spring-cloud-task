@@ -17,7 +17,6 @@
 		<test.containers.version>1.17.2</test.containers.version>
 		<test.rabbit.containers.version>1.17.2</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<db2-jdbc.version>11.5.7.0</db2-jdbc.version>
 	</properties>
 
 	<dependencyManagement>
@@ -126,12 +125,6 @@
 			<groupId>org.testcontainers</groupId>
 			<artifactId>db2</artifactId>
 			<version>${test.containers.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.ibm.db2</groupId>
-			<artifactId>jcc</artifactId>
-			<version>${db2-jdbc.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
