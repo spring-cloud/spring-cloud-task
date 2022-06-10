@@ -19,7 +19,6 @@ package org.springframework.cloud.task.configuration.observation;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import brave.handler.SpanHandler;
 import brave.sampler.Sampler;
 import brave.test.TestSpanHandler;
 import io.micrometer.common.KeyValues;
@@ -32,9 +31,6 @@ import io.micrometer.tracing.test.simple.SpansAssert;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import zipkin2.Span;
-import zipkin2.reporter.Reporter;
-import zipkin2.reporter.brave.ZipkinSpanHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -46,12 +42,14 @@ import org.springframework.boot.actuate.autoconfigure.tracing.BraveAutoConfigura
 import org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@AutoConfigureObservability
 @SpringBootTest(classes = ObservationIntegrationTests.Config.class)
 class ObservationIntegrationTests {
 
@@ -89,11 +87,6 @@ class ObservationIntegrationTests {
 		@Bean
 		TestSpanHandler testSpanHandler() {
 			return new TestSpanHandler();
-		}
-
-		@Bean
-		SpanHandler zipkinSpanHandler(Reporter<Span> spanReporter) {
-			return ZipkinSpanHandler.newBuilder(spanReporter).build();
 		}
 
 		@Bean
