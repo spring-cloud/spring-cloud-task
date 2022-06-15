@@ -287,6 +287,39 @@ can also use the following properties to configure a `JdbcCursorItemReader`:
 | SQL query from which to read.
 |===
 
+You can also specify JDBC DataSource specifically for the reader by using the following properties:
+.`JdbcCursorItemReader` Properties
+|===
+| Property | Type | Default Value | Description
+
+| `spring.batch.job.jdbccursoritemreader.datasource.enable`
+| `boolean`
+| `false`
+| Determines whether `JdbcCursorItemReader` `DataSource` should be enabled.
+
+| `jdbccursoritemreader.datasource.url`
+| `String`
+| `null`
+| JDBC URL of the database.
+
+| `jdbccursoritemreader.datasource.username`
+| `String`
+| `null`
+| Login username of the database.
+
+| `jdbccursoritemreader.datasource.password`
+| `String`
+| `null`
+| Login password of the database.
+
+| `jdbccursoritemreader.datasource.driver-class-name`
+| `String`
+| `null`
+| Fully qualified name of the JDBC driver.
+|===
+
+NOTE: The default `DataSource` will be used by the `JDBCCursorItemReader` if the `jdbccursoritemreader_datasource` is not specified.
+
 See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcCursorItemReader.html[`JdbcCursorItemReader` documentation].
 
 [[kafkaItemReader]]
@@ -504,6 +537,39 @@ configuration options by setting the following properties:
 | `true`
 | Whether to verify that every insert results in the update of at least one record.
 |===
+
+You can also specify JDBC DataSource specifically for the writer by using the following properties:
+.`JdbcBatchItemWriter` Properties
+|===
+| Property | Type | Default Value | Description
+
+| `spring.batch.job.jdbcbatchitemwriter.datasource.enable`
+| `boolean`
+| `false`
+| Determines whether `JdbcCursorItemReader` `DataSource` should be enabled.
+
+| `jdbcbatchitemwriter.datasource.url`
+| `String`
+| `null`
+| JDBC URL of the database.
+
+| `jdbcbatchitemwriter.datasource.username`
+| `String`
+| `null`
+| Login username of the database.
+
+| `jdbcbatchitemwriter.datasource.password`
+| `String`
+| `null`
+| Login password of the database.
+
+| `jdbcbatchitemreader.datasource.driver-class-name`
+| `String`
+| `null`
+| Fully qualified name of the JDBC driver.
+|===
+
+NOTE: The default `DataSource` will be used by the `JdbcBatchItemWriter` if the `jdbcbatchitemwriter_datasource` is not specified.
 
 See the https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/database/JdbcBatchItemWriter.html[`JdbcBatchItemWriter` documentation].
 

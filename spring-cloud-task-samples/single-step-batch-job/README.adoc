@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS item
 ```
 
 === JdbcCursorItemReader with a JdbcItemWriter batch job
-In this example the batch job will read from the `item_sample` table in your data store and write the result to the `item` table in your data store.
+In this example the batch job will read from the `item_sample` table in your data store (as specified in the default `DataSource` properties) and write the result to the `item` table in your data store (as specified in the default `DataSource` properties).
 ```
 java -Dspring.profiles.active=jdbcreader,jdbcwriter -jar target/single-step-batch-job-2.3.0-SNAPSHOT.jar
 ```
@@ -80,6 +80,22 @@ INSERT INTO item_sample (item_name) VALUES ('baz');
 INSERT INTO item_sample (item_name) VALUES ('boo');
 INSERT INTO item_sample (item_name) VALUES ('qux');
 INSERT INTO item_sample (item_name) VALUES ('Job');
+```
+
+You may also wish to read from and write to data sources different from the default `DataSource`.   This can be done specifying datasources for the reader and writer as follows:
+```
+# Jdbc Cursor Item Reader Data Source
+export jdbccursoritemreader_datasource_url=<your reader database>
+export jdbccursoritemreader_datasource_username=<your user>
+export jdbccursoritemreader_datasource_password=<your password>
+export jdbccursoritemreader_datasource_driverClassName=<your driver classname>
+export spring_batch_job_jdbccursoritemreader_datasource_enable=true
+# Jdbc Batch Item Writer Data Source
+export jdbcbatchitemwriter_datasource_url=<your writer database>
+export jdbcbatchitemwriter_datasource_username=<your user>
+export jdbcbatchitemwriter_datasource_password=<your password>
+export jdbcbatchitemwriter_datasource_driverClassName=<your driver classname>
+export spring_batch_job_jdbcbatchitemwriter_datasource_enable=true
 ```
 
 === JdbcCursorItemReader with FlatfileItemWriter batch job

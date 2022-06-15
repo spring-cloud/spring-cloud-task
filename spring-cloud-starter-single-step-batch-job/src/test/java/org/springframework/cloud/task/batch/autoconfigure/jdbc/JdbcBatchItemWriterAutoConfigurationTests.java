@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -59,6 +60,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JdbcBatchItemWriterAutoConfigurationTests {
 
@@ -106,10 +108,37 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
-		runTest(applicationContextRunner);
+		runTest(applicationContextRunner, false);
+	}
+	@Test
+	public void baseTestWithWriterDataSource() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withUserConfiguration(
+				TaskLauncherConfiguration.class,
+				JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class
+			)
+			.withConfiguration(
+				AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					BatchAutoConfiguration.class,
+					SingleStepJobAutoConfiguration.class,
+					JdbcBatchItemWriterAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jdbcbatchitemwriter.datasource.enable=true",
+				"spring.batch.job.jdbcsinglestep.datasource.enable=false",
+				"spring.batch.job.jobName=job",
+				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
+				"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
+				"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)",
+				"spring.batch.jdbc.initialize-schema=always",
+				"jdbcbatchitemwriter.datasource.url=" + DATASOURCE_URL,
+				"jdbcbatchitemwriter.datasource.username=" + DATASOURCE_USER_NAME,
+				"jdbcbatchitemwriter.datasource.password=" + DATASOURCE_USER_PASSWORD,
+				"jdbcbatchitemwriter.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
+
+		runTest(applicationContextRunner, true);
 	}
 
 	@Test
@@ -123,10 +152,11 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
-		runTest(applicationContextRunner);
+		runTest(applicationContextRunner, false);
 	}
 
 	@Test
@@ -140,9 +170,10 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
 								BatchAutoConfiguration.class,
 								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class));
+								JdbcBatchItemWriterAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
-		runTest(applicationContextRunner);
+		runTest(applicationContextRunner, false);
 	}
 
 	private ApplicationContextRunner updatePropertiesForTest(
@@ -154,8 +185,14 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 				"spring.batch.jdbc.initialize-schema=always");
 	}
 
-	private void validateResultAndBean(ApplicationContext context) {
-		DataSource dataSource = context.getBean(DataSource.class);
+	private void validateResultAndBean(ApplicationContext context, boolean isWriterDataSourcePresent) {
+		DataSource dataSource;
+		try {
+			dataSource = context.getBean(DataSource.class);
+		}
+		catch (NoSuchBeanDefinitionException nde) {
+			dataSource = context.getBean("jdbcBatchItemWriterSpringDataSource", DataSource.class);
+		}
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		List<Map<String, Object>> result = jdbcTemplate
 				.queryForList("SELECT item_name FROM item ORDER BY item_name");
@@ -172,9 +209,17 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 				.isEqualTo(1);
 		assertThat((Boolean) ReflectionTestUtils.getField(writer, "usingNamedParameters"))
 				.isTrue();
+		if (!isWriterDataSourcePresent) {
+			assertThatThrownBy(() ->  context.getBean("jdbcBatchItemWriterSpringDataSource"))
+				.isInstanceOf(NoSuchBeanDefinitionException.class)
+				.hasMessageContaining("No bean named 'jdbcBatchItemWriterSpringDataSource' available");
+		}
+		else {
+			assertThat(context.getBean("jdbcBatchItemWriterSpringDataSource")).isNotNull();
+		}
 	}
 
-	private void runTest(ApplicationContextRunner applicationContextRunner) {
+	private void runTest(ApplicationContextRunner applicationContextRunner, boolean isWriterDataSourcePresent) {
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
 
@@ -188,7 +233,7 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			validateResultAndBean(context);
+			validateResultAndBean(context, isWriterDataSourcePresent);
 		});
 	}
 

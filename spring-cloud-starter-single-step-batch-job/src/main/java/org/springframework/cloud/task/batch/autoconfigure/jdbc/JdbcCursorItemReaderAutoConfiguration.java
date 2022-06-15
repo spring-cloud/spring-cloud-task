@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,24 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -45,7 +53,14 @@ import org.springframework.jdbc.core.RowMapper;
 @EnableConfigurationProperties(JdbcCursorItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader", name = "name")
+@Import(JDBCSingleStepDataSourceAutoConfiguration.class)
 public class JdbcCursorItemReaderAutoConfiguration {
+
+	private static final Log logger = LogFactory
+		.getLog(JdbcCursorItemReaderAutoConfiguration.class);
+
+	@Autowired
+	ApplicationContext applicationContext;
 
 	private final JdbcCursorItemReaderProperties properties;
 
@@ -61,10 +76,18 @@ public class JdbcCursorItemReaderAutoConfiguration {
 	@ConditionalOnMissingBean
 	public JdbcCursorItemReader<Map<String, Object>> itemReader(@Autowired(required = false) RowMapper<Map<String, Object>> rowMapper,
 		@Autowired(required = false) PreparedStatementSetter preparedStatementSetter) {
+		DataSource readerDataSource = this.dataSource;
+		try {
+			readerDataSource = this.applicationContext.getBean("jdbcCursorItemReaderSpringDataSource", DataSource.class);
+		}
+		catch (Exception e) {
+			logger.info("Using Default Data Source for the JdbcCursorItemReader");
+
+		}
 		return new JdbcCursorItemReaderBuilder<Map<String, Object>>()
 				.name(this.properties.getName())
 				.currentItemCount(this.properties.getCurrentItemCount())
-				.dataSource(this.dataSource)
+				.dataSource(readerDataSource)
 				.driverSupportsAbsolute(this.properties.isDriverSupportsAbsolute())
 				.fetchSize(this.properties.getFetchSize())
 				.ignoreWarnings(this.properties.isIgnoreWarnings())
@@ -84,6 +107,20 @@ public class JdbcCursorItemReaderAutoConfiguration {
 	@ConditionalOnMissingBean
 	public RowMapper<Map<String, Object>> rowMapper() {
 		return new MapRowMapper();
+	}
+
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable", havingValue = "true")
+	@Bean(name = "jdbcCursorItemReaderDataSourceProperties")
+	@ConfigurationProperties("jdbccursoritemreader.datasource")
+	public DataSourceProperties jdbcCursorItemReaderDataSourceProperties() {
+		return new DataSourceProperties();
+	}
+
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable", havingValue = "true")
+	@Bean(name = "jdbcCursorItemReaderSpringDataSource")
+	public DataSource readerDataSource(@Qualifier("jdbcCursorItemReaderDataSourceProperties")DataSourceProperties readerDataSourceProperties) {
+		DataSource result = readerDataSourceProperties.initializeDataSourceBuilder().build();
+		return result;
 	}
 
 	public static class MapRowMapper implements RowMapper<Map<String, Object>> {
