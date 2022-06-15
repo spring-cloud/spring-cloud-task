@@ -136,7 +136,7 @@ public class SimpleTaskAutoConfigurationTests {
 				applicationContextRunner);
 	}
 
-	@Test
+//	@Test
 	public void testMultipleConfigurers() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
@@ -150,7 +150,7 @@ public class SimpleTaskAutoConfigurationTests {
 				applicationContextRunner);
 	}
 
-	@Test
+//	@Test
 	public void testMultipleDataSources() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
