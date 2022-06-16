@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,10 +70,10 @@ public class TaskJobLauncherAutoConfigurationTests {
 	public void testAutoBuiltDataSourceWithBatchJobNames() {
 		this.contextRunner
 				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
-						"spring.batch.job.names=job1,job2",
-						"spring.cloud.task.batch.jobNames=foobar")
+						"spring.batch.job.name=job1",
+						"spring.cloud.task.batch.jobName=foobar")
 				.run(context -> {
-					validateJobNames(context, "job1,job2");
+					validateJobNames(context, "job1");
 				});
 	}
 
@@ -93,7 +93,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 				.getBean(TaskJobLauncherApplicationRunner.class);
 
 		Object names = ReflectionTestUtils.getField(jobLauncherApplicationRunner,
-				"jobNames");
+				"jobName");
 		assertThat(names).isEqualTo(jobNames);
 	}
 

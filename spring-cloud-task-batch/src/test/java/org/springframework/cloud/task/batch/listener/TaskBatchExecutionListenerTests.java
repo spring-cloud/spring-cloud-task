@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,7 +217,7 @@ public class TaskBatchExecutionListenerTests {
 	@Test
 	public void testMultipleJobs() {
 		this.applicationContext = SpringApplication.run(MultipleJobConfiguration.class,
-				ARGS);
+				"--spring.batch.job.name=job1");
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -227,14 +227,12 @@ public class TaskBatchExecutionListenerTests {
 		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
 				page.iterator().next().getExecutionId());
 
-		assertThat(jobExecutionIds.size()).isEqualTo(2);
+		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		Iterator<Long> jobExecutionIdsIterator = jobExecutionIds.iterator();
 		assertThat((long) taskExplorer
 				.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()))
 						.isEqualTo(1);
-		assertThat((long) taskExplorer
-				.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()))
-						.isEqualTo(1);
+
 	}
 
 	@Test

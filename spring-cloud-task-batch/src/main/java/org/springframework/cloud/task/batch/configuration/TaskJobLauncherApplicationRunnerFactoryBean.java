@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 
 	private List<Job> jobs;
 
-	private String jobNames;
+	private String jobName;
 
 	private JobRegistry jobRegistry;
 
@@ -65,14 +65,14 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.jobs = jobs;
-		this.jobNames = taskBatchProperties.getJobNames();
+		this.jobName = taskBatchProperties.getJobNames();
 		this.jobRegistry = jobRegistry;
 		this.taskBatchProperties = taskBatchProperties;
-		if (StringUtils.hasText(batchProperties.getJob().getNames())) {
-			this.jobNames = batchProperties.getJob().getNames();
+		if (StringUtils.hasText(batchProperties.getJob().getName())) {
+			this.jobName = batchProperties.getJob().getName();
 		}
 		else {
-			this.jobNames = taskBatchProperties.getJobNames();
+			this.jobName = taskBatchProperties.getJobNames();
 		}
 		this.order = taskBatchProperties.getCommandLineRunnerOrder();
 		this.jobRepository = jobRepository;
@@ -88,8 +88,8 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 				this.jobLauncher, this.jobExplorer, this.jobRepository,
 				this.taskBatchProperties);
 		taskJobLauncherApplicationRunner.setJobs(this.jobs);
-		if (StringUtils.hasText(this.jobNames)) {
-			taskJobLauncherApplicationRunner.setJobNames(this.jobNames);
+		if (StringUtils.hasText(this.jobName)) {
+			taskJobLauncherApplicationRunner.setJobName(this.jobName);
 		}
 		taskJobLauncherApplicationRunner.setJobRegistry(this.jobRegistry);
 
