@@ -597,3 +597,31 @@ Second, this starter lets you configure two properties on the writer.
 |===
 
 For more about the configuration options for the `KafkaItemWriter`, see the  https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[`KafkaItemWiter` documentation].
+
+=== Spring AOT
+When using Spring AOT with Single Step Batch Starter you must set the reader and
+writer name properties at compile time (unless you create a bean(s) for the reader and or writer).
+To do this you must include the name of the reader and writer that you wish to use as
+and argument or environment variable in the boot maven plugin or gradle plugin.   For example if
+you wish to enable the `FlatFileItemReader` and `FlatFileItemWriter` in Maven it would look like:
+
+```
+    <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+            <execution>
+            <id>aot-generate</id>
+            <goals>
+                <goal>aot-generate</goal>
+            </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <arguments>
+                <argument>--spring.batch.job.flatfileitemreader.name=foobar</argument>
+                <argument>--spring.batch.job.flatfileitemwriter.name=fooWriter</argument>
+            </arguments>
+        </configuration>
+    </plugin>
+```
