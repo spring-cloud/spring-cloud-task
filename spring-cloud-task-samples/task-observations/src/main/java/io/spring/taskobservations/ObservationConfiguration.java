@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.taskmetrics;
+package io.spring.taskobservations;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MetricConfiguration {
+public class ObservationConfiguration {
 	@Bean
 	public SimpleMeterRegistry meterRegistry() {
 		return new SimpleMeterRegistry();

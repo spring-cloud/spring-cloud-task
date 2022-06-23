@@ -64,12 +64,15 @@ public class TaskLifecycleConfiguration {
 
 	private ObservationRegistry observationRegistry;
 
+	private TaskObservationCloudKeyValues taskObservationCloudKeyValues;
+
 	@Autowired
 	public TaskLifecycleConfiguration(TaskProperties taskProperties,
 		ConfigurableApplicationContext context, TaskRepository taskRepository,
 		TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
 		ObjectProvider<ApplicationArguments> applicationArguments,
-		@Autowired(required = false) ObservationRegistry observationRegistry) {
+		@Autowired(required = false) ObservationRegistry observationRegistry,
+		@Autowired(required = false) TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
 
 		this.taskProperties = taskProperties;
 		this.context = context;
@@ -78,6 +81,7 @@ public class TaskLifecycleConfiguration {
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments.getIfAvailable();
 		this.observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
+		this.taskObservationCloudKeyValues = taskObservationCloudKeyValues;
 
 	}
 
@@ -96,7 +100,7 @@ public class TaskLifecycleConfiguration {
 					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
 					this.taskProperties,
 					new TaskListenerExecutorObjectFactory(this.context),
-					this.observationRegistry);
+					this.observationRegistry, taskObservationCloudKeyValues);
 
 			this.initialized = true;
 		}

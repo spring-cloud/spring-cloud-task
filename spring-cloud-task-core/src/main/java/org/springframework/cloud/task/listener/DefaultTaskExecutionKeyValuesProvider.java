@@ -20,6 +20,13 @@ import io.micrometer.common.KeyValues;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXCEPTION;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXECUTION_ID;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXIT_CODE;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_NAME;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_PARENT_EXECUTION_ID;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_STATUS;
+
 /**
  * /**
  * Default {@link TaskExecutionKeyValuesProvider} implementation.
@@ -32,17 +39,16 @@ public class DefaultTaskExecutionKeyValuesProvider implements TaskExecutionKeyVa
 	@Override
 	public KeyValues getLowCardinalityKeyValues(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
-		return KeyValues.of(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.of(execution.getTaskName()),
-			TaskExecutionMeters.TaskTags.TASK_STATUS_TAG.of(context.getStatus()),
-			TaskExecutionMeters.TaskTags.TASK_PARENT_EXECUTION_ID_TAG.of(String.valueOf(execution.getParentExecutionId())),
-			TaskExecutionMeters.TaskTags.TASK_EXIT_CODE_TAG.of(String.valueOf(execution.getExitCode())),
-			TaskExecutionMeters.TaskTags.TASK_EXCEPTION_TAG.of(context.getExceptionMessage()),
-			TaskExecutionMeters.TaskTags.TASK_EXECUTION_ID_TAG.of(String.valueOf(execution.getExecutionId())));
+		return KeyValues.of(TASK_NAME, execution.getTaskName(), TASK_STATUS, context.getStatus(),
+			TASK_PARENT_EXECUTION_ID, String.valueOf(execution.getParentExecutionId()),
+			TASK_EXIT_CODE, String.valueOf(execution.getExitCode()),
+			TASK_EXCEPTION, context.getExceptionMessage(),
+			TASK_EXECUTION_ID, String.valueOf(execution.getExecutionId()));
 	}
 
 	@Override
 	public KeyValues getHighCardinalityKeyValues(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
-		return KeyValues.of(TaskExecutionMeters.TaskTags.TASK_NAME_TAG.of(execution.getTaskName()));
+		return KeyValues.of(TASK_NAME, execution.getTaskName());
 	}
 }

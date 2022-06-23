@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.taskmetrics;
+package io.spring.taskobservations;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.commons.logging.Log;
@@ -32,15 +32,15 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableTask
-public class TaskMetricsApplication {
+public class TaskObservationsApplication {
 
-	private static final Log logger = LogFactory.getLog(TaskMetricsApplication.class);
+	private static final Log logger = LogFactory.getLog(TaskObservationsApplication.class);
 
 	@Autowired
 	public SimpleMeterRegistry simpleMeterRegistry;
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskMetricsApplication.class, args);
+		SpringApplication.run(TaskObservationsApplication.class, args);
 	}
 
 	@Bean

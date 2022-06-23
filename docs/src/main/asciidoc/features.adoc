@@ -451,10 +451,9 @@ Thus allowing the application to terminate.
 
 [[enable-task-metrics]]
 === Enable Task Metrics
-Spring Cloud Task integrates with Micrometer and collects metrics for both `Observation` and `LongTaskTimer`.
-To enable Task metrics integration, you must add the `spring-boot-starter-actuator`,
-preferred registry implementation, and the micrometer core to your task application.
-An example maven set of dependencies to enable task metrics using Influx would be:
+Spring Cloud Task integrates with Micrometer and creates observations for the Tasks it executes.
+To enable Task Observability integration, you must add `spring-boot-starter-actuator`, your preferred registry implementation (if you want to publish metrics), and micrometer-tracing (if you want to publish tracing data) to your task application.
+An example maven set of dependencies to enable task observability and metrics using Influx would be:
 
 [source,xml]
 <dependency>
@@ -467,8 +466,4 @@ An example maven set of dependencies to enable task metrics using Influx would b
     <version>1.10.0-SNAPSHOT</version>
     <scope>runtime</scope>
 </dependency>
-<dependency>
-    <groupId>io.micrometer</groupId>
-    <artifactId>micrometer-core</artifactId>
-    <version>1.10.0-SNAPSHOT</version>
-</dependency>
+

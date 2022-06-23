@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.taskmetrics;
+package io.spring.taskobservations;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
-class TaskMetricsApplicationTests {
+class TaskObservationsApplicationTests {
 
 	@Test
 	void contextLoads(CapturedOutput output) {

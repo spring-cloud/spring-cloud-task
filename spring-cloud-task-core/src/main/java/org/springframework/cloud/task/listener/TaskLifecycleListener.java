@@ -37,6 +37,7 @@ import org.springframework.boot.ExitCodeEvent;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cloud.task.configuration.TaskObservationCloudKeyValues;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -89,7 +90,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private final TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory;
 
-	private final TaskMetrics taskMetrics;
+	private final TaskObservations taskObservations;
 
 	@Autowired
 	private ConfigurableApplicationContext context;
@@ -134,7 +135,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
 			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
-		@Autowired(required = false) ObservationRegistry observationRegistry) {
+		@Autowired(required = false) ObservationRegistry observationRegistry,
+		TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
@@ -149,7 +151,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
 		observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
-		this.taskMetrics = new TaskMetrics(observationRegistry);
+		this.taskObservations = new TaskObservations(observationRegistry, taskObservationCloudKeyValues);
 	}
 
 	/**
@@ -318,8 +320,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
-		if (this.taskMetrics != null) {
-			this.taskMetrics.onTaskStartup(taskExecution);
+		if (this.taskObservations != null) {
+			this.taskObservations.onTaskStartup(taskExecution);
 		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
@@ -343,8 +345,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution) {
-		if (this.taskMetrics != null) {
-			this.taskMetrics.onTaskEnd(taskExecution);
+		if (this.taskObservations != null) {
+			this.taskObservations.onTaskEnd(taskExecution);
 		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
@@ -369,8 +371,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
-		if (this.taskMetrics != null) {
-			this.taskMetrics.onTaskFailed(throwable);
+		if (this.taskObservations != null) {
+			this.taskObservations.onTaskFailed(throwable);
 		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {

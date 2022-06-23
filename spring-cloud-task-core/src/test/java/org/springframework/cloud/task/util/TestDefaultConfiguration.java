@@ -24,6 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.task.configuration.TaskObservationCloudKeyValues;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.listener.TaskListenerExecutorObjectFactory;
@@ -89,7 +90,7 @@ public class TestDefaultConfiguration implements InitializingBean {
 
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
 				this.applicationArguments, taskExplorer, this.taskProperties,
-				taskListenerExecutorObjectProvider(this.context), observationRegistry);
+				taskListenerExecutorObjectProvider(this.context), observationRegistry, new TaskObservationCloudKeyValues());
 	}
 
 	@Override
