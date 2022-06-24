@@ -320,9 +320,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
-		if (this.taskObservations != null) {
-			this.taskObservations.onTaskStartup(taskExecution);
-		}
+		this.taskObservations.onTaskStartup(taskExecution);
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
 				this.taskExecutionListeners);

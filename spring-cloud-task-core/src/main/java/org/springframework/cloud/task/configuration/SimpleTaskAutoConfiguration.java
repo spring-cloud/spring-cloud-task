@@ -117,7 +117,7 @@ public class SimpleTaskAutoConfiguration {
 
 	@Bean
 	@Profile("cloud")
-	TaskObservationCloudKeyValues taskObservationFilterProperties() {
+	TaskObservationCloudKeyValues taskObservationCloudKeyValues() {
 		return new TaskObservationCloudKeyValues();
 	}
 

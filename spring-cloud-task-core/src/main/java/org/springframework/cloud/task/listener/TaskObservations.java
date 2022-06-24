@@ -81,6 +81,37 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	 * Organization Name for CF cloud.
 	 */
 	public static final String TASK_CF_ORG_NAME = "cf.org.name";
+
+	/**
+	 * Space id for CF cloud.
+	 */
+	public static final String TASK_CF_SPACE_ID = "cf.space.id";
+
+	/**
+	 * Space name for CF cloud.
+	 */
+	public static final String TASK_CF_SPACE_NAME = "cf.space.name";
+
+	/**
+	 * App name for CF cloud.
+	 */
+	public static final String TASK_CF_APP_NAME = "cf.app.name";
+
+	/**
+	 * App id for CF cloud.
+	 */
+	public static final String TASK_CF_APP_ID = "cf.app.id";
+
+	/**
+	 * App version for CF cloud.
+	 */
+	public static final String TASK_CF_APP_VERSION = "cf.app.version";
+
+	/**
+	 * App version for CF cloud.
+	 */
+	public static final String TASK_CF_INSTANCE_INDEX = "cf.instance.index";
+
 	/**
 	 * Successful task execution status indicator.
 	 */
@@ -105,7 +136,7 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 
 	private Observation.Scope scope;
 
-	private TaskExecutionKeyValuesProvider tagsProvider = new DefaultTaskExecutionKeyValuesProvider();
+	private TaskExecutionKeyValuesProvider keyValuesProvider = new DefaultTaskExecutionKeyValuesProvider();
 
 	private TaskExecutionObservationContext taskObservationContext;
 
@@ -119,13 +150,13 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 
 		Observation observation = Observation.createNotStarted(TASK_PREFIX, this.taskObservationContext, this.observationRegistry)
 			.contextualName(String.valueOf(taskExecution.getExecutionId()))
-			.keyValuesProvider(this.tagsProvider)
+			.keyValuesProvider(this.keyValuesProvider)
 			.lowCardinalityKeyValue(TASK_NAME, (taskExecution.getTaskName() != null) ? taskExecution.getTaskName() : UNKNOWN)
 			.lowCardinalityKeyValue(TASK_EXECUTION_ID, "" + taskExecution.getExecutionId())
 			.lowCardinalityKeyValue(TASK_PARENT_EXECUTION_ID,
-				((taskExecution.getParentExecutionId() != null) ? "" + taskExecution.getParentExecutionId() : UNKNOWN));
-//			.lowCardinalityKeyValue(TASK_EXTERNAL_EXECUTION_ID,
-//				((taskExecution.getExternalExecutionId() != null) ? taskExecution.getExternalExecutionId() : UNKNOWN));
+				((taskExecution.getParentExecutionId() != null) ? "" + taskExecution.getParentExecutionId() : UNKNOWN))
+			.lowCardinalityKeyValue(TASK_EXTERNAL_EXECUTION_ID,
+				((taskExecution.getExternalExecutionId() != null) ? taskExecution.getExternalExecutionId() : UNKNOWN));
 
 		if (taskObservationCloudKeyValues != null) {
 			observation.lowCardinalityKeyValue(TASK_CF_ORG_NAME, this.taskObservationCloudKeyValues.getOrganizationName());
@@ -144,18 +175,19 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	public void onTaskFailed(Throwable throwable) {
 			this.taskObservationContext.setExceptionMessage(throwable.getClass().getSimpleName());
 			this.taskObservationContext.setStatus(STATUS_FAILURE);
+			this.scope.getCurrentObservation().error(throwable);
 	}
 
 	public void onTaskEnd(TaskExecution taskExecution) {
 		if (this.scope != null) {
 			this.taskObservationContext.getTaskExecution().setExitCode(taskExecution.getExitCode());
-			this.scope.getCurrentObservation().stop();
 			this.scope.close();
+			this.scope.getCurrentObservation().stop();
 		}
 	}
 
 	@Override
 	public void setKeyValuesProvider(TaskExecutionKeyValuesProvider tagsProvider) {
-		this.tagsProvider = tagsProvider;
+		this.keyValuesProvider = tagsProvider;
 	}
 }

@@ -39,7 +39,13 @@ import org.springframework.cloud.task.repository.TaskExecution;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_ACTIVE_NAME;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_APP_ID;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_APP_NAME;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_APP_VERSION;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_INSTANCE_INDEX;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_ORG_NAME;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_SPACE_ID;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_CF_SPACE_NAME;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXCEPTION;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXECUTION_ID;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXIT_CODE;
@@ -328,6 +334,30 @@ public class TaskObservationsTests {
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
 			.hasTimerWithNameAndTags(TASK_PREFIX,
 				Tags.of(TASK_CF_ORG_NAME, ORGANIZATION_NAME));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_SPACE_ID, SPACE_ID));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_SPACE_NAME, SPACE_NAME));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_APP_NAME, APPLICATION_NAME));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_APP_ID, APPLICATION_ID));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_APP_VERSION, APPLICATION_VERSION));
+
+		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
+			.hasTimerWithNameAndTags(TASK_PREFIX,
+				Tags.of(TASK_CF_INSTANCE_INDEX, INSTANCE_INDEX));
 
 		// Test Timer
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry)
