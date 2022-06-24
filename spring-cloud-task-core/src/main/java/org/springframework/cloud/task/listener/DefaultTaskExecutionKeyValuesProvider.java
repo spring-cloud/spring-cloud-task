@@ -23,9 +23,11 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXCEPTION;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXECUTION_ID;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXIT_CODE;
+import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXTERNAL_EXECUTION_ID;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_NAME;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_PARENT_EXECUTION_ID;
 import static org.springframework.cloud.task.listener.TaskObservations.TASK_STATUS;
+import static org.springframework.cloud.task.listener.TaskObservations.UNKNOWN;
 
 /**
  * /**
@@ -39,8 +41,10 @@ public class DefaultTaskExecutionKeyValuesProvider implements TaskExecutionKeyVa
 	@Override
 	public KeyValues getLowCardinalityKeyValues(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
-		return KeyValues.of(TASK_NAME, execution.getTaskName(), TASK_STATUS, context.getStatus(),
-			TASK_PARENT_EXECUTION_ID, String.valueOf(execution.getParentExecutionId()),
+		return KeyValues.of(TASK_NAME, (execution.getTaskName() != null) ? execution.getTaskName() : UNKNOWN,
+			TASK_STATUS, context.getStatus(),
+			TASK_PARENT_EXECUTION_ID, String.valueOf((execution.getParentExecutionId() != null) ? execution.getParentExecutionId() : UNKNOWN),
+			TASK_EXTERNAL_EXECUTION_ID, String.valueOf((execution.getExternalExecutionId() != null) ? execution.getExternalExecutionId() : UNKNOWN),
 			TASK_EXIT_CODE, String.valueOf(execution.getExitCode()),
 			TASK_EXCEPTION, context.getExceptionMessage(),
 			TASK_EXECUTION_ID, String.valueOf(execution.getExecutionId()));
@@ -49,6 +53,6 @@ public class DefaultTaskExecutionKeyValuesProvider implements TaskExecutionKeyVa
 	@Override
 	public KeyValues getHighCardinalityKeyValues(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
-		return KeyValues.of(TASK_NAME, execution.getTaskName());
+		return KeyValues.of(TASK_NAME,  (execution.getTaskName() != null) ? execution.getTaskName() : UNKNOWN);
 	}
 }

@@ -37,6 +37,11 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	public static final String TASK_PARENT_EXECUTION_ID = "spring.cloud.task.parent.execution.id";
 
 	/**
+	 * Task external execution id.
+	 */
+	public static final String TASK_EXTERNAL_EXECUTION_ID = "spring.cloud.task.external.execution.id";
+
+	/**
 	 * Task exit code.
 	 */
 	public static final String TASK_EXIT_CODE = "spring.cloud.task.exit.code";
@@ -63,7 +68,7 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	public static final String TASK_PREFIX = "spring.cloud.task";
 
 	/**
-	 * Task name measurement tag.
+	 * Task name measurement.
 	 */
 	public static final String TASK_NAME = "spring.cloud.task.name";
 
@@ -73,6 +78,10 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	public static final String TASK_ACTIVE_NAME = "spring.cloud.task.active";
 
 	/**
+	 * Organization Name for CF cloud.
+	 */
+	public static final String TASK_CF_ORG_NAME = "cf.org.name";
+	/**
 	 * Successful task execution status indicator.
 	 */
 	public static final String STATUS_SUCCESS = "success";
@@ -81,6 +90,11 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 	 * Failing task execution status indicator.
 	 */
 	public static final String STATUS_FAILURE = "failure";
+
+	/**
+	 * Default for when value is not present.
+	 */
+	public static final String UNKNOWN = "unknown";
 
 	private ObservationRegistry observationRegistry;
 
@@ -101,16 +115,20 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 
 
 		this.taskObservationContext = new TaskExecutionObservationContext(taskExecution);
+		String s = (taskExecution.getParentExecutionId() != null) ? "" + taskExecution.getParentExecutionId() : UNKNOWN;
+
 		Observation observation = Observation.createNotStarted(TASK_PREFIX, this.taskObservationContext, this.observationRegistry)
 			.contextualName(String.valueOf(taskExecution.getExecutionId()))
 			.keyValuesProvider(this.tagsProvider)
-			.lowCardinalityKeyValue(TASK_NAME, taskExecution.getTaskName())
+			.lowCardinalityKeyValue(TASK_NAME, (taskExecution.getTaskName() != null) ? taskExecution.getTaskName() : UNKNOWN)
 			.lowCardinalityKeyValue(TASK_EXECUTION_ID, "" + taskExecution.getExecutionId())
 			.lowCardinalityKeyValue(TASK_PARENT_EXECUTION_ID,
-				"" + taskExecution.getParentExecutionId());
+				((taskExecution.getParentExecutionId() != null) ? "" + taskExecution.getParentExecutionId() : UNKNOWN));
+//			.lowCardinalityKeyValue(TASK_EXTERNAL_EXECUTION_ID,
+//				((taskExecution.getExternalExecutionId() != null) ? taskExecution.getExternalExecutionId() : UNKNOWN));
 
 		if (taskObservationCloudKeyValues != null) {
-			observation.lowCardinalityKeyValue("cf.org.name", this.taskObservationCloudKeyValues.getOrganizationName());
+			observation.lowCardinalityKeyValue(TASK_CF_ORG_NAME, this.taskObservationCloudKeyValues.getOrganizationName());
 			observation.lowCardinalityKeyValue("cf.space.id", this.taskObservationCloudKeyValues.getSpaceId());
 			observation.lowCardinalityKeyValue("cf.space.name", this.taskObservationCloudKeyValues.getSpaceName());
 			observation.lowCardinalityKeyValue("cf.app.id", this.taskObservationCloudKeyValues.getApplicationId());
