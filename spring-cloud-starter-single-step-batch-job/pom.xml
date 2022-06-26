@@ -10,8 +10,8 @@
 	<artifactId>spring-cloud-starter-single-step-batch-job</artifactId>
 
 	<properties>
-		<test.containers.version>1.15.2</test.containers.version>
-		<test.rabbit.containers.version>1.15.2</test.rabbit.containers.version>
+		<test.containers.version>1.15.3</test.containers.version>
+		<test.rabbit.containers.version>1.15.3</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 		<spring-kafka-version>2.6.6</spring-kafka-version>
 		<spring-cloud-stream.version>3.1.6</spring-cloud-stream.version>
