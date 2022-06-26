@@ -20,11 +20,6 @@ import io.micrometer.common.KeyValues;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
-import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXCEPTION;
-import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXECUTION_ID;
-import static org.springframework.cloud.task.listener.TaskObservations.TASK_EXIT_CODE;
-import static org.springframework.cloud.task.listener.TaskObservations.TASK_STATUS;
-
 /**
  * /**
  * Default {@link TaskExecutionKeyValuesProvider} implementation.
@@ -41,15 +36,15 @@ public class DefaultTaskExecutionKeyValuesProvider implements TaskExecutionKeyVa
 
 	@Override
 	public KeyValues getHighCardinalityKeyValues(TaskExecutionObservationContext context) {
-		return getKeyValuesForTaskExecution(context);
+		return KeyValues.empty();
 	}
 
 	private KeyValues getKeyValuesForTaskExecution(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
 		return KeyValues.of(
-			TASK_STATUS, context.getStatus(),
-			TASK_EXIT_CODE, String.valueOf(execution.getExitCode()),
-			TASK_EXCEPTION, context.getExceptionMessage(),
-			TASK_EXECUTION_ID, String.valueOf(execution.getExecutionId()));
+			TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), context.getStatus(),
+			TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(), String.valueOf(execution.getExitCode()),
+			TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(),
+			String.valueOf(execution.getExecutionId()));
 	}
 }

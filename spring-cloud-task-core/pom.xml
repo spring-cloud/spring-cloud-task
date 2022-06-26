@@ -13,9 +13,6 @@
 	<packaging>jar</packaging>
 	<name>Spring Cloud Task Core</name>
 	<description>Spring Cloud Task</description>
-	<properties>
-		<jmock-version>1.49</jmock-version>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -147,12 +144,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<version>${jmock-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
