@@ -25,10 +25,15 @@ import io.micrometer.observation.Observation;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class DefaultTaskKeyValuesProvider implements TaskKeyValuesProvider {
+public class DefaultTaskObservationConvention implements TaskObservationConvention {
 
 	@Override
 	public KeyValues getLowCardinalityKeyValues(TaskObservationContext context) {
 		return KeyValues.of(TaskDocumentedObservation.TaskRunnerTags.BEAN_NAME.of(context.getBeanName()));
+	}
+
+	@Override
+	public String getName() {
+		return "spring.cloud.task.runner";
 	}
 }

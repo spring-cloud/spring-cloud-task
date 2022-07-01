@@ -27,7 +27,9 @@ import org.springframework.boot.CommandLineRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationCommandLineRunner implements CommandLineRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
+class ObservationCommandLineRunner implements CommandLineRunner, Observation.KeyValuesProviderAware<TaskObservationConvention> {
+
+	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
 	private final BeanFactory beanFactory;
 
@@ -37,7 +39,7 @@ class ObservationCommandLineRunner implements CommandLineRunner, Observation.Key
 
 	private ObservationRegistry registry;
 
-	private TaskKeyValuesProvider keyValuesProvider = new DefaultTaskKeyValuesProvider();
+	private TaskObservationConvention taskObservationConvention;
 
 	ObservationCommandLineRunner(BeanFactory beanFactory, CommandLineRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;
@@ -48,9 +50,8 @@ class ObservationCommandLineRunner implements CommandLineRunner, Observation.Key
 	@Override
 	public void run(String... args) throws Exception {
 		TaskObservationContext context = new TaskObservationContext(this.beanName);
-		Observation observation = TaskDocumentedObservation.TASK_RUNNER_OBSERVATION.observation(registry(), context)
-			.contextualName(this.beanName)
-			.keyValuesProvider(this.keyValuesProvider);
+		Observation observation = TaskDocumentedObservation.TASK_RUNNER_OBSERVATION.observation(registry(), context, this.taskObservationConvention, INSTANCE)
+			.contextualName(this.beanName);
 		try (Observation.Scope scope = observation.start().openScope()) {
 			this.delegate.run(args);
 		}
@@ -71,7 +72,7 @@ class ObservationCommandLineRunner implements CommandLineRunner, Observation.Key
 	}
 
 	@Override
-	public void setKeyValuesProvider(TaskKeyValuesProvider keyValuesProvider) {
-		this.keyValuesProvider = keyValuesProvider;
+	public void setKeyValuesProvider(TaskObservationConvention keyValuesProvider) {
+		this.taskObservationConvention = keyValuesProvider;
 	}
 }

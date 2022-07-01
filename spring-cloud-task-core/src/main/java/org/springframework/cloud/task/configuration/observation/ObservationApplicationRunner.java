@@ -28,7 +28,9 @@ import org.springframework.boot.ApplicationRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationApplicationRunner implements ApplicationRunner, Observation.KeyValuesProviderAware<TaskKeyValuesProvider> {
+class ObservationApplicationRunner implements ApplicationRunner, Observation.KeyValuesProviderAware<TaskObservationConvention> {
+
+	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
 	private final BeanFactory beanFactory;
 
@@ -38,7 +40,7 @@ class ObservationApplicationRunner implements ApplicationRunner, Observation.Key
 
 	private ObservationRegistry registry;
 
-	private TaskKeyValuesProvider keyValuesProvider = new DefaultTaskKeyValuesProvider();
+	private TaskObservationConvention taskObservationConvention;
 
 	ObservationApplicationRunner(BeanFactory beanFactory, ApplicationRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;
@@ -49,9 +51,8 @@ class ObservationApplicationRunner implements ApplicationRunner, Observation.Key
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		TaskObservationContext context = new TaskObservationContext(this.beanName);
-		Observation observation = TaskDocumentedObservation.TASK_RUNNER_OBSERVATION.observation(registry(), context)
-			.contextualName(this.beanName)
-			.keyValuesProvider(this.keyValuesProvider);
+		Observation observation = TaskDocumentedObservation.TASK_RUNNER_OBSERVATION.observation(registry(), context, this.taskObservationConvention, INSTANCE)
+			.contextualName(this.beanName);
 		try (Observation.Scope scope = observation.start().openScope()) {
 			this.delegate.run(args);
 		}
@@ -72,7 +73,7 @@ class ObservationApplicationRunner implements ApplicationRunner, Observation.Key
 	}
 
 	@Override
-	public void setKeyValuesProvider(TaskKeyValuesProvider keyValuesProvider) {
-		this.keyValuesProvider = keyValuesProvider;
+	public void setKeyValuesProvider(TaskObservationConvention keyValuesProvider) {
+		this.taskObservationConvention = keyValuesProvider;
 	}
 }

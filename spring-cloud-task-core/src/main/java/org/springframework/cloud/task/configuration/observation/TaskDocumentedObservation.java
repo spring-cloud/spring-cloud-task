@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.configuration.observation;
 
 import io.micrometer.common.docs.KeyName;
+import io.micrometer.observation.Observation;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 enum TaskDocumentedObservation implements DocumentedObservation {
@@ -25,9 +26,10 @@ enum TaskDocumentedObservation implements DocumentedObservation {
 	 * Observation created when a task runner is executed.
 	 */
 	TASK_RUNNER_OBSERVATION {
+
 		@Override
-		public String getName() {
-			return "spring.cloud.task.runner";
+		public Class<? extends Observation.ObservationConvention<? extends Observation.Context>> getDefaultConvention() {
+			return DefaultTaskObservationConvention.class;
 		}
 
 		@Override
