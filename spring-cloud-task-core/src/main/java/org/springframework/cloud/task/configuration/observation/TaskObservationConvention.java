@@ -24,7 +24,7 @@ import io.micrometer.observation.Observation;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public interface TaskKeyValuesProvider extends Observation.KeyValuesProvider<TaskObservationContext> {
+public interface TaskObservationConvention extends Observation.ObservationConvention<TaskObservationContext> {
 
 	@Override
 	default boolean supportsContext(Observation.Context context) {
