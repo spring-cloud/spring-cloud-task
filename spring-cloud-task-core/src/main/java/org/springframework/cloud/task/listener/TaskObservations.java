@@ -30,7 +30,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @author Glenn Renfro
  * @since 2.2
  */
-public class TaskObservations implements Observation.KeyValuesProviderAware<TaskExecutionKeyValuesProvider> {
+public class TaskObservations {
 
 	/**
 	 * Successful task execution status indicator.
@@ -49,14 +49,18 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 
 	private ObservationRegistry observationRegistry;
 
-	public TaskObservations(ObservationRegistry observationRegistry, TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
+	private Observation.ObservationConvention customObservationConvention;
+
+	public TaskObservations(ObservationRegistry observationRegistry, TaskObservationCloudKeyValues taskObservationCloudKeyValues,
+							Observation.ObservationConvention customObservationConvention) {
 		this.observationRegistry = observationRegistry;
 		this.taskObservationCloudKeyValues = taskObservationCloudKeyValues;
+		this.customObservationConvention = customObservationConvention;
 	}
 
 	private Observation.Scope scope;
 
-	private TaskExecutionKeyValuesProvider keyValuesProvider = new DefaultTaskExecutionKeyValuesProvider();
+	private TaskExecutionObservationConvention observationsProvider = new DefaultTaskExecutionObservationConvention();
 
 	private TaskExecutionObservationContext taskObservationContext;
 
@@ -67,9 +71,9 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 
 		this.taskObservationContext = new TaskExecutionObservationContext(taskExecution);
 
-		Observation observation = TaskExecutionObservation.TASK_ACTIVE.observation(this.observationRegistry, this.taskObservationContext)
+		Observation observation = TaskExecutionObservation.TASK_ACTIVE.observation(this.customObservationConvention, new DefaultTaskExecutionObservationConvention(), this.taskObservationContext,  this.observationRegistry)
 			.contextualName(String.valueOf(taskExecution.getExecutionId()))
-			.keyValuesProvider(this.keyValuesProvider)
+			.keyValuesProvider(this.observationsProvider)
 			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), getValueOrDefault(taskExecution.getTaskName()))
 			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(), "" + taskExecution.getExecutionId())
 			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.getKeyName(),
@@ -113,10 +117,5 @@ public class TaskObservations implements Observation.KeyValuesProviderAware<Task
 			this.scope.close();
 			this.scope.getCurrentObservation().stop();
 		}
-	}
-
-	@Override
-	public void setKeyValuesProvider(TaskExecutionKeyValuesProvider tagsProvider) {
-		this.keyValuesProvider = tagsProvider;
 	}
 }

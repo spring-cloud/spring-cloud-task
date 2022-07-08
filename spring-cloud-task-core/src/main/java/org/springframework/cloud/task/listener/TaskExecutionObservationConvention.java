@@ -19,12 +19,12 @@ package org.springframework.cloud.task.listener;
 import io.micrometer.observation.Observation;
 
 /**
- * {@link Observation.KeyValuesProvider} for {@link TaskExecutionObservationContext}.
+ * {@link Observation.ObservationConvention} for {@link TaskExecutionObservationContext}.
  *
  * @author Glenn Renfro
  * @since 3.0.0
  */
-public interface TaskExecutionKeyValuesProvider extends Observation.KeyValuesProvider<TaskExecutionObservationContext> {
+public interface TaskExecutionObservationConvention extends Observation.ObservationConvention<TaskExecutionObservationContext> {
 
 	@Override
 	default boolean supportsContext(Observation.Context context) {

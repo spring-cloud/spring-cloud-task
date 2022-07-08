@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,6 +99,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	@Autowired(required = false)
 	private Collection<TaskExecutionListener> taskExecutionListenersFromContext;
 
+	@Autowired(required = false)
+	private Observation.ObservationConvention observationConvention;
+
 	private List<TaskExecutionListener> taskExecutionListeners;
 
 	private TaskExecution taskExecution;
@@ -151,7 +155,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
 		observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
-		this.taskObservations = new TaskObservations(observationRegistry, taskObservationCloudKeyValues);
+		this.taskObservations = new TaskObservations(observationRegistry, taskObservationCloudKeyValues, observationConvention);
 	}
 
 	/**

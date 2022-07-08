@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.listener;
 
 import io.micrometer.common.docs.KeyName;
+import io.micrometer.observation.Observation;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 /**
@@ -30,12 +31,12 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 	 * Metrics created around a task execution.
 	 */
 	TASK_ACTIVE {
-		@Override
-		public String getName() {
-			return "spring.cloud.task";
-		}
 
 		@Override
+		public Class<? extends Observation.ObservationConvention<? extends Observation.Context>> getDefaultConvention() {
+			return DefaultTaskExecutionObservationConvention.class;
+		}
+
 		public String getPrefix() {
 			return "spring.cloud.task";
 		}

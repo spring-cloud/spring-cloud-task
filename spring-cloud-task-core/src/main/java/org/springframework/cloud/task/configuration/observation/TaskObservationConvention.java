@@ -19,7 +19,7 @@ package org.springframework.cloud.task.configuration.observation;
 import io.micrometer.observation.Observation;
 
 /**
- * {@link Observation.KeyValuesProvider} for Spring Cloud Task.
+ * {@link Observation.ObservationConvention} for Spring Cloud Task.
  *
  * @author Marcin Grzejszczak
  * @since 3.0.0
