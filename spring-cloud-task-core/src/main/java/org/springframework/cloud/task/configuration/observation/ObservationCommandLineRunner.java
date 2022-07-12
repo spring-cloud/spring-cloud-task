@@ -27,7 +27,7 @@ import org.springframework.boot.CommandLineRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationCommandLineRunner implements CommandLineRunner, Observation.KeyValuesProviderAware<TaskObservationConvention> {
+class ObservationCommandLineRunner implements CommandLineRunner, Observation.ObservationConventionAware<TaskObservationConvention> {
 
 	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
@@ -72,7 +72,7 @@ class ObservationCommandLineRunner implements CommandLineRunner, Observation.Key
 	}
 
 	@Override
-	public void setKeyValuesProvider(TaskObservationConvention keyValuesProvider) {
-		this.taskObservationConvention = keyValuesProvider;
+	public void setObservationConvention(TaskObservationConvention taskObservationConvention) {
+		this.taskObservationConvention = taskObservationConvention;
 	}
 }

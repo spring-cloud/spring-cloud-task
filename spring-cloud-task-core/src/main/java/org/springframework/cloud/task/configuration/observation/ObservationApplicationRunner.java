@@ -28,7 +28,7 @@ import org.springframework.boot.ApplicationRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationApplicationRunner implements ApplicationRunner, Observation.KeyValuesProviderAware<TaskObservationConvention> {
+class ObservationApplicationRunner implements ApplicationRunner, Observation.ObservationConventionAware<TaskObservationConvention> {
 
 	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
@@ -73,7 +73,7 @@ class ObservationApplicationRunner implements ApplicationRunner, Observation.Key
 	}
 
 	@Override
-	public void setKeyValuesProvider(TaskObservationConvention keyValuesProvider) {
-		this.taskObservationConvention = keyValuesProvider;
+	public void setObservationConvention(TaskObservationConvention taskObservationConvention) {
+		this.taskObservationConvention = taskObservationConvention;
 	}
 }
