@@ -27,7 +27,7 @@ import org.springframework.boot.CommandLineRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationCommandLineRunner implements CommandLineRunner, Observation.ObservationConventionAware<TaskObservationConvention> {
+class ObservationCommandLineRunner implements CommandLineRunner {
 
 	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
@@ -69,10 +69,5 @@ class ObservationCommandLineRunner implements CommandLineRunner, Observation.Obs
 			this.registry = this.beanFactory.getBean(ObservationRegistry.class);
 		}
 		return this.registry;
-	}
-
-	@Override
-	public void setObservationConvention(TaskObservationConvention taskObservationConvention) {
-		this.taskObservationConvention = taskObservationConvention;
 	}
 }

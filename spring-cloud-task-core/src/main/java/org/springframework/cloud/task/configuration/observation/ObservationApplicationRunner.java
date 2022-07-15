@@ -28,7 +28,7 @@ import org.springframework.boot.ApplicationRunner;
  *
  * @author Marcin Grzejszczak
  */
-class ObservationApplicationRunner implements ApplicationRunner, Observation.ObservationConventionAware<TaskObservationConvention> {
+class ObservationApplicationRunner implements ApplicationRunner {
 
 	private static final DefaultTaskObservationConvention INSTANCE = new DefaultTaskObservationConvention();
 
@@ -70,10 +70,5 @@ class ObservationApplicationRunner implements ApplicationRunner, Observation.Obs
 			this.registry = this.beanFactory.getBean(ObservationRegistry.class);
 		}
 		return this.registry;
-	}
-
-	@Override
-	public void setObservationConvention(TaskObservationConvention taskObservationConvention) {
-		this.taskObservationConvention = taskObservationConvention;
 	}
 }
