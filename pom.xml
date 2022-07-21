@@ -119,7 +119,6 @@
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<java.version>17</java.version>
-		<micrometer.version>1.10.0-SNAPSHOT</micrometer.version>
 	</properties>
 
 	<build>
