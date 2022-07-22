@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * it should be added as the first listener in the chain.
  *
  * @author Glenn Renfro
+ * @author Mahmoud Ben Hassine
  * @since 2.0.0
  */
 public class SingleInstanceTaskListener implements ApplicationListener<ApplicationEvent> {
