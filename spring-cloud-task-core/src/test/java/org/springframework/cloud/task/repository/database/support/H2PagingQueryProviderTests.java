@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.batch.item.database.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -39,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Henning Pöttker
+ * @author Mahmoud Ben Hassine
  */
 class H2PagingQueryProviderTests {
 
@@ -48,7 +49,7 @@ class H2PagingQueryProviderTests {
 		String connectionUrl = String.format("jdbc:h2:mem:%s;MODE=%s", UUID.randomUUID(), mode);
 		DataSource dataSource = new SimpleDriverDataSource(new org.h2.Driver(), connectionUrl, "sa", "");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+		PlatformTransactionManager transactionManager = new JdbcTransactionManager(dataSource);
 		TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
 		transactionTemplate.executeWithoutResult(status -> {

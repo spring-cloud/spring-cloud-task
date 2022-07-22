@@ -230,7 +230,7 @@ repository) to be used.
 
 |`PlatformTransactionManager`
 |A transaction manager to be used when running updates for tasks.
-|`DataSourceTransactionManager` if a `DataSource` is used.
+|`JdbcTransactionManager` if a `DataSource` is used.
 `ResourcelessTransactionManager` if it is not.
 |===
 

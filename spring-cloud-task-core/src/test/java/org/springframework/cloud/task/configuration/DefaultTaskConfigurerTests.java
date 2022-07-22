@@ -36,6 +36,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * @author Glenn Renfro
+ * @author Mahmoud Ben Hassine
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { EmbeddedDataSourceConfiguration.class })
@@ -68,7 +69,7 @@ public class DefaultTaskConfigurerTests {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
 				this.dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
+				.isEqualTo("org.springframework.jdbc.support.JdbcTransactionManager");
 	}
 
 	@Test
@@ -77,16 +78,16 @@ public class DefaultTaskConfigurerTests {
 				this.dataSource);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
 				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+						"org.springframework.jdbc.support.JdbcTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO", null);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
 				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+						"org.springframework.jdbc.support.JdbcTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO",
 				this.context);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
 				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+						"org.springframework.jdbc.support.JdbcTransactionManager");
 	}
 
 	@Test
