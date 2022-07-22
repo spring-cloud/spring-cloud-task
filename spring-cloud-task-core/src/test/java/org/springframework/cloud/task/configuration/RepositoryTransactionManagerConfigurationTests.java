@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -44,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
+ * @author Mahmoud Ben Hassine
  */
 public class RepositoryTransactionManagerConfigurationTests {
 
@@ -136,8 +137,8 @@ public class RepositoryTransactionManagerConfigurationTests {
 		}
 
 		@Bean
-		public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-			return new TestDataSourceTransactionManager(dataSource);
+		public JdbcTransactionManager transactionManager(DataSource dataSource) {
+			return new TestJdbcTransactionManager(dataSource);
 		}
 
 	}
@@ -162,8 +163,8 @@ public class RepositoryTransactionManagerConfigurationTests {
 		}
 
 		@Bean
-		public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-			return new TestDataSourceTransactionManager(dataSource);
+		public JdbcTransactionManager transactionManager(DataSource dataSource) {
+			return new TestJdbcTransactionManager(dataSource);
 		}
 
 		@Bean
@@ -172,15 +173,15 @@ public class RepositoryTransactionManagerConfigurationTests {
 		}
 
 		@Bean
-		public DataSourceTransactionManager transactionManager2(DataSource dataSource2) {
-			return new DataSourceTransactionManager(dataSource2);
+		public JdbcTransactionManager transactionManager2(DataSource dataSource2) {
+			return new JdbcTransactionManager(dataSource2);
 		}
 
 	}
 
-	private static class TestDataSourceTransactionManager extends DataSourceTransactionManager {
+	private static class TestJdbcTransactionManager extends JdbcTransactionManager {
 
-		protected TestDataSourceTransactionManager(DataSource dataSource) {
+		protected TestJdbcTransactionManager(DataSource dataSource) {
 			super(dataSource);
 		}
 

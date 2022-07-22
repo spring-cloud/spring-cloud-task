@@ -31,7 +31,7 @@ import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -48,6 +48,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  *
  * @author Glenn Renfro
  * @author Michael Minella
+ * @author Mahmoud Ben Hassine
  */
 public class DefaultTaskConfigurer implements TaskConfigurer {
 
@@ -144,7 +145,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 				}
 				finally {
 					if (this.transactionManager == null) {
-						this.transactionManager = new DataSourceTransactionManager(this.dataSource);
+						this.transactionManager = new JdbcTransactionManager(this.dataSource);
 					}
 				}
 			}
