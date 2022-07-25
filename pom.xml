@@ -119,6 +119,7 @@
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<java.version>17</java.version>
+		<spring-javaformat-maven-plugin.version>0.0.34</spring-javaformat-maven-plugin.version>
 	</properties>
 
 	<build>
@@ -236,6 +237,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.spring.javaformat</groupId>
+				<artifactId>spring-javaformat-maven-plugin</artifactId>
+				<version>${spring-javaformat-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<inherited>true</inherited>
+						<goals>
+							<goal>validate</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
