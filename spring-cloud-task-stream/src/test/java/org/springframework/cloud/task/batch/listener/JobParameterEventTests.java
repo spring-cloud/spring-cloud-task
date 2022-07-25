@@ -46,15 +46,13 @@ public class JobParameterEventTests {
 		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, true);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_VALUE);
-		assertThat(jobParameterEvent.getType())
-				.isEqualTo(JobParameterEvent.ParameterType.STRING);
+		assertThat(jobParameterEvent.getType()).isEqualTo(JobParameterEvent.ParameterType.STRING);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 
 		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, true);
 		jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_DATE_VALUE);
-		assertThat(jobParameterEvent.getType())
-				.isEqualTo(JobParameterEvent.ParameterType.DATE);
+		assertThat(jobParameterEvent.getType()).isEqualTo(JobParameterEvent.ParameterType.DATE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 		assertThat(new JobParameterEvent(jobParameter).equals(jobParameterEvent)).isTrue();
 	}

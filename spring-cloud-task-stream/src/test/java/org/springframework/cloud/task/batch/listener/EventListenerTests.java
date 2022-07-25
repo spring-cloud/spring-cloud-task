@@ -78,27 +78,24 @@ public class EventListenerTests {
 	@BeforeEach
 	public void beforeTests() {
 		this.applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(BatchEventsApplication.class)).web(WebApplicationType.NONE).build()
-			.run();
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
+				.web(WebApplicationType.NONE).build().run();
 		StreamBridge streamBridge = this.applicationContext.getBean(StreamBridge.class);
 		MessagePublisher messagePublisher = new MessagePublisher(streamBridge);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		this.eventEmittingSkipListener = new EventEmittingSkipListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingItemProcessListener = new EventEmittingItemProcessListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingItemReadListener = new EventEmittingItemReadListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingItemWriteListener = new EventEmittingItemWriteListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingJobExecutionListener = new EventEmittingJobExecutionListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingStepExecutionListener = new EventEmittingStepExecutionListener(
-			messagePublisher, this.taskEventProperties);
-		this.eventEmittingChunkListener = new EventEmittingChunkListener(
-			messagePublisher, 0, this.taskEventProperties);
+		this.eventEmittingSkipListener = new EventEmittingSkipListener(messagePublisher, this.taskEventProperties);
+		this.eventEmittingItemProcessListener = new EventEmittingItemProcessListener(messagePublisher,
+				this.taskEventProperties);
+		this.eventEmittingItemReadListener = new EventEmittingItemReadListener(messagePublisher,
+				this.taskEventProperties);
+		this.eventEmittingItemWriteListener = new EventEmittingItemWriteListener(messagePublisher,
+				this.taskEventProperties);
+		this.eventEmittingJobExecutionListener = new EventEmittingJobExecutionListener(messagePublisher,
+				this.taskEventProperties);
+		this.eventEmittingStepExecutionListener = new EventEmittingStepExecutionListener(messagePublisher,
+				this.taskEventProperties);
+		this.eventEmittingChunkListener = new EventEmittingChunkListener(messagePublisher, 0, this.taskEventProperties);
 	}
 
 	@AfterEach
@@ -110,25 +107,18 @@ public class EventListenerTests {
 
 	@Test
 	public void testEventListenerOrderProperty() {
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingSkipListener.getOrder());
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingItemProcessListener.getOrder());
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingItemReadListener.getOrder());
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingItemWriteListener.getOrder());
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingJobExecutionListener.getOrder());
-		assertThat(Ordered.LOWEST_PRECEDENCE)
-				.isEqualTo(this.eventEmittingStepExecutionListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingSkipListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingItemProcessListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingItemReadListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingItemWriteListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingJobExecutionListener.getOrder());
+		assertThat(Ordered.LOWEST_PRECEDENCE).isEqualTo(this.eventEmittingStepExecutionListener.getOrder());
 		assertThat(0).isEqualTo(this.eventEmittingChunkListener.getOrder());
 	}
 
 	@Test
 	public void testItemProcessListenerOnProcessorError() {
-		this.eventEmittingItemProcessListener.onProcessError("HELLO",
-			new RuntimeException("Test Exception"));
+		this.eventEmittingItemProcessListener.onProcessError("HELLO", new RuntimeException("Test Exception"));
 
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
 				.isEqualTo("Exception while item was being processed");
@@ -136,18 +126,17 @@ public class EventListenerTests {
 
 	@Test
 	public void testItemProcessListenerAfterProcess() {
-		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS_EQUAL",
-				"HELLO_AFTER_PROCESS_EQUAL");
+		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS_EQUAL", "HELLO_AFTER_PROCESS_EQUAL");
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
-			.isEqualTo("item equaled result after processing");
+				.isEqualTo("item equaled result after processing");
 
 		this.eventEmittingItemProcessListener.afterProcess("HELLO_NOT_EQUAL", "WORLD");
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
 				.isEqualTo("item did not equal result after processing");
 
 		this.eventEmittingItemProcessListener.afterProcess("HELLO_AFTER_PROCESS", null);
-		assertThat(getStringFromDestination(this.taskEventProperties.
-			getItemProcessEventBindingName())).isEqualTo("1 item was filtered");
+		assertThat(getStringFromDestination(this.taskEventProperties.getItemProcessEventBindingName()))
+				.isEqualTo("1 item was filtered");
 	}
 
 	@Test
@@ -159,33 +148,29 @@ public class EventListenerTests {
 	@Test
 	public void EventEmittingSkipListenerSkipRead() {
 		this.eventEmittingSkipListener.onSkipInRead(new RuntimeException("Text Exception"));
-		assertThat(getStringFromDestination(this.taskEventProperties.
-			getSkipEventBindingName())).isEqualTo("Skipped when reading.");
+		assertThat(getStringFromDestination(this.taskEventProperties.getSkipEventBindingName()))
+				.isEqualTo("Skipped when reading.");
 	}
 
 	@Test
 	public void EventEmittingSkipListenerSkipWrite() {
 		final String MESSAGE = "\"HELLO_SKIP_WRITE\"";
-		this.eventEmittingSkipListener.onSkipInWrite(MESSAGE,
-			new RuntimeException("Text Exception"));
-		assertThat(getStringFromDestination(this.taskEventProperties.
-			getSkipEventBindingName())).isEqualTo(MESSAGE);
+		this.eventEmittingSkipListener.onSkipInWrite(MESSAGE, new RuntimeException("Text Exception"));
+		assertThat(getStringFromDestination(this.taskEventProperties.getSkipEventBindingName())).isEqualTo(MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingSkipListenerSkipProcess() {
 		final String MESSAGE = "\"HELLO_SKIP_PROCESS\"";
-		this.eventEmittingSkipListener.onSkipInProcess(MESSAGE,
-			new RuntimeException("Text Exception"));
-		assertThat(getStringFromDestination(this.taskEventProperties.
-			getSkipEventBindingName())).isEqualTo(MESSAGE);
+		this.eventEmittingSkipListener.onSkipInProcess(MESSAGE, new RuntimeException("Text Exception"));
+		assertThat(getStringFromDestination(this.taskEventProperties.getSkipEventBindingName())).isEqualTo(MESSAGE);
 	}
 
 	@Test
 	public void EventEmittingItemReadListener() {
 		this.eventEmittingItemReadListener.onReadError(new RuntimeException("Text Exception"));
-		assertThat(getStringFromDestination(this.taskEventProperties.
-			getItemReadEventBindingName())).isEqualTo("Exception while item was being read");
+		assertThat(getStringFromDestination(this.taskEventProperties.getItemReadEventBindingName()))
+				.isEqualTo("Exception while item was being read");
 	}
 
 	@Test
@@ -204,14 +189,14 @@ public class EventListenerTests {
 	public void EventEmittingItemWriteListenerBeforeWrite() {
 		this.eventEmittingItemWriteListener.beforeWrite(getSampleList());
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemWriteEventBindingName()))
-			.isEqualTo("3 items to be written.");
+				.isEqualTo("3 items to be written.");
 	}
 
 	@Test
 	public void EventEmittingItemWriteListenerAfterWrite() {
 		this.eventEmittingItemWriteListener.afterWrite(getSampleList());
 		assertThat(getStringFromDestination(this.taskEventProperties.getItemWriteEventBindingName()))
-			.isEqualTo("3 items have been written.");
+				.isEqualTo("3 items have been written.");
 	}
 
 	@Test
@@ -230,9 +215,8 @@ public class EventListenerTests {
 		List<Message<byte[]>> result = testListener(this.taskEventProperties.getJobExecutionEventBindingName(), 1);
 		assertThat(result.get(0)).isNotNull();
 
-		JobExecutionEvent jobEvent =  this.objectMapper.readValue(result.get(0).getPayload(), JobExecutionEvent.class);
-		assertThat(jobEvent.getJobInstance().getJobName())
-				.isEqualTo(jobExecution.getJobInstance().getJobName());
+		JobExecutionEvent jobEvent = this.objectMapper.readValue(result.get(0).getPayload(), JobExecutionEvent.class);
+		assertThat(jobEvent.getJobInstance().getJobName()).isEqualTo(jobExecution.getJobInstance().getJobName());
 	}
 
 	@Test
@@ -242,9 +226,8 @@ public class EventListenerTests {
 		List<Message<byte[]>> result = testListener(this.taskEventProperties.getJobExecutionEventBindingName(), 1);
 		assertThat(result.get(0)).isNotNull();
 
-		JobExecutionEvent jobEvent =  this.objectMapper.readValue(result.get(0).getPayload(), JobExecutionEvent.class);
-		assertThat(jobEvent.getJobInstance().getJobName())
-				.isEqualTo(jobExecution.getJobInstance().getJobName());
+		JobExecutionEvent jobEvent = this.objectMapper.readValue(result.get(0).getPayload(), JobExecutionEvent.class);
+		assertThat(jobEvent.getJobInstance().getJobName()).isEqualTo(jobExecution.getJobInstance().getJobName());
 	}
 
 	@Test
@@ -256,7 +239,8 @@ public class EventListenerTests {
 		List<Message<byte[]>> result = testListener(this.taskEventProperties.getStepExecutionEventBindingName(), 1);
 		assertThat(result.get(0)).isNotNull();
 
-		StepExecutionEvent stepExecutionEvent =  this.objectMapper.readValue(result.get(0).getPayload(), StepExecutionEvent.class);
+		StepExecutionEvent stepExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
+				StepExecutionEvent.class);
 		assertThat(stepExecutionEvent.getStepName()).isEqualTo(STEP_MESSAGE);
 	}
 
@@ -268,7 +252,8 @@ public class EventListenerTests {
 		List<Message<byte[]>> result = testListener(this.taskEventProperties.getStepExecutionEventBindingName(), 1);
 
 		assertThat(result.get(0)).isNotNull();
-		StepExecutionEvent stepExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(), StepExecutionEvent.class);
+		StepExecutionEvent stepExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
+				StepExecutionEvent.class);
 		assertThat(stepExecutionEvent.getStepName()).isEqualTo(STEP_MESSAGE);
 	}
 
@@ -277,7 +262,7 @@ public class EventListenerTests {
 		final String CHUNK_MESSAGE = "Before Chunk Processing";
 		this.eventEmittingChunkListener.beforeChunk(getChunkContext());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
-			.isEqualTo(CHUNK_MESSAGE);
+				.isEqualTo(CHUNK_MESSAGE);
 	}
 
 	@Test
@@ -285,7 +270,7 @@ public class EventListenerTests {
 		final String CHUNK_MESSAGE = "After Chunk Processing";
 		this.eventEmittingChunkListener.afterChunk(getChunkContext());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
-			.isEqualTo(CHUNK_MESSAGE);
+				.isEqualTo(CHUNK_MESSAGE);
 	}
 
 	@Test
@@ -340,5 +325,7 @@ public class EventListenerTests {
 
 	@SpringBootApplication
 	public static class BatchEventsApplication {
+
 	}
+
 }

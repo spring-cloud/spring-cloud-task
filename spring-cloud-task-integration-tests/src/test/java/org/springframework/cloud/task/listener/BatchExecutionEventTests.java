@@ -29,7 +29,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -51,6 +50,7 @@ public class BatchExecutionEventTests {
 	private static final String TASK_NAME = "taskEventTest";
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	private ConfigurableApplicationContext applicationContext;
 
 	@BeforeEach
@@ -68,45 +68,39 @@ public class BatchExecutionEventTests {
 	@Test
 	public void testContext() {
 		this.applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(BatchEventsApplication.class)).web(WebApplicationType.NONE)
-			.build().run(getCommandLineParams(
-				"--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
+				.web(WebApplicationType.NONE).build()
+				.run(getCommandLineParams("--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
 
-		assertThat(this.applicationContext.getBean("jobExecutionEventsListener"))
-			.isNotNull();
-		assertThat(this.applicationContext.getBean("stepExecutionEventsListener"))
-			.isNotNull();
+		assertThat(this.applicationContext.getBean("jobExecutionEventsListener")).isNotNull();
+		assertThat(this.applicationContext.getBean("stepExecutionEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("chunkEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("itemReadEventsListener")).isNotNull();
-		assertThat(this.applicationContext.getBean("itemWriteEventsListener"))
-			.isNotNull();
-		assertThat(this.applicationContext.getBean("itemProcessEventsListener"))
-			.isNotNull();
+		assertThat(this.applicationContext.getBean("itemWriteEventsListener")).isNotNull();
+		assertThat(this.applicationContext.getBean("itemProcessEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("skipEventsListener")).isNotNull();
 	}
 
 	@Test
 	public void testJobEventListener() throws Exception {
 		List<Message<byte[]>> result = testListener(
-			"--spring.cloud.task.batch.events.jobExecutionEventBindingName=foobar", "foobar", 1);
+				"--spring.cloud.task.batch.events.jobExecutionEventBindingName=foobar", "foobar", 1);
 		JobExecutionEvent jobExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
-			JobExecutionEvent.class);
-		Assertions.assertThat(jobExecutionEvent.getJobInstance().getJobName())
-			.isEqualTo("job").as("Job name should be job");
+				JobExecutionEvent.class);
+		Assertions.assertThat(jobExecutionEvent.getJobInstance().getJobName()).isEqualTo("job")
+				.as("Job name should be job");
 	}
 
 	@Test
 	public void testStepEventListener() throws Exception {
 		final String bindingName = "step-execution-foobar";
 		List<Message<byte[]>> result = testListener(
-			"--spring.cloud.task.batch.events.stepExecutionEventBindingName=" + bindingName,
-			bindingName, 4);
+				"--spring.cloud.task.batch.events.stepExecutionEventBindingName=" + bindingName, bindingName, 4);
 		int stepOneCount = 0;
 		int stepTwoCount = 0;
 		for (int i = 0; i < 4; i++) {
 			StepExecutionEvent stepExecutionEvent = this.objectMapper.readValue(result.get(i).getPayload(),
-				StepExecutionEvent.class);
+					StepExecutionEvent.class);
 			if (stepExecutionEvent.getStepName().equals("step1")) {
 				stepOneCount++;
 			}
@@ -115,10 +109,8 @@ public class BatchExecutionEventTests {
 			}
 		}
 
-		assertThat(stepOneCount).as("the number of step1 events did not match")
-			.isEqualTo(2);
-		assertThat(stepTwoCount).as("the number of step2 events did not match")
-			.isEqualTo(2);
+		assertThat(stepOneCount).as("the number of step1 events did not match").isEqualTo(2);
+		assertThat(stepTwoCount).as("the number of step2 events did not match").isEqualTo(2);
 
 	}
 
@@ -127,8 +119,7 @@ public class BatchExecutionEventTests {
 		final String bindingName = "item-execution-foobar";
 
 		List<Message<byte[]>> result = testListener(
-			"--spring.cloud.task.batch.events.itemProcessEventBindingName=" + bindingName,
-			bindingName, 1);
+				"--spring.cloud.task.batch.events.itemProcessEventBindingName=" + bindingName, bindingName, 1);
 		String value = new String(result.get(0).getPayload());
 		assertThat(value).isEqualTo("item did not equal result after processing");
 
@@ -139,8 +130,7 @@ public class BatchExecutionEventTests {
 		final String bindingName = "chunk-events-foobar";
 
 		List<Message<byte[]>> result = testListener(
-			"--spring.cloud.task.batch.events.chunkEventBindingName=" + bindingName,
-			bindingName, 2);
+				"--spring.cloud.task.batch.events.chunkEventBindingName=" + bindingName, bindingName, 2);
 		String value = new String(result.get(0).getPayload());
 		assertThat(value).isEqualTo("Before Chunk Processing");
 		value = new String(result.get(1).getPayload());
@@ -152,8 +142,7 @@ public class BatchExecutionEventTests {
 		final String bindingName = "item-write-events-foobar";
 
 		List<Message<byte[]>> result = testListener(
-			"--spring.cloud.task.batch.events.itemWriteEventBindingName=" + bindingName,
-			bindingName, 2);
+				"--spring.cloud.task.batch.events.itemWriteEventBindingName=" + bindingName, bindingName, 2);
 		String value = new String(result.get(0).getPayload());
 		assertThat(value).isEqualTo("3 items to be written.");
 		value = new String(result.get(1).getPayload());
@@ -165,16 +154,12 @@ public class BatchExecutionEventTests {
 	}
 
 	private String[] getCommandLineParams(String sinkChannelParam, boolean enableFailJobConfig) {
-		String jobConfig = enableFailJobConfig ?
-			"--spring.cloud.task.test.enable-job-configuration=true" :
-			"--spring.cloud.task.test.enable-fail-job-configuration=true";
-		return new String[]{"--spring.cloud.task.closecontext_enable=false",
-			"--spring.cloud.task.name=" + TASK_NAME,
-			"--spring.main.web-environment=false",
-			"--spring.cloud.stream.defaultBinder=rabbit",
-			"--spring.cloud.stream.bindings.task-events.destination=test",
-			jobConfig,
-			"foo=" + UUID.randomUUID(), sinkChannelParam};
+		String jobConfig = enableFailJobConfig ? "--spring.cloud.task.test.enable-job-configuration=true"
+				: "--spring.cloud.task.test.enable-fail-job-configuration=true";
+		return new String[] { "--spring.cloud.task.closecontext_enable=false", "--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.main.web-environment=false", "--spring.cloud.stream.defaultBinder=rabbit",
+				"--spring.cloud.stream.bindings.task-events.destination=test", jobConfig, "foo=" + UUID.randomUUID(),
+				sinkChannelParam };
 	}
 
 	private List<Message<byte[]>> testListener(String channelBinding, String bindingName, int numberToRead) {
@@ -185,14 +170,13 @@ public class BatchExecutionEventTests {
 		return testListenerForApp(channelBinding, bindingName, numberToRead, BatchSkipEventsApplication.class, false);
 	}
 
-	private List<Message<byte[]>> testListenerForApp(String channelBinding,
-		String bindingName, int numberToRead, Class clazz, boolean enableFailJobConfig) {
+	private List<Message<byte[]>> testListenerForApp(String channelBinding, String bindingName, int numberToRead,
+			Class clazz, boolean enableFailJobConfig) {
 		List<Message<byte[]>> results = new ArrayList<>();
 
 		this.applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(clazz)).web(WebApplicationType.NONE)
-			.build().run(getCommandLineParams(channelBinding, enableFailJobConfig));
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(clazz)).web(WebApplicationType.NONE)
+				.build().run(getCommandLineParams(channelBinding, enableFailJobConfig));
 
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
 
@@ -207,8 +191,7 @@ public class BatchExecutionEventTests {
 		final String bindingName = "item-read-events-foobar";
 
 		List<Message<byte[]>> result = testListenerSkip(
-			"--spring.cloud.task.batch.events.itemReadEventBindingName=" + bindingName,
-			bindingName, 1);
+				"--spring.cloud.task.batch.events.itemReadEventBindingName=" + bindingName, bindingName, 1);
 		String exceptionMessage = new String(result.get(0).getPayload());
 		assertThat(exceptionMessage).isEqualTo("Exception while item was being read");
 	}
@@ -220,8 +203,7 @@ public class BatchExecutionEventTests {
 		final String SKIPPING_WRITE_CONTENT = "-1";
 		final String bindingName = "skip-event-foobar";
 		List<Message<byte[]>> result = testListenerSkip(
-			"--spring.cloud.task.batch.events.skipEventBindingName=" + bindingName,
-			bindingName, 3);
+				"--spring.cloud.task.batch.events.skipEventBindingName=" + bindingName, bindingName, 3);
 		int readSkipCount = 0;
 		int writeSkipCount = 0;
 		for (int i = 0; i < 3; i++) {
@@ -234,19 +216,20 @@ public class BatchExecutionEventTests {
 			}
 		}
 
-		assertThat(readSkipCount).as("the number of read skip events did not match")
-			.isEqualTo(2);
-		assertThat(writeSkipCount).as("the number of write skip events did not match")
-			.isEqualTo(1);
+		assertThat(readSkipCount).as("the number of read skip events did not match").isEqualTo(2);
+		assertThat(writeSkipCount).as("the number of write skip events did not match").isEqualTo(1);
 	}
 
 	@SpringBootApplication
 	@Import(JobConfiguration.class)
 	public static class BatchEventsApplication {
+
 	}
 
 	@SpringBootApplication
 	@Import(JobSkipConfiguration.class)
 	public static class BatchSkipEventsApplication {
+
 	}
+
 }

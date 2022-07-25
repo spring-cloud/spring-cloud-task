@@ -24,10 +24,12 @@ import io.micrometer.observation.Observation;
  * @author Glenn Renfro
  * @since 3.0.0
  */
-public interface TaskExecutionObservationConvention extends Observation.ObservationConvention<TaskExecutionObservationContext> {
+public interface TaskExecutionObservationConvention
+		extends Observation.ObservationConvention<TaskExecutionObservationContext> {
 
 	@Override
 	default boolean supportsContext(Observation.Context context) {
 		return context instanceof TaskExecutionObservationContext;
 	}
+
 }

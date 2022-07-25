@@ -39,8 +39,8 @@ public class JdbcBatchItemWriterProperties {
 	private String sql;
 
 	/**
-	 * If set to {@code true}, confirms that every insert results in the update of at least one
-	 * row in the database. Defaults to {@code true}.
+	 * If set to {@code true}, confirms that every insert results in the update of at
+	 * least one row in the database. Defaults to {@code true}.
 	 */
 	private boolean assertUpdates = true;
 

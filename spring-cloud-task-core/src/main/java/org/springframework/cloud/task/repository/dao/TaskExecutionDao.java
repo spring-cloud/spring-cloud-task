@@ -42,8 +42,8 @@ public interface TaskExecutionDao {
 	 * @param externalExecutionId id assigned to the task by the platform
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
-	TaskExecution createTaskExecution(String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId);
+	TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId);
 
 	/**
 	 * Save a new {@link TaskExecution}.
@@ -55,8 +55,8 @@ public interface TaskExecutionDao {
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 * @since 1.2.0
 	 */
-	TaskExecution createTaskExecution(String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId, Long parentExecutionId);
+	TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId, Long parentExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as started.
@@ -69,8 +69,8 @@ public interface TaskExecutionDao {
 	 * start.
 	 * @since 1.1.0
 	 */
-	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId);
+	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as started.
@@ -84,8 +84,8 @@ public interface TaskExecutionDao {
 	 * start.
 	 * @since 1.2.0
 	 */
-	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId, Long parentExecutionId);
+	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId, Long parentExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as completed.
@@ -96,8 +96,8 @@ public interface TaskExecutionDao {
 	 * @param errorMessage error information available upon failure of a task.
 	 * @since 1.1.0
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage, String errorMessage);
+	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+			String errorMessage);
 
 	/**
 	 * Update and existing {@link TaskExecution}.
@@ -106,8 +106,7 @@ public interface TaskExecutionDao {
 	 * @param endTime the time the task completed.
 	 * @param exitMessage the message assigned to the task upon completion.
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage);
+	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 
 	/**
 	 * Retrieves a task execution from the task repository.

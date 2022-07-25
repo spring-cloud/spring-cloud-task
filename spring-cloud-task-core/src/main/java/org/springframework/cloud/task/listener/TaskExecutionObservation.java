@@ -27,6 +27,7 @@ import io.micrometer.observation.docs.DocumentedObservation;
  * @since 3.0.0
  */
 public enum TaskExecutionObservation implements DocumentedObservation {
+
 	/**
 	 * Metrics created around a task execution.
 	 */
@@ -41,6 +42,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 			return "spring.cloud.task";
 		}
 	};
+
 	@Override
 	public KeyName[] getLowCardinalityKeyNames() {
 		return TaskKeyValues.values();

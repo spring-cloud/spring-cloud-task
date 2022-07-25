@@ -47,7 +47,8 @@ public class AmqpItemWriterProperties {
 
 	/**
 	 * Enables or disables the {@code AmqpItemWriter}.
-	 * @param enabled if {@code true} then {@code AmqpItemWriter} is enabled. Defaults to {@code false}.
+	 * @param enabled if {@code true} then {@code AmqpItemWriter} is enabled. Defaults to
+	 * {@code false}.
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;

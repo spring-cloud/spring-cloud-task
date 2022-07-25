@@ -54,8 +54,7 @@ import org.springframework.context.annotation.Import;
 @Import(JDBCSingleStepDataSourceAutoConfiguration.class)
 public class JdbcBatchItemWriterAutoConfiguration {
 
-	private static final Log logger = LogFactory
-		.getLog(JdbcBatchItemWriterAutoConfiguration.class);
+	private static final Log logger = LogFactory.getLog(JdbcBatchItemWriterAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private ItemPreparedStatementSetter itemPreparedStatementSetter;
@@ -70,8 +69,7 @@ public class JdbcBatchItemWriterAutoConfiguration {
 
 	private DataSource dataSource;
 
-	public JdbcBatchItemWriterAutoConfiguration(DataSource dataSource,
-			JdbcBatchItemWriterProperties properties) {
+	public JdbcBatchItemWriterAutoConfiguration(DataSource dataSource, JdbcBatchItemWriterProperties properties) {
 		this.dataSource = dataSource;
 		this.properties = properties;
 	}
@@ -91,12 +89,10 @@ public class JdbcBatchItemWriterAutoConfiguration {
 		JdbcBatchItemWriterBuilder<Map<String, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
 				.dataSource(writerDataSource).sql(this.properties.getSql());
 		if (this.itemPreparedStatementSetter != null) {
-			jdbcBatchItemWriterBuilder
-					.itemPreparedStatementSetter(this.itemPreparedStatementSetter);
+			jdbcBatchItemWriterBuilder.itemPreparedStatementSetter(this.itemPreparedStatementSetter);
 		}
 		else if (this.itemSqlParameterSourceProvider != null) {
-			jdbcBatchItemWriterBuilder
-					.itemSqlParameterSourceProvider(this.itemSqlParameterSourceProvider);
+			jdbcBatchItemWriterBuilder.itemSqlParameterSourceProvider(this.itemSqlParameterSourceProvider);
 		}
 		else {
 			jdbcBatchItemWriterBuilder.columnMapped();
@@ -105,17 +101,21 @@ public class JdbcBatchItemWriterAutoConfiguration {
 		return jdbcBatchItemWriterBuilder.build();
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcbatchitemwriter.datasource", name = "enable", havingValue = "true")
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcbatchitemwriter.datasource", name = "enable",
+			havingValue = "true")
 	@Bean(name = "jdbcBatchItemWriterDataSourceProperties")
 	@ConfigurationProperties("jdbcbatchitemwriter.datasource")
 	public DataSourceProperties jdbcBatchItemWriterDataSourceProperties() {
 		return new DataSourceProperties();
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcbatchitemwriter.datasource", name = "enable", havingValue = "true")
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcbatchitemwriter.datasource", name = "enable",
+			havingValue = "true")
 	@Bean(name = "jdbcBatchItemWriterSpringDataSource")
-	public DataSource writerDataSource(@Qualifier("jdbcBatchItemWriterDataSourceProperties") DataSourceProperties writerDataSourceProperties) {
-		DataSource result =  writerDataSourceProperties.initializeDataSourceBuilder().build();
+	public DataSource writerDataSource(
+			@Qualifier("jdbcBatchItemWriterDataSourceProperties") DataSourceProperties writerDataSourceProperties) {
+		DataSource result = writerDataSourceProperties.initializeDataSourceBuilder().build();
 		return result;
 	}
+
 }

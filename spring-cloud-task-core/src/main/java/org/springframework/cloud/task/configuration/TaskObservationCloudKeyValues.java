@@ -103,4 +103,5 @@ public class TaskObservationCloudKeyValues {
 	public void setInstanceIndex(String instanceIndex) {
 		this.instanceIndex = instanceIndex;
 	}
+
 }

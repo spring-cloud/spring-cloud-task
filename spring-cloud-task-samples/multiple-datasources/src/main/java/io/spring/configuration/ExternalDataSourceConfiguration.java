@@ -31,6 +31,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * Creates two data sources that use external databases.
+ *
  * @author Glenn Renfro
  */
 @Configuration(proxyBeanMethods = false)
@@ -52,20 +53,19 @@ public class ExternalDataSourceConfiguration {
 
 	@Bean(name = "springDataSource")
 	@Primary
-	public DataSource dataSource(@Qualifier("springDataSourceProperties")DataSourceProperties springDataSourceProperties) {
-		return DataSourceBuilder.create().driverClassName(springDataSourceProperties.getDriverClassName()).
-			url(springDataSourceProperties.getUrl()).
-			password(springDataSourceProperties.getPassword()).
-			username(springDataSourceProperties.getUsername()).
-			build();
+	public DataSource dataSource(
+			@Qualifier("springDataSourceProperties") DataSourceProperties springDataSourceProperties) {
+		return DataSourceBuilder.create().driverClassName(springDataSourceProperties.getDriverClassName())
+				.url(springDataSourceProperties.getUrl()).password(springDataSourceProperties.getPassword())
+				.username(springDataSourceProperties.getUsername()).build();
 	}
 
 	@Bean
-	public DataSource secondDataSource(@Qualifier("secondDataSourceProperties") DataSourceProperties secondDataSourceProperties) {
-		return DataSourceBuilder.create().driverClassName(secondDataSourceProperties.getDriverClassName()).
-			url(secondDataSourceProperties.getUrl()).
-			password(secondDataSourceProperties.getPassword()).
-			username(secondDataSourceProperties.getUsername()).
-			build();
+	public DataSource secondDataSource(
+			@Qualifier("secondDataSourceProperties") DataSourceProperties secondDataSourceProperties) {
+		return DataSourceBuilder.create().driverClassName(secondDataSourceProperties.getDriverClassName())
+				.url(secondDataSourceProperties.getUrl()).password(secondDataSourceProperties.getPassword())
+				.username(secondDataSourceProperties.getUsername()).build();
 	}
+
 }

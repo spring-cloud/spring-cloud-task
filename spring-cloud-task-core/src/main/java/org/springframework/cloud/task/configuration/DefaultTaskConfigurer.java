@@ -96,16 +96,14 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * infrastructure.
 	 * @param context the context to be used.
 	 */
-	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix,
-			ApplicationContext context) {
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
 		this.dataSource = dataSource;
 		this.context = context;
 
 		TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
 
 		if (this.dataSource != null) {
-			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource,
-					tablePrefix);
+			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
 		}
 		else {
 			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean();
@@ -136,27 +134,22 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 			if (isDataSourceAvailable()) {
 				try {
 					Class.forName("javax.persistence.EntityManager");
-					if (this.context != null && this.context
-							.getBeanNamesForType(EntityManager.class).length > 0) {
-						logger.debug(
-								"EntityManager was found, using JpaTransactionManager");
+					if (this.context != null && this.context.getBeanNamesForType(EntityManager.class).length > 0) {
+						logger.debug("EntityManager was found, using JpaTransactionManager");
 						this.transactionManager = new JpaTransactionManager();
 					}
 				}
 				catch (ClassNotFoundException ignore) {
-					logger.debug(
-							"No EntityManager was found, using DataSourceTransactionManager");
+					logger.debug("No EntityManager was found, using DataSourceTransactionManager");
 				}
 				finally {
 					if (this.transactionManager == null) {
-						this.transactionManager = new DataSourceTransactionManager(
-								this.dataSource);
+						this.transactionManager = new DataSourceTransactionManager(this.dataSource);
 					}
 				}
 			}
 			else {
-				logger.debug(
-						"No DataSource was found, using ResourcelessTransactionManager");
+				logger.debug("No DataSource was found, using ResourcelessTransactionManager");
 				this.transactionManager = new ResourcelessTransactionManager();
 			}
 		}

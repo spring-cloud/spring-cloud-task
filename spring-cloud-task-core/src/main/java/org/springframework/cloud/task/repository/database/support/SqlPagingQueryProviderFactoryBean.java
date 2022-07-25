@@ -47,8 +47,7 @@ import static org.springframework.cloud.task.repository.support.DatabaseType.SQL
  *
  * @author Glenn Renfro
  */
-public class SqlPagingQueryProviderFactoryBean
-		implements FactoryBean<PagingQueryProvider> {
+public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQueryProvider> {
 
 	private DataSource dataSource;
 
@@ -134,20 +133,16 @@ public class SqlPagingQueryProviderFactoryBean
 
 		DatabaseType type;
 		try {
-			type = this.databaseType != null
-					? DatabaseType.valueOf(this.databaseType.toUpperCase())
+			type = this.databaseType != null ? DatabaseType.valueOf(this.databaseType.toUpperCase())
 					: DatabaseType.fromMetaData(this.dataSource);
 		}
 		catch (MetaDataAccessException e) {
 			throw new IllegalArgumentException(
-					"Could not inspect meta data for database type.  You have to supply it explicitly.",
-					e);
+					"Could not inspect meta data for database type.  You have to supply it explicitly.", e);
 		}
 
 		AbstractSqlPagingQueryProvider provider = this.providers.get(type);
-		Assert.state(provider != null,
-				"Should not happen: missing PagingQueryProvider for DatabaseType="
-						+ type);
+		Assert.state(provider != null, "Should not happen: missing PagingQueryProvider for DatabaseType=" + type);
 
 		provider.setFromClause(this.fromClause);
 		provider.setWhereClause(this.whereClause);

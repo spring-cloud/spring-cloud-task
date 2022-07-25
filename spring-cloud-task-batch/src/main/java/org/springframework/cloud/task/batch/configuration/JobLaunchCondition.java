@@ -31,14 +31,12 @@ public class JobLaunchCondition extends AllNestedConditions {
 		super(ConfigurationPhase.PARSE_CONFIGURATION);
 	}
 
-	@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure",
-			havingValue = "true")
+	@ConditionalOnProperty(name = "spring.cloud.task.batch.fail-on-job-failure", havingValue = "true")
 	static class FailOnJobFailureCondition {
 
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job", name = "enabled",
-			havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "spring.batch.job", name = "enabled", havingValue = "true", matchIfMissing = true)
 	static class SpringBatchJobCondition {
 
 	}

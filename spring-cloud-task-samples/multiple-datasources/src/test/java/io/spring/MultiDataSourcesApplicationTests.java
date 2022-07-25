@@ -16,7 +16,6 @@
 
 package io.spring;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -40,10 +39,11 @@ public class MultiDataSourcesApplicationTests {
 		String output = capturedOutput.toString();
 
 		assertThat(output.contains("There are 2 DataSources within this application"))
-			.as("Unable to find CommandLineRunner output: " + output).isTrue();
-		assertThat(output.contains("Creating: TaskExecution{"))
-			.as("Unable to find start task message: " + output).isTrue();
-		assertThat(output.contains("Updating: TaskExecution"))
-			.as("Unable to find update task message: " + output).isTrue();
+				.as("Unable to find CommandLineRunner output: " + output).isTrue();
+		assertThat(output.contains("Creating: TaskExecution{")).as("Unable to find start task message: " + output)
+				.isTrue();
+		assertThat(output.contains("Updating: TaskExecution")).as("Unable to find update task message: " + output)
+				.isTrue();
 	}
+
 }

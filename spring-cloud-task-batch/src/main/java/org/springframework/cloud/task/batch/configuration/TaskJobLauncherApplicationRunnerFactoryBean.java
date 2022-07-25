@@ -35,8 +35,7 @@ import org.springframework.util.StringUtils;
  * @author Glenn Renfro
  * @since 2.3.0
  */
-public class TaskJobLauncherApplicationRunnerFactoryBean
-		implements FactoryBean<TaskJobLauncherApplicationRunner> {
+public class TaskJobLauncherApplicationRunnerFactoryBean implements FactoryBean<TaskJobLauncherApplicationRunner> {
 
 	private JobLauncher jobLauncher;
 
@@ -54,10 +53,9 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 
 	private JobRepository jobRepository;
 
-	public TaskJobLauncherApplicationRunnerFactoryBean(JobLauncher jobLauncher,
-			JobExplorer jobExplorer, List<Job> jobs,
-			TaskBatchProperties taskBatchProperties, JobRegistry jobRegistry,
-			JobRepository jobRepository, BatchProperties batchProperties) {
+	public TaskJobLauncherApplicationRunnerFactoryBean(JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
+			TaskBatchProperties taskBatchProperties, JobRegistry jobRegistry, JobRepository jobRepository,
+			BatchProperties batchProperties) {
 		Assert.notNull(taskBatchProperties, "taskBatchProperties must not be null");
 		Assert.notNull(batchProperties, "batchProperties must not be null");
 		Assert.notEmpty(jobs, "jobs must not be null nor empty");
@@ -85,8 +83,7 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 	@Override
 	public TaskJobLauncherApplicationRunner getObject() {
 		TaskJobLauncherApplicationRunner taskJobLauncherApplicationRunner = new TaskJobLauncherApplicationRunner(
-				this.jobLauncher, this.jobExplorer, this.jobRepository,
-				this.taskBatchProperties);
+				this.jobLauncher, this.jobExplorer, this.jobRepository, this.taskBatchProperties);
 		taskJobLauncherApplicationRunner.setJobs(this.jobs);
 		if (StringUtils.hasText(this.jobName)) {
 			taskJobLauncherApplicationRunner.setJobName(this.jobName);

@@ -37,63 +37,48 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TaskJobLauncherAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(BatchAutoConfiguration.class,
-					TaskJobLauncherAutoConfiguration.class))
+			.withConfiguration(
+					AutoConfigurations.of(BatchAutoConfiguration.class, TaskJobLauncherAutoConfiguration.class))
 			.withUserConfiguration(TaskBatchExecutionListenerTests.JobConfiguration.class,
-					PropertyPlaceholderAutoConfiguration.class,
-					EmbeddedDataSourceConfiguration.class);
+					PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class);
 
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLR() {
-		this.contextRunner
-				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true")
-				.run(context -> {
-					assertThat(context)
-							.hasSingleBean(TaskJobLauncherApplicationRunner.class);
-					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class)
-							.getOrder()).isEqualTo(0);
-				});
+		this.contextRunner.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true").run(context -> {
+			assertThat(context).hasSingleBean(TaskJobLauncherApplicationRunner.class);
+			assertThat(context.getBean(TaskJobLauncherApplicationRunner.class).getOrder()).isEqualTo(0);
+		});
 	}
 
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLROrder() {
-		this.contextRunner
-				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
-						"spring.cloud.task.batch.commandLineRunnerOrder=100")
-				.run(context -> {
-					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class)
-							.getOrder()).isEqualTo(100);
+		this.contextRunner.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
+				"spring.cloud.task.batch.commandLineRunnerOrder=100").run(context -> {
+					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class).getOrder()).isEqualTo(100);
 				});
 	}
 
 	@Test
 	public void testAutoBuiltDataSourceWithBatchJobNames() {
-		this.contextRunner
-				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
-						"spring.batch.job.name=job1",
-						"spring.cloud.task.batch.jobName=foobar")
-				.run(context -> {
+		this.contextRunner.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
+				"spring.batch.job.name=job1", "spring.cloud.task.batch.jobName=foobar").run(context -> {
 					validateJobNames(context, "job1");
 				});
 	}
 
 	@Test
 	public void testAutoBuiltDataSourceWithTaskBatchJobNames() {
-		this.contextRunner
-				.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
-						"spring.cloud.task.batch.jobNames=job1,job2")
-				.run(context -> {
+		this.contextRunner.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
+				"spring.cloud.task.batch.jobNames=job1,job2").run(context -> {
 					validateJobNames(context, "job1,job2");
 				});
 	}
 
-	private void validateJobNames(AssertableApplicationContext context, String jobNames)
-			throws Exception {
+	private void validateJobNames(AssertableApplicationContext context, String jobNames) throws Exception {
 		JobLauncherApplicationRunner jobLauncherApplicationRunner = context
 				.getBean(TaskJobLauncherApplicationRunner.class);
 
-		Object names = ReflectionTestUtils.getField(jobLauncherApplicationRunner,
-				"jobName");
+		Object names = ReflectionTestUtils.getField(jobLauncherApplicationRunner, "jobName");
 		assertThat(names).isEqualTo(jobNames);
 	}
 

@@ -29,9 +29,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
 /**
- * Establishes the default {@link DataSource} for the Task when creating a {@link DataSource}
- * for  {@link org.springframework.batch.item.database.JdbcCursorItemReader}
- * or {@link org.springframework.batch.item.database.JdbcBatchItemWriter}.
+ * Establishes the default {@link DataSource} for the Task when creating a
+ * {@link DataSource} for
+ * {@link org.springframework.batch.item.database.JdbcCursorItemReader} or
+ * {@link org.springframework.batch.item.database.JdbcBatchItemWriter}.
  *
  * @author Glenn Renfro
  * @since 3.0
@@ -44,7 +45,8 @@ class JDBCSingleStepDataSourceAutoConfiguration {
 		return new DefaultTaskConfigurer(dataSource);
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcsinglestep.datasource", name = "enable", havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcsinglestep.datasource", name = "enable", havingValue = "true",
+			matchIfMissing = true)
 	@ConditionalOnMissingBean(name = "springDataSourceProperties")
 	@Bean(name = "springDataSourceProperties")
 	@ConfigurationProperties("spring.datasource")
@@ -53,11 +55,14 @@ class JDBCSingleStepDataSourceAutoConfiguration {
 		return new DataSourceProperties();
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcsinglestep.datasource", name = "enable", havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbcsinglestep.datasource", name = "enable", havingValue = "true",
+			matchIfMissing = true)
 	@Bean(name = "springDataSource")
 	@Primary
-	public DataSource dataSource(@Qualifier("springDataSourceProperties")DataSourceProperties springDataSourceProperties) {
-		DataSource dataSource =  springDataSourceProperties.initializeDataSourceBuilder().build();
+	public DataSource dataSource(
+			@Qualifier("springDataSourceProperties") DataSourceProperties springDataSourceProperties) {
+		DataSource dataSource = springDataSourceProperties.initializeDataSourceBuilder().build();
 		return dataSource;
 	}
+
 }

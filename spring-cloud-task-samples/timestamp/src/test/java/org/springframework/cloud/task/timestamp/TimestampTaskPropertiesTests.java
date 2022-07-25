@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.task.timestamp;
 
-
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,8 +38,7 @@ public class TimestampTaskPropertiesTests {
 		testPropertyValues.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context
-			.getBean(TimestampTaskProperties.class);
+		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			properties.getFormat();
 		});
@@ -51,10 +49,9 @@ public class TimestampTaskPropertiesTests {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context
-			.getBean(TimestampTaskProperties.class);
+		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
 		assertThat(properties.getFormat()).as("result does not match default format.")
-			.isEqualTo("yyyy-MM-dd HH:mm:ss.SSS");
+				.isEqualTo("yyyy-MM-dd HH:mm:ss.SSS");
 	}
 
 	@Test
@@ -63,15 +60,15 @@ public class TimestampTaskPropertiesTests {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(Conf.class);
 		context.refresh();
-		TimestampTaskProperties properties = context
-			.getBean(TimestampTaskProperties.class);
+		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
 		properties.setFormat(FORMAT);
-		assertThat(properties.getFormat()).as("result does not match established format.")
-			.isEqualTo(FORMAT);
+		assertThat(properties.getFormat()).as("result does not match established format.").isEqualTo(FORMAT);
 	}
 
 	@Configuration(proxyBeanMethods = false)
 	@EnableConfigurationProperties(TimestampTaskProperties.class)
 	static class Conf {
+
 	}
+
 }

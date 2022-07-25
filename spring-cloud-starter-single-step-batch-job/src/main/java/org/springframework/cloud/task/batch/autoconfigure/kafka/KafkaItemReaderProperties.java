@@ -48,14 +48,16 @@ public class KafkaItemReaderProperties {
 	private List<Integer> partitions = new ArrayList<>();
 
 	/**
-	 * Establish the {@code pollTimeout} for the {@code poll()} operations. Defaults to 30 seconds.
+	 * Establish the {@code pollTimeout} for the {@code poll()} operations. Defaults to 30
+	 * seconds.
 	 */
 	private long pollTimeOutInSeconds = 30L;
 
 	/**
-	 * Configure whether the state of the {@link org.springframework.batch.item.ItemStreamSupport}
-	 * should be persisted within the {@link org.springframework.batch.item.ExecutionContext}
-	 * for restart purposes.  Defaults to {@code true}.
+	 * Configure whether the state of the
+	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
+	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * Defaults to {@code true}.
 	 */
 	private boolean saveState = true;
 
@@ -127,10 +129,12 @@ public class KafkaItemReaderProperties {
 	public void setPollTimeOutInSeconds(long pollTimeOutInSeconds) {
 		this.pollTimeOutInSeconds = pollTimeOutInSeconds;
 	}
+
 	/**
-	 * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport}
-	 * should be persisted within the {@link org.springframework.batch.item.ExecutionContext}
-	 * for restart purposes.  Defaults to true.
+	 * Configure if the state of the
+	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
+	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * Defaults to true.
 	 * @return current status of the saveState flag.
 	 */
 	public boolean isSaveState() {
@@ -138,12 +142,13 @@ public class KafkaItemReaderProperties {
 	}
 
 	/**
-	 * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport}
-	 * should be persisted within the {@link org.springframework.batch.item.ExecutionContext}
-	 * for restart purposes.
-	 * @param saveState true if state should be persisted.  Defaults to true.
+	 * Configure if the state of the
+	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
+	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * @param saveState true if state should be persisted. Defaults to true.
 	 */
 	public void setSaveState(boolean saveState) {
 		this.saveState = saveState;
 	}
+
 }

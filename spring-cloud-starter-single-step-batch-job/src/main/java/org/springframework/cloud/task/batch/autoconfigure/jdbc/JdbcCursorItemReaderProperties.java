@@ -27,14 +27,15 @@ public class JdbcCursorItemReaderProperties {
 
 	/**
 	 * Configure whether the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted
-	 * within the {@link org.springframework.batch.item.ExecutionContext} for
-	 * restart purposes. Defaults to {@code true}.
+	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
+	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * Defaults to {@code true}.
 	 */
 	private boolean saveState = true;
 
 	/**
-	 * Returns the configured value of the name used to calculate {@code ExecutionContext} keys.
+	 * Returns the configured value of the name used to calculate {@code ExecutionContext}
+	 * keys.
 	 */
 	private String name;
 
@@ -83,8 +84,8 @@ public class JdbcCursorItemReaderProperties {
 
 	/**
 	 * Establishes whether the connection used for the cursor is being used by all other
-	 * processing and is, therefore, part of the same transaction.
-	 * Defaults to {@code false}
+	 * processing and is, therefore, part of the same transaction. Defaults to
+	 * {@code false}
 	 */
 	private boolean useSharedExtendedConnection;
 

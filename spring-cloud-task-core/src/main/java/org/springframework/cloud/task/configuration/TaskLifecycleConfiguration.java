@@ -43,8 +43,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class TaskLifecycleConfiguration {
 
-	protected static final Log logger = LogFactory
-			.getLog(TaskLifecycleConfiguration.class);
+	protected static final Log logger = LogFactory.getLog(TaskLifecycleConfiguration.class);
 
 	private TaskProperties taskProperties;
 
@@ -67,12 +66,11 @@ public class TaskLifecycleConfiguration {
 	private TaskObservationCloudKeyValues taskObservationCloudKeyValues;
 
 	@Autowired
-	public TaskLifecycleConfiguration(TaskProperties taskProperties,
-		ConfigurableApplicationContext context, TaskRepository taskRepository,
-		TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
-		ObjectProvider<ApplicationArguments> applicationArguments,
-		@Autowired(required = false) ObservationRegistry observationRegistry,
-		@Autowired(required = false) TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
+	public TaskLifecycleConfiguration(TaskProperties taskProperties, ConfigurableApplicationContext context,
+			TaskRepository taskRepository, TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
+			ObjectProvider<ApplicationArguments> applicationArguments,
+			@Autowired(required = false) ObservationRegistry observationRegistry,
+			@Autowired(required = false) TaskObservationCloudKeyValues taskObservationCloudKeyValues) {
 
 		this.taskProperties = taskProperties;
 		this.context = context;
@@ -96,11 +94,10 @@ public class TaskLifecycleConfiguration {
 	@PostConstruct
 	protected void initialize() {
 		if (!this.initialized) {
-			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository,
-					this.taskNameResolver, this.applicationArguments, this.taskExplorer,
-					this.taskProperties,
-					new TaskListenerExecutorObjectFactory(this.context),
-					this.observationRegistry, taskObservationCloudKeyValues);
+			this.taskLifecycleListener = new TaskLifecycleListener(this.taskRepository, this.taskNameResolver,
+					this.applicationArguments, this.taskExplorer, this.taskProperties,
+					new TaskListenerExecutorObjectFactory(this.context), this.observationRegistry,
+					taskObservationCloudKeyValues);
 
 			this.initialized = true;
 		}

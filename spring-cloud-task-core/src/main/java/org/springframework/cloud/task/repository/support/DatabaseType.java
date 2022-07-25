@@ -109,24 +109,22 @@ public enum DatabaseType {
 	 * @return DatabaseType The database type associated with the datasource.
 	 * @throws MetaDataAccessException thrown if failure occurs on metadata lookup.
 	 */
-	public static DatabaseType fromMetaData(DataSource dataSource)
-			throws SQLException, MetaDataAccessException {
-		String databaseProductName = JdbcUtils
-				.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
+	public static DatabaseType fromMetaData(DataSource dataSource) throws SQLException, MetaDataAccessException {
+		String databaseProductName = JdbcUtils.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
 
-					@Override
-					public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
-						return dbmd.getDatabaseProductName();
-					}
-				}).toString();
-		if (StringUtils.hasText(databaseProductName)
-				&& !databaseProductName.equals("DB2/Linux")
+			@Override
+			public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
+				return dbmd.getDatabaseProductName();
+			}
+		}).toString();
+		if (StringUtils.hasText(databaseProductName) && !databaseProductName.equals("DB2/Linux")
 				&& databaseProductName.startsWith("DB2")) {
 			String databaseProductVersion = JdbcUtils
 					.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
 
 						@Override
-						public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
+						public Object processMetaData(DatabaseMetaData dbmd)
+								throws SQLException, MetaDataAccessException {
 							return dbmd.getDatabaseProductVersion();
 						}
 					}).toString();
@@ -139,8 +137,7 @@ public enum DatabaseType {
 			}
 			else if (databaseProductName.indexOf("AS") != -1
 					&& (databaseProductVersion.startsWith("QSQ") || databaseProductVersion
-							.substring(databaseProductVersion.indexOf('V'))
-							.matches("V\\dR\\d[mM]\\d"))) {
+							.substring(databaseProductVersion.indexOf('V')).matches("V\\dR\\d[mM]\\d"))) {
 				databaseProductName = "DB2AS400";
 			}
 			else {
@@ -164,8 +161,7 @@ public enum DatabaseType {
 			productName = "MySQL";
 		}
 		if (!dbNameMap.containsKey(productName)) {
-			throw new IllegalArgumentException(
-					"DatabaseType not found for product name: [" + productName + "]");
+			throw new IllegalArgumentException("DatabaseType not found for product name: [" + productName + "]");
 		}
 		else {
 			return dbNameMap.get(productName);

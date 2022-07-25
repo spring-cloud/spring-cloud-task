@@ -21,8 +21,7 @@ import io.micrometer.common.KeyValues;
 import org.springframework.cloud.task.repository.TaskExecution;
 
 /**
- * /**
- * Default {@link TaskExecutionObservationConvention} implementation.
+ * /** Default {@link TaskExecutionObservationConvention} implementation.
  *
  * @author Glenn Renfro
  * @since 3.0.0
@@ -41,15 +40,16 @@ public class DefaultTaskExecutionObservationConvention implements TaskExecutionO
 
 	private KeyValues getKeyValuesForTaskExecution(TaskExecutionObservationContext context) {
 		TaskExecution execution = context.getTaskExecution();
-		return KeyValues.of(
-			TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), context.getStatus(),
-			TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(), String.valueOf(execution.getExitCode()),
-			TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(),
-			String.valueOf(execution.getExecutionId()));
+		return KeyValues.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), context.getStatus(),
+				TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(),
+				String.valueOf(execution.getExitCode()),
+				TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(),
+				String.valueOf(execution.getExecutionId()));
 	}
 
 	@Override
 	public String getName() {
 		return "spring.cloud.task";
 	}
+
 }

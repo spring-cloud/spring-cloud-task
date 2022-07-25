@@ -65,9 +65,8 @@ public class KafkaItemWriterAutoConfiguration {
 		validateProperties(kafkaItemWriterProperties);
 		KafkaTemplate template = new KafkaTemplate(producerFactory);
 		template.setDefaultTopic(kafkaItemWriterProperties.getTopic());
-		return new KafkaItemWriterBuilder<Object, Map<String, Object>>()
-				.delete(kafkaItemWriterProperties.isDelete()).kafkaTemplate(template)
-				.itemKeyMapper(itemKeyMapper).build();
+		return new KafkaItemWriterBuilder<Object, Map<String, Object>>().delete(kafkaItemWriterProperties.isDelete())
+				.kafkaTemplate(template).itemKeyMapper(itemKeyMapper).build();
 	}
 
 	@Bean
@@ -86,13 +85,11 @@ public class KafkaItemWriterAutoConfiguration {
 	ProducerFactory<Object, Map<String, Object>> producerFactory() {
 		Map<String, Object> configs = new HashMap<>();
 		configs.putAll(this.kafkaProperties.getProducer().buildProperties());
-		return new DefaultKafkaProducerFactory<>(configs, null,
-			new JsonSerializer<>());
+		return new DefaultKafkaProducerFactory<>(configs, null, new JsonSerializer<>());
 	}
 
 	private void validateProperties(KafkaItemWriterProperties kafkaItemWriterProperties) {
-		Assert.hasText(kafkaItemWriterProperties.getTopic(),
-				"topic must not be empty or null");
+		Assert.hasText(kafkaItemWriterProperties.getTopic(), "topic must not be empty or null");
 	}
 
 }

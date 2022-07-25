@@ -31,6 +31,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "TASK_RUN_OUTPUT")
 public class TaskRunOutput {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -64,4 +65,5 @@ public class TaskRunOutput {
 	public String toString() {
 		return "TaskRunOutput{" + "id=" + this.id + ", output='" + this.output + '\'' + '}';
 	}
+
 }

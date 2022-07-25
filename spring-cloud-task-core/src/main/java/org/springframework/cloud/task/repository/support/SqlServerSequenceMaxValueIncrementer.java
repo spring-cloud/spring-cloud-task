@@ -22,6 +22,7 @@ import org.springframework.jdbc.support.incrementer.AbstractSequenceMaxValueIncr
 
 /**
  * Incrementer using SQL Server's sequence.
+ *
  * @author Glenn Renfro
  * @since 2.3.2
  */
@@ -30,8 +31,10 @@ public class SqlServerSequenceMaxValueIncrementer extends AbstractSequenceMaxVal
 	SqlServerSequenceMaxValueIncrementer(DataSource dataSource, String incrementerName) {
 		super(dataSource, incrementerName);
 	}
+
 	@Override
 	protected String getSequenceQuery() {
 		return "select next value for " + getIncrementerName();
 	}
+
 }

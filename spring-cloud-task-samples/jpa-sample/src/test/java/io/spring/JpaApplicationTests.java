@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
@@ -59,11 +58,13 @@ public class JpaApplicationTests {
 	static {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-			+ "DB_CLOSE_ON_EXIT=FALSE";
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	private ConfigurableApplicationContext context;
+
 	private DataSource dataSource;
+
 	private Server server;
 
 	@BeforeEach
@@ -76,9 +77,8 @@ public class JpaApplicationTests {
 		this.dataSource = dataSource;
 		try {
 			this.server = Server
-				.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String
-					.valueOf(randomPort))
-				.start();
+					.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+					.start();
 		}
 		catch (SQLException e) {
 			throw new IllegalStateException(e);
@@ -96,18 +96,14 @@ public class JpaApplicationTests {
 	@Test
 	public void testBatchJobApp(CapturedOutput capturedOutput) {
 		final String INSERT_MESSAGE = "Hibernate: insert into task_run_output (";
-		this.context = SpringApplication
-			.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
+		this.context = SpringApplication.run(JpaApplication.class, "--spring.datasource.url=" + DATASOURCE_URL,
 				"--spring.datasource.username=" + DATASOURCE_USER_NAME,
 				"--spring.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME,
 				"--spring.jpa.database-platform=org.hibernate.dialect.H2Dialect");
 		String output = capturedOutput.toString();
-		assertThat(output
-			.contains(INSERT_MESSAGE)).as("Unable to find the insert message: " + output)
-			.isTrue();
+		assertThat(output.contains(INSERT_MESSAGE)).as("Unable to find the insert message: " + output).isTrue();
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
-		Map<String, Object> result = template
-			.queryForMap("Select * from TASK_RUN_OUTPUT");
+		Map<String, Object> result = template.queryForMap("Select * from TASK_RUN_OUTPUT");
 		assertThat(result.get("ID")).isEqualTo(1L);
 		assertThat(((String) result.get("OUTPUT"))).contains("Executed at");
 	}

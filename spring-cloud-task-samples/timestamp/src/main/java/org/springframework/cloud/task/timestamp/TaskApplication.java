@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.task.timestamp;
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  */
 @EnableTask
 @SpringBootApplication
-@EnableConfigurationProperties({TimestampTaskProperties.class})
+@EnableConfigurationProperties({ TimestampTaskProperties.class })
 public class TaskApplication {
 
 	private static final Log logger = LogFactory.getLog(TaskApplication.class);
@@ -64,5 +63,7 @@ public class TaskApplication {
 			DateFormat dateFormat = new SimpleDateFormat(this.config.getFormat());
 			logger.info(dateFormat.format(new Date()));
 		}
+
 	}
+
 }

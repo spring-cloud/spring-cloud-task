@@ -46,16 +46,13 @@ public class JobConfiguration {
 
 	@Bean
 	public Job job1() {
-		return this.jobBuilderFactory.get("job1")
-			.start(this.stepBuilderFactory.get("job1step1")
-				.tasklet(new Tasklet() {
-					@Override
-					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-						logger.info("Job1 was run");
-						return RepeatStatus.FINISHED;
-					}
-				})
-				.build())
-			.build();
+		return this.jobBuilderFactory.get("job1").start(this.stepBuilderFactory.get("job1step1").tasklet(new Tasklet() {
+			@Override
+			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+				logger.info("Job1 was run");
+				return RepeatStatus.FINISHED;
+			}
+		}).build()).build();
 	}
+
 }

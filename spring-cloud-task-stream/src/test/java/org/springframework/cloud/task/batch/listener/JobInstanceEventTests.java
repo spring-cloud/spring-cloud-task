@@ -53,8 +53,7 @@ public class JobInstanceEventTests {
 	@Test
 	public void testToString() {
 		JobInstanceEvent jobInstanceEvent = new JobInstanceEvent(INSTANCE_ID, JOB_NAME);
-		assertThat(jobInstanceEvent.toString())
-				.isEqualTo("JobInstanceEvent: id=1, version=null, Job=[FOOBAR]");
+		assertThat(jobInstanceEvent.toString()).isEqualTo("JobInstanceEvent: id=1, version=null, Job=[FOOBAR]");
 	}
 
 }

@@ -46,22 +46,27 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TaskPartitionerTests.TaskLauncherConfiguration.class})
+@SpringBootTest(classes = { TaskPartitionerTests.TaskLauncherConfiguration.class })
 public class TaskPartitionerTests {
 
 	private final static String DATASOURCE_USER_NAME = "SA";
+
 	private final static String DATASOURCE_USER_PASSWORD = "";
+
 	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
+
 	private static String DATASOURCE_URL;
+
 	private static int randomPort;
 
 	static {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
 		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-			+ "DB_CLOSE_ON_EXIT=FALSE";
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	private TaskExplorer taskExplorer;
+
 	@Autowired
 	private DataSource dataSource;
 
@@ -100,16 +105,12 @@ public class TaskPartitionerTests {
 		app.setDefaultProperties(properties);
 		app.run();
 
-		Page<TaskExecution> taskExecutions = this.taskExplorer
-			.findAll(PageRequest.of(0, 10));
-		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected")
-			.isEqualTo(5);
-		assertThat(this.taskExplorer
-			.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
-			.as("Only One master is expected").isEqualTo(1);
+		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected").isEqualTo(5);
+		assertThat(this.taskExplorer.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
+				.as("Only One master is expected").isEqualTo(1);
 		for (TaskExecution taskExecution : taskExecutions) {
-			assertThat(taskExecution.getExitCode()
-				.intValue()).as("return code should be 0").isEqualTo(0);
+			assertThat(taskExecution.getExitCode().intValue()).as("return code should be 0").isEqualTo(0);
 		}
 	}
 
@@ -120,10 +121,8 @@ public class TaskPartitionerTests {
 		public org.h2.tools.Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server
-					.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String
-						.valueOf(randomPort))
-					.start();
+				server = Server.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort",
+						String.valueOf(randomPort)).start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);
@@ -140,6 +139,7 @@ public class TaskPartitionerTests {
 			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 			return dataSource;
 		}
+
 	}
 
 }

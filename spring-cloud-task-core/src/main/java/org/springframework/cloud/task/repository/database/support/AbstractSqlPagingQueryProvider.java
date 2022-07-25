@@ -144,13 +144,11 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 			sql.append(" WHERE ").append(this.whereClause);
 		}
 		List<String> namedParameters = new ArrayList<>();
-		this.parameterCount = JdbcParameterUtils
-				.countParameterPlaceholders(sql.toString(), namedParameters);
+		this.parameterCount = JdbcParameterUtils.countParameterPlaceholders(sql.toString(), namedParameters);
 		if (namedParameters.size() > 0) {
 			if (this.parameterCount != namedParameters.size()) {
 				throw new InvalidDataAccessApiUsageException(
-						"You can't use both named parameters and classic \"?\" placeholders: "
-								+ sql);
+						"You can't use both named parameters and classic \"?\" placeholders: " + sql);
 			}
 			this.usingNamedParameters = true;
 		}
@@ -159,8 +157,7 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	private String removeKeyWord(String keyWord, String clause) {
 		String temp = clause.trim();
 		String keyWordString = keyWord + " ";
-		if (temp.toLowerCase().startsWith(keyWordString)
-				&& temp.length() > keyWordString.length()) {
+		if (temp.toLowerCase().startsWith(keyWordString) && temp.length() > keyWordString.length()) {
 			return temp.substring(keyWordString.length());
 		}
 		else {

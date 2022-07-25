@@ -42,20 +42,16 @@ public class JobParametersEvent {
 		this.parameters = new LinkedHashMap<>();
 		for (Map.Entry<String, JobParameter> entry : jobParameters.entrySet()) {
 			if (entry.getValue().getValue() instanceof String) {
-				this.parameters.put(entry.getKey(),
-						new JobParameterEvent(entry.getValue()));
+				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if (entry.getValue().getValue() instanceof Long) {
-				this.parameters.put(entry.getKey(),
-						new JobParameterEvent(entry.getValue()));
+				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if (entry.getValue().getValue() instanceof Date) {
-				this.parameters.put(entry.getKey(),
-						new JobParameterEvent(entry.getValue()));
+				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 			else if (entry.getValue().getValue() instanceof Double) {
-				this.parameters.put(entry.getKey(),
-						new JobParameterEvent(entry.getValue()));
+				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}
 		}
 	}

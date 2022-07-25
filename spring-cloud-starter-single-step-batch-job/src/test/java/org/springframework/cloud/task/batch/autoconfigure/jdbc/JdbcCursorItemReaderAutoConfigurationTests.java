@@ -74,8 +74,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 	static {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
-				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	@AfterAll
@@ -93,13 +93,12 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 	@Test
 	public void testIntegration() {
-		ApplicationContextRunner applicationContextRunner = applicationContextRunner()
-				.withPropertyValues("spring.batch.job.jobName=integrationJob",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursoritemreader.name=fooReader",
-						"spring.batch.job.jdbccursoritemreader.sql=select item_name from item",
-						"spring.batch.jdbc.initialize-schema=always",
-						"spring.batch.job.jdbcsinglestep.datasource.enable=false");
+		ApplicationContextRunner applicationContextRunner = applicationContextRunner().withPropertyValues(
+				"spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
+				"spring.batch.job.chunkSize=5", "spring.batch.job.jdbccursoritemreader.name=fooReader",
+				"spring.batch.job.jdbccursoritemreader.sql=select item_name from item",
+				"spring.batch.jdbc.initialize-schema=always",
+				"spring.batch.job.jdbcsinglestep.datasource.enable=false");
 
 		applicationContextRunner.run((context) -> {
 			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
@@ -114,38 +113,32 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<String, Object>> items = context.getBean(ListItemWriter.class)
-					.getWrittenItems();
+			List<Map<String, Object>> items = context.getBean(ListItemWriter.class).getWrittenItems();
 
 			assertThat(items.size()).isEqualTo(3);
 			assertThat(items.get(0).get("ITEM_NAME")).isEqualTo("foo");
 			assertThat(items.get(1).get("ITEM_NAME")).isEqualTo("bar");
 			assertThat(items.get(2).get("ITEM_NAME")).isEqualTo("baz");
 			assertThatThrownBy(() -> context.getBean("readerSpringDataSource"))
-				.isInstanceOf(NoSuchBeanDefinitionException.class)
-				.hasMessageContaining("No bean named 'readerSpringDataSource' available");
+					.isInstanceOf(NoSuchBeanDefinitionException.class)
+					.hasMessageContaining("No bean named 'readerSpringDataSource' available");
 		});
 	}
 
 	private ApplicationContextRunner applicationContextRunner() {
 		return new ApplicationContextRunner()
-			.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
-			.withConfiguration(
-				AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-					BatchAutoConfiguration.class,
-					SingleStepJobAutoConfiguration.class,
-					JdbcCursorItemReaderAutoConfiguration.class));
+				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class).withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcCursorItemReaderAutoConfiguration.class));
 	}
 
 	@Test
 	public void testIntegrationReaderDataSourceEnabled() {
-		ApplicationContextRunner applicationContextRunner = applicationContextRunner()
-			.withPropertyValues("spring.batch.job.jobName=integrationReaderJob",
-				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-				"spring.batch.job.jdbccursoritemreader.name=fooReader",
+		ApplicationContextRunner applicationContextRunner = applicationContextRunner().withPropertyValues(
+				"spring.batch.job.jobName=integrationReaderJob", "spring.batch.job.stepName=step1",
+				"spring.batch.job.chunkSize=5", "spring.batch.job.jdbccursoritemreader.name=fooReader",
 				"spring.batch.job.jdbccursoritemreader.sql=select item_name from item",
-				"spring.batch.jdbc.initialize-schema=always",
-				"spring.batch.job.jdbcsinglestep.datasource.enable=false",
+				"spring.batch.jdbc.initialize-schema=always", "spring.batch.job.jdbcsinglestep.datasource.enable=false",
 				"spring.batch.job.jdbccursoritemreader.datasource.enable=true",
 				"jdbccursoritemreader.datasource.url=" + DATASOURCE_URL,
 				"jdbccursoritemreader.datasource.username=" + DATASOURCE_USER_NAME,
@@ -165,8 +158,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<String, Object>> items = context.getBean(ListItemWriter.class)
-				.getWrittenItems();
+			List<Map<String, Object>> items = context.getBean(ListItemWriter.class).getWrittenItems();
 
 			assertThat(items.size()).isEqualTo(3);
 			assertThat(items.get(0).get("ITEM_NAME")).isEqualTo("foo");
@@ -181,13 +173,10 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(TaskLauncherConfiguration.class, RowMapperConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcCursorItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=rowMapperJob",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursoritemreader.name=fooReader",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcCursorItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=rowMapperJob", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.jdbccursoritemreader.name=fooReader",
 						"spring.batch.job.jdbccursoritemreader.sql=select * from item",
 						"spring.batch.jdbc.initialize-schema=always",
 						"spring.batch.job.jdbcsinglestep.datasource.enable=false");
@@ -205,8 +194,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			List<Map<String, Object>> items = context.getBean(ListItemWriter.class)
-					.getWrittenItems();
+			List<Map<String, Object>> items = context.getBean(ListItemWriter.class).getWrittenItems();
 
 			assertThat(items.size()).isEqualTo(3);
 			assertThat(items.get(0).get("item")).isEqualTo("foo");
@@ -220,13 +208,10 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcCursorItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=roseyJob",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursoritemreader.saveState=false",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcCursorItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=roseyJob", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.jdbccursoritemreader.saveState=false",
 						"spring.batch.job.jdbccursoritemreader.name=fooReader",
 						"spring.batch.job.jdbccursoritemreader.maxItemCount=15",
 						"spring.batch.job.jdbccursoritemreader.currentItemCount=2",
@@ -241,8 +226,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 		applicationContextRunner.run((context) -> {
 
-			JdbcCursorItemReader<Map<String, Object>> itemReader = context
-					.getBean(JdbcCursorItemReader.class);
+			JdbcCursorItemReader<Map<String, Object>> itemReader = context.getBean(JdbcCursorItemReader.class);
 
 			validateBean(itemReader);
 		});
@@ -251,31 +235,19 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 	private void validateBean(JdbcCursorItemReader itemReader) {
 		assertThat(itemReader.getSql()).isEqualTo("select * from foo");
 		assertThat(itemReader.getDataSource()).isNotNull();
-		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "saveState"))
-				.isFalse();
-		assertThat(
-				ReflectionTestUtils.getField(
-						(ExecutionContextUserSupport) ReflectionTestUtils
-								.getField(itemReader, "executionContextUserSupport"),
-						"name")).isEqualTo("fooReader");
-		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "maxItemCount"))
-				.isEqualTo(15);
-		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "currentItemCount"))
-				.isEqualTo(2);
-		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "fetchSize"))
-				.isEqualTo(4);
-		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "maxRows"))
-				.isEqualTo(6);
-		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "queryTimeout"))
-				.isEqualTo(8);
-		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "ignoreWarnings"))
-				.isTrue();
-		assertThat((Boolean) ReflectionTestUtils.getField(itemReader,
-				"verifyCursorPosition")).isTrue();
-		assertThat((Boolean) ReflectionTestUtils.getField(itemReader,
-				"driverSupportsAbsolute")).isTrue();
-		assertThat((Boolean) ReflectionTestUtils.getField(itemReader,
-				"useSharedExtendedConnection")).isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "saveState")).isFalse();
+		assertThat(ReflectionTestUtils.getField(
+				(ExecutionContextUserSupport) ReflectionTestUtils.getField(itemReader, "executionContextUserSupport"),
+				"name")).isEqualTo("fooReader");
+		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "maxItemCount")).isEqualTo(15);
+		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "currentItemCount")).isEqualTo(2);
+		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "fetchSize")).isEqualTo(4);
+		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "maxRows")).isEqualTo(6);
+		assertThat((Integer) ReflectionTestUtils.getField(itemReader, "queryTimeout")).isEqualTo(8);
+		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "ignoreWarnings")).isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "verifyCursorPosition")).isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "driverSupportsAbsolute")).isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(itemReader, "useSharedExtendedConnection")).isTrue();
 	}
 
 	@Test
@@ -283,18 +255,14 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcCursorItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=noNameJob",
-						"spring.batch.job.stepName=step1",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcCursorItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=noNameJob", "spring.batch.job.stepName=step1",
 						"spring.batch.job.chunkSize=5");
 
 		assertThatThrownBy(() -> {
 			runTest(applicationContextRunner);
-		}).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("UnsatisfiedDependencyException");
+		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("UnsatisfiedDependencyException");
 	}
 
 	@Test
@@ -302,18 +270,14 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		final ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(TaskLauncherConfiguration.class, BaseConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcCursorItemReaderAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-						"spring.batch.job.jdbccursoritemreader.name=fooReader");
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcCursorItemReaderAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+						"spring.batch.job.chunkSize=5", "spring.batch.job.jdbccursoritemreader.name=fooReader");
 
 		assertThatThrownBy(() -> {
 			runTest(applicationContextRunner);
-		}).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("UnsatisfiedDependencyException");
+		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("UnsatisfiedDependencyException");
 	}
 
 	private void runTest(ApplicationContextRunner applicationContextRunner) {
@@ -332,7 +296,8 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		});
 	}
 
-	@AutoConfigureBefore({JdbcCursorItemReaderAutoConfiguration.class, JDBCSingleStepDataSourceAutoConfiguration.class})
+	@AutoConfigureBefore({ JdbcCursorItemReaderAutoConfiguration.class,
+			JDBCSingleStepDataSourceAutoConfiguration.class })
 	@Configuration
 	public static class TaskLauncherConfiguration {
 
@@ -343,19 +308,16 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 			Server server = null;
 			try {
 				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp",
-							"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-							.start();
+					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+							String.valueOf(randomPort)).start();
 					defaultServer = server;
 					DriverManagerDataSource dataSource = new DriverManagerDataSource();
 					dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
 					dataSource.setUrl(DATASOURCE_URL);
 					dataSource.setUsername(DATASOURCE_USER_NAME);
 					dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-					ClassPathResource setupResource = new ClassPathResource(
-							"schema-h2.sql");
-					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
-							setupResource);
+					ClassPathResource setupResource = new ClassPathResource("schema-h2.sql");
+					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(setupResource);
 					resourceDatabasePopulator.setContinueOnError(true);
 					resourceDatabasePopulator.execute(dataSource);
 

@@ -39,8 +39,7 @@ public interface TaskRepository {
 	 * @return the updated {@link TaskExecution}
 	 */
 	@Transactional("springCloudTaskTransactionManager")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage);
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution has completed.
@@ -53,8 +52,8 @@ public interface TaskRepository {
 	 * @since 1.1.0
 	 */
 	@Transactional("springCloudTaskTransactionManager")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime,
-			String exitMessage, String errorMessage);
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+			String errorMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.
@@ -99,8 +98,8 @@ public interface TaskRepository {
 	 * @return TaskExecution created based on the parameters.
 	 */
 	@Transactional("springCloudTaskTransactionManager")
-	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId);
+	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId);
 
 	/**
 	 * Notifies the repository to update the taskExecution's externalExecutionId.
@@ -122,7 +121,7 @@ public interface TaskRepository {
 	 * a TaskExecution.
 	 */
 	@Transactional("springCloudTaskTransactionManager")
-	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime,
-			List<String> arguments, String externalExecutionId, Long parentExecutionId);
+	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
+			String externalExecutionId, Long parentExecutionId);
 
 }

@@ -34,10 +34,10 @@ import org.springframework.util.Assert;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-public class EventEmittingStepExecutionListener
-		implements StepExecutionListener, Ordered {
+public class EventEmittingStepExecutionListener implements StepExecutionListener, Ordered {
 
 	private final MessagePublisher<StepExecutionEvent> messagePublisher;
+
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 	private TaskEventProperties properties;
@@ -50,19 +50,22 @@ public class EventEmittingStepExecutionListener
 		this.properties = properties;
 	}
 
-	public EventEmittingStepExecutionListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+	public EventEmittingStepExecutionListener(MessagePublisher messagePublisher, int order,
+			TaskEventProperties properties) {
 		this(messagePublisher, properties);
 		this.order = order;
 	}
 
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(), new StepExecutionEvent(stepExecution));
+		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(),
+				new StepExecutionEvent(stepExecution));
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(), new StepExecutionEvent(stepExecution));
+		this.messagePublisher.publish(this.properties.getStepExecutionEventBindingName(),
+				new StepExecutionEvent(stepExecution));
 
 		return stepExecution.getExitStatus();
 	}

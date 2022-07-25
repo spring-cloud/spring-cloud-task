@@ -42,8 +42,7 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	private Map<Method, Set<Object>> failedTaskInstances;
 
 	public TaskListenerExecutor(Map<Method, Set<Object>> beforeTaskInstances,
-			Map<Method, Set<Object>> afterTaskInstances,
-			Map<Method, Set<Object>> failedTaskInstances) {
+			Map<Method, Set<Object>> afterTaskInstances, Map<Method, Set<Object>> failedTaskInstances) {
 
 		this.beforeTaskInstances = beforeTaskInstances;
 		this.afterTaskInstances = afterTaskInstances;
@@ -56,8 +55,7 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	 */
 	@Override
 	public void onTaskStartup(TaskExecution taskExecution) {
-		executeTaskListener(taskExecution, this.beforeTaskInstances.keySet(),
-				this.beforeTaskInstances);
+		executeTaskListener(taskExecution, this.beforeTaskInstances.keySet(), this.beforeTaskInstances);
 	}
 
 	/**
@@ -66,8 +64,7 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	 */
 	@Override
 	public void onTaskEnd(TaskExecution taskExecution) {
-		executeTaskListener(taskExecution, this.afterTaskInstances.keySet(),
-				this.afterTaskInstances);
+		executeTaskListener(taskExecution, this.afterTaskInstances.keySet(), this.afterTaskInstances);
 	}
 
 	/**
@@ -77,8 +74,8 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	 */
 	@Override
 	public void onTaskFailed(TaskExecution taskExecution, Throwable throwable) {
-		executeTaskListenerWithThrowable(taskExecution, throwable,
-				this.failedTaskInstances.keySet(), this.failedTaskInstances);
+		executeTaskListenerWithThrowable(taskExecution, throwable, this.failedTaskInstances.keySet(),
+				this.failedTaskInstances);
 	}
 
 	private void executeTaskListener(TaskExecution taskExecution, Set<Method> methods,
@@ -89,27 +86,24 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 					method.invoke(instance, taskExecution);
 				}
 				catch (IllegalAccessException e) {
-					throw new TaskExecutionException(
-							"@BeforeTask and @AfterTask annotated methods must be public.",
-							e);
+					throw new TaskExecutionException("@BeforeTask and @AfterTask annotated methods must be public.", e);
 				}
 				catch (InvocationTargetException e) {
-					throw new TaskExecutionException(String.format(
-							"Failed to process @BeforeTask or @AfterTask"
-									+ " annotation because: %s",
-							e.getTargetException().getMessage()), e);
+					throw new TaskExecutionException(
+							String.format("Failed to process @BeforeTask or @AfterTask" + " annotation because: %s",
+									e.getTargetException().getMessage()),
+							e);
 				}
 				catch (IllegalArgumentException e) {
-					throw new TaskExecutionException("taskExecution parameter "
-							+ "is required for @BeforeTask and @AfterTask annotated methods",
+					throw new TaskExecutionException(
+							"taskExecution parameter " + "is required for @BeforeTask and @AfterTask annotated methods",
 							e);
 				}
 			}
 		}
 	}
 
-	private void executeTaskListenerWithThrowable(TaskExecution taskExecution,
-			Throwable throwable, Set<Method> methods,
+	private void executeTaskListenerWithThrowable(TaskExecution taskExecution, Throwable throwable, Set<Method> methods,
 			Map<Method, Set<Object>> instances) {
 		for (Method method : methods) {
 			for (Object instance : instances.get(method)) {
@@ -117,19 +111,17 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 					method.invoke(instance, taskExecution, throwable);
 				}
 				catch (IllegalAccessException e) {
-					throw new TaskExecutionException(
-							"@FailedTask annotated methods must be public.", e);
+					throw new TaskExecutionException("@FailedTask annotated methods must be public.", e);
 				}
 				catch (InvocationTargetException e) {
-					throw new TaskExecutionException(String.format(
-							"Failed to process @FailedTask " + "annotation because: %s",
-							e.getTargetException().getMessage()), e);
+					throw new TaskExecutionException(
+							String.format("Failed to process @FailedTask " + "annotation because: %s",
+									e.getTargetException().getMessage()),
+							e);
 				}
 				catch (IllegalArgumentException e) {
-					throw new TaskExecutionException(
-							"taskExecution and throwable parameters "
-									+ "are required for @FailedTask annotated methods",
-							e);
+					throw new TaskExecutionException("taskExecution and throwable parameters "
+							+ "are required for @FailedTask annotated methods", e);
 				}
 			}
 		}

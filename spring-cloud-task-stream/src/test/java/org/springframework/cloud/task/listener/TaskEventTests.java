@@ -37,15 +37,15 @@ public class TaskEventTests {
 	@Test
 	public void testDefaultConfiguration() {
 		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(TaskEventsApplication.class)).web(WebApplicationType.NONE).build()
-			.run();
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(TaskEventsApplication.class))
+				.web(WebApplicationType.NONE).build().run();
 		assertThat(applicationContext.getBean("taskEventEmitter")).isNotNull();
 	}
 
 	@EnableTask
 	@SpringBootApplication
 	public static class TaskEventsApplication {
+
 	}
 
 }

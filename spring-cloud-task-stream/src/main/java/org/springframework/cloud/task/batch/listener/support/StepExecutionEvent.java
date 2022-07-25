@@ -63,8 +63,7 @@ public class StepExecutionEvent extends Entity {
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
-	private ExitStatus exitStatus = new ExitStatus(
-			org.springframework.batch.core.ExitStatus.EXECUTING);
+	private ExitStatus exitStatus = new ExitStatus(org.springframework.batch.core.ExitStatus.EXECUTING);
 
 	private boolean terminateOnly;
 
@@ -82,8 +81,7 @@ public class StepExecutionEvent extends Entity {
 	 */
 	public StepExecutionEvent(StepExecution stepExecution) {
 		super();
-		Assert.notNull(stepExecution,
-				"StepExecution must be provided to re-hydrate an existing StepExecutionEvent");
+		Assert.notNull(stepExecution, "StepExecution must be provided to re-hydrate an existing StepExecutionEvent");
 		Assert.notNull(stepExecution.getJobExecution(),
 				"JobExecution must be provided to re-hydrate an existing StepExecutionEvent");
 		setId(stepExecution.getId());
@@ -393,8 +391,7 @@ public class StepExecutionEvent extends Entity {
 		}
 		StepExecution other = (StepExecution) obj;
 
-		return this.stepName.equals(other.getStepName())
-				&& (this.jobExecutionId == other.getJobExecutionId())
+		return this.stepName.equals(other.getStepName()) && (this.jobExecutionId == other.getJobExecutionId())
 				&& getId().equals(other.getId());
 	}
 
@@ -407,16 +404,13 @@ public class StepExecutionEvent extends Entity {
 	public int hashCode() {
 		Object jobExecutionId = getJobExecutionId();
 		Long id = getId();
-		return super.hashCode()
-				+ 31 * (this.stepName != null ? this.stepName.hashCode() : 0)
-				+ 91 * (jobExecutionId != null ? jobExecutionId.hashCode() : 0)
-				+ 59 * (id != null ? id.hashCode() : 0);
+		return super.hashCode() + 31 * (this.stepName != null ? this.stepName.hashCode() : 0)
+				+ 91 * (jobExecutionId != null ? jobExecutionId.hashCode() : 0) + 59 * (id != null ? id.hashCode() : 0);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(getSummary() + ", exitDescription=%s",
-				this.exitStatus.getExitDescription());
+		return String.format(getSummary() + ", exitDescription=%s", this.exitStatus.getExitDescription());
 	}
 
 	public String getSummary() {
@@ -424,9 +418,8 @@ public class StepExecutionEvent extends Entity {
 				", name=%s, status=%s, exitStatus=%s, readCount=%d, "
 						+ "filterCount=%d, writeCount=%d readSkipCount=%d, writeSkipCount=%d"
 						+ ", processSkipCount=%d, commitCount=%d, rollbackCount=%d",
-				this.stepName, this.status, this.exitStatus.getExitCode(), this.readCount,
-				this.filterCount, this.writeCount, this.readSkipCount,
-				this.writeSkipCount, this.processSkipCount, this.commitCount,
+				this.stepName, this.status, this.exitStatus.getExitCode(), this.readCount, this.filterCount,
+				this.writeCount, this.readSkipCount, this.writeSkipCount, this.processSkipCount, this.commitCount,
 				this.rollbackCount);
 	}
 

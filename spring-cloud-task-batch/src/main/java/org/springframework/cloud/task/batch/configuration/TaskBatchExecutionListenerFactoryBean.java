@@ -40,8 +40,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Michael Minella
  */
-public class TaskBatchExecutionListenerFactoryBean
-		implements FactoryBean<TaskBatchExecutionListener> {
+public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBatchExecutionListener> {
 
 	private TaskBatchExecutionListener listener;
 
@@ -57,8 +56,7 @@ public class TaskBatchExecutionListenerFactoryBean
 	 * @param dataSource the dataSource to use for the TaskBatchExecutionListener.
 	 * @param taskExplorer the taskExplorer to use for the TaskBatchExecutionListener.
 	 */
-	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource,
-			TaskExplorer taskExplorer) {
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer) {
 		this.dataSource = dataSource;
 		this.taskExplorer = taskExplorer;
 	}
@@ -70,8 +68,7 @@ public class TaskBatchExecutionListenerFactoryBean
 	 * @param tablePrefix the prefix for the task tables accessed by the
 	 * TaskBatchExecutionListener.
 	 */
-	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource,
-			TaskExplorer taskExplorer, String tablePrefix) {
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer, String tablePrefix) {
 		this(dataSource, taskExplorer);
 		Assert.hasText(tablePrefix, "tablePrefix must not be null nor empty.");
 		this.tablePrefix = tablePrefix;
@@ -86,8 +83,7 @@ public class TaskBatchExecutionListenerFactoryBean
 			this.listener = new TaskBatchExecutionListener(getMapTaskBatchDao());
 		}
 		else {
-			this.listener = new TaskBatchExecutionListener(
-					new JdbcTaskBatchDao(this.dataSource, this.tablePrefix));
+			this.listener = new TaskBatchExecutionListener(new JdbcTaskBatchDao(this.dataSource, this.tablePrefix));
 		}
 
 		return this.listener;
@@ -104,8 +100,7 @@ public class TaskBatchExecutionListenerFactoryBean
 	}
 
 	private MapTaskBatchDao getMapTaskBatchDao() throws Exception {
-		Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class,
-				"taskExecutionDao");
+		Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class, "taskExecutionDao");
 		taskExecutionDaoField.setAccessible(true);
 
 		MapTaskExecutionDao taskExecutionDao;
@@ -114,12 +109,11 @@ public class TaskBatchExecutionListenerFactoryBean
 			SimpleTaskExplorer dereferencedTaskRepository = (SimpleTaskExplorer) ((Advised) this.taskExplorer)
 					.getTargetSource().getTarget();
 
-			taskExecutionDao = (MapTaskExecutionDao) ReflectionUtils
-					.getField(taskExecutionDaoField, dereferencedTaskRepository);
+			taskExecutionDao = (MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField,
+					dereferencedTaskRepository);
 		}
 		else {
-			taskExecutionDao = (MapTaskExecutionDao) ReflectionUtils
-					.getField(taskExecutionDaoField, this.taskExplorer);
+			taskExecutionDao = (MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, this.taskExplorer);
 		}
 
 		return new MapTaskBatchDao(taskExecutionDao.getBatchJobAssociations());

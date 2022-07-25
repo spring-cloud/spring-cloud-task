@@ -39,8 +39,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	private TaskExecutionDao taskExecutionDao;
 
 	public SimpleTaskExplorer(TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean) {
-		Assert.notNull(taskExecutionDaoFactoryBean,
-				"taskExecutionDaoFactoryBean must not be null");
+		Assert.notNull(taskExecutionDaoFactoryBean, "taskExecutionDaoFactoryBean must not be null");
 
 		try {
 			this.taskExecutionDao = taskExecutionDaoFactoryBean.getObject();
@@ -56,8 +55,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
-	public Page<TaskExecution> findRunningTaskExecutions(String taskName,
-			Pageable pageable) {
+	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
 		return this.taskExecutionDao.findRunningTaskExecutions(taskName, pageable);
 	}
 
@@ -82,8 +80,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
-	public Page<TaskExecution> findTaskExecutionsByName(String taskName,
-			Pageable pageable) {
+	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
 		return this.taskExecutionDao.findTaskExecutionsByName(taskName, pageable);
 	}
 

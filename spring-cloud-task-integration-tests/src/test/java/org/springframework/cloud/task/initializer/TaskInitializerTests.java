@@ -47,7 +47,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -59,8 +58,7 @@ public class TaskInitializerTests {
 
 	private final static int MAX_WAIT_TIME = 5000;
 
-	private final static String URL = "maven://io.spring.cloud:"
-			+ "timestamp-task:jar:1.1.0.RELEASE";
+	private final static String URL = "maven://io.spring.cloud:" + "timestamp-task:jar:1.1.0.RELEASE";
 
 	private final static String DATASOURCE_URL;
 
@@ -76,8 +74,8 @@ public class TaskInitializerTests {
 
 	static {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
-				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	private DataSource dataSource;
@@ -96,8 +94,7 @@ public class TaskInitializerTests {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(
-				dataSource);
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
 		this.taskExplorer = new SimpleTaskExplorer(factoryBean);
 	}
 
@@ -138,13 +135,11 @@ public class TaskInitializerTests {
 		this.applicationContext = myapp.run(properties);
 		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = this.taskExplorer
-				.findAll(PageRequest.of(0, 10));
+		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
-		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
-				.isEqualTo(1);
-		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
-				.as("return code should be 0").isEqualTo(0);
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
+				.isEqualTo(0);
 	}
 
 	@Test
@@ -163,20 +158,17 @@ public class TaskInitializerTests {
 		this.applicationContext = myapp.run(properties);
 		assertThat(waitForDBToBePopulated()).isTrue();
 
-		Page<TaskExecution> taskExecutions = this.taskExplorer
-				.findAll(PageRequest.of(0, 10));
+		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
 		TaskExecution te = taskExecutions.iterator().next();
-		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected")
-				.isEqualTo(1);
-		assertThat(taskExecutions.iterator().next().getExitCode().intValue())
-				.as("return code should be 0").isEqualTo(0);
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
+				.isEqualTo(0);
 	}
 
 	private boolean tableExists() throws SQLException {
 		boolean result;
 		try (Connection conn = this.dataSource.getConnection();
-				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION",
-						new String[] { "TABLE" })) {
+				ResultSet res = conn.getMetaData().getTables(null, null, "TASK_EXECUTION", new String[] { "TABLE" })) {
 			result = res.next();
 		}
 		return result;
@@ -204,9 +196,8 @@ public class TaskInitializerTests {
 			Server server = null;
 			try {
 				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp",
-							"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-							.start();
+					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+							String.valueOf(randomPort)).start();
 					defaultServer = server;
 				}
 			}

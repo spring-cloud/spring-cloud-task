@@ -60,43 +60,39 @@ public class BatchEventsApplication {
 
 		@Bean
 		public Step step1() {
-			return this.stepBuilderFactory.get("step1")
-				.tasklet(new Tasklet() {
-					@Override
-					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-						System.out.println("Tasklet has run");
-						return RepeatStatus.FINISHED;
-					}
-				}).build();
+			return this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+				@Override
+				public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+					System.out.println("Tasklet has run");
+					return RepeatStatus.FINISHED;
+				}
+			}).build();
 		}
 
 		@Bean
 		public Step step2() {
-			return this.stepBuilderFactory.get("step2")
-				.<String, String>chunk(DEFAULT_CHUNK_COUNT)
-				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
-				.processor(new ItemProcessor<String, String>() {
-					@Override
-					public String process(String item) throws Exception {
-						return String.valueOf(Integer.parseInt(item) * -1);
-					}
-				})
-				.writer(new ItemWriter<String>() {
-					@Override
-					public void write(List<? extends String> items) throws Exception {
-						for (String item : items) {
-							System.out.println(">> " + item);
+			return this.stepBuilderFactory.get("step2").<String, String>chunk(DEFAULT_CHUNK_COUNT)
+					.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
+					.processor(new ItemProcessor<String, String>() {
+						@Override
+						public String process(String item) throws Exception {
+							return String.valueOf(Integer.parseInt(item) * -1);
 						}
-					}
-				}).build();
+					}).writer(new ItemWriter<String>() {
+						@Override
+						public void write(List<? extends String> items) throws Exception {
+							for (String item : items) {
+								System.out.println(">> " + item);
+							}
+						}
+					}).build();
 		}
 
 		@Bean
 		public Job job() {
-			return this.jobBuilderFactory.get("job")
-				.start(step1())
-				.next(step2())
-				.build();
+			return this.jobBuilderFactory.get("job").start(step1()).next(step2()).build();
 		}
+
 	}
+
 }

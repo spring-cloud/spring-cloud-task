@@ -133,23 +133,20 @@ public class TaskBatchExecutionListenerTests {
 
 	@Test
 	public void testFactoryBean() {
-		this.applicationContext = SpringApplication.run(JobFactoryBeanConfiguration.class,
-				ARGS);
+		this.applicationContext = SpringApplication.run(JobFactoryBeanConfiguration.class, ARGS);
 		validateContext();
 	}
 
 	private void validateContext() {
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
-				PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
-				page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer
+				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
-		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next())
-				.getExecutionId()).isEqualTo(1);
+		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
 
 	}
 
@@ -158,27 +155,24 @@ public class TaskBatchExecutionListenerTests {
 		this.applicationContext = SpringApplication.run(TaskNotEnabledConfiguration.class, ARGS);
 		assertThat(applicationContext.getBean(Job.class)).isNotNull();
 		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListenerBeanPostProcessor.class))
-			.isInstanceOf(NoSuchBeanDefinitionException.class);
+				.isInstanceOf(NoSuchBeanDefinitionException.class);
 		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListener.class))
-			.isInstanceOf(NoSuchBeanDefinitionException.class);
+				.isInstanceOf(NoSuchBeanDefinitionException.class);
 	}
 
 	@Test
 	public void testMultipleDataSources() {
-		this.applicationContext = SpringApplication
-				.run(JobConfigurationMultipleDataSources.class, ARGS);
+		this.applicationContext = SpringApplication.run(JobConfigurationMultipleDataSources.class, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
-				PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
-				page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer
+				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
-		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next())
-				.getExecutionId()).isEqualTo(1);
+		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
 	}
 
 	@Test
@@ -187,11 +181,10 @@ public class TaskBatchExecutionListenerTests {
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
-				PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
-				page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer
+				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(0);
 	}
@@ -202,36 +195,30 @@ public class TaskBatchExecutionListenerTests {
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
-				PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
-				page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer
+				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
-		assertThat((long) taskExplorer
-				.getTaskExecutionIdByJobExecutionId(jobExecutionIds.iterator().next()))
-						.isEqualTo(1);
+		assertThat((long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIds.iterator().next()))
+				.isEqualTo(1);
 	}
 
 	@Test
 	public void testMultipleJobs() {
-		this.applicationContext = SpringApplication.run(MultipleJobConfiguration.class,
-				"--spring.batch.job.name=job1");
+		this.applicationContext = SpringApplication.run(MultipleJobConfiguration.class, "--spring.batch.job.name=job1");
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
-		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application",
-				PageRequest.of(0, 1));
+		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
-		Set<Long> jobExecutionIds = taskExplorer.getJobExecutionIdsByTaskExecutionId(
-				page.iterator().next().getExecutionId());
+		Set<Long> jobExecutionIds = taskExplorer
+				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		Iterator<Long> jobExecutionIdsIterator = jobExecutionIds.iterator();
-		assertThat((long) taskExplorer
-				.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next()))
-						.isEqualTo(1);
+		assertThat((long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIdsIterator.next())).isEqualTo(1);
 
 	}
 
@@ -242,23 +229,19 @@ public class TaskBatchExecutionListenerTests {
 		jobNames.add("job2");
 		jobNames.add("TESTOBJECT");
 
-		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = beanPostProcessor(
-				jobNames);
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = beanPostProcessor(jobNames);
 
 		SimpleJob testObject = new SimpleJob();
-		SimpleJob bean = (SimpleJob) beanPostProcessor
-				.postProcessBeforeInitialization(testObject, "TESTOBJECT");
+		SimpleJob bean = (SimpleJob) beanPostProcessor.postProcessBeforeInitialization(testObject, "TESTOBJECT");
 		assertThat(bean).isEqualTo(testObject);
 	}
 
 	@Test
 	public void testBatchExecutionListenerBeanPostProcessorWithEmptyJobNames() {
-		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = beanPostProcessor(
-				Collections.emptyList());
+		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = beanPostProcessor(Collections.emptyList());
 
 		SimpleJob testObject = new SimpleJob();
-		SimpleJob bean = (SimpleJob) beanPostProcessor
-				.postProcessBeforeInitialization(testObject, "TESTOBJECT");
+		SimpleJob bean = (SimpleJob) beanPostProcessor.postProcessBeforeInitialization(testObject, "TESTOBJECT");
 		assertThat(bean).isEqualTo(testObject);
 	}
 
@@ -269,12 +252,10 @@ public class TaskBatchExecutionListenerTests {
 		});
 	}
 
-	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(
-			List<String> jobNames) {
-		this.applicationContext = SpringApplication.run(new Class[] {
-				JobConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
-				EmbeddedDataSourceConfiguration.class, BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+	private TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor(List<String> jobNames) {
+		this.applicationContext = SpringApplication.run(new Class[] { JobConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
+				BatchAutoConfiguration.class, TaskBatchAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = this.applicationContext
@@ -329,10 +310,10 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job")
-				.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
-					System.out.println("Executed");
-					return RepeatStatus.FINISHED;
-				}).build()).build();
+					.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
+					}).build()).build();
 		}
 
 	}
@@ -355,8 +336,8 @@ public class TaskBatchExecutionListenerTests {
 				@Override
 				public Job getObject() {
 					return JobFactoryBeanConfiguration.this.jobBuilderFactory.get("job")
-							.start(JobFactoryBeanConfiguration.this.stepBuilderFactory
-									.get("step1").tasklet((contribution, chunkContext) -> {
+							.start(JobFactoryBeanConfiguration.this.stepBuilderFactory.get("step1")
+									.tasklet((contribution, chunkContext) -> {
 										System.out.println("Executed");
 										return RepeatStatus.FINISHED;
 									}).build())
@@ -383,32 +364,29 @@ public class TaskBatchExecutionListenerTests {
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfigurationMultipleDataSources {
 
-
 		@Bean
 		public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-			return jobBuilderFactory.get("job")
-					.start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution,
-								ChunkContext chunkContext) throws Exception {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
-					}).build()).build();
+			return jobBuilderFactory.get("job").start(stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+				@Override
+				public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}
+			}).build()).build();
 		}
 
 		@Bean
 		@Primary
 		public DataSource myDataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2).setName("myDataSource");
+			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+					.setName("myDataSource");
 			return builder.build();
 		}
 
 		@Bean
 		public DataSource incorrectDataSource() {
-			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder()
-					.setType(EmbeddedDatabaseType.H2).setName("incorrectDataSource");
+			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+					.setName("incorrectDataSource");
 			return builder.build();
 		}
 
@@ -438,8 +416,8 @@ public class TaskBatchExecutionListenerTests {
 
 		@Bean
 		public Job job1() {
-			return this.jobBuilderFactory.get("job1").start(
-					this.stepBuilderFactory.get("job1step1").tasklet((contribution, chunkContext) -> {
+			return this.jobBuilderFactory.get("job1")
+					.start(this.stepBuilderFactory.get("job1step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job1");
 						return RepeatStatus.FINISHED;
 					}).build()).build();
@@ -447,8 +425,8 @@ public class TaskBatchExecutionListenerTests {
 
 		@Bean
 		public Job job2() {
-			return this.jobBuilderFactory.get("job2").start(
-					this.stepBuilderFactory.get("job2step1").tasklet((contribution, chunkContext) -> {
+			return this.jobBuilderFactory.get("job2")
+					.start(this.stepBuilderFactory.get("job2step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job2");
 						return RepeatStatus.FINISHED;
 					}).build()).build();

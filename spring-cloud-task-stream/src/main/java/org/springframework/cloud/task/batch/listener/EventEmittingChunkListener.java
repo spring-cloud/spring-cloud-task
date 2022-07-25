@@ -55,14 +55,12 @@ public class EventEmittingChunkListener implements ChunkListener, Ordered {
 
 	@Override
 	public void beforeChunk(ChunkContext context) {
-		this.messagePublisher.publish(this.properties.getChunkEventBindingName(),
-			"Before Chunk Processing");
+		this.messagePublisher.publish(this.properties.getChunkEventBindingName(), "Before Chunk Processing");
 	}
 
 	@Override
 	public void afterChunk(ChunkContext context) {
-		this.messagePublisher.publish(this.properties.getChunkEventBindingName(),
-			"After Chunk Processing");
+		this.messagePublisher.publish(this.properties.getChunkEventBindingName(), "After Chunk Processing");
 	}
 
 	@Override

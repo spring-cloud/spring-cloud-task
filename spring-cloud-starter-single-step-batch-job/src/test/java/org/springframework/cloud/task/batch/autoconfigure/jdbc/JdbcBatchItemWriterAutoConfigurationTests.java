@@ -76,8 +76,8 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 
 	static {
 		randomPort = TestSocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort
-				+ "/mem:dataflow;DB_CLOSE_DELAY=-1;" + "DB_CLOSE_ON_EXIT=FALSE";
+		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
+				+ "DB_CLOSE_ON_EXIT=FALSE";
 	}
 
 	@AfterEach
@@ -100,43 +100,35 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	@Test
 	public void baseTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-					TaskLauncherConfiguration.class,
-					JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class
-						)
+				.withUserConfiguration(TaskLauncherConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class))
-			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcBatchItemWriterAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner, false);
 	}
+
 	@Test
 	public void baseTestWithWriterDataSource() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-			.withUserConfiguration(
-				TaskLauncherConfiguration.class,
-				JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class
-			)
-			.withConfiguration(
-				AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-					BatchAutoConfiguration.class,
-					SingleStepJobAutoConfiguration.class,
-					JdbcBatchItemWriterAutoConfiguration.class))
-			.withPropertyValues("spring.batch.job.jdbcbatchitemwriter.datasource.enable=true",
-				"spring.batch.job.jdbcsinglestep.datasource.enable=false",
-				"spring.batch.job.jobName=job",
-				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-				"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
-				"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)",
-				"spring.batch.jdbc.initialize-schema=always",
-				"jdbcbatchitemwriter.datasource.url=" + DATASOURCE_URL,
-				"jdbcbatchitemwriter.datasource.username=" + DATASOURCE_USER_NAME,
-				"jdbcbatchitemwriter.datasource.password=" + DATASOURCE_USER_PASSWORD,
-				"jdbcbatchitemwriter.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
+				.withUserConfiguration(TaskLauncherConfiguration.class,
+						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class)
+				.withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcBatchItemWriterAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jdbcbatchitemwriter.datasource.enable=true",
+						"spring.batch.job.jdbcsinglestep.datasource.enable=false", "spring.batch.job.jobName=job",
+						"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
+						"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
+						"spring.batch.job.jdbcbatchitemwriter.sql=INSERT INTO item (item_name) VALUES (:item_name)",
+						"spring.batch.jdbc.initialize-schema=always",
+						"jdbcbatchitemwriter.datasource.url=" + DATASOURCE_URL,
+						"jdbcbatchitemwriter.datasource.username=" + DATASOURCE_USER_NAME,
+						"jdbcbatchitemwriter.datasource.password=" + DATASOURCE_USER_PASSWORD,
+						"jdbcbatchitemwriter.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
 
 		runTest(applicationContextRunner, true);
 	}
@@ -144,16 +136,13 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	@Test
 	public void customSqlParameterSourceTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-						TaskLauncherConfiguration.class,
+				.withUserConfiguration(TaskLauncherConfiguration.class,
 						JdbcBatchItemWriterAutoConfigurationTests.DelimitedDifferentKeyNameJobConfiguration.class,
 						CustomSqlParameterSourceProviderConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class))
-			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcBatchItemWriterAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 
 		runTest(applicationContextRunner, false);
@@ -162,22 +151,18 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	@Test
 	public void preparedStatementSetterTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(
-						TaskLauncherConfiguration.class,
+				.withUserConfiguration(TaskLauncherConfiguration.class,
 						JdbcBatchItemWriterAutoConfigurationTests.DelimitedJobConfiguration.class,
 						ItemPreparedStatementSetterConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								JdbcBatchItemWriterAutoConfiguration.class))
-			.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, JdbcBatchItemWriterAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jdbcsinglestep.datasource.enable=false");
 		applicationContextRunner = updatePropertiesForTest(applicationContextRunner);
 		runTest(applicationContextRunner, false);
 	}
 
-	private ApplicationContextRunner updatePropertiesForTest(
-			ApplicationContextRunner applicationContextRunner) {
+	private ApplicationContextRunner updatePropertiesForTest(ApplicationContextRunner applicationContextRunner) {
 		return applicationContextRunner.withPropertyValues("spring.batch.job.jobName=job",
 				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
 				"spring.batch.job.jdbcbatchitemwriter.name=fooWriter",
@@ -194,8 +179,7 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 			dataSource = context.getBean("jdbcBatchItemWriterSpringDataSource", DataSource.class);
 		}
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		List<Map<String, Object>> result = jdbcTemplate
-				.queryForList("SELECT item_name FROM item ORDER BY item_name");
+		List<Map<String, Object>> result = jdbcTemplate.queryForList("SELECT item_name FROM item ORDER BY item_name");
 		assertThat(result.size()).isEqualTo(3);
 
 		assertThat(result.get(0).get("item_name")).isEqualTo("bar");
@@ -203,16 +187,13 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 		assertThat(result.get(2).get("item_name")).isEqualTo("foo");
 
 		JdbcBatchItemWriter writer = context.getBean(JdbcBatchItemWriter.class);
-		assertThat((Boolean) ReflectionTestUtils.getField(writer, "assertUpdates"))
-				.isTrue();
-		assertThat((Integer) ReflectionTestUtils.getField(writer, "parameterCount"))
-				.isEqualTo(1);
-		assertThat((Boolean) ReflectionTestUtils.getField(writer, "usingNamedParameters"))
-				.isTrue();
+		assertThat((Boolean) ReflectionTestUtils.getField(writer, "assertUpdates")).isTrue();
+		assertThat((Integer) ReflectionTestUtils.getField(writer, "parameterCount")).isEqualTo(1);
+		assertThat((Boolean) ReflectionTestUtils.getField(writer, "usingNamedParameters")).isTrue();
 		if (!isWriterDataSourcePresent) {
-			assertThatThrownBy(() ->  context.getBean("jdbcBatchItemWriterSpringDataSource"))
-				.isInstanceOf(NoSuchBeanDefinitionException.class)
-				.hasMessageContaining("No bean named 'jdbcBatchItemWriterSpringDataSource' available");
+			assertThatThrownBy(() -> context.getBean("jdbcBatchItemWriterSpringDataSource"))
+					.isInstanceOf(NoSuchBeanDefinitionException.class)
+					.hasMessageContaining("No bean named 'jdbcBatchItemWriterSpringDataSource' available");
 		}
 		else {
 			assertThat(context.getBean("jdbcBatchItemWriterSpringDataSource")).isNotNull();
@@ -247,19 +228,16 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 			Server server = null;
 			try {
 				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp",
-							"-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-							.start();
+					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+							String.valueOf(randomPort)).start();
 					defaultServer = server;
 					DriverManagerDataSource dataSource = new DriverManagerDataSource();
 					dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
 					dataSource.setUrl(DATASOURCE_URL);
 					dataSource.setUsername(DATASOURCE_USER_NAME);
 					dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-					ClassPathResource setupResource = new ClassPathResource(
-							"schema-h2.sql");
-					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(
-							setupResource);
+					ClassPathResource setupResource = new ClassPathResource("schema-h2.sql");
+					ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(setupResource);
 					resourceDatabasePopulator.execute(dataSource);
 				}
 			}
@@ -340,11 +318,9 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 		public ItemPreparedStatementSetter itemPreparedStatementSetter() {
 			return new ItemPreparedStatementSetter() {
 				@Override
-				public void setValues(Object item, PreparedStatement ps)
-						throws SQLException {
+				public void setValues(Object item, PreparedStatement ps) throws SQLException {
 					Map<String, Object> mapItem = (Map<String, Object>) item;
-					StatementCreatorUtils.setParameterValue(ps, 1,
-							SqlTypeValue.TYPE_UNKNOWN, mapItem.get("item_name"));
+					StatementCreatorUtils.setParameterValue(ps, 1, SqlTypeValue.TYPE_UNKNOWN, mapItem.get("item_name"));
 				}
 			};
 		}

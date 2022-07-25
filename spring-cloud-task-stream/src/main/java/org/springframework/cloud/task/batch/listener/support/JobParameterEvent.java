@@ -79,25 +79,22 @@ public class JobParameterEvent {
 		}
 
 		JobParameterEvent rhs = (JobParameterEvent) obj;
-		return this.parameter == null
-				? rhs.parameter == null && this.parameterType == rhs.parameterType
+		return this.parameter == null ? rhs.parameter == null && this.parameterType == rhs.parameterType
 				: this.parameter.equals(rhs.parameter);
 	}
 
 	@Override
 	public String toString() {
-		return this.parameter == null ? null
-				: (this.parameterType == JobParameterEvent.ParameterType.DATE
-						? "" + ((Date) this.parameter).getTime()
-						: this.parameter.toString());
+		return this.parameter == null ? null : (this.parameterType == JobParameterEvent.ParameterType.DATE
+				? "" + ((Date) this.parameter).getTime() : this.parameter.toString());
 	}
 
 	@Override
 	public int hashCode() {
 		final int BASE_HASH = 7;
 		final int MULTIPLIER_HASH = 21;
-		return BASE_HASH + MULTIPLIER_HASH * (this.parameter == null
-				? this.parameterType.hashCode() : this.parameter.hashCode());
+		return BASE_HASH + MULTIPLIER_HASH
+				* (this.parameter == null ? this.parameterType.hashCode() : this.parameter.hashCode());
 	}
 
 	/**

@@ -22,7 +22,8 @@ package org.springframework.cloud.task.listener;
  *
  * @author Michael Minella
  * @since 1.2
- * @deprecated since 3.0 in favor of the default implementations of {@link TaskExecutionListener}
+ * @deprecated since 3.0 in favor of the default implementations of
+ * {@link TaskExecutionListener}
  */
 @Deprecated
 public class TaskExecutionListenerSupport implements TaskExecutionListener {

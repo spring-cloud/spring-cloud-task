@@ -63,15 +63,15 @@ class ObservationIntegrationTests {
 	void testSuccessfulObservation() {
 		List<FinishedSpan> finishedSpans = finishedSpans();
 
-		SpansAssert.then(finishedSpans)
-			.thenASpanWithNameEqualTo("my-command-line-runner")
-			.hasTag("spring.cloud.task.runner.bean-name", "myCommandLineRunner")
-			.backToSpans()
-			.thenASpanWithNameEqualTo("my-application-runner")
-			.hasTag("spring.cloud.task.runner.bean-name", "myApplicationRunner");
+		SpansAssert.then(finishedSpans).thenASpanWithNameEqualTo("my-command-line-runner")
+				.hasTag("spring.cloud.task.runner.bean-name", "myCommandLineRunner").backToSpans()
+				.thenASpanWithNameEqualTo("my-application-runner")
+				.hasTag("spring.cloud.task.runner.bean-name", "myApplicationRunner");
 		MeterRegistryAssert.then(this.meterRegistry)
-			.hasTimerWithNameAndTags("spring.cloud.task.runner", KeyValues.of("spring.cloud.task.runner.bean-name", "myCommandLineRunner"))
-			.hasTimerWithNameAndTags("spring.cloud.task.runner", KeyValues.of("spring.cloud.task.runner.bean-name", "myApplicationRunner"));
+				.hasTimerWithNameAndTags("spring.cloud.task.runner",
+						KeyValues.of("spring.cloud.task.runner.bean-name", "myCommandLineRunner"))
+				.hasTimerWithNameAndTags("spring.cloud.task.runner",
+						KeyValues.of("spring.cloud.task.runner.bean-name", "myApplicationRunner"));
 	}
 
 	private List<FinishedSpan> finishedSpans() {
@@ -80,8 +80,12 @@ class ObservationIntegrationTests {
 
 	@Configuration
 	@EnableTask
-	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, ObservationAutoConfiguration.class, ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class, CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class})
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class, ObservationAutoConfiguration.class,
+			ObservationTaskAutoConfiguration.class, BraveAutoConfiguration.class,
+			MicrometerTracingAutoConfiguration.class, MetricsAutoConfiguration.class,
+			CompositeMeterRegistryAutoConfiguration.class, ZipkinAutoConfiguration.class })
 	static class Config {
+
 		private static final Logger log = LoggerFactory.getLogger(Config.class);
 
 		@Bean
@@ -96,12 +100,16 @@ class ObservationIntegrationTests {
 
 		@Bean
 		CommandLineRunner myCommandLineRunner(Tracer tracer) {
-			return args -> log.info("<TRACE:{}> Hello from command line runner", tracer.currentSpan().context().traceId());
+			return args -> log.info("<TRACE:{}> Hello from command line runner",
+					tracer.currentSpan().context().traceId());
 		}
 
 		@Bean
 		ApplicationRunner myApplicationRunner(Tracer tracer) {
-			return args -> log.info("<TRACE:{}> Hello from application runner", tracer.currentSpan().context().traceId());
+			return args -> log.info("<TRACE:{}> Hello from application runner",
+					tracer.currentSpan().context().traceId());
 		}
+
 	}
+
 }

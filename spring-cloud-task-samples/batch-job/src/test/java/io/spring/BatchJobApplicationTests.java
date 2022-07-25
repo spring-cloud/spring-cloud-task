@@ -26,7 +26,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -36,7 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(OutputCaptureExtension.class)
 public class BatchJobApplicationTests {
-
 
 	@Test
 	public void testBatchJobApp(CapturedOutput capturedOutput) throws Exception {
@@ -57,7 +55,6 @@ public class BatchJobApplicationTests {
 		int i = output.indexOf(JOB_ASSOCIATION_MESSAGE);
 
 		assertThat(i).isGreaterThan(0);
-
 
 		String taskTitle = "Demo Batch Job Task";
 		Pattern pattern = Pattern.compile(taskTitle);

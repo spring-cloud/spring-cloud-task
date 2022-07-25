@@ -100,8 +100,8 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 				String incrementerName = this.tablePrefix + "SEQ";
 				DataFieldMaxValueIncrementerFactory incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(
 						dataSource);
-				DataFieldMaxValueIncrementer incrementer = incrementerFactory
-						.getIncrementer(databaseType, incrementerName);
+				DataFieldMaxValueIncrementer incrementer = incrementerFactory.getIncrementer(databaseType,
+						incrementerName);
 				if (!isSqlServerTableSequenceAvailable(incrementerName)) {
 					incrementer = new SqlServerSequenceMaxValueIncrementer(dataSource, this.tablePrefix + "SEQ");
 				}
@@ -135,8 +135,8 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
-		((JdbcTaskExecutionDao) this.dao).setTaskIncrementer(incrementerFactory
-			.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+		((JdbcTaskExecutionDao) this.dao)
+				.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
 
 	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {

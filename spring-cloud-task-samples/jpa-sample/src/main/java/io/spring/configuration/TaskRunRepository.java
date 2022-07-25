@@ -23,4 +23,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Glenn Renfro
  */
 public interface TaskRunRepository extends JpaRepository<TaskRunOutput, Long> {
+
 }

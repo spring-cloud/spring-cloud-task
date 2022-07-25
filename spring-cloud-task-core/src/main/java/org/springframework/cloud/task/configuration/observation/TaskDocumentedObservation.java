@@ -57,5 +57,7 @@ enum TaskDocumentedObservation implements DocumentedObservation {
 				return "spring.cloud.task.runner.bean-name";
 			}
 		}
+
 	}
+
 }

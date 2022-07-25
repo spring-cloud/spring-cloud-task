@@ -38,4 +38,5 @@ public class TimestampTaskProperties {
 	public void setFormat(String format) {
 		this.format = format;
 	}
+
 }

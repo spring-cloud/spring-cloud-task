@@ -69,8 +69,7 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	public void saveRelationship(TaskExecution taskExecution, JobExecution jobExecution) {
 		Assert.notNull(taskExecution, "A taskExecution is required");
 		Assert.notNull(jobExecution, "A jobExecution is required");
-		this.jdbcTemplate.update(getQuery(INSERT_STATEMENT),
-				taskExecution.getExecutionId(), jobExecution.getId());
+		this.jdbcTemplate.update(getQuery(INSERT_STATEMENT), taskExecution.getExecutionId(), jobExecution.getId());
 	}
 
 	private String getQuery(String base) {

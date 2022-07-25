@@ -42,8 +42,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(AmqpItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.enabled",
-		havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.enabled", havingValue = "true", matchIfMissing = false)
 public class AmqpItemReaderAutoConfiguration {
 
 	@Autowired(required = false)
@@ -65,8 +64,8 @@ public class AmqpItemReaderAutoConfiguration {
 		return builder.build();
 	}
 
-	@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.jsonConverterEnabled",
-			havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(name = "spring.batch.job.amqpitemreader.jsonConverterEnabled", havingValue = "true",
+			matchIfMissing = true)
 	@Bean
 	public MessageConverter messageConverter() {
 		return new Jackson2JsonMessageConverter();

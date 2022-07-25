@@ -55,13 +55,12 @@ import org.springframework.util.CollectionUtils;
 @EnableTransactionManagement
 @EnableConfigurationProperties({ TaskProperties.class })
 // @checkstyle:off
-@ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled",
-		havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled", havingValue = "true",
+		matchIfMissing = true)
 // @checkstyle:on
 public class SimpleTaskAutoConfiguration {
 
-	protected static final Log logger = LogFactory
-			.getLog(SimpleTaskAutoConfiguration.class);
+	protected static final Log logger = LogFactory.getLog(SimpleTaskAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private Collection<DataSource> dataSources;
@@ -85,7 +84,6 @@ public class SimpleTaskAutoConfiguration {
 		return this.taskRepository;
 	}
 
-
 	@Bean
 	public PlatformTransactionManager springCloudTaskTransactionManager() {
 		return this.platformTransactionManager;
@@ -104,8 +102,7 @@ public class SimpleTaskAutoConfiguration {
 	@Bean
 	@Lazy(false)
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
-		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(
-				this.taskProperties);
+		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(this.taskProperties);
 		DataSource initializerDataSource = getDefaultConfigurer().getTaskDataSource();
 		if (initializerDataSource != null) {
 			taskRepositoryInitializer.setDataSource(initializerDataSource);
@@ -113,7 +110,6 @@ public class SimpleTaskAutoConfiguration {
 
 		return taskRepositoryInitializer;
 	}
-
 
 	@Bean
 	@Profile("cloud")
@@ -132,8 +128,7 @@ public class SimpleTaskAutoConfiguration {
 
 		TaskConfigurer taskConfigurer = getDefaultConfigurer();
 
-		logger.debug(String.format("Using %s TaskConfigurer",
-				taskConfigurer.getClass().getName()));
+		logger.debug(String.format("Using %s TaskConfigurer", taskConfigurer.getClass().getName()));
 
 		this.taskRepository = taskConfigurer.getTaskRepository();
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
@@ -148,18 +143,14 @@ public class SimpleTaskAutoConfiguration {
 
 		if (configurers < 1) {
 			TaskConfigurer taskConfigurer;
-			if (!CollectionUtils.isEmpty(this.dataSources)
-					&& this.dataSources.size() == 1) {
-				taskConfigurer = new DefaultTaskConfigurer(
-						this.dataSources.iterator().next(),
+			if (!CollectionUtils.isEmpty(this.dataSources) && this.dataSources.size() == 1) {
+				taskConfigurer = new DefaultTaskConfigurer(this.dataSources.iterator().next(),
 						this.taskProperties.getTablePrefix(), this.context);
 			}
 			else {
-				taskConfigurer = new DefaultTaskConfigurer(
-						this.taskProperties.getTablePrefix());
+				taskConfigurer = new DefaultTaskConfigurer(this.taskProperties.getTablePrefix());
 			}
-			this.context.getBeanFactory().registerSingleton("taskConfigurer",
-					taskConfigurer);
+			this.context.getBeanFactory().registerSingleton("taskConfigurer", taskConfigurer);
 			return taskConfigurer;
 		}
 		else {
@@ -167,8 +158,7 @@ public class SimpleTaskAutoConfiguration {
 				return this.context.getBean(TaskConfigurer.class);
 			}
 			else {
-				throw new IllegalStateException(
-						"Expected one TaskConfigurer but found " + configurers);
+				throw new IllegalStateException("Expected one TaskConfigurer but found " + configurers);
 			}
 		}
 	}
@@ -177,14 +167,12 @@ public class SimpleTaskAutoConfiguration {
 		int configurers = this.context.getBeanNamesForType(TaskConfigurer.class).length;
 		// retrieve the count of dataSources (without instantiating them) excluding
 		// DataSource proxy beans
-		long dataSources = Arrays
-				.stream(this.context.getBeanNamesForType(DataSource.class))
+		long dataSources = Arrays.stream(this.context.getBeanNamesForType(DataSource.class))
 				.filter((name -> !ScopedProxyUtils.isScopedTarget(name))).count();
 
 		if (configurers == 0 && dataSources > 1) {
-			throw new IllegalStateException(
-					"To use the default TaskConfigurer the context must contain no more than"
-							+ " one DataSource, found " + dataSources);
+			throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than"
+					+ " one DataSource, found " + dataSources);
 		}
 	}
 

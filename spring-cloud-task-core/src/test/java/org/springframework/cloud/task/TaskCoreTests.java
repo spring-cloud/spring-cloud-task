@@ -72,17 +72,16 @@ public class TaskCoreTests {
 	@Test
 	public void successfulTaskTest(CapturedOutput capturedOutput) {
 		this.applicationContext = SpringApplication.run(TaskConfiguration.class,
-				"--spring.cloud.task.closecontext.enable=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.cloud.task.closecontext.enable=false", "--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
 		String output = capturedOutput.toString();
-		assertThat(output.contains(CREATE_TASK_MESSAGE))
-				.as("Test results do not show create task message: " + output).isTrue();
-		assertThat(output.contains(UPDATE_TASK_MESSAGE))
-				.as("Test results do not show success message: " + output).isTrue();
-		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE))
-				.as("Test results have incorrect exit code: " + output).isTrue();
+		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
+				.isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
+				.isTrue();
+		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
+				.isTrue();
 	}
 
 	/**
@@ -90,76 +89,63 @@ public class TaskCoreTests {
 	 */
 	@Test
 	public void successfulTaskTestWithAnnotation(CapturedOutput capturedOutput) {
-		this.applicationContext = SpringApplication.run(
-				TaskConfigurationWithAnotation.class,
-				"--spring.cloud.task.closecontext.enable=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
+		this.applicationContext = SpringApplication.run(TaskConfigurationWithAnotation.class,
+				"--spring.cloud.task.closecontext.enable=false", "--spring.cloud.task.name=" + TASK_NAME,
 				"--spring.main.web-environment=false");
 
 		String output = capturedOutput.toString();
-		assertThat(output.contains(CREATE_TASK_MESSAGE))
-				.as("Test results do not show create task message: " + output).isTrue();
-		assertThat(output.contains(UPDATE_TASK_MESSAGE))
-				.as("Test results do not show success message: " + output).isTrue();
-		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE))
-				.as("Test results have incorrect exit code: " + output).isTrue();
+		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
+				.isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
+				.isTrue();
+		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
+				.isTrue();
 	}
 
 	@Test
 	public void exceptionTaskTest(CapturedOutput capturedOutput) {
 		boolean exceptionFired = false;
 		try {
-			this.applicationContext = SpringApplication.run(
-					TaskExceptionConfiguration.class,
-					"--spring.cloud.task.closecontext.enable=false",
-					"--spring.cloud.task.name=" + TASK_NAME,
+			this.applicationContext = SpringApplication.run(TaskExceptionConfiguration.class,
+					"--spring.cloud.task.closecontext.enable=false", "--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false");
 		}
 		catch (IllegalStateException exception) {
 			exceptionFired = true;
 		}
-		assertThat(exceptionFired).as("An IllegalStateException should have been thrown")
-				.isTrue();
+		assertThat(exceptionFired).as("An IllegalStateException should have been thrown").isTrue();
 
 		String output = capturedOutput.toString();
-		assertThat(output.contains(CREATE_TASK_MESSAGE))
-				.as("Test results do not show create task message: " + output).isTrue();
-		assertThat(output.contains(UPDATE_TASK_MESSAGE))
-				.as("Test results do not show success message: " + output).isTrue();
-		assertThat(output.contains(EXCEPTION_EXIT_CODE_MESSAGE))
-				.as("Test results have incorrect exit code: " + output).isTrue();
-		assertThat(output.contains(ERROR_MESSAGE))
-				.as("Test results have incorrect exit message: " + output).isTrue();
-		assertThat(output.contains(EXCEPTION_MESSAGE))
-				.as("Test results have exception message: " + output).isTrue();
+		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
+				.isTrue();
+		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
+				.isTrue();
+		assertThat(output.contains(EXCEPTION_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
+				.isTrue();
+		assertThat(output.contains(ERROR_MESSAGE)).as("Test results have incorrect exit message: " + output).isTrue();
+		assertThat(output.contains(EXCEPTION_MESSAGE)).as("Test results have exception message: " + output).isTrue();
 	}
 
 	@Test
 	public void invalidExecutionId(CapturedOutput capturedOutput) {
 		boolean exceptionFired = false;
 		try {
-			this.applicationContext = SpringApplication.run(
-					TaskExceptionConfiguration.class,
-					"--spring.cloud.task.closecontext.enable=false",
-					"--spring.cloud.task.name=" + TASK_NAME,
-					"--spring.main.web-environment=false",
-					"--spring.cloud.task.executionid=55");
+			this.applicationContext = SpringApplication.run(TaskExceptionConfiguration.class,
+					"--spring.cloud.task.closecontext.enable=false", "--spring.cloud.task.name=" + TASK_NAME,
+					"--spring.main.web-environment=false", "--spring.cloud.task.executionid=55");
 		}
 		catch (ApplicationContextException exception) {
 			exceptionFired = true;
 		}
-		assertThat(exceptionFired)
-				.as("An ApplicationContextException should have been thrown").isTrue();
+		assertThat(exceptionFired).as("An ApplicationContextException should have been thrown").isTrue();
 
 		String output = capturedOutput.toString();
 		assertThat(output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID))
-				.as("Test results do not show the correct exception message: " + output)
-				.isTrue();
+				.as("Test results do not show the correct exception message: " + output).isTrue();
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
-			PropertyPlaceholderAutoConfiguration.class })
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskConfiguration {
 
 		@Bean
@@ -174,8 +160,7 @@ public class TaskCoreTests {
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
-			PropertyPlaceholderAutoConfiguration.class })
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskConfigurationWithAnotation {
 
 		@Bean
@@ -190,8 +175,7 @@ public class TaskCoreTests {
 	}
 
 	@EnableTask
-	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class,
-			PropertyPlaceholderAutoConfiguration.class })
+	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class })
 	public static class TaskExceptionConfiguration {
 
 		@Bean

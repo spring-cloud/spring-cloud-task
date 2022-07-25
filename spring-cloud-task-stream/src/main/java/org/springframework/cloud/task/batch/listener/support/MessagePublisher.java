@@ -29,7 +29,6 @@ import org.springframework.util.Assert;
  */
 public class MessagePublisher<P> {
 
-
 	private final StreamBridge streamBridge;
 
 	public MessagePublisher(StreamBridge streamBridge) {
@@ -52,8 +51,8 @@ public class MessagePublisher<P> {
 	}
 
 	public void publishWithThrowableHeader(String bindingName, P payload, String header) {
-		Message<P> message = MessageBuilder.withPayload(payload)
-				.setHeader(BatchJobHeaders.BATCH_EXCEPTION, header).build();
+		Message<P> message = MessageBuilder.withPayload(payload).setHeader(BatchJobHeaders.BATCH_EXCEPTION, header)
+				.build();
 		publishMessage(bindingName, message);
 	}
 

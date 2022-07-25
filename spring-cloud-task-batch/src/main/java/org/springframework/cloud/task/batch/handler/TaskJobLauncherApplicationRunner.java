@@ -69,8 +69,7 @@ import org.springframework.util.StringUtils;
  */
 public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunner {
 
-	private static final Log logger = LogFactory
-			.getLog(TaskJobLauncherApplicationRunner.class);
+	private static final Log logger = LogFactory.getLog(TaskJobLauncherApplicationRunner.class);
 
 	private JobLauncher taskJobLauncher;
 
@@ -93,9 +92,8 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	 * @param taskBatchProperties the properties used to configure the
 	 * taskBatchProperties.
 	 */
-	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher,
-			JobExplorer jobExplorer, JobRepository jobRepository,
-			TaskBatchProperties taskBatchProperties) {
+	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
+			JobRepository jobRepository, TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer, jobRepository);
 		this.taskJobLauncher = jobLauncher;
 		this.taskJobExplorer = jobExplorer;
@@ -115,18 +113,14 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		monitorJobExecutions();
 	}
 
-	protected void execute(Job job, JobParameters jobParameters)
-			throws JobExecutionAlreadyRunningException, JobRestartException,
-			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
+			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		String jobName = job.getName();
 		JobParameters parameters = jobParameters;
-		boolean jobInstanceExists = this.taskJobRepository.isJobInstanceExists(jobName,
-				parameters);
+		boolean jobInstanceExists = this.taskJobRepository.isJobInstanceExists(jobName, parameters);
 		if (jobInstanceExists) {
-			JobExecution lastJobExecution = this.taskJobRepository
-					.getLastJobExecution(jobName, jobParameters);
-			if (lastJobExecution != null && isStoppedOrFailed(lastJobExecution)
-					&& job.isRestartable()) {
+			JobExecution lastJobExecution = this.taskJobRepository.getLastJobExecution(jobName, jobParameters);
+			if (lastJobExecution != null && isStoppedOrFailed(lastJobExecution) && job.isRestartable()) {
 				// Retry a failed or stopped execution with previous parameters
 				JobParameters previousParameters = lastJobExecution.getJobParameters();
 				/*
@@ -135,8 +129,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 				 * they are required (or need to be modified) on a restart, they need to
 				 * be (re)specified.
 				 */
-				JobParameters previousIdentifyingParameters = removeNonIdentifying(
-						previousParameters);
+				JobParameters previousIdentifyingParameters = removeNonIdentifying(previousParameters);
 				// merge additional parameters with previous ones (overriding those with
 				// the same key)
 				parameters = merge(previousIdentifyingParameters, jobParameters);
@@ -145,15 +138,14 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		else {
 			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
 			if (incrementer != null) {
-				JobParameters nextParameters = new JobParametersBuilder(jobParameters,
-						this.taskJobExplorer).getNextJobParameters(job).toJobParameters();
+				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobExplorer)
+						.getNextJobParameters(job).toJobParameters();
 				parameters = merge(nextParameters, jobParameters);
 			}
 		}
 		JobExecution execution = this.taskJobLauncher.run(job, parameters);
 		if (this.taskApplicationEventPublisher != null) {
-			this.taskApplicationEventPublisher
-					.publishEvent(new JobExecutionEvent(execution));
+			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
 		}
 		this.jobExecutionList.add(execution);
 		if (execution.getStatus().equals(BatchStatus.FAILED)) {
@@ -171,8 +163,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 			List<JobExecution> failedJobExecutions = new ArrayList<>();
 			RepeatStatus repeatStatus = RepeatStatus.FINISHED;
 			for (JobExecution jobExecution : this.jobExecutionList) {
-				JobExecution currentJobExecution = this.taskJobExplorer
-						.getJobExecution(jobExecution.getId());
+				JobExecution currentJobExecution = this.taskJobExplorer.getJobExecution(jobExecution.getId());
 				BatchStatus batchStatus = currentJobExecution.getStatus();
 				if (batchStatus.isRunning()) {
 					repeatStatus = RepeatStatus.CONTINUABLE;
@@ -183,8 +174,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 			}
 			Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
 
-			if (repeatStatus.equals(RepeatStatus.FINISHED)
-					&& failedJobExecutions.size() > 0) {
+			if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
 				throwJobFailedException(failedJobExecutions);
 			}
 			return repeatStatus;
@@ -194,10 +184,10 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	private void throwJobFailedException(List<JobExecution> failedJobExecutions) {
 		StringBuilder message = new StringBuilder("The following Jobs have failed: \n");
 		for (JobExecution failedJobExecution : failedJobExecutions) {
-			message.append(String.format("Job %s failed during "
-					+ "execution for job instance id %s with jobExecutionId of %s \n",
-					failedJobExecution.getJobInstance().getJobName(),
-					failedJobExecution.getJobId(), failedJobExecution.getId()));
+			message.append(String.format(
+					"Job %s failed during " + "execution for job instance id %s with jobExecutionId of %s \n",
+					failedJobExecution.getJobInstance().getJobName(), failedJobExecution.getJobId(),
+					failedJobExecution.getId()));
 		}
 
 		logger.error(message);

@@ -40,7 +40,7 @@ public class SqlServerSequenceMaxValueIncrementerTests {
 	@Test
 	public void testDefaultDataSourceConfiguration() throws Exception {
 		this.context = new AnnotationConfigApplicationContext(
-			TaskExecutionDaoFactoryBeanTests.DefaultDataSourceConfiguration.class);
+				TaskExecutionDaoFactoryBeanTests.DefaultDataSourceConfiguration.class);
 
 		DataSource dataSource = this.context.getBean(DataSource.class);
 
@@ -48,4 +48,5 @@ public class SqlServerSequenceMaxValueIncrementerTests {
 		assertThat(incrementer.getSequenceQuery()).isEqualTo("select next value for foo");
 		assertThat(incrementer.getIncrementerName()).isEqualTo("foo");
 	}
+
 }

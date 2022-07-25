@@ -32,4 +32,5 @@ public class TaskSinkApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TaskSinkApplication.class, args);
 	}
+
 }

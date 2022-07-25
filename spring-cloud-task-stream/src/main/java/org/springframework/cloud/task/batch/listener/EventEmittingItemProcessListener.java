@@ -43,8 +43,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemProcessListener implements ItemProcessListener, Ordered {
 
-	private static final Log logger = LogFactory
-		.getLog(EventEmittingItemProcessListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemProcessListener.class);
 
 	private MessagePublisher messagePublisher;
 
@@ -59,7 +58,8 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 		this.properties = properties;
 	}
 
-	public EventEmittingItemProcessListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+	public EventEmittingItemProcessListener(MessagePublisher messagePublisher, int order,
+			TaskEventProperties properties) {
 		this(messagePublisher, properties);
 		this.order = order;
 	}
@@ -74,10 +74,12 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "1 item was filtered");
 		}
 		else if (item.equals(result)) {
-			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "item equaled result after processing");
+			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(),
+					"item equaled result after processing");
 		}
 		else {
-			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "item did not equal result after processing");
+			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(),
+					"item did not equal result after processing");
 		}
 	}
 
@@ -86,9 +88,8 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onProcessError: " + e.getMessage(), e);
 		}
-		this.messagePublisher.publishWithThrowableHeader(
-			this.properties.getItemProcessEventBindingName(),
-			"Exception while item was being processed", e.getMessage());
+		this.messagePublisher.publishWithThrowableHeader(this.properties.getItemProcessEventBindingName(),
+				"Exception while item was being processed", e.getMessage());
 	}
 
 	@Override

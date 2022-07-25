@@ -51,48 +51,39 @@ public class DefaultTaskConfigurerTests {
 	public void resourcelessTransactionManagerTest() {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo(
-						"org.springframework.batch.support.transaction.ResourcelessTransactionManager");
+				.isEqualTo("org.springframework.batch.support.transaction.ResourcelessTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer("foo");
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo(
-						"org.springframework.batch.support.transaction.ResourcelessTransactionManager");
+				.isEqualTo("org.springframework.batch.support.transaction.ResourcelessTransactionManager");
 	}
 
 	@Test
 	public void testDefaultContext() throws Exception {
 		AnnotationConfigApplicationContext localContext = new AnnotationConfigApplicationContext();
-		localContext.register(EmbeddedDataSourceConfiguration.class,
-				EntityManagerConfiguration.class);
+		localContext.register(EmbeddedDataSourceConfiguration.class, EntityManagerConfiguration.class);
 		localContext.refresh();
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
-				this.dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource,
+				TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
 				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
 	}
 
 	@Test
 	public void dataSourceTransactionManagerTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
-				this.dataSource);
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO", null);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
-		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO",
-				this.context);
+				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "FOO", this.context);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-				.isEqualTo(
-						"org.springframework.jdbc.datasource.DataSourceTransactionManager");
+				.isEqualTo("org.springframework.jdbc.datasource.DataSourceTransactionManager");
 	}
 
 	@Test
 	public void taskExplorerTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
-				this.dataSource);
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource);
 		assertThat(defaultTaskConfigurer.getTaskExplorer()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTaskExplorer()).isNotNull();
@@ -100,8 +91,7 @@ public class DefaultTaskConfigurerTests {
 
 	@Test
 	public void taskRepositoryTest() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
-				this.dataSource);
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource);
 		assertThat(defaultTaskConfigurer.getTaskRepository()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTaskRepository()).isNotNull();
@@ -109,8 +99,7 @@ public class DefaultTaskConfigurerTests {
 
 	@Test
 	public void taskDataSource() {
-		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(
-				this.dataSource);
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource);
 		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNull();

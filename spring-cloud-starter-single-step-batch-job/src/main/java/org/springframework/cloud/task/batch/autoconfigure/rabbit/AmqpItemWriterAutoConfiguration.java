@@ -40,14 +40,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(AmqpItemWriterProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
-@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.enabled",
-		havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.enabled", havingValue = "true", matchIfMissing = false)
 public class AmqpItemWriterAutoConfiguration {
 
 	@Bean
 	public AmqpItemWriter<Map<String, Object>> amqpItemWriter(AmqpTemplate amqpTemplate) {
-		return new AmqpItemWriterBuilder<Map<String, Object>>().amqpTemplate(amqpTemplate)
-				.build();
+		return new AmqpItemWriterBuilder<Map<String, Object>>().amqpTemplate(amqpTemplate).build();
 	}
 
 	@Bean
@@ -55,8 +53,8 @@ public class AmqpItemWriterAutoConfiguration {
 		return new AmqpItemWriterProperties();
 	}
 
-	@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.jsonConverterEnabled",
-			havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(name = "spring.batch.job.amqpitemwriter.jsonConverterEnabled", havingValue = "true",
+			matchIfMissing = true)
 	@Bean
 	public MessageConverter messageConverter() {
 		return new Jackson2JsonMessageConverter();

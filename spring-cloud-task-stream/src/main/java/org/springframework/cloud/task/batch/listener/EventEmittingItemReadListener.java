@@ -40,8 +40,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemReadListener implements ItemReadListener, Ordered {
 
-	private static final Log logger = LogFactory
-			.getLog(EventEmittingItemReadListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemReadListener.class);
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -56,8 +55,7 @@ public class EventEmittingItemReadListener implements ItemReadListener, Ordered 
 		this.messagePublisher = messagePublisher;
 	}
 
-	public EventEmittingItemReadListener(MessagePublisher messagePublisher,
-		int order, TaskEventProperties properties) {
+	public EventEmittingItemReadListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
 		this(messagePublisher, properties);
 		this.order = order;
 	}

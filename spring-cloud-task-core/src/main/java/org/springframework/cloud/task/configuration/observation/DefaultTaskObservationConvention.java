@@ -36,4 +36,5 @@ public class DefaultTaskObservationConvention implements TaskObservationConventi
 	public String getName() {
 		return "spring.cloud.task.runner";
 	}
+
 }

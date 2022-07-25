@@ -82,22 +82,16 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 
 	@BeforeEach
 	public void setupMock() {
-		when(this.taskletStep.getTasklet()).thenReturn(
-				new ChunkOrientedTasklet(this.chunkProvider, this.chunkProcessor));
+		when(this.taskletStep.getTasklet())
+				.thenReturn(new ChunkOrientedTasklet(this.chunkProvider, this.chunkProcessor));
 		when(this.taskletStep.getName()).thenReturn("FOOOBAR");
 
-		registerAlias(ItemProcessListener.class,
-				BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER);
-		registerAlias(StepExecutionListener.class,
-				BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER);
-		registerAlias(ChunkListener.class,
-				BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER);
-		registerAlias(ItemReadListener.class,
-				BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER);
-		registerAlias(ItemWriteListener.class,
-				BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER);
-		registerAlias(SkipListener.class,
-				BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
+		registerAlias(ItemProcessListener.class, BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER);
+		registerAlias(StepExecutionListener.class, BatchEventAutoConfiguration.STEP_EXECUTION_EVENTS_LISTENER);
+		registerAlias(ChunkListener.class, BatchEventAutoConfiguration.CHUNK_EVENTS_LISTENER);
+		registerAlias(ItemReadListener.class, BatchEventAutoConfiguration.ITEM_READ_EVENTS_LISTENER);
+		registerAlias(ItemWriteListener.class, BatchEventAutoConfiguration.ITEM_WRITE_EVENTS_LISTENER);
+		registerAlias(SkipListener.class, BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
 	}
 
 	@Test
@@ -105,8 +99,8 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 		TaskBatchEventListenerBeanPostProcessor postProcessor = this.context
 				.getBean(TaskBatchEventListenerBeanPostProcessor.class);
 		assertThat(postProcessor).isNotNull();
-		TaskletStep updatedTaskletStep = (TaskletStep) postProcessor
-				.postProcessBeforeInitialization(this.taskletStep, "FOO");
+		TaskletStep updatedTaskletStep = (TaskletStep) postProcessor.postProcessBeforeInitialization(this.taskletStep,
+				"FOO");
 		assertThat(updatedTaskletStep).isEqualTo(this.taskletStep);
 	}
 

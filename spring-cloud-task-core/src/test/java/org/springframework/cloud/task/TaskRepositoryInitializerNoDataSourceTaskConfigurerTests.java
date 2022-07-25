@@ -44,9 +44,8 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
  * @since 2.0.0
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(
-		classes = { SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
-				EmbeddedDataSourceConfiguration.class, DefaultTaskConfigurer.class })
+@ContextConfiguration(classes = { SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
+		EmbeddedDataSourceConfiguration.class, DefaultTaskConfigurer.class })
 public class TaskRepositoryInitializerNoDataSourceTaskConfigurerTests {
 
 	@Autowired

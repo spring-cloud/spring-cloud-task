@@ -47,4 +47,5 @@ public class TaskRunComponent {
 		this.taskRunRepository.save(new TaskRunOutput("Executed at " + execDate));
 		logger.info("Executed at : " + execDate);
 	}
+
 }

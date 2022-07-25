@@ -56,8 +56,7 @@ public class PrefixTests {
 
 	@Test
 	public void testPrefix() {
-		this.applicationContext = SpringApplication.run(JobConfiguration.class,
-				"--spring.cloud.task.tablePrefix=FOO_");
+		this.applicationContext = SpringApplication.run(JobConfiguration.class, "--spring.cloud.task.tablePrefix=FOO_");
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 
@@ -74,8 +73,8 @@ public class PrefixTests {
 
 		@Bean
 		public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-			return jobBuilderFactory.get("job").start(stepBuilderFactory
-					.get("step1").tasklet((contribution, chunkContext) -> {
+			return jobBuilderFactory.get("job")
+					.start(stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
 					}).build()).build();
@@ -83,8 +82,8 @@ public class PrefixTests {
 
 		@Bean
 		public DataSource dataSource() {
-			return new EmbeddedDatabaseBuilder().addScript("classpath:schema-h2.sql")
-					.setType(EmbeddedDatabaseType.H2).build();
+			return new EmbeddedDatabaseBuilder().addScript("classpath:schema-h2.sql").setType(EmbeddedDatabaseType.H2)
+					.build();
 		}
 
 	}

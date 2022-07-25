@@ -74,8 +74,7 @@ import org.springframework.util.CollectionUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
-public class DeployerPartitionHandler
-		implements PartitionHandler, EnvironmentAware, InitializingBean {
+public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware, InitializingBean {
 
 	/**
 	 * ID of Spring Cloud Task job execution.
@@ -145,21 +144,23 @@ public class DeployerPartitionHandler
 
 	private TaskExecutor taskExecutor;
 
-
 	@Autowired
 	private TaskRepository taskRepository;
 
 	/**
 	 * Constructor initializing the DeployerPartitionHandler instance.
-	 * @param taskLauncher The {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute partitioned tasks.
+	 * @param taskLauncher The
+	 * {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute
+	 * partitioned tasks.
 	 * @param jobExplorer The {@link JobExplorer} to acquire the status of the job.
 	 * @param resource The {@link Resource} to the app to be launched.
 	 * @param stepName The name of the step.
-	 * @param taskExecutor If task launches should occur asynchronously then provide a {@link ThreadPoolTaskExecutor}.  Default is null.
+	 * @param taskExecutor If task launches should occur asynchronously then provide a
+	 * {@link ThreadPoolTaskExecutor}. Default is null.
 	 */
-	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
-		Resource resource, String stepName, TaskRepository taskRepository,
-		TaskExecutor taskExecutor) {
+	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher,
+			JobExplorer jobExplorer, Resource resource, String stepName, TaskRepository taskRepository,
+			TaskExecutor taskExecutor) {
 		Assert.notNull(taskLauncher, "A taskLauncher is required");
 		Assert.notNull(jobExplorer, "A jobExplorer is required");
 		Assert.notNull(resource, "A resource is required");
@@ -176,13 +177,15 @@ public class DeployerPartitionHandler
 
 	/**
 	 * Constructor initializing the DeployerPartitionHandler instance.
-	 * @param taskLauncher The {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute partitioned tasks.
+	 * @param taskLauncher The
+	 * {@link org.springframework.cloud.deployer.spi.task.TaskLauncher} used to execute
+	 * partitioned tasks.
 	 * @param jobExplorer The {@link JobExplorer} to acquire the status of the job.
 	 * @param resource The {@link Resource} to the app to be launched.
 	 * @param stepName The name of the step.
 	 */
-	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher, JobExplorer jobExplorer,
-		Resource resource, String stepName, TaskRepository taskRepository) {
+	public DeployerPartitionHandler(org.springframework.cloud.deployer.spi.task.TaskLauncher taskLauncher,
+			JobExplorer jobExplorer, Resource resource, String stepName, TaskRepository taskRepository) {
 		this(taskLauncher, jobExplorer, resource, stepName, taskRepository, new SyncTaskExecutor());
 	}
 
@@ -190,8 +193,7 @@ public class DeployerPartitionHandler
 	 * Used to provide any environment variables to be set on each worker launched.
 	 * @param environmentVariablesProvider an {@link EnvironmentVariablesProvider}
 	 */
-	public void setEnvironmentVariablesProvider(
-			EnvironmentVariablesProvider environmentVariablesProvider) {
+	public void setEnvironmentVariablesProvider(EnvironmentVariablesProvider environmentVariablesProvider) {
 		this.environmentVariablesProvider = environmentVariablesProvider;
 	}
 
@@ -208,8 +210,7 @@ public class DeployerPartitionHandler
 	 * Used to provide any command line arguements to be passed to each worker launched.
 	 * @param commandLineArgsProvider {@link CommandLineArgsProvider}
 	 */
-	public void setCommandLineArgsProvider(
-			CommandLineArgsProvider commandLineArgsProvider) {
+	public void setCommandLineArgsProvider(CommandLineArgsProvider commandLineArgsProvider) {
 		this.commandLineArgsProvider = commandLineArgsProvider;
 	}
 
@@ -250,8 +251,10 @@ public class DeployerPartitionHandler
 	}
 
 	/**
-	 * Map of deployment properties to be used by the {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}.
-	 * @param deploymentProperties properties to be used by the {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}
+	 * Map of deployment properties to be used by the
+	 * {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}.
+	 * @param deploymentProperties properties to be used by the
+	 * {@link org.springframework.cloud.deployer.spi.task.TaskLauncher}
 	 */
 	public void setDeploymentProperties(Map<String, String> deploymentProperties) {
 		this.deploymentProperties = deploymentProperties;
@@ -271,19 +274,17 @@ public class DeployerPartitionHandler
 		this.taskExecution = taskExecution;
 
 		if (this.commandLineArgsProvider == null) {
-			SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(
-					taskExecution);
+			SimpleCommandLineArgsProvider provider = new SimpleCommandLineArgsProvider(taskExecution);
 			this.commandLineArgsProvider = provider;
 
 		}
 	}
 
 	@Override
-	public Collection<StepExecution> handle(StepExecutionSplitter stepSplitter,
-			StepExecution stepExecution) throws Exception {
+	public Collection<StepExecution> handle(StepExecutionSplitter stepSplitter, StepExecution stepExecution)
+			throws Exception {
 
-		final Set<StepExecution> tempCandidates = stepSplitter.split(stepExecution,
-				this.gridSize);
+		final Set<StepExecution> tempCandidates = stepSplitter.split(stepExecution, this.gridSize);
 
 		// Following two lines due to https://jira.spring.io/browse/BATCH-2490
 		final Set<StepExecution> candidates = new HashSet<>(tempCandidates.size());
@@ -306,23 +307,18 @@ public class DeployerPartitionHandler
 		return pollReplies(stepExecution, executed, candidates, partitions);
 	}
 
-	private void launchWorkers(Set<StepExecution> candidates,
-			Set<StepExecution> executed) {
+	private void launchWorkers(Set<StepExecution> candidates, Set<StepExecution> executed) {
 		TaskLauncherHandler taskLauncherHandler = new TaskLauncherHandler(this.commandLineArgsProvider,
-			this.taskRepository, this.defaultArgsAsEnvironmentVars,
-			this.stepName, this.taskExecution, this.environmentVariablesProvider,
-			this.resource, this.deploymentProperties,
-			this.taskLauncher,
-			this.applicationName);
+				this.taskRepository, this.defaultArgsAsEnvironmentVars, this.stepName, this.taskExecution,
+				this.environmentVariablesProvider, this.resource, this.deploymentProperties, this.taskLauncher,
+				this.applicationName);
 		for (StepExecution execution : candidates) {
 			if (this.currentWorkers < this.maxWorkers || this.maxWorkers < 0) {
 				if (this.taskExecutor != null) {
 					TaskLauncherHandler taskLauncherThread = new TaskLauncherHandler(this.commandLineArgsProvider,
-						this.taskRepository, this.defaultArgsAsEnvironmentVars,
-						this.stepName, this.taskExecution, this.environmentVariablesProvider,
-						this.resource, this.deploymentProperties,
-						this.taskLauncher,
-						this.applicationName, execution);
+							this.taskRepository, this.defaultArgsAsEnvironmentVars, this.stepName, this.taskExecution,
+							this.environmentVariablesProvider, this.resource, this.deploymentProperties,
+							this.taskLauncher, this.applicationName, execution);
 					this.taskExecutor.execute(taskLauncherThread);
 				}
 				else {
@@ -335,8 +331,7 @@ public class DeployerPartitionHandler
 	}
 
 	private Collection<StepExecution> pollReplies(final StepExecution masterStepExecution,
-			final Set<StepExecution> executed, final Set<StepExecution> candidates,
-			final int size) throws Exception {
+			final Set<StepExecution> executed, final Set<StepExecution> candidates, final int size) throws Exception {
 
 		final Collection<StepExecution> result = new ArrayList<>(executed.size());
 
@@ -348,8 +343,7 @@ public class DeployerPartitionHandler
 				for (StepExecution curStepExecution : executed) {
 					if (!result.contains(curStepExecution)) {
 						StepExecution partitionStepExecution = DeployerPartitionHandler.this.jobExplorer
-								.getStepExecution(masterStepExecution.getJobExecutionId(),
-										curStepExecution.getId());
+								.getStepExecution(masterStepExecution.getJobExecutionId(), curStepExecution.getId());
 
 						BatchStatus batchStatus = partitionStepExecution.getStatus();
 						if (batchStatus != null && isComplete(batchStatus)) {
@@ -388,8 +382,7 @@ public class DeployerPartitionHandler
 	}
 
 	private boolean isComplete(BatchStatus status) {
-		return status.equals(BatchStatus.COMPLETED)
-				|| status.isGreaterThan(BatchStatus.STARTED);
+		return status.equals(BatchStatus.COMPLETED) || status.isGreaterThan(BatchStatus.STARTED);
 	}
 
 	@Override
@@ -400,9 +393,9 @@ public class DeployerPartitionHandler
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (this.environmentVariablesProvider == null) {
-			this.environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(
-					this.environment);
+			this.environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
 
 		}
 	}
+
 }

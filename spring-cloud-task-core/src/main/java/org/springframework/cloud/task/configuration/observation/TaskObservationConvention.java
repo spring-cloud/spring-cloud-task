@@ -30,4 +30,5 @@ public interface TaskObservationConvention extends Observation.ObservationConven
 	default boolean supportsContext(Observation.Context context) {
 		return context instanceof TaskObservationContext;
 	}
+
 }

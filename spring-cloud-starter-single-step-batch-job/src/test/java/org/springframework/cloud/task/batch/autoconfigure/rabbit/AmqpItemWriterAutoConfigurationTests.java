@@ -81,8 +81,7 @@ public class AmqpItemWriterAutoConfigurationTests {
 	private String[] configurations;
 
 	static {
-		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9")
-				.withExposedPorts(5672);
+		GenericContainer rabbitmq = new RabbitMQContainer("rabbitmq:3.8.9").withExposedPorts(5672);
 		rabbitmq.start();
 		final Integer mappedPort = rabbitmq.getMappedPort(5672);
 		host = rabbitmq.getHost();
@@ -95,8 +94,7 @@ public class AmqpItemWriterAutoConfigurationTests {
 		addNameToReaderList(sampleData, "Judy");
 	}
 
-	private static void addNameToReaderList(List<Map<String, Object>> itemReaderList,
-			String value) {
+	private static void addNameToReaderList(List<Map<String, Object>> itemReaderList, String value) {
 		Map<String, Object> prepMap = new HashMap<>();
 		prepMap.put("first_name", value);
 		itemReaderList.add(prepMap);
@@ -110,14 +108,11 @@ public class AmqpItemWriterAutoConfigurationTests {
 		AmqpAdmin admin = new RabbitAdmin(this.connectionFactory);
 		admin.declareQueue(new Queue(QUEUE_NAME));
 		admin.declareExchange(new TopicExchange(EXCHANGE_NAME));
-		admin.declareBinding(new Binding(QUEUE_NAME, Binding.DestinationType.QUEUE,
-				EXCHANGE_NAME, "#", null));
+		admin.declareBinding(new Binding(QUEUE_NAME, Binding.DestinationType.QUEUE, EXCHANGE_NAME, "#", null));
 		this.configurations = new String[] { "spring.batch.job.jobName=integrationJob",
 				"spring.batch.job.stepName=step1", "spring.batch.job.chunkSize=5",
-				"spring.rabbitmq.template.exchange=" + EXCHANGE_NAME,
-				"spring.rabbitmq.host=" + host,
-				"spring.batch.job.amqpitemwriter.enabled=true",
-				"spring.rabbitmq.port=" + amqpPort };
+				"spring.rabbitmq.template.exchange=" + EXCHANGE_NAME, "spring.rabbitmq.host=" + host,
+				"spring.batch.job.amqpitemwriter.enabled=true", "spring.rabbitmq.port=" + amqpPort };
 	}
 
 	@AfterEach
@@ -132,12 +127,9 @@ public class AmqpItemWriterAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(BaseConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								AmqpItemWriterAutoConfiguration.class,
-								RabbitAutoConfiguration.class,
-								DataSourceAutoConfiguration.class))
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, AmqpItemWriterAutoConfiguration.class,
+								RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
 				.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {
@@ -149,10 +141,8 @@ public class AmqpItemWriterAutoConfigurationTests {
 			}
 
 			for (Map<String, Object> sampleEntry : sampleData) {
-				Map<String, Object> map = (Map<String, Object>) template
-						.receiveAndConvert(QUEUE_NAME);
-				assertThat(map.get("first_name"))
-						.isEqualTo(sampleEntry.get("first_name"));
+				Map<String, Object> map = (Map<String, Object>) template.receiveAndConvert(QUEUE_NAME);
+				assertThat(map.get("first_name")).isEqualTo(sampleEntry.get("first_name"));
 			}
 		});
 	}
@@ -161,12 +151,9 @@ public class AmqpItemWriterAutoConfigurationTests {
 	void useAmqpTemplateTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(MockConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								AmqpItemWriterAutoConfiguration.class,
-								DataSourceAutoConfiguration.class))
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
+						AmqpItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
 				.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {

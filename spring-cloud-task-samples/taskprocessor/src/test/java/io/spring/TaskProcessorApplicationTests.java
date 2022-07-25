@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -53,6 +52,7 @@ public class TaskProcessorApplicationTests {
 	private static final String DEFAULT_PAYLOAD = "hello";
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	private ConfigurableApplicationContext applicationContext;
 
 	@BeforeEach
@@ -72,22 +72,19 @@ public class TaskProcessorApplicationTests {
 		Map<String, String> properties = new HashMap();
 		properties.put("payload", DEFAULT_PAYLOAD);
 		TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
-			"maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
-			null, null);
+				"maven://org.springframework.cloud.task.app:" + "timestamp-task:jar:1.0.1.RELEASE", null, properties,
+				null, null);
 		List<Message<byte[]>> result = testListener("output", 1);
 
 		TaskLaunchRequest tlq = objectMapper.readValue(result.get(0).getPayload(), TaskLaunchRequest.class);
 		assertThat(tlq).isEqualTo(expectedRequest);
 	}
 
-
 	private List<Message<byte[]>> testListener(String bindingName, int numberToRead) {
 		List<Message<byte[]>> results = new ArrayList<>();
 		this.applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(TaskProcessorTestApplication.class)).web(WebApplicationType.NONE)
-			.run();
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(TaskProcessorTestApplication.class))
+				.web(WebApplicationType.NONE).run();
 
 		InputDestination input = this.applicationContext.getBean(InputDestination.class);
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
@@ -99,7 +96,9 @@ public class TaskProcessorApplicationTests {
 	}
 
 	@SpringBootApplication
-	@Import({TaskProcessor.class})
+	@Import({ TaskProcessor.class })
 	public static class TaskProcessorTestApplication {
+
 	}
+
 }

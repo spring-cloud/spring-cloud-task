@@ -35,4 +35,5 @@ public class TaskObservationContext extends Observation.Context {
 	public String getBeanName() {
 		return beanName;
 	}
+
 }

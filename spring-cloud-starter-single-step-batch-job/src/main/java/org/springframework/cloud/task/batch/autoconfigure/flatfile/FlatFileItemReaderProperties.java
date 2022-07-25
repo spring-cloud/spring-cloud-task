@@ -73,8 +73,8 @@ public class FlatFileItemReaderProperties {
 	private boolean strict = true;
 
 	/**
-	 * Configure the encoding used by the reader to read the input source. The default value
-	 * is {@link FlatFileItemReader#DEFAULT_CHARSET}.
+	 * Configure the encoding used by the reader to read the input source. The default
+	 * value is {@link FlatFileItemReader#DEFAULT_CHARSET}.
 	 */
 	private String encoding = FlatFileItemReader.DEFAULT_CHARSET;
 

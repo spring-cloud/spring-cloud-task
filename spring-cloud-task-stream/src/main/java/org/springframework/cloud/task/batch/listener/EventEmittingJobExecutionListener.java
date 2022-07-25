@@ -47,19 +47,22 @@ public class EventEmittingJobExecutionListener implements JobExecutionListener, 
 		this.properties = properties;
 	}
 
-	public EventEmittingJobExecutionListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+	public EventEmittingJobExecutionListener(MessagePublisher messagePublisher, int order,
+			TaskEventProperties properties) {
 		this(messagePublisher, properties);
 		this.order = order;
 	}
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
-		this.messagePublisher.publish(properties.getJobExecutionEventBindingName(), new JobExecutionEvent(jobExecution));
+		this.messagePublisher.publish(properties.getJobExecutionEventBindingName(),
+				new JobExecutionEvent(jobExecution));
 	}
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		this.messagePublisher.publish(properties.getJobExecutionEventBindingName(), new JobExecutionEvent(jobExecution));
+		this.messagePublisher.publish(properties.getJobExecutionEventBindingName(),
+				new JobExecutionEvent(jobExecution));
 	}
 
 	@Override

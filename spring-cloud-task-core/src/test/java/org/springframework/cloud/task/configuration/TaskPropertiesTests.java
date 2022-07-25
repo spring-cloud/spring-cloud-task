@@ -28,10 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(
-		classes = { SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class },
-		properties = { "spring.cloud.task.closecontextEnabled=false",
-				"spring.cloud.task.initialize-enabled=false" })
+@SpringBootTest(classes = { SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class },
+		properties = { "spring.cloud.task.closecontextEnabled=false", "spring.cloud.task.initialize-enabled=false" })
 public class TaskPropertiesTests {
 
 	@Autowired

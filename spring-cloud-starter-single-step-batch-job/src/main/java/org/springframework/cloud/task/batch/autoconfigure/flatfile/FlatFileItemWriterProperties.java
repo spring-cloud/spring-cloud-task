@@ -37,8 +37,8 @@ public class FlatFileItemWriterProperties {
 	private Resource resource;
 
 	/**
-	 * Configure the use of the {@code DelimitedLineAggregator} to generate the output per item.
-	 * Default is {@code false}.
+	 * Configure the use of the {@code DelimitedLineAggregator} to generate the output per
+	 * item. Default is {@code false}.
 	 */
 	private boolean delimited;
 
@@ -65,7 +65,7 @@ public class FlatFileItemWriterProperties {
 
 	/**
 	 * Configure the minimum record length.
- 	 */
+	 */
 	private int minimumLength = 0;
 
 	/**
@@ -74,12 +74,14 @@ public class FlatFileItemWriterProperties {
 	private String delimiter = ",";
 
 	/**
-	 * File encoding for the output file.  Defaults to {@code FlatFileItemWriter.DEFAULT_CHARSET})
+	 * File encoding for the output file. Defaults to
+	 * {@code FlatFileItemWriter.DEFAULT_CHARSET})
 	 */
 	private String encoding = FlatFileItemWriter.DEFAULT_CHARSET;
 
 	/**
-	 * A flag indicating that changes should be force-synced to disk on flush. Defaults to {@code false}.
+	 * A flag indicating that changes should be force-synced to disk on flush. Defaults to
+	 * {@code false}.
 	 */
 	private boolean forceSync = false;
 
@@ -89,12 +91,14 @@ public class FlatFileItemWriterProperties {
 	private String[] names;
 
 	/**
-	 * Configure if the output file is found if it should be appended to. Defaults to {@code false}.
+	 * Configure if the output file is found if it should be appended to. Defaults to
+	 * {@code false}.
 	 */
 	private boolean append = false;
 
 	/**
-	 * String used to separate lines in output. Defaults to the {@code System} property {@code line.separator}.
+	 * String used to separate lines in output. Defaults to the {@code System} property
+	 * {@code line.separator}.
 	 */
 	private String lineSeparator = FlatFileItemWriter.DEFAULT_LINE_SEPARATOR;
 
@@ -117,12 +121,14 @@ public class FlatFileItemWriterProperties {
 	private boolean shouldDeleteIfEmpty = false;
 
 	/**
-	 * Indicates whether an existing output file should be deleted on startup. Defaults to {@code true}.
+	 * Indicates whether an existing output file should be deleted on startup. Defaults to
+	 * {@code true}.
 	 */
 	private boolean shouldDeleteIfExists = true;
 
 	/**
-	 * Indicates whether flushing the buffer should be delayed while a transaction is active.  Defaults to {@code true}.
+	 * Indicates whether flushing the buffer should be delayed while a transaction is
+	 * active. Defaults to {@code true}.
 	 */
 	private boolean transactional = FlatFileItemWriter.DEFAULT_TRANSACTIONAL;
 

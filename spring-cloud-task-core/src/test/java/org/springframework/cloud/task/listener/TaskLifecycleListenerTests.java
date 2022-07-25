@@ -74,8 +74,7 @@ public class TaskLifecycleListenerTests {
 	public void setUp() {
 		this.context = new AnnotationConfigApplicationContext();
 		this.context.setId("testTask");
-		this.context.register(TestDefaultConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
+		this.context.register(TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class);
 		TestListener.getStartupOrderList().clear();
 		TestListener.getFailOrderList().clear();
 		TestListener.getEndOrderList().clear();
@@ -109,8 +108,8 @@ public class TaskLifecycleListenerTests {
 		this.context.refresh();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 
-		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(),
-				new String[0], this.context, Duration.ofSeconds(50)));
+		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], this.context,
+				Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, 0);
 	}
@@ -121,8 +120,7 @@ public class TaskLifecycleListenerTests {
 		RuntimeException exception = new RuntimeException("This was expected");
 		SpringApplication application = new SpringApplication();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
-		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
-				this.context, exception));
+		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0], this.context, exception));
 		this.context.publishEvent(
 				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
@@ -140,17 +138,14 @@ public class TaskLifecycleListenerTests {
 		SpringApplication application = new SpringApplication();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 		this.context.publishEvent(new ExitCodeEvent(this.context, exitCode));
-		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0],
-				this.context, exception));
+		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0], this.context, exception));
 		this.context.publishEvent(
 				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, exitCode, exception, null);
 		assertThat(TestListener.getStartupOrderList().size()).isEqualTo(2);
-		assertThat(TestListener.getStartupOrderList().get(0))
-				.isEqualTo(Integer.valueOf(2));
-		assertThat(TestListener.getStartupOrderList().get(1))
-				.isEqualTo(Integer.valueOf(1));
+		assertThat(TestListener.getStartupOrderList().get(0)).isEqualTo(Integer.valueOf(2));
+		assertThat(TestListener.getStartupOrderList().get(1)).isEqualTo(Integer.valueOf(1));
 
 		assertThat(TestListener.getEndOrderList().size()).isEqualTo(2);
 		assertThat(TestListener.getEndOrderList().get(0)).isEqualTo(Integer.valueOf(1));
@@ -166,8 +161,7 @@ public class TaskLifecycleListenerTests {
 	public void testNoClosingOfContext() {
 
 		try (ConfigurableApplicationContext applicationContext = SpringApplication.run(
-				new Class[] { TestDefaultConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class },
+				new Class[] { TestDefaultConfiguration.class, PropertyPlaceholderAutoConfiguration.class },
 				new String[] { "--spring.cloud.task.closecontext_enabled=false" })) {
 			assertThat(applicationContext.isActive()).isTrue();
 		}
@@ -180,8 +174,7 @@ public class TaskLifecycleListenerTests {
 			MutablePropertySources propertySources = environment.getPropertySources();
 			Map<String, Object> myMap = new HashMap<>();
 			myMap.put("spring.cloud.task.executionid", "55");
-			propertySources
-					.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+			propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 			this.context.setEnvironment(environment);
 			this.context.refresh();
 		});
@@ -190,8 +183,7 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testRestartExistingTask(CapturedOutput capturedOutput) {
 		this.context.refresh();
-		TaskLifecycleListener taskLifecycleListener = this.context
-				.getBean(TaskLifecycleListener.class);
+		TaskLifecycleListener taskLifecycleListener = this.context.getBean(TaskLifecycleListener.class);
 		taskLifecycleListener.start();
 		String output = capturedOutput.toString();
 		assertThat(output.contains("Multiple start events have been received"))
@@ -204,8 +196,7 @@ public class TaskLifecycleListenerTests {
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.external-execution-id", "myid");
-		propertySources
-				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		this.context.setEnvironment(environment);
 		this.context.refresh();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
@@ -219,8 +210,7 @@ public class TaskLifecycleListenerTests {
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Map<String, Object> myMap = new HashMap<>();
 		myMap.put("spring.cloud.task.parentExecutionId", 789);
-		propertySources
-				.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
 		this.context.setEnvironment(environment);
 		this.context.refresh();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
@@ -228,8 +218,7 @@ public class TaskLifecycleListenerTests {
 		verifyTaskExecution(0, false, null, null, null, 789L);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update,
-			Integer exitCode) {
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode) {
 		verifyTaskExecution(numberOfParams, update, exitCode, null, null);
 	}
 
@@ -237,21 +226,19 @@ public class TaskLifecycleListenerTests {
 		verifyTaskExecution(numberOfParams, update, null, null, null);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode,
-			Throwable exception, String externalExecutionId) {
-		verifyTaskExecution(numberOfParams, update, exitCode, exception,
-				externalExecutionId, null);
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception,
+			String externalExecutionId) {
+		verifyTaskExecution(numberOfParams, update, exitCode, exception, externalExecutionId, null);
 	}
 
-	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode,
-			Throwable exception, String externalExecutionId, Long parentExecutionId) {
+	private void verifyTaskExecution(int numberOfParams, boolean update, Integer exitCode, Throwable exception,
+			String externalExecutionId, Long parentExecutionId) {
 
 		Sort sort = Sort.by("id");
 
 		PageRequest request = PageRequest.of(0, Integer.MAX_VALUE, sort);
 
-		Page<TaskExecution> taskExecutionsByName = this.taskExplorer
-				.findTaskExecutionsByName("testTask", request);
+		Page<TaskExecution> taskExecutionsByName = this.taskExplorer.findTaskExecutionsByName("testTask", request);
 		assertThat(taskExecutionsByName.iterator().hasNext()).isTrue();
 		TaskExecution taskExecution = taskExecutionsByName.iterator().next();
 
@@ -261,16 +248,14 @@ public class TaskLifecycleListenerTests {
 		assertThat(taskExecution.getParentExecutionId()).isEqualTo(parentExecutionId);
 
 		if (exception != null) {
-			assertThat(taskExecution.getErrorMessage()
-					.length() > exception.getStackTrace().length).isTrue();
+			assertThat(taskExecution.getErrorMessage().length() > exception.getStackTrace().length).isTrue();
 		}
 		else {
 			assertThat(taskExecution.getExitMessage()).isNull();
 		}
 
 		if (update) {
-			assertThat(taskExecution.getEndTime().getTime() >= taskExecution
-					.getStartTime().getTime()).isTrue();
+			assertThat(taskExecution.getEndTime().getTime() >= taskExecution.getStartTime().getTime()).isTrue();
 			assertThat(taskExecution.getExitCode()).isNotNull();
 		}
 		else {
@@ -310,8 +295,7 @@ public class TaskLifecycleListenerTests {
 
 			int i = 0;
 			for (Map.Entry<String, String> stringStringEntry : this.args.entrySet()) {
-				sourceArgs[i] = "--" + stringStringEntry.getKey() + "="
-						+ stringStringEntry.getValue();
+				sourceArgs[i] = "--" + stringStringEntry.getKey() + "=" + stringStringEntry.getValue();
 				i++;
 			}
 

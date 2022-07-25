@@ -39,12 +39,14 @@ import org.springframework.context.annotation.Configuration;
 public class ObservationTaskAutoConfiguration {
 
 	@Bean
-	static ObservationCommandLineRunnerBeanPostProcessor observedCommandLineRunnerBeanPostProcessor(BeanFactory beanFactory) {
+	static ObservationCommandLineRunnerBeanPostProcessor observedCommandLineRunnerBeanPostProcessor(
+			BeanFactory beanFactory) {
 		return new ObservationCommandLineRunnerBeanPostProcessor(beanFactory);
 	}
 
 	@Bean
-	static ObservationApplicationRunnerBeanPostProcessor observedApplicationRunnerBeanPostProcessor(BeanFactory beanFactory) {
+	static ObservationApplicationRunnerBeanPostProcessor observedApplicationRunnerBeanPostProcessor(
+			BeanFactory beanFactory) {
 		return new ObservationApplicationRunnerBeanPostProcessor(beanFactory);
 	}
 

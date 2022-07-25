@@ -54,8 +54,7 @@ public class JobSkipConfiguration {
 	public Step step1() {
 		return this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
 			@Override
-			public RepeatStatus execute(StepContribution contribution,
-					ChunkContext chunkContext) throws Exception {
+			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				System.out.println("Executed");
 				return RepeatStatus.FINISHED;
 			}
@@ -64,10 +63,8 @@ public class JobSkipConfiguration {
 
 	@Bean
 	public Step step2() {
-		return this.stepBuilderFactory.get("step2").chunk(3).faultTolerant()
-				.skip(IllegalStateException.class).skipLimit(100)
-				.reader(new SkipItemReader())
-				.processor(new ItemProcessor<Object, Object>() {
+		return this.stepBuilderFactory.get("step2").chunk(3).faultTolerant().skip(IllegalStateException.class)
+				.skipLimit(100).reader(new SkipItemReader()).processor(new ItemProcessor<Object, Object>() {
 					@Override
 					public String process(Object item) throws Exception {
 						return String.valueOf(Integer.parseInt((String) item) * -1);

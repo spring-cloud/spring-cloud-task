@@ -29,4 +29,5 @@ public class SingleStepBatchJobApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SingleStepBatchJobApplication.class, args);
 	}
+
 }

@@ -41,8 +41,7 @@ import org.springframework.util.Assert;
  */
 public class EventEmittingItemWriteListener implements ItemWriteListener, Ordered {
 
-	private static final Log logger = LogFactory
-			.getLog(EventEmittingItemWriteListener.class);
+	private static final Log logger = LogFactory.getLog(EventEmittingItemWriteListener.class);
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -58,7 +57,8 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		this.properties = properties;
 	}
 
-	public EventEmittingItemWriteListener(MessagePublisher messagePublisher, int order, TaskEventProperties properties) {
+	public EventEmittingItemWriteListener(MessagePublisher messagePublisher, int order,
+			TaskEventProperties properties) {
 		this(messagePublisher, properties);
 		this.order = order;
 	}
@@ -66,7 +66,7 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 	@Override
 	public void beforeWrite(List items) {
 		this.messagePublisher.publish(this.properties.getItemWriteEventBindingName(),
-			items.size() + " items to be written.");
+				items.size() + " items to be written.");
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 			logger.debug("Executing afterWrite: " + items);
 		}
 		this.messagePublisher.publish(this.properties.getItemWriteEventBindingName(),
-			items.size() + " items have been written.");
+				items.size() + " items have been written.");
 	}
 
 	@Override
@@ -83,10 +83,9 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onWriteError: " + exception.getMessage(), exception);
 		}
-		String payload = "Exception while " + items.size()
-				+ " items are attempted to be written.";
-		this.messagePublisher.publishWithThrowableHeader(
-			this.properties.getItemWriteEventBindingName(), payload, exception.getMessage());
+		String payload = "Exception while " + items.size() + " items are attempted to be written.";
+		this.messagePublisher.publishWithThrowableHeader(this.properties.getItemWriteEventBindingName(), payload,
+				exception.getMessage());
 	}
 
 	@Override

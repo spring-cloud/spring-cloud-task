@@ -42,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("DockerRequired")
 public class BatchEventsApplicationTests {
+
 	private static final String TASK_NAME = "taskEventTest";
 
 	private ConfigurableApplicationContext applicationContext;
@@ -64,33 +65,25 @@ public class BatchEventsApplicationTests {
 
 	@Test
 	public void testExecution() throws Exception {
-		List<Message<byte[]>> result = testListener(
-			taskEventProperties.getJobExecutionEventBindingName(), 1);
+		List<Message<byte[]>> result = testListener(taskEventProperties.getJobExecutionEventBindingName(), 1);
 		JobExecutionEvent jobExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
-			JobExecutionEvent.class);
-		assertThat(jobExecutionEvent.getJobInstance().getJobName())
-			.isEqualTo("job").as("Job name should be job");
+				JobExecutionEvent.class);
+		assertThat(jobExecutionEvent.getJobInstance().getJobName()).isEqualTo("job").as("Job name should be job");
 	}
 
 	private String[] getCommandLineParams(boolean enableFailJobConfig) {
-		String jobConfig = enableFailJobConfig ?
-			"--spring.cloud.task.test.enable-job-configuration=true" :
-			"--spring.cloud.task.test.enable-fail-job-configuration=true";
-		return new String[]{"--spring.cloud.task.closecontext_enable=false",
-			"--spring.cloud.task.name=" + TASK_NAME,
-			"--spring.main.web-environment=false",
-			"--spring.cloud.stream.defaultBinder=rabbit",
-			"--spring.cloud.stream.bindings.task-events.destination=test",
-			jobConfig,
-			"foo=" + UUID.randomUUID()};
+		String jobConfig = enableFailJobConfig ? "--spring.cloud.task.test.enable-job-configuration=true"
+				: "--spring.cloud.task.test.enable-fail-job-configuration=true";
+		return new String[] { "--spring.cloud.task.closecontext_enable=false", "--spring.cloud.task.name=" + TASK_NAME,
+				"--spring.main.web-environment=false", "--spring.cloud.stream.defaultBinder=rabbit",
+				"--spring.cloud.stream.bindings.task-events.destination=test", jobConfig, "foo=" + UUID.randomUUID() };
 	}
 
 	private List<Message<byte[]>> testListener(String bindingName, int numberToRead) {
 		List<Message<byte[]>> results = new ArrayList<>();
 		this.applicationContext = new SpringApplicationBuilder()
-			.sources(TestChannelBinderConfiguration
-				.getCompleteConfiguration(BatchEventsTestApplication.class)).web(WebApplicationType.NONE).build()
-			.run(getCommandLineParams(true));
+				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsTestApplication.class))
+				.web(WebApplicationType.NONE).build().run(getCommandLineParams(true));
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
 		for (int i = 0; i < numberToRead; i++) {
 			results.add(target.receive(10000, bindingName));
@@ -99,8 +92,9 @@ public class BatchEventsApplicationTests {
 	}
 
 	@SpringBootApplication
-	@Import({BatchEventsApplication.class})
+	@Import({ BatchEventsApplication.class })
 	public static class BatchEventsTestApplication {
+
 	}
 
 }

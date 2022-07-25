@@ -70,8 +70,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Glenn Renfro
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(
-		classes = { TaskJobLauncherApplicationRunnerCoreTests.BatchConfiguration.class })
+@ContextConfiguration(classes = { TaskJobLauncherApplicationRunnerCoreTests.BatchConfiguration.class })
 public class TaskJobLauncherApplicationRunnerCoreTests {
 
 	@Autowired
@@ -103,8 +102,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
 		this.step = this.steps.get("step").tasklet(tasklet).build();
 		this.job = this.jobs.get("job").start(this.step).build();
-		this.runner = new TaskJobLauncherApplicationRunner(this.jobLauncher,
-				this.jobExplorer, this.jobRepository, new TaskBatchProperties());
+		this.runner = new TaskJobLauncherApplicationRunner(this.jobLauncher, this.jobExplorer, this.jobRepository,
+				new TaskBatchProperties());
 
 	}
 
@@ -113,26 +112,23 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	public void basicExecution() throws Exception {
 		this.runner.execute(this.job, new JobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
-		this.runner.execute(this.job,
-				new JobParametersBuilder().addLong("id", 1L).toJobParameters());
+		this.runner.execute(this.job, new JobParametersBuilder().addLong("id", 1L).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
 	@DirtiesContext
-//	@Test
+	// @Test
 	public void incrementExistingExecution() throws Exception {
-		this.job = this.jobs.get("job").start(this.step)
-				.incrementer(new RunIdIncrementer()).build();
+		this.job = this.jobs.get("job").start(this.step).incrementer(new RunIdIncrementer()).build();
 		this.runner.execute(this.job, new JobParameters());
 		this.runner.execute(this.job, new JobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
 
 	@DirtiesContext
-//	@Test
+	// @Test
 	public void retryFailedExecution() throws Exception {
-		this.job = this.jobs.get("job")
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
+		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
 				.incrementer(new RunIdIncrementer()).build();
 		runFailedJob(new JobParameters());
 		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
@@ -142,16 +138,13 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void runDifferentInstances() throws Exception {
-		this.job = this.jobs.get("job")
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build()).build();
+		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build()).build();
 		// start a job instance
-		JobParameters jobParameters = new JobParametersBuilder().addString("name", "foo")
-				.toJobParameters();
+		JobParameters jobParameters = new JobParametersBuilder().addString("name", "foo").toJobParameters();
 		runFailedJob(jobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 		// start a different job instance
-		JobParameters otherJobParameters = new JobParametersBuilder()
-				.addString("name", "bar").toJobParameters();
+		JobParameters otherJobParameters = new JobParametersBuilder().addString("name", "bar").toJobParameters();
 		runFailedJob(otherJobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
 	}
@@ -160,8 +153,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@Test
 	public void retryFailedExecutionOnNonRestartableJob() throws Exception {
 		this.job = this.jobs.get("job").preventRestart()
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
-				.incrementer(new RunIdIncrementer()).build();
+				.start(this.steps.get("step").tasklet(throwingTasklet()).build()).incrementer(new RunIdIncrementer())
+				.build();
 		runFailedJob(new JobParameters());
 		runFailedJob(new JobParameters());
 		// A failed job that is not restartable does not re-use the job params of
@@ -171,40 +164,35 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		// try to re-run a failed execution
 		Executable executable = () -> this.runner.execute(this.job,
 				new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
-		assertThatExceptionOfType(JobRestartException.class)
-				.isThrownBy(executable::execute)
+		assertThatExceptionOfType(JobRestartException.class).isThrownBy(executable::execute)
 				.withMessage("JobInstance already exists and is not restartable");
 	}
 
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithNonIdentifyingParameters() throws Exception {
-		this.job = this.jobs.get("job")
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
+		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
 				.incrementer(new RunIdIncrementer()).build();
-		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false)
-				.addLong("foo", 2L, false).toJobParameters();
+		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
+				.toJobParameters();
 		runFailedJob(jobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
-		runFailedJob(new JobParametersBuilder(jobParameters).addLong("run.id", 1L)
-				.toJobParameters());
+		runFailedJob(new JobParametersBuilder(jobParameters).addLong("run.id", 1L).toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 	}
 
 	@DirtiesContext
 	@Test
-	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution()
-			throws Exception {
-		this.job = this.jobs.get("job")
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build())
+	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution() throws Exception {
+		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
 				.incrementer(new RunIdIncrementer()).build();
-		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false)
-				.addLong("foo", 2L, false).toJobParameters();
+		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
+				.toJobParameters();
 		runFailedJob(jobParameters);
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 		// try to re-run a failed execution with non identifying parameters
-		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L)
-				.addLong("id", 2L, false).addLong("foo", 3L, false).toJobParameters());
+		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L).addLong("id", 2L, false).addLong("foo", 3L, false)
+				.toJobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(1);
 		JobInstance jobInstance = jobExplorer.getLastJobInstance("job");
 
@@ -212,7 +200,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 		assertThat(executions).hasSize(2);
 
-		JobExecution firstJobExecution  = executions.get(0);
+		JobExecution firstJobExecution = executions.get(0);
 		JobExecution secondJobExecution = executions.get(1);
 		if ((executions.get(0).getId() > executions.get(1).getId())) {
 			firstJobExecution = executions.get(1);
@@ -261,7 +249,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		private JobRepository jobRepository;
 
 		@Autowired
-		private  DataSource dataSource;
+		private DataSource dataSource;
 
 		public BatchConfiguration() throws Exception {
 		}
@@ -317,7 +305,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			databasePopulator.addScript(new ClassPathResource("org/springframework/batch/core/schema-drop-h2.sql"));
 			dataSourceInitializer.setDatabaseCleaner(databasePopulator);
 			return dataSourceInitializer;
-	}
+		}
 
 	}
 

@@ -28,6 +28,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @since 3.0.0
  */
 public class TaskExecutionObservationContext extends Observation.Context {
+
 	private final TaskExecution taskExecution;
 
 	private String exceptionMessage = "none";
@@ -57,4 +58,5 @@ public class TaskExecutionObservationContext extends Observation.Context {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
 }

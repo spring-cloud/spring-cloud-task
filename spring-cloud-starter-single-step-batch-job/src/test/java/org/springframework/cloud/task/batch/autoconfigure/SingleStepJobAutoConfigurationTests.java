@@ -91,8 +91,7 @@ public class SingleStepJobAutoConfigurationTests {
 			new SingleStepJobAutoConfiguration(null, null, properties, null);
 		}
 		catch (IllegalArgumentException iae) {
-			assertThat(iae.getMessage())
-					.isEqualTo("A chunk size greater than zero is required");
+			assertThat(iae.getMessage()).isEqualTo("A chunk size greater than zero is required");
 		}
 		catch (Throwable t) {
 			fail("wrong exception was thrown", t);
@@ -106,12 +105,9 @@ public class SingleStepJobAutoConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withUserConfiguration(SimpleConfiguration.class)
 				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-								BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class,
-								DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job",
-						"spring.batch.job.stepName=step1",
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
 						"spring.batch.job.chunkSize=5");
 
 		validateConfiguration(applicationContextRunner);
@@ -120,17 +116,14 @@ public class SingleStepJobAutoConfigurationTests {
 	@Test
 	public void testSimpleConfigurationKabobStyle() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-			.withUserConfiguration(SimpleConfiguration.class)
-			.withConfiguration(
-				AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-					BatchAutoConfiguration.class,
-					SingleStepJobAutoConfiguration.class,
-					DataSourceAutoConfiguration.class))
-			.withPropertyValues("spring.batch.job.job-name=job",
-				"spring.batch.job.step-name=step1",
-				"spring.batch.job.chunk-size=5");
+				.withUserConfiguration(SimpleConfiguration.class)
+				.withConfiguration(
+						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+								SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
+				.withPropertyValues("spring.batch.job.job-name=job", "spring.batch.job.step-name=step1",
+						"spring.batch.job.chunk-size=5");
 
-			validateConfiguration(applicationContextRunner);
+		validateConfiguration(applicationContextRunner);
 	}
 
 	private void validateConfiguration(ApplicationContextRunner applicationContextRunner) {

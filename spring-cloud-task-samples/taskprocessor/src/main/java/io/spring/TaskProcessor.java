@@ -48,30 +48,25 @@ public class TaskProcessor {
 			String message = messagePayload.getPayload();
 			Map<String, String> properties = new HashMap<>();
 			if (StringUtils.hasText(this.processorProperties.getDataSourceUrl())) {
-				properties
-					.put("spring_datasource_url", this.processorProperties
-						.getDataSourceUrl());
+				properties.put("spring_datasource_url", this.processorProperties.getDataSourceUrl());
 			}
-			if (StringUtils
-				.hasText(this.processorProperties.getDataSourceDriverClassName())) {
-				properties.put("spring_datasource_driverClassName", this.processorProperties
-					.getDataSourceDriverClassName());
+			if (StringUtils.hasText(this.processorProperties.getDataSourceDriverClassName())) {
+				properties.put("spring_datasource_driverClassName",
+						this.processorProperties.getDataSourceDriverClassName());
 			}
 			if (StringUtils.hasText(this.processorProperties.getDataSourceUserName())) {
-				properties.put("spring_datasource_username", this.processorProperties
-					.getDataSourceUserName());
+				properties.put("spring_datasource_username", this.processorProperties.getDataSourceUserName());
 			}
 			if (StringUtils.hasText(this.processorProperties.getDataSourcePassword())) {
-				properties.put("spring_datasource_password", this.processorProperties
-					.getDataSourcePassword());
+				properties.put("spring_datasource_password", this.processorProperties.getDataSourcePassword());
 			}
 			properties.put("payload", message);
 
-			TaskLaunchRequest request = new TaskLaunchRequest(
-				this.processorProperties.getUri(), null, properties, null,
-				this.processorProperties.getApplicationName());
+			TaskLaunchRequest request = new TaskLaunchRequest(this.processorProperties.getUri(), null, properties, null,
+					this.processorProperties.getApplicationName());
 
 			return MessageBuilder.withPayload(request).build();
 		};
 	}
+
 }

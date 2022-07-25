@@ -63,50 +63,53 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class JobConfiguration {
 
 	private static final int GRID_SIZE = 4;
+
 	// @checkstyle:off
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
+
 	@Autowired
 	public StepBuilderFactory stepBuilderFactory;
+
 	@Autowired
 	public DataSource dataSource;
+
 	@Autowired
 	public JobRepository jobRepository;
+
 	// @checkstyle:on
 	@Autowired
 	private ConfigurableApplicationContext context;
+
 	@Autowired
 	private DelegatingResourceLoader resourceLoader;
+
 	@Autowired
 	private Environment environment;
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
-		TaskRepository taskRepository, @Autowired(required = false) ThreadPoolTaskExecutor executor) throws Exception {
+			TaskRepository taskRepository, @Autowired(required = false) ThreadPoolTaskExecutor executor)
+			throws Exception {
 		Resource resource = this.resourceLoader
-			.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
+				.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
 
-		DeployerPartitionHandler partitionHandler =
-			new DeployerPartitionHandler(taskLauncher, jobExplorer, resource,
+		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource,
 				"workerStep", taskRepository, executor);
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
 		commandLineArgs.add("--spring.cloud.task.initialize-enabled=false");
 		commandLineArgs.add("--spring.batch.initializer.enabled=false");
-		partitionHandler
-			.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
-		partitionHandler
-			.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
+		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
+		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
 		partitionHandler.setMaxWorkers(2);
 		partitionHandler.setApplicationName("PartitionedBatchJobTask");
 
 		return partitionHandler;
 	}
 
-	@ConditionalOnProperty(  value="io.spring.asynchronous",
-		havingValue = "true",
-		matchIfMissing = false)
+	@ConditionalOnProperty(value = "io.spring.asynchronous", havingValue = "true", matchIfMissing = false)
 	@Bean
 	public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -145,8 +148,7 @@ public class JobConfiguration {
 
 	@Bean
 	@StepScope
-	public Tasklet workerTasklet(
-		final @Value("#{stepExecutionContext['partitionNumber']}") Integer partitionNumber) {
+	public Tasklet workerTasklet(final @Value("#{stepExecutionContext['partitionNumber']}") Integer partitionNumber) {
 
 		return new Tasklet() {
 			@Override
@@ -160,26 +162,20 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step1(PartitionHandler partitionHandler) throws Exception {
-		return this.stepBuilderFactory.get("step1")
-			.partitioner(workerStep().getName(), partitioner())
-			.step(workerStep())
-			.partitionHandler(partitionHandler)
-			.build();
+		return this.stepBuilderFactory.get("step1").partitioner(workerStep().getName(), partitioner())
+				.step(workerStep()).partitionHandler(partitionHandler).build();
 	}
 
 	@Bean
 	public Step workerStep() {
-		return this.stepBuilderFactory.get("workerStep")
-			.tasklet(workerTasklet(null))
-			.build();
+		return this.stepBuilderFactory.get("workerStep").tasklet(workerTasklet(null)).build();
 	}
 
 	@Bean
 	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
-		return this.jobBuilderFactory.get("partitionedJob" + random.nextInt())
-			.start(step1(partitionHandler))
-			.build();
+		return this.jobBuilderFactory.get("partitionedJob" + random.nextInt()).start(step1(partitionHandler)).build();
 	}
+
 }

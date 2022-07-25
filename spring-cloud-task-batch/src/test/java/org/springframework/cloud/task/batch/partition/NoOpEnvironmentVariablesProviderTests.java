@@ -37,13 +37,11 @@ public class NoOpEnvironmentVariablesProviderTests {
 
 	@Test
 	public void test() {
-		Map<String, String> environmentVariables = this.provider
-				.getEnvironmentVariables(null);
+		Map<String, String> environmentVariables = this.provider.getEnvironmentVariables(null);
 		assertThat(environmentVariables).isNotNull();
 		assertThat(environmentVariables.isEmpty()).isTrue();
 
-		Map<String, String> environmentVariables2 = this.provider
-				.getEnvironmentVariables(null);
+		Map<String, String> environmentVariables2 = this.provider.getEnvironmentVariables(null);
 		assertThat(environmentVariables == environmentVariables2).isTrue();
 	}
 

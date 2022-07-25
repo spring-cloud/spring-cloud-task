@@ -29,4 +29,5 @@ public class BatchJobApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BatchJobApplication.class, args);
 	}
+
 }

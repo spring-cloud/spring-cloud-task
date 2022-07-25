@@ -41,8 +41,8 @@ import org.springframework.context.annotation.PropertySource;
 @ConditionalOnBean(TaskLifecycleListener.class)
 @ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${spring.batch.job.jobName:}')")
 // @checkstyle:off
-@ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled",
-		havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.cloud.task.events", name = "enabled", havingValue = "true",
+		matchIfMissing = true)
 // @checkstyle:on
 @PropertySource("classpath:/org/springframework/cloud/task/application.properties")
 @AutoConfigureBefore(BindingServiceConfiguration.class)
@@ -55,8 +55,10 @@ public class TaskEventAutoConfiguration {
 	 */
 	@Configuration(proxyBeanMethods = false)
 	public static class ListenerConfiguration {
+
 		@Bean
-		public TaskExecutionListener taskEventEmitter(StreamBridge streamBridge, TaskEventProperties taskEventProperties) {
+		public TaskExecutionListener taskEventEmitter(StreamBridge streamBridge,
+				TaskEventProperties taskEventProperties) {
 			return new TaskExecutionListener() {
 				@Override
 				public void onTaskStartup(TaskExecution taskExecution) {

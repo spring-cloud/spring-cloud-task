@@ -39,7 +39,7 @@ public class SampleCommandLineRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("There are " + this.dataSources.size() +
-			" DataSources within this application");
+		System.out.println("There are " + this.dataSources.size() + " DataSources within this application");
 	}
+
 }

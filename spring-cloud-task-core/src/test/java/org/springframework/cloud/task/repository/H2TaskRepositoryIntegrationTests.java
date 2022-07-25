@@ -42,9 +42,8 @@ class H2TaskRepositoryIntegrationTests {
 	void testTaskRepository(ModeEnum mode) {
 		String connectionUrl = String.format("jdbc:h2:mem:%s;DB_CLOSE_DELAY=-1;MODE=%s", UUID.randomUUID(), mode);
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-			.withUserConfiguration(TestConfiguration.class)
-			.withBean(DataSource.class,
-				() -> new SimpleDriverDataSource(new org.h2.Driver(), connectionUrl, "sa", ""));
+				.withUserConfiguration(TestConfiguration.class).withBean(DataSource.class,
+						() -> new SimpleDriverDataSource(new org.h2.Driver(), connectionUrl, "sa", ""));
 
 		applicationContextRunner.run((context -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
@@ -55,6 +54,7 @@ class H2TaskRepositoryIntegrationTests {
 	@EnableTask
 	@ImportAutoConfiguration(SimpleTaskAutoConfiguration.class)
 	static class TestConfiguration {
+
 	}
 
 }

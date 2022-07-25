@@ -56,8 +56,7 @@ import org.springframework.jdbc.core.RowMapper;
 @Import(JDBCSingleStepDataSourceAutoConfiguration.class)
 public class JdbcCursorItemReaderAutoConfiguration {
 
-	private static final Log logger = LogFactory
-		.getLog(JdbcCursorItemReaderAutoConfiguration.class);
+	private static final Log logger = LogFactory.getLog(JdbcCursorItemReaderAutoConfiguration.class);
 
 	@Autowired
 	ApplicationContext applicationContext;
@@ -66,41 +65,34 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 	private final DataSource dataSource;
 
-	public JdbcCursorItemReaderAutoConfiguration(
-			JdbcCursorItemReaderProperties properties, DataSource dataSource) {
+	public JdbcCursorItemReaderAutoConfiguration(JdbcCursorItemReaderProperties properties, DataSource dataSource) {
 		this.properties = properties;
 		this.dataSource = dataSource;
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public JdbcCursorItemReader<Map<String, Object>> itemReader(@Autowired(required = false) RowMapper<Map<String, Object>> rowMapper,
-		@Autowired(required = false) PreparedStatementSetter preparedStatementSetter) {
+	public JdbcCursorItemReader<Map<String, Object>> itemReader(
+			@Autowired(required = false) RowMapper<Map<String, Object>> rowMapper,
+			@Autowired(required = false) PreparedStatementSetter preparedStatementSetter) {
 		DataSource readerDataSource = this.dataSource;
 		try {
-			readerDataSource = this.applicationContext.getBean("jdbcCursorItemReaderSpringDataSource", DataSource.class);
+			readerDataSource = this.applicationContext.getBean("jdbcCursorItemReaderSpringDataSource",
+					DataSource.class);
 		}
 		catch (Exception e) {
 			logger.info("Using Default Data Source for the JdbcCursorItemReader");
 
 		}
-		return new JdbcCursorItemReaderBuilder<Map<String, Object>>()
-				.name(this.properties.getName())
-				.currentItemCount(this.properties.getCurrentItemCount())
-				.dataSource(readerDataSource)
+		return new JdbcCursorItemReaderBuilder<Map<String, Object>>().name(this.properties.getName())
+				.currentItemCount(this.properties.getCurrentItemCount()).dataSource(readerDataSource)
 				.driverSupportsAbsolute(this.properties.isDriverSupportsAbsolute())
-				.fetchSize(this.properties.getFetchSize())
-				.ignoreWarnings(this.properties.isIgnoreWarnings())
-				.maxItemCount(this.properties.getMaxItemCount())
-				.maxRows(this.properties.getMaxRows())
-				.queryTimeout(this.properties.getQueryTimeout())
-				.saveState(this.properties.isSaveState()).sql(this.properties.getSql())
-				.rowMapper(rowMapper)
-				.preparedStatementSetter(preparedStatementSetter)
+				.fetchSize(this.properties.getFetchSize()).ignoreWarnings(this.properties.isIgnoreWarnings())
+				.maxItemCount(this.properties.getMaxItemCount()).maxRows(this.properties.getMaxRows())
+				.queryTimeout(this.properties.getQueryTimeout()).saveState(this.properties.isSaveState())
+				.sql(this.properties.getSql()).rowMapper(rowMapper).preparedStatementSetter(preparedStatementSetter)
 				.verifyCursorPosition(this.properties.isVerifyCursorPosition())
-				.useSharedExtendedConnection(
-						this.properties.isUseSharedExtendedConnection())
-				.build();
+				.useSharedExtendedConnection(this.properties.isUseSharedExtendedConnection()).build();
 	}
 
 	@Bean
@@ -109,16 +101,19 @@ public class JdbcCursorItemReaderAutoConfiguration {
 		return new MapRowMapper();
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable", havingValue = "true")
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable",
+			havingValue = "true")
 	@Bean(name = "jdbcCursorItemReaderDataSourceProperties")
 	@ConfigurationProperties("jdbccursoritemreader.datasource")
 	public DataSourceProperties jdbcCursorItemReaderDataSourceProperties() {
 		return new DataSourceProperties();
 	}
 
-	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable", havingValue = "true")
+	@ConditionalOnProperty(prefix = "spring.batch.job.jdbccursoritemreader.datasource", name = "enable",
+			havingValue = "true")
 	@Bean(name = "jdbcCursorItemReaderSpringDataSource")
-	public DataSource readerDataSource(@Qualifier("jdbcCursorItemReaderDataSourceProperties")DataSourceProperties readerDataSourceProperties) {
+	public DataSource readerDataSource(
+			@Qualifier("jdbcCursorItemReaderDataSourceProperties") DataSourceProperties readerDataSourceProperties) {
 		DataSource result = readerDataSourceProperties.initializeDataSourceBuilder().build();
 		return result;
 	}

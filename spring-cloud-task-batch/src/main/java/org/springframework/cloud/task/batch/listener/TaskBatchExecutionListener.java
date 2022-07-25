@@ -32,7 +32,7 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  */
-public class TaskBatchExecutionListener implements JobExecutionListener,  Ordered {
+public class TaskBatchExecutionListener implements JobExecutionListener, Ordered {
 
 	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
 
@@ -57,12 +57,10 @@ public class TaskBatchExecutionListener implements JobExecutionListener,  Ordere
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
 		if (this.taskExecution == null) {
-			logger.warn(
-					"This job was executed outside the scope of a task but still used the task listener.");
+			logger.warn("This job was executed outside the scope of a task but still used the task listener.");
 		}
 		else {
-			logger.info(String.format(
-					"The job execution id %s was run within the task execution %s",
+			logger.info(String.format("The job execution id %s was run within the task execution %s",
 					jobExecution.getId(), this.taskExecution.getExecutionId()));
 			this.taskBatchDao.saveRelationship(this.taskExecution, jobExecution);
 		}
@@ -72,4 +70,5 @@ public class TaskBatchExecutionListener implements JobExecutionListener,  Ordere
 	public int getOrder() {
 		return Ordered.HIGHEST_PRECEDENCE;
 	}
+
 }

@@ -40,10 +40,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Michael Minella
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnBean({Job.class, TaskLifecycleListener.class})
-@ConditionalOnProperty(
-		name = { "spring.cloud.task.batch.listener.enable",
-				"spring.cloud.task.batch.listener.enabled" },
+@ConditionalOnBean({ Job.class, TaskLifecycleListener.class })
+@ConditionalOnProperty(name = { "spring.cloud.task.batch.listener.enable", "spring.cloud.task.batch.listener.enabled" },
 		havingValue = "true", matchIfMissing = true)
 public class TaskBatchAutoConfiguration {
 
@@ -68,15 +66,13 @@ public class TaskBatchAutoConfiguration {
 		private TaskProperties taskProperties;
 
 		@Bean
-		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(
-				TaskExplorer taskExplorer) {
+		public TaskBatchExecutionListenerFactoryBean taskBatchExecutionListener(TaskExplorer taskExplorer) {
 			TaskConfigurer taskConfigurer = null;
 			if (!this.context.getBeansOfType(TaskConfigurer.class).isEmpty()) {
 				taskConfigurer = this.context.getBean(TaskConfigurer.class);
 			}
 			if (taskConfigurer != null && taskConfigurer.getTaskDataSource() != null) {
-				return new TaskBatchExecutionListenerFactoryBean(
-						taskConfigurer.getTaskDataSource(), taskExplorer,
+				return new TaskBatchExecutionListenerFactoryBean(taskConfigurer.getTaskDataSource(), taskExplorer,
 						this.taskProperties.getTablePrefix());
 			}
 			else {

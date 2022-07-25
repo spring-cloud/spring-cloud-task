@@ -68,12 +68,19 @@ public class TaskEventProperties {
 	private int skipOrder = Ordered.LOWEST_PRECEDENCE;
 
 	private String jobExecutionEventBindingName = "job-execution-events";
+
 	private String skipEventBindingName = "skip-events";
+
 	private String chunkEventBindingName = "chunk-events";
+
 	private String itemProcessEventBindingName = "item-process-events";
+
 	private String itemReadEventBindingName = "item-read-events";
+
 	private String itemWriteEventBindingName = "item-write-events";
+
 	private String stepExecutionEventBindingName = "step-execution-events";
+
 	private String taskEventBindingName = "task-events";
 
 	public int getJobExecutionOrder() {
@@ -131,7 +138,6 @@ public class TaskEventProperties {
 	public void setSkipOrder(int skipOrder) {
 		this.skipOrder = skipOrder;
 	}
-
 
 	public String getJobExecutionEventBindingName() {
 		return jobExecutionEventBindingName;
@@ -196,4 +202,5 @@ public class TaskEventProperties {
 	public void setTaskEventBindingName(String taskEventBindingName) {
 		this.taskEventBindingName = taskEventBindingName;
 	}
+
 }

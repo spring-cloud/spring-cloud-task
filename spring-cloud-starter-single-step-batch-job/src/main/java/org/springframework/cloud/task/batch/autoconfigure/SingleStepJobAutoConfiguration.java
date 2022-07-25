@@ -57,9 +57,8 @@ public class SingleStepJobAutoConfiguration {
 	@Autowired(required = false)
 	private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
 
-	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory,
-			StepBuilderFactory stepBuilderFactory, SingleStepJobProperties properties,
-			ApplicationContext context) {
+	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
+			SingleStepJobProperties properties, ApplicationContext context) {
 
 		validateProperties(properties);
 
@@ -72,27 +71,23 @@ public class SingleStepJobAutoConfiguration {
 		Assert.hasText(properties.getJobName(), "A job name is required");
 		Assert.hasText(properties.getStepName(), "A step name is required");
 		Assert.notNull(properties.getChunkSize(), "A chunk size is required");
-		Assert.isTrue(properties.getChunkSize() > 0,
-				"A chunk size greater than zero is required");
+		Assert.isTrue(properties.getChunkSize() > 0, "A chunk size greater than zero is required");
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job", name = "job-name")
-	public Job job(ItemReader<Map<String, Object>> itemReader,
-			ItemWriter<Map<String, Object>> itemWriter) {
+	public Job job(ItemReader<Map<String, Object>> itemReader, ItemWriter<Map<String, Object>> itemWriter) {
 
 		SimpleStepBuilder<Map<String, Object>, Map<String, Object>> stepBuilder = this.stepBuilderFactory
 				.get(this.properties.getStepName())
-				.<Map<String, Object>, Map<String, Object>>chunk(
-						this.properties.getChunkSize())
-				.reader(itemReader);
+				.<Map<String, Object>, Map<String, Object>>chunk(this.properties.getChunkSize()).reader(itemReader);
 
 		stepBuilder.processor(this.itemProcessor);
 
 		Step step = stepBuilder.writer(itemWriter).build();
 
-		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step)
-				.build();
+		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step).build();
 	}
+
 }
