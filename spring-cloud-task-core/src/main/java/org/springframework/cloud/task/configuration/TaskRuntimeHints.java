@@ -57,7 +57,6 @@ public class TaskRuntimeHints implements RuntimeHintsRegistrar {
 		hints.proxies().registerJdkProxy(builder -> builder.proxiedInterfaces(TaskExplorer.class)
 				.proxiedInterfaces(SpringProxy.class, Advised.class, DecoratingProxy.class));
 
-		// Experimental - These can be removed in the future possibly.
 		if (!ClassUtils.isPresent("com.zaxxer.hikari.HikariDataSource", classLoader)) {
 			return;
 		}
