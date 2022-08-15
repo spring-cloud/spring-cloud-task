@@ -24,9 +24,12 @@ import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
+import org.springframework.aot.hint.support.RuntimeHintsUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.core.DecoratingProxy;
+import org.springframework.core.annotation.SynthesizedAnnotation;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -52,10 +55,15 @@ public class TaskRuntimeHints implements RuntimeHintsRegistrar {
 				TypeReference.of("org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer"),
 				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
 						MemberCategory.INVOKE_DECLARED_METHODS));
+
 		hints.proxies().registerJdkProxy(builder -> builder.proxiedInterfaces(TaskRepository.class)
 				.proxiedInterfaces(SpringProxy.class, Advised.class, DecoratingProxy.class));
 		hints.proxies().registerJdkProxy(builder -> builder.proxiedInterfaces(TaskExplorer.class)
 				.proxiedInterfaces(SpringProxy.class, Advised.class, DecoratingProxy.class));
+
+		// Remove Qualifier hints once SCSt can be natively compiled.
+		hints.reflection().registerType(Qualifier.class, RuntimeHintsUtils.ANNOTATION_HINT);
+		hints.proxies().registerJdkProxy(Qualifier.class, SynthesizedAnnotation.class);
 
 		if (!ClassUtils.isPresent("com.zaxxer.hikari.HikariDataSource", classLoader)) {
 			return;

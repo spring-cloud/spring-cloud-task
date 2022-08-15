@@ -33,6 +33,7 @@ import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
+import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -80,8 +81,8 @@ public class SimpleTaskAutoConfiguration {
 	private TaskExplorer taskExplorer;
 
 	@Bean
-	public TaskRepository taskRepository() {
-		return this.taskRepository;
+	public SimpleTaskRepository taskRepository() {
+		return (SimpleTaskRepository) this.taskRepository;
 	}
 
 	@Bean
