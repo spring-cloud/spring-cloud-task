@@ -111,40 +111,6 @@
 					<plugin>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
-						<dependencies>
-							<dependency>
-								<groupId>org.asciidoctor</groupId>
-								<artifactId>asciidoctorj-epub3</artifactId>
-								<version>${asciidoctorj.pdf.version}</version>
-							</dependency>
-						</dependencies>
-						<executions>
-							<!-- Why Michael, why?! -->
-							<execution>
-								<id>generate-epub</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>process-asciidoc</goal>
-								</goals>
-								<configuration>
-									<sourceDocumentExtensions>
-										<sourceDocumentExtension>.epubadoc</sourceDocumentExtension>
-									</sourceDocumentExtensions>
-									<outputDirectory>
-										${project.build.directory}/generated-docs/reference/epub
-									</outputDirectory>
-									<backend>epub3</backend>
-									<sourceHighlighter>coderay</sourceHighlighter>
-									<attributes>
-										<icons>font</icons>
-										<pagenums />
-										<sectnums />
-										<toc />
-										<project-version>${project.version}</project-version>
-									</attributes>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -156,6 +122,9 @@
 									<goal>run</goal>
 								</goals>
 								<configuration>
+									<target>
+										<mkdir dir="${project.basedir}/target/generated-docs/apidocs"/>
+									</target>
 									<target>
 										<copy todir="${project.basedir}/target/generated-docs/apidocs">
 											<fileset dir="${maven.multiModuleProjectDirectory}/target/site/apidocs"/>
