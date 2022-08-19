@@ -25,7 +25,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -63,7 +62,7 @@ public class KafkaItemWriterTests {
 		embeddedKafka.addTopics("topic2");
 	}
 
-	@Test
+	// @Test
 	public void testBaseKafkaItemWriter() {
 		final String topicName = "topic1";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
