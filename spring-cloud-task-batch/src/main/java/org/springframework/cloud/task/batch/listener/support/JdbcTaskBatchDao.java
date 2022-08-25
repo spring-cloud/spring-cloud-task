@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,14 @@ import org.springframework.util.StringUtils;
  */
 public class JdbcTaskBatchDao implements TaskBatchDao {
 
-	private static final String INSERT_STATEMENT = "INSERT INTO %PREFIX%TASK_BATCH VALUES(?, ?)";
+	private static final String INSERT_STATEMENT = "INSERT INTO %PREFIX%TASK_BATCH (TASK_EXECUTION_ID, JOB_EXECUTION_ID) VALUES (?, ?)";
 
 	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
-	private JdbcOperations jdbcTemplate;
+	private final JdbcOperations jdbcTemplate;
 
 	/**
-	 * Intializes the JdbcTaskBatchDao.
+	 * Initializes the JdbcTaskBatchDao.
 	 * @param dataSource {@link DataSource} where the task batch table resides.
 	 * @param tablePrefix the table prefix to use for this dao.
 	 */
@@ -55,7 +55,7 @@ public class JdbcTaskBatchDao implements TaskBatchDao {
 	}
 
 	/**
-	 * Intializes the JdbcTaskBatchDao and defaults the table prefix to
+	 * Initializes the JdbcTaskBatchDao and defaults the table prefix to
 	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 * @param dataSource {@link DataSource} where the task batch table resides.
 	 */
