@@ -611,9 +611,9 @@ you wish to enable the `FlatFileItemReader` and `FlatFileItemWriter` in Maven it
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
             <execution>
-            <id>aot-generate</id>
+            <id>process-aot</id>
             <goals>
-                <goal>aot-generate</goal>
+                <goal>process-aot</goal>
             </goals>
             </execution>
         </executions>
