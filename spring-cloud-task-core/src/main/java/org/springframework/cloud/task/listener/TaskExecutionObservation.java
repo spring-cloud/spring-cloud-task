@@ -54,8 +54,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 * Task name measurement.
 		 */
 		TASK_NAME {
-			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.name";
 			}
 		},
@@ -65,7 +64,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_EXECUTION_ID {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.execution.id";
 			}
 		},
@@ -75,7 +74,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_PARENT_EXECUTION_ID {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.parent.execution.id";
 			}
 		},
@@ -85,7 +84,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_EXTERNAL_EXECUTION_ID {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.external.execution.id";
 			}
 		},
@@ -94,7 +93,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_EXIT_CODE {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.exit.code";
 			}
 		},
@@ -104,7 +103,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_STATUS {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.status";
 			}
 		},
@@ -114,7 +113,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_ORG_NAME {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.org.name";
 			}
 		},
@@ -124,7 +123,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_SPACE_ID {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.space.id";
 			}
 		},
@@ -134,7 +133,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_SPACE_NAME {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.space.name";
 			}
 		},
@@ -144,7 +143,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_APP_NAME {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.app.name";
 			}
 		},
@@ -154,7 +153,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_APP_ID {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.app.id";
 			}
 		},
@@ -164,7 +163,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_APP_VERSION {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.app.version";
 			}
 		},
@@ -174,7 +173,7 @@ public enum TaskExecutionObservation implements DocumentedObservation {
 		 */
 		TASK_CF_INSTANCE_INDEX {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "cf.instance.index";
 			}
 		}

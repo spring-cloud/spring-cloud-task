@@ -29,7 +29,7 @@ public class DefaultTaskObservationConvention implements TaskObservationConventi
 
 	@Override
 	public KeyValues getLowCardinalityKeyValues(TaskObservationContext context) {
-		return KeyValues.of(TaskDocumentedObservation.TaskRunnerTags.BEAN_NAME.of(context.getBeanName()));
+		return KeyValues.of(TaskDocumentedObservation.TaskRunnerTags.BEAN_NAME.withValue(context.getBeanName()));
 	}
 
 	@Override

@@ -33,6 +33,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
+import org.springframework.batch.item.Chunk;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -285,12 +286,12 @@ public class EventListenerTests {
 		return new JobExecution(jobInstance, 1L, new JobParameters());
 	}
 
-	private List<String> getSampleList() {
+	private Chunk<String> getSampleList() {
 		List<String> testList = new ArrayList<>(3);
 		testList.add("Hello");
 		testList.add("World");
 		testList.add("foo");
-		return testList;
+		return new Chunk<String>(testList);
 	}
 
 	private ChunkContext getChunkContext() {

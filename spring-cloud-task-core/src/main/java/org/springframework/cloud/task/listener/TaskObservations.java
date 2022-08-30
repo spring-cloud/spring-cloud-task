@@ -75,31 +75,30 @@ public class TaskObservations {
 				.observation(this.customObservationConvention, new DefaultTaskExecutionObservationConvention(),
 						this.taskObservationContext, this.observationRegistry)
 				.contextualName(String.valueOf(taskExecution.getExecutionId()))
-				.keyValuesProvider(this.observationsProvider)
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(),
+				.observationConvention(this.observationsProvider)
+				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(),
 						getValueOrDefault(taskExecution.getTaskName()))
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(),
+				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(),
 						"" + taskExecution.getExecutionId())
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.getKeyName(),
+				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(),
 						(getValueOrDefault(taskExecution.getParentExecutionId())))
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.getKeyName(),
+				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.asString(),
 						(getValueOrDefault(taskExecution.getExternalExecutionId())));
 
 		if (taskObservationCloudKeyValues != null) {
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.asString(),
 					this.taskObservationCloudKeyValues.getOrganizationName());
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.asString(),
 					this.taskObservationCloudKeyValues.getSpaceId());
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.asString(),
 					this.taskObservationCloudKeyValues.getSpaceName());
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.asString(),
 					this.taskObservationCloudKeyValues.getApplicationId());
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.asString(),
 					this.taskObservationCloudKeyValues.getApplicationName());
-			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.asString(),
 					this.taskObservationCloudKeyValues.getApplicationVersion());
-			observation.lowCardinalityKeyValue(
-					TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.getKeyName(),
+			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.asString(),
 					this.taskObservationCloudKeyValues.getInstanceIndex());
 		}
 		observation.start();

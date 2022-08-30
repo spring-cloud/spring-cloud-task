@@ -53,7 +53,7 @@ enum TaskDocumentedObservation implements DocumentedObservation {
 		 */
 		BEAN_NAME {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "spring.cloud.task.runner.bean-name";
 			}
 		}

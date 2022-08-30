@@ -16,8 +16,7 @@
 
 package configuration;
 
-import java.util.List;
-
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 
 /**
@@ -28,7 +27,7 @@ public class SkipItemWriter implements ItemWriter {
 	int failCount = 0;
 
 	@Override
-	public void write(List items) throws Exception {
+	public void write(Chunk items) throws Exception {
 		if (this.failCount < 2) {
 			this.failCount++;
 			throw new IllegalStateException("Writer FOOBAR");

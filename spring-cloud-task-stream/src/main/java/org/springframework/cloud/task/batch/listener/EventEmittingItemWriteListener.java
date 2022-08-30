@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.core.ItemWriteListener;
+import org.springframework.batch.item.Chunk;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
@@ -33,7 +32,7 @@ import org.springframework.util.Assert;
  * channel.
  *
  * Each method provides an informational message.
- * {@link ItemWriteListener#onWriteError(Exception, List)} provides a message as well as
+ * {@link ItemWriteListener#onWriteError(Exception, Chunk)} provides a message as well as
  * the exception's message via the {@link BatchJobHeaders#BATCH_EXCEPTION} message header.
  *
  * @author Glenn Renfro
@@ -64,13 +63,13 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 	}
 
 	@Override
-	public void beforeWrite(List items) {
+	public void beforeWrite(Chunk items) {
 		this.messagePublisher.publish(this.properties.getItemWriteEventBindingName(),
 				items.size() + " items to be written.");
 	}
 
 	@Override
-	public void afterWrite(List items) {
+	public void afterWrite(Chunk items) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing afterWrite: " + items);
 		}
@@ -79,7 +78,7 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 	}
 
 	@Override
-	public void onWriteError(Exception exception, List items) {
+	public void onWriteError(Exception exception, Chunk items) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onWriteError: " + exception.getMessage(), exception);
 		}

@@ -21,7 +21,7 @@ import java.util.Date;
 
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.observation.TimerObservationHandler;
+import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.tck.MeterRegistryAssert;
 import io.micrometer.observation.Observation;
@@ -63,7 +63,7 @@ public class TaskObservationsTests {
 	public void before() {
 		this.simpleMeterRegistry = new SimpleMeterRegistry();
 		this.observationRegistry = TestObservationRegistry.create();
-		ObservationHandler<Observation.Context> timerObservationHandler = new TimerObservationHandler(
+		ObservationHandler<Observation.Context> timerObservationHandler = new DefaultMeterObservationHandler(
 				this.simpleMeterRegistry);
 		this.observationRegistry.observationConfig().observationHandler(timerObservationHandler);
 		this.taskObservations = new TaskObservations(this.observationRegistry, null, null);
@@ -88,7 +88,7 @@ public class TaskObservationsTests {
 		verifyDefaultKeyValues();
 		TaskExecutionObservation.TASK_ACTIVE.getDefaultConvention();
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags("spring.cloud.task", Tags
-				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), TaskObservations.STATUS_SUCCESS));
+				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.asString(), TaskObservations.STATUS_SUCCESS));
 
 		verifyLongTaskTimerAfterStop(longTaskTimer, "myTask72", "123");
 	}
@@ -109,22 +109,22 @@ public class TaskObservationsTests {
 
 		// Test Timer
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), UNKNOWN));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(), UNKNOWN));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(), "123"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(), "123"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.getKeyName(), UNKNOWN));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(), UNKNOWN));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.getKeyName(), UNKNOWN));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.asString(), UNKNOWN));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(), "0"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.asString(), "0"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX, Tags
-				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), TaskObservations.STATUS_SUCCESS));
+				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.asString(), TaskObservations.STATUS_SUCCESS));
 
 		verifyLongTaskTimerAfterStop(longTaskTimer, "unknown", "123");
 
@@ -146,19 +146,19 @@ public class TaskObservationsTests {
 		taskObservations.onTaskEnd(taskExecution);
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), "myTask72"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(), "myTask72"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(), "123"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(), "123"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.getKeyName(), "-1"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(), "-1"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(), "1"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.asString(), "1"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX, Tags
-				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), TaskObservations.STATUS_FAILURE));
+				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.asString(), TaskObservations.STATUS_FAILURE));
 
 		verifyLongTaskTimerAfterStop(longTaskTimer, "myTask72", "123");
 	}
@@ -192,29 +192,29 @@ public class TaskObservationsTests {
 		verifyDefaultKeyValues();
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.getKeyName(), ORGANIZATION_NAME));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.asString(), ORGANIZATION_NAME));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.getKeyName(), SPACE_ID));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.asString(), SPACE_ID));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.getKeyName(), SPACE_NAME));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.asString(), SPACE_NAME));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.getKeyName(), APPLICATION_NAME));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.asString(), APPLICATION_NAME));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.getKeyName(), APPLICATION_ID));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.asString(), APPLICATION_ID));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.getKeyName(), APPLICATION_VERSION));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.asString(), APPLICATION_VERSION));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.getKeyName(), INSTANCE_INDEX));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.asString(), INSTANCE_INDEX));
 
 		// Test Timer
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), "myTask72"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(), "myTask72"));
 
 		verifyLongTaskTimerAfterStop(longTaskTimer, "myTask72", "123");
 	}
@@ -242,29 +242,29 @@ public class TaskObservationsTests {
 			verifyDefaultKeyValues();
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.getKeyName(), "default"));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.asString(), "default"));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.getKeyName(), UNKNOWN));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_ID.asString(), UNKNOWN));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.getKeyName(), UNKNOWN));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_SPACE_NAME.asString(), UNKNOWN));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.getKeyName(), UNKNOWN));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_NAME.asString(), UNKNOWN));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.getKeyName(), UNKNOWN));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_ID.asString(), UNKNOWN));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.getKeyName(), UNKNOWN));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_APP_VERSION.asString(), UNKNOWN));
 
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.getKeyName(), "0"));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_CF_INSTANCE_INDEX.asString(), "0"));
 
 			// Test Timer
 			MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), "myTask72"));
+					Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(), "myTask72"));
 
 			verifyLongTaskTimerAfterStop(longTaskTimer, "myTask72", "123");
 		});
@@ -286,9 +286,9 @@ public class TaskObservationsTests {
 		System.out.println(simpleMeterRegistry.getMetersAsString());
 		assertThat(longTaskTimer).withFailMessage("LongTask timer should be created on Task start").isNotNull();
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(1);
-		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName()))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString()))
 				.isEqualTo(taskName);
-		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName()))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString()))
 				.isEqualTo(executionId);
 		return longTaskTimer;
 	}
@@ -296,27 +296,27 @@ public class TaskObservationsTests {
 	private void verifyDefaultKeyValues() {
 		// Test Timer
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName(), "myTask72"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(), "myTask72"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName(), "123"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(), "123"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.getKeyName(), "-1"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(), "-1"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX,
-				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.getKeyName(), "0"));
+				Tags.of(TaskExecutionObservation.TaskKeyValues.TASK_EXIT_CODE.asString(), "0"));
 
 		MeterRegistryAssert.assertThat(this.simpleMeterRegistry).hasTimerWithNameAndTags(PREFIX, Tags
-				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.getKeyName(), TaskObservations.STATUS_SUCCESS));
+				.of(TaskExecutionObservation.TaskKeyValues.TASK_STATUS.asString(), TaskObservations.STATUS_SUCCESS));
 	}
 
 	private void verifyLongTaskTimerAfterStop(LongTaskTimer longTaskTimer, String taskName, String executionId) {
 		// Test Long Task Timer after the task has completed.
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(0);
-		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_NAME.getKeyName()))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString()))
 				.isEqualTo(taskName);
-		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.getKeyName()))
+		assertThat(longTaskTimer.getId().getTag(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString()))
 				.isEqualTo(executionId);
 	}
 

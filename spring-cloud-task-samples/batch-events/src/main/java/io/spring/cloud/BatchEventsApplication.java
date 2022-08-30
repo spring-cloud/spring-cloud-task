@@ -27,6 +27,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
@@ -80,7 +81,7 @@ public class BatchEventsApplication {
 						}
 					}).writer(new ItemWriter<String>() {
 						@Override
-						public void write(List<? extends String> items) throws Exception {
+						public void write(Chunk<? extends String> items) throws Exception {
 							for (String item : items) {
 								System.out.println(">> " + item);
 							}
