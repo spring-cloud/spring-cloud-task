@@ -17,6 +17,7 @@
 		<asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
 
 		<!-- Observability -->
+		<micrometer-docs-generator.version>1.0.0-M6</micrometer-docs-generator.version>
 		<micrometer-docs-generator.inputPath>${maven.multiModuleProjectDirectory}/spring-cloud-task-core/</micrometer-docs-generator.inputPath>
 		<micrometer-docs-generator.inclusionPattern>.*</micrometer-docs-generator.inclusionPattern>
 		<micrometer-docs-generator.outputPath>${maven.multiModuleProjectDirectory}/target/</micrometer-docs-generator.outputPath>
@@ -94,12 +95,16 @@
 								</groupId>
 								<artifactId>micrometer-docs-generator-spans</artifactId>
 								<type>jar</type>
+								<version>${micrometer-docs-generator.version}
+								</version>
 							</dependency>
 							<dependency>
 								<groupId>io.micrometer
 								</groupId>
 								<artifactId>micrometer-docs-generator-metrics</artifactId>
 								<type>jar</type>
+								<version>${micrometer-docs-generator.version}
+								</version>
 							</dependency>
 						</dependencies>
 					</plugin>

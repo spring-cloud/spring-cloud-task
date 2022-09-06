@@ -55,7 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FlatFileItemReaderAutoConfigurationTests {
 
 	/**
-	 * Contents of the file to be read (included here because it's UTF-16):
+	 * Contents of the file to be read (included here because it's UTF-16).
 	 *
 	 * <pre>
 	 * 1@2@3@4@5@six
@@ -219,7 +219,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	}
 
 	/**
-	 * This test requires an input file with an even number of records
+	 * This test requires an input file with an even number of records.
 	 */
 	@Test
 	public void testCustomRecordSeparatorAndSkippedLines() {
