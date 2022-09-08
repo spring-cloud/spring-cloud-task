@@ -61,6 +61,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -188,6 +189,9 @@ public class TaskJobLauncherApplicationRunnerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job").start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
@@ -196,7 +200,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 					System.out.println("Executed");
 					return RepeatStatus.FINISHED;
 				}
-			}).build()).build();
+			}).transactionManager(transactionManager).build()).build();
 		}
 
 	}
@@ -215,6 +219,9 @@ public class TaskJobLauncherApplicationRunnerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Job jobFail() {
 			return this.jobBuilderFactory.get("jobA").start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
@@ -223,7 +230,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 					System.out.println("Executed");
 					throw new IllegalStateException("WHOOPS");
 				}
-			}).build()).build();
+			}).transactionManager(transactionManager).build()).build();
 		}
 
 		@Bean
@@ -235,7 +242,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
-					}).build()).build();
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 	}

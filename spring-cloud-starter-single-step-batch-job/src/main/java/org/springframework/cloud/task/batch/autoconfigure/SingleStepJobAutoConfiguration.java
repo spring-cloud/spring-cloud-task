@@ -35,6 +35,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
 /**
@@ -53,6 +54,9 @@ public class SingleStepJobAutoConfiguration {
 	private StepBuilderFactory stepBuilderFactory;
 
 	private SingleStepJobProperties properties;
+
+	@Autowired
+	PlatformTransactionManager transactionManager;
 
 	@Autowired(required = false)
 	private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
@@ -85,7 +89,7 @@ public class SingleStepJobAutoConfiguration {
 
 		stepBuilder.processor(this.itemProcessor);
 
-		Step step = stepBuilder.writer(itemWriter).build();
+		Step step = stepBuilder.writer(itemWriter).transactionManager(this.transactionManager).build();
 
 		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step).build();
 	}

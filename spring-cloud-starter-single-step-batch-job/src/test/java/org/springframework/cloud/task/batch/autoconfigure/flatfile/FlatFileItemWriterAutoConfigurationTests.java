@@ -40,6 +40,7 @@ import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.batch.test.AssertFile;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -52,6 +53,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.FileCopyUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -363,6 +365,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class DelimitedJobConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
 
 			List<Map<String, Object>> items = new ArrayList<>(3);
@@ -379,6 +386,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	@Configuration
 	@EnableBatchProcessing
 	public static class LineAggregatorConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
@@ -402,6 +414,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	@Configuration
 	@EnableBatchProcessing
 	public static class HeaderFooterConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
@@ -432,6 +449,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class FieldExtractorConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
 
 			List<Map<String, Object>> items = new ArrayList<>(3);
@@ -460,6 +482,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	public static class FormattedJobConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
 
 			List<Map<String, Object>> items = new ArrayList<>(3);
@@ -476,6 +503,11 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	@Configuration
 	@EnableBatchProcessing
 	public static class FormattedFieldExtractorJobConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public FieldExtractor<Map<String, Object>> lineAggregator() {

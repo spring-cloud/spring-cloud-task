@@ -98,9 +98,9 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	public void init() {
 		this.transactionManager = new ResourcelessTransactionManager();
 		this.jobs = new JobBuilderFactory(this.jobRepository);
-		this.steps = new StepBuilderFactory(this.jobRepository, this.transactionManager);
+		this.steps = new StepBuilderFactory(this.jobRepository);
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
-		this.step = this.steps.get("step").tasklet(tasklet).build();
+		this.step = this.steps.get("step").tasklet(tasklet).transactionManager(this.transactionManager).build();
 		this.job = this.jobs.get("job").start(this.step).build();
 		this.runner = new TaskJobLauncherApplicationRunner(this.jobLauncher, this.jobExplorer, this.jobRepository,
 				new TaskBatchProperties());
@@ -138,7 +138,9 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void runDifferentInstances() throws Exception {
-		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build()).build();
+		this.job = this.jobs.get("job").start(
+				this.steps.get("step").tasklet(throwingTasklet()).transactionManager(this.transactionManager).build())
+				.build();
 		// start a job instance
 		JobParameters jobParameters = new JobParametersBuilder().addString("name", "foo").toJobParameters();
 		runFailedJob(jobParameters);
@@ -152,9 +154,10 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionOnNonRestartableJob() throws Exception {
-		this.job = this.jobs.get("job").preventRestart()
-				.start(this.steps.get("step").tasklet(throwingTasklet()).build()).incrementer(new RunIdIncrementer())
-				.build();
+		this.job = this.jobs
+				.get("job").preventRestart().start(this.steps.get("step").tasklet(throwingTasklet())
+						.transactionManager(this.transactionManager).build())
+				.incrementer(new RunIdIncrementer()).build();
 		runFailedJob(new JobParameters());
 		runFailedJob(new JobParameters());
 		// A failed job that is not restartable does not re-use the job params of
@@ -171,7 +174,9 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithNonIdentifyingParameters() throws Exception {
-		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
+		this.job = this.jobs
+				.get("job").start(this.steps.get("step").tasklet(throwingTasklet())
+						.transactionManager(this.transactionManager).build())
 				.incrementer(new RunIdIncrementer()).build();
 		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
 				.toJobParameters();
@@ -184,7 +189,9 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution() throws Exception {
-		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
+		this.job = this.jobs
+				.get("job").start(this.steps.get("step").tasklet(throwingTasklet())
+						.transactionManager(this.transactionManager).build())
 				.incrementer(new RunIdIncrementer()).build();
 		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
 				.toJobParameters();

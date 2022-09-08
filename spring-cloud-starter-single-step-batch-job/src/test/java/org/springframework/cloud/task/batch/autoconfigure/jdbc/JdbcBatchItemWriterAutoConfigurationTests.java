@@ -40,6 +40,7 @@ import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -58,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -264,6 +266,11 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	public static class DelimitedJobConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {
 
 			List<Map<String, Object>> items = new ArrayList<>(3);
@@ -280,6 +287,11 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	@Configuration
 	@EnableBatchProcessing
 	public static class DelimitedDifferentKeyNameJobConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {

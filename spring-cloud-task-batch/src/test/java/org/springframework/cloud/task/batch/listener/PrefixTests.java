@@ -28,6 +28,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -77,7 +78,7 @@ public class PrefixTests {
 					.start(stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).build()).build();
+					}).transactionManager(new ResourcelessTransactionManager()).build()).build();
 		}
 
 		@Bean

@@ -25,6 +25,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -33,6 +34,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -47,6 +49,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +65,7 @@ public class KafkaItemWriterTests {
 		embeddedKafka.addTopics("topic2");
 	}
 
-	// @Test
+	@Test
 	public void testBaseKafkaItemWriter() {
 		final String topicName = "topic1";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
@@ -118,6 +121,11 @@ public class KafkaItemWriterTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class CustomMappingConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {

@@ -38,6 +38,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @EnableTask
 @SpringBootApplication
@@ -59,6 +60,9 @@ public class BatchEventsApplication {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Step step1() {
 			return this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
@@ -67,7 +71,7 @@ public class BatchEventsApplication {
 					System.out.println("Tasklet has run");
 					return RepeatStatus.FINISHED;
 				}
-			}).build();
+			}).transactionManager(transactionManager).build();
 		}
 
 		@Bean
@@ -86,7 +90,7 @@ public class BatchEventsApplication {
 								System.out.println(">> " + item);
 							}
 						}
-					}).build();
+					}).transactionManager(transactionManager).build();
 		}
 
 		@Bean

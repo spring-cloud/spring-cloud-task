@@ -47,6 +47,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -58,6 +59,7 @@ import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -189,6 +191,11 @@ public class AmqpItemWriterAutoConfigurationTests {
 	}
 
 	public static class ItemWriterConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public RowMapper<Map<String, Object>> rowMapper() {

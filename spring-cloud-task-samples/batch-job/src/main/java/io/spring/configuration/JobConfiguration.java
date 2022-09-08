@@ -29,6 +29,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Michael Minella
@@ -44,6 +45,9 @@ public class JobConfiguration {
 	@Autowired
 	public StepBuilderFactory stepBuilderFactory;
 
+	@Autowired
+	public PlatformTransactionManager transactionManager;
+
 	@Bean
 	public Job job1() {
 		return this.jobBuilderFactory.get("job1").start(this.stepBuilderFactory.get("job1step1").tasklet(new Tasklet() {
@@ -52,7 +56,7 @@ public class JobConfiguration {
 				logger.info("Job1 was run");
 				return RepeatStatus.FINISHED;
 			}
-		}).build()).build();
+		}).transactionManager(transactionManager).build()).build();
 	}
 
 }

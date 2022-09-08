@@ -31,6 +31,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.item.support.ListItemWriter;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -38,6 +39,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -155,6 +157,11 @@ public class SingleStepJobAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class SimpleConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemReader<Map<String, Object>> itemReader() {

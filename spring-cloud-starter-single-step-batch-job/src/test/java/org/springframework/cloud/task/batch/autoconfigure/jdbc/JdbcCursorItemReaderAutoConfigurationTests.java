@@ -36,6 +36,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.support.ListItemWriter;
 import org.springframework.batch.item.util.ExecutionContextUserSupport;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -52,6 +53,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -300,6 +302,11 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 			JDBCSingleStepDataSourceAutoConfiguration.class })
 	@Configuration
 	public static class TaskLauncherConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		private static Server defaultServer;
 

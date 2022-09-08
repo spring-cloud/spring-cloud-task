@@ -36,6 +36,7 @@ import org.springframework.batch.item.file.separator.RecordSeparatorPolicy;
 import org.springframework.batch.item.file.transform.DefaultFieldSet;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.support.ListItemWriter;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.cloud.task.batch.autoconfigure.RangeConverter;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -307,6 +309,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public static class CustomMappingConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
@@ -329,6 +336,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	public static class JobConfiguration {
 
 		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
 		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
 		}
@@ -338,6 +350,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class RecordSeparatorAndSkippedLinesJobConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public RecordSeparatorPolicy recordSeparatorPolicy() {
@@ -383,6 +400,11 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class CustomLineMapperConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public LineMapper<Map<String, Object>> lineMapper() {

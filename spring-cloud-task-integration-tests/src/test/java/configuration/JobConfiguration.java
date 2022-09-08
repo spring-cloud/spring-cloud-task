@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Glenn Renfro
@@ -52,6 +53,9 @@ public class JobConfiguration {
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
 
+	@Autowired
+	private PlatformTransactionManager transactionManager;
+
 	@Bean
 	public Job job() {
 		return this.jobBuilderFactory.get("job").start(step1()).next(step2()).build();
@@ -65,7 +69,7 @@ public class JobConfiguration {
 				System.out.println("Executed");
 				return RepeatStatus.FINISHED;
 			}
-		}).build();
+		}).transactionManager(transactionManager).build();
 	}
 
 	@Bean
@@ -84,7 +88,7 @@ public class JobConfiguration {
 							System.out.println(">> " + item);
 						}
 					}
-				}).build();
+				}).transactionManager(transactionManager).build();
 	}
 
 }

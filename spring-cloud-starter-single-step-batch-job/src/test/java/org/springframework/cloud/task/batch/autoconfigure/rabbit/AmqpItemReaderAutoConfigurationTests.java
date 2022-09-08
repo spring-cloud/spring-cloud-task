@@ -43,6 +43,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.support.ListItemWriter;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
@@ -53,6 +54,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -204,6 +206,11 @@ public class AmqpItemReaderAutoConfigurationTests {
 	@EnableBatchProcessing
 	@Configuration
 	public static class BaseConfiguration {
+
+		@Bean
+		public PlatformTransactionManager platformTransactionManager() {
+			return new ResourcelessTransactionManager();
+		}
 
 		@Bean
 		public ListItemWriter<Map<String, Object>> itemWriter() {

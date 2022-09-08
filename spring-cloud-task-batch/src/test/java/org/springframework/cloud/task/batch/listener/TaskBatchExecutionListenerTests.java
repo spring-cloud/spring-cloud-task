@@ -37,6 +37,7 @@ import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -285,13 +287,16 @@ public class TaskBatchExecutionListenerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job")
 					.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).build()).build();
+					}).transactionManager(this.transactionManager).build()).build();
 		}
 
 	}
@@ -307,13 +312,16 @@ public class TaskBatchExecutionListenerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Job job() {
 			return this.jobBuilderFactory.get("job")
 					.start(this.stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).build()).build();
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 	}
@@ -330,6 +338,9 @@ public class TaskBatchExecutionListenerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public FactoryBean<Job> job() {
 			return new FactoryBean<Job>() {
@@ -340,7 +351,7 @@ public class TaskBatchExecutionListenerTests {
 									.tasklet((contribution, chunkContext) -> {
 										System.out.println("Executed");
 										return RepeatStatus.FINISHED;
-									}).build())
+									}).transactionManager(transactionManager).build())
 							.build();
 				}
 
@@ -372,7 +383,7 @@ public class TaskBatchExecutionListenerTests {
 					System.out.println("Executed");
 					return RepeatStatus.FINISHED;
 				}
-			}).build()).build();
+			}).transactionManager(new ResourcelessTransactionManager()).build()).build();
 		}
 
 		@Bean
@@ -414,13 +425,16 @@ public class TaskBatchExecutionListenerTests {
 		@Autowired
 		private StepBuilderFactory stepBuilderFactory;
 
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+
 		@Bean
 		public Job job1() {
 			return this.jobBuilderFactory.get("job1")
 					.start(this.stepBuilderFactory.get("job1step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job1");
 						return RepeatStatus.FINISHED;
-					}).build()).build();
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 		@Bean
@@ -429,7 +443,7 @@ public class TaskBatchExecutionListenerTests {
 					.start(this.stepBuilderFactory.get("job2step1").tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job2");
 						return RepeatStatus.FINISHED;
-					}).build()).build();
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 	}
