@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -100,7 +100,7 @@ public class TaskLifecycleListener
 	private Collection<TaskExecutionListener> taskExecutionListenersFromContext;
 
 	@Autowired(required = false)
-	private Observation.ObservationConvention observationConvention;
+	private ObservationConvention observationConvention;
 
 	private List<TaskExecutionListener> taskExecutionListeners;
 

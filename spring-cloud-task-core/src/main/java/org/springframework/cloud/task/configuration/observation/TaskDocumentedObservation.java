@@ -18,6 +18,7 @@ package org.springframework.cloud.task.configuration.observation;
 
 import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 enum TaskDocumentedObservation implements DocumentedObservation {
@@ -28,7 +29,7 @@ enum TaskDocumentedObservation implements DocumentedObservation {
 	TASK_RUNNER_OBSERVATION {
 
 		@Override
-		public Class<? extends Observation.ObservationConvention<? extends Observation.Context>> getDefaultConvention() {
+		public Class<? extends ObservationConvention<? extends Observation.Context>> getDefaultConvention() {
 			return DefaultTaskObservationConvention.class;
 		}
 

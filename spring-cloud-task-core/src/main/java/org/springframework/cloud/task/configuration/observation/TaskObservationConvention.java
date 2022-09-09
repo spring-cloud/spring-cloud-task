@@ -17,14 +17,15 @@
 package org.springframework.cloud.task.configuration.observation;
 
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationConvention;
 
 /**
- * {@link Observation.ObservationConvention} for Spring Cloud Task.
+ * {@link ObservationConvention} for Spring Cloud Task.
  *
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public interface TaskObservationConvention extends Observation.ObservationConvention<TaskObservationContext> {
+public interface TaskObservationConvention extends ObservationConvention<TaskObservationContext> {
 
 	@Override
 	default boolean supportsContext(Observation.Context context) {

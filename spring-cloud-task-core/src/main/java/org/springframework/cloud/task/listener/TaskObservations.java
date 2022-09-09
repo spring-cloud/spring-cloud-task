@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.listener;
 
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
 
 import org.springframework.cloud.task.configuration.TaskObservationCloudKeyValues;
@@ -49,11 +50,11 @@ public class TaskObservations {
 
 	private ObservationRegistry observationRegistry;
 
-	private Observation.ObservationConvention customObservationConvention;
+	private ObservationConvention customObservationConvention;
 
 	public TaskObservations(ObservationRegistry observationRegistry,
 			TaskObservationCloudKeyValues taskObservationCloudKeyValues,
-			Observation.ObservationConvention customObservationConvention) {
+			ObservationConvention customObservationConvention) {
 		this.observationRegistry = observationRegistry;
 		this.taskObservationCloudKeyValues = taskObservationCloudKeyValues;
 		this.customObservationConvention = customObservationConvention;
