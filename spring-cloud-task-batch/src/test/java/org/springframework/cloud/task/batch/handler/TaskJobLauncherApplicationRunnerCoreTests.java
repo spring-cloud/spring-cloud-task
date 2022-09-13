@@ -33,17 +33,17 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
@@ -86,10 +86,6 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 	private TaskJobLauncherApplicationRunner runner;
 
-	private JobBuilderFactory jobs;
-
-	private StepBuilderFactory steps;
-
 	private Job job;
 
 	private Step step;
@@ -97,11 +93,10 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@BeforeEach
 	public void init() {
 		this.transactionManager = new ResourcelessTransactionManager();
-		this.jobs = new JobBuilderFactory(this.jobRepository);
-		this.steps = new StepBuilderFactory(this.jobRepository);
 		Tasklet tasklet = (contribution, chunkContext) -> RepeatStatus.FINISHED;
-		this.step = this.steps.get("step").tasklet(tasklet).transactionManager(this.transactionManager).build();
-		this.job = this.jobs.get("job").start(this.step).build();
+		this.step = new StepBuilder("step").repository(this.jobRepository).tasklet(tasklet)
+				.transactionManager(this.transactionManager).build();
+		this.job = new JobBuilder("job").repository(this.jobRepository).start(this.step).build();
 		this.runner = new TaskJobLauncherApplicationRunner(this.jobLauncher, this.jobExplorer, this.jobRepository,
 				new TaskBatchProperties());
 
@@ -119,7 +114,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	// @Test
 	public void incrementExistingExecution() throws Exception {
-		this.job = this.jobs.get("job").start(this.step).incrementer(new RunIdIncrementer()).build();
+		this.job = new JobBuilder("job").repository(this.jobRepository).start(this.step)
+				.incrementer(new RunIdIncrementer()).build();
 		this.runner.execute(this.job, new JobParameters());
 		this.runner.execute(this.job, new JobParameters());
 		assertThat(this.jobExplorer.getJobInstances("job", 0, 100)).hasSize(2);
@@ -128,7 +124,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	// @Test
 	public void retryFailedExecution() throws Exception {
-		this.job = this.jobs.get("job").start(this.steps.get("step").tasklet(throwingTasklet()).build())
+		this.job = new JobBuilder("job").repository(this.jobRepository)
+				.start(new StepBuilder("step").repository(this.jobRepository).tasklet(throwingTasklet()).build())
 				.incrementer(new RunIdIncrementer()).build();
 		runFailedJob(new JobParameters());
 		runFailedJob(new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
@@ -138,8 +135,9 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void runDifferentInstances() throws Exception {
-		this.job = this.jobs.get("job").start(
-				this.steps.get("step").tasklet(throwingTasklet()).transactionManager(this.transactionManager).build())
+		this.job = new JobBuilder("job").repository(this.jobRepository)
+				.start(new StepBuilder("step").repository(this.jobRepository).tasklet(throwingTasklet())
+						.transactionManager(this.transactionManager).build())
 				.build();
 		// start a job instance
 		JobParameters jobParameters = new JobParametersBuilder().addString("name", "foo").toJobParameters();
@@ -154,8 +152,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionOnNonRestartableJob() throws Exception {
-		this.job = this.jobs
-				.get("job").preventRestart().start(this.steps.get("step").tasklet(throwingTasklet())
+		this.job = new JobBuilder("job").repository(this.jobRepository).preventRestart()
+				.start(new StepBuilder("step").repository(this.jobRepository).tasklet(throwingTasklet())
 						.transactionManager(this.transactionManager).build())
 				.incrementer(new RunIdIncrementer()).build();
 		runFailedJob(new JobParameters());
@@ -174,8 +172,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithNonIdentifyingParameters() throws Exception {
-		this.job = this.jobs
-				.get("job").start(this.steps.get("step").tasklet(throwingTasklet())
+		this.job = new JobBuilder("job").repository(this.jobRepository)
+				.start(new StepBuilder("step").repository(this.jobRepository).tasklet(throwingTasklet())
 						.transactionManager(this.transactionManager).build())
 				.incrementer(new RunIdIncrementer()).build();
 		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
@@ -189,8 +187,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	@DirtiesContext
 	@Test
 	public void retryFailedExecutionWithDifferentNonIdentifyingParametersFromPreviousExecution() throws Exception {
-		this.job = this.jobs
-				.get("job").start(this.steps.get("step").tasklet(throwingTasklet())
+		this.job = new JobBuilder("job").repository(this.jobRepository)
+				.start(new StepBuilder("step").repository(this.jobRepository).tasklet(throwingTasklet())
 						.transactionManager(this.transactionManager).build())
 				.incrementer(new RunIdIncrementer()).build();
 		JobParameters jobParameters = new JobParametersBuilder().addLong("id", 1L, false).addLong("foo", 2L, false)
@@ -285,7 +283,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 		@Override
 		public JobLauncher getJobLauncher() throws Exception {
-			SimpleJobLauncher launcher = new SimpleJobLauncher();
+			TaskExecutorJobLauncher launcher = new TaskExecutorJobLauncher();
 
 			launcher.setJobRepository(getJobRepository());
 			launcher.setTaskExecutor(new SyncTaskExecutor());

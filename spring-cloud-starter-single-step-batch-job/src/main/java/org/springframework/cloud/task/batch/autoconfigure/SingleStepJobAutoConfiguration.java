@@ -20,9 +20,10 @@ import java.util.Map;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -49,25 +50,20 @@ import org.springframework.util.Assert;
 @AutoConfigureBefore(BatchAutoConfiguration.class)
 public class SingleStepJobAutoConfiguration {
 
-	private JobBuilderFactory jobBuilderFactory;
-
-	private StepBuilderFactory stepBuilderFactory;
-
 	private SingleStepJobProperties properties;
 
 	@Autowired
 	PlatformTransactionManager transactionManager;
 
+	@Autowired
+	JobRepository jobRepository;
+
 	@Autowired(required = false)
 	private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
 
-	public SingleStepJobAutoConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
-			SingleStepJobProperties properties, ApplicationContext context) {
+	public SingleStepJobAutoConfiguration(SingleStepJobProperties properties, ApplicationContext context) {
 
 		validateProperties(properties);
-
-		this.jobBuilderFactory = jobBuilderFactory;
-		this.stepBuilderFactory = stepBuilderFactory;
 		this.properties = properties;
 	}
 
@@ -83,15 +79,16 @@ public class SingleStepJobAutoConfiguration {
 	@ConditionalOnProperty(prefix = "spring.batch.job", name = "job-name")
 	public Job job(ItemReader<Map<String, Object>> itemReader, ItemWriter<Map<String, Object>> itemWriter) {
 
-		SimpleStepBuilder<Map<String, Object>, Map<String, Object>> stepBuilder = this.stepBuilderFactory
-				.get(this.properties.getStepName())
-				.<Map<String, Object>, Map<String, Object>>chunk(this.properties.getChunkSize()).reader(itemReader);
+		SimpleStepBuilder<Map<String, Object>, Map<String, Object>> stepBuilder = new StepBuilder(
+				this.properties.getStepName()).repository(this.jobRepository)
+						.<Map<String, Object>, Map<String, Object>>chunk(this.properties.getChunkSize())
+						.reader(itemReader);
 
 		stepBuilder.processor(this.itemProcessor);
 
 		Step step = stepBuilder.writer(itemWriter).transactionManager(this.transactionManager).build();
 
-		return this.jobBuilderFactory.get(this.properties.getJobName()).start(step).build();
+		return new JobBuilder(this.properties.getJobName()).repository(this.jobRepository).start(step).build();
 	}
 
 }

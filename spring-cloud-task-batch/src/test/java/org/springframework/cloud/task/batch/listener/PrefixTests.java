@@ -25,8 +25,9 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.SpringApplication;
@@ -73,9 +74,9 @@ public class PrefixTests {
 	public static class JobConfiguration {
 
 		@Bean
-		public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-			return jobBuilderFactory.get("job")
-					.start(stepBuilderFactory.get("step1").tasklet((contribution, chunkContext) -> {
+		public Job job(JobRepository jobRepository) {
+			return new JobBuilder("job").repository(jobRepository)
+					.start(new StepBuilder("step1").repository(jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
 					}).transactionManager(new ResourcelessTransactionManager()).build()).build();

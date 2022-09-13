@@ -54,7 +54,7 @@ public class SingleStepJobAutoConfigurationTests {
 		SingleStepJobProperties properties = new SingleStepJobProperties();
 
 		try {
-			new SingleStepJobAutoConfiguration(null, null, properties, null);
+			new SingleStepJobAutoConfiguration(properties, null);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo("A job name is required");
@@ -66,7 +66,7 @@ public class SingleStepJobAutoConfigurationTests {
 		properties.setJobName("job");
 
 		try {
-			new SingleStepJobAutoConfiguration(null, null, properties, null);
+			new SingleStepJobAutoConfiguration(properties, null);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo("A step name is required");
@@ -78,7 +78,7 @@ public class SingleStepJobAutoConfigurationTests {
 		properties.setStepName("step");
 
 		try {
-			new SingleStepJobAutoConfiguration(null, null, properties, null);
+			new SingleStepJobAutoConfiguration(properties, null);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo("A chunk size is required");
@@ -90,7 +90,7 @@ public class SingleStepJobAutoConfigurationTests {
 		properties.setChunkSize(-5);
 
 		try {
-			new SingleStepJobAutoConfiguration(null, null, properties, null);
+			new SingleStepJobAutoConfiguration(properties, null);
 		}
 		catch (IllegalArgumentException iae) {
 			assertThat(iae.getMessage()).isEqualTo("A chunk size greater than zero is required");

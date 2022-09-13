@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -41,22 +42,19 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class JobSkipConfiguration {
 
 	@Autowired
-	private JobBuilderFactory jobBuilderFactory;
-
-	@Autowired
-	private StepBuilderFactory stepBuilderFactory;
+	private JobRepository jobRepository;
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 
 	@Bean
 	public Job job() {
-		return this.jobBuilderFactory.get("job").start(step1()).next(step2()).build();
+		return new JobBuilder("job").repository(this.jobRepository).start(step1()).next(step2()).build();
 	}
 
 	@Bean
 	public Step step1() {
-		return this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
+		return new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				System.out.println("Executed");
@@ -67,8 +65,9 @@ public class JobSkipConfiguration {
 
 	@Bean
 	public Step step2() {
-		return this.stepBuilderFactory.get("step2").chunk(3).faultTolerant().skip(IllegalStateException.class)
-				.skipLimit(100).reader(new SkipItemReader()).processor(new ItemProcessor<Object, Object>() {
+		return new StepBuilder("step2").repository(this.jobRepository).chunk(3).faultTolerant()
+				.skip(IllegalStateException.class).skipLimit(100).reader(new SkipItemReader())
+				.processor(new ItemProcessor<Object, Object>() {
 					@Override
 					public String process(Object item) throws Exception {
 						return String.valueOf(Integer.parseInt((String) item) * -1);

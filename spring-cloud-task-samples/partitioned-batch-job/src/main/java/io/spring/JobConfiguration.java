@@ -27,14 +27,14 @@ import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -55,6 +55,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Michael Minella
@@ -66,16 +67,10 @@ public class JobConfiguration {
 
 	// @checkstyle:off
 	@Autowired
-	public JobBuilderFactory jobBuilderFactory;
-
-	@Autowired
-	public StepBuilderFactory stepBuilderFactory;
+	public JobRepository jobRepository;
 
 	@Autowired
 	public DataSource dataSource;
-
-	@Autowired
-	public JobRepository jobRepository;
 
 	// @checkstyle:on
 	@Autowired
@@ -86,6 +81,9 @@ public class JobConfiguration {
 
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer,
@@ -162,20 +160,23 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step1(PartitionHandler partitionHandler) throws Exception {
-		return this.stepBuilderFactory.get("step1").partitioner(workerStep().getName(), partitioner())
-				.step(workerStep()).partitionHandler(partitionHandler).build();
+		return new StepBuilder("step1").repository(this.jobRepository)
+				.partitioner(workerStep().getName(), partitioner()).step(workerStep())
+				.partitionHandler(partitionHandler).build();
 	}
 
 	@Bean
 	public Step workerStep() {
-		return this.stepBuilderFactory.get("workerStep").tasklet(workerTasklet(null)).build();
+		return new StepBuilder("workerStep").repository(this.jobRepository).tasklet(workerTasklet(null))
+				.transactionManager(this.transactionManager).build();
 	}
 
 	@Bean
 	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
-		return this.jobBuilderFactory.get("partitionedJob" + random.nextInt()).start(step1(partitionHandler)).build();
+		return new JobBuilder("partitionedJob" + random.nextInt()).repository(this.jobRepository)
+				.start(step1(partitionHandler)).build();
 	}
 
 }

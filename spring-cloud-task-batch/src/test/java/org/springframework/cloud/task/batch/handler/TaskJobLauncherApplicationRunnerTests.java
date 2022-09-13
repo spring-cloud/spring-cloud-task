@@ -30,12 +30,13 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -184,23 +185,21 @@ public class TaskJobLauncherApplicationRunnerTests {
 	public static class JobConfiguration {
 
 		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
+		private JobRepository jobRepository;
 
 		@Autowired
 		private PlatformTransactionManager transactionManager;
 
 		@Bean
 		public Job job() {
-			return this.jobBuilderFactory.get("job").start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-				@Override
-				public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-					System.out.println("Executed");
-					return RepeatStatus.FINISHED;
-				}
-			}).transactionManager(transactionManager).build()).build();
+			return new JobBuilder("job").repository(this.jobRepository)
+					.start(new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
+						@Override
+						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+							System.out.println("Executed");
+							return RepeatStatus.FINISHED;
+						}
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 	}
@@ -214,29 +213,28 @@ public class TaskJobLauncherApplicationRunnerTests {
 	public static class JobWithFailureConfiguration {
 
 		@Autowired
-		private JobBuilderFactory jobBuilderFactory;
-
-		@Autowired
-		private StepBuilderFactory stepBuilderFactory;
+		private JobRepository jobRepository;
 
 		@Autowired
 		private PlatformTransactionManager transactionManager;
 
 		@Bean
 		public Job jobFail() {
-			return this.jobBuilderFactory.get("jobA").start(this.stepBuilderFactory.get("step1").tasklet(new Tasklet() {
-				@Override
-				public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-					System.out.println("Executed");
-					throw new IllegalStateException("WHOOPS");
-				}
-			}).transactionManager(transactionManager).build()).build();
+			return new JobBuilder("jobA").repository(this.jobRepository)
+					.start(new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
+						@Override
+						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
+								throws Exception {
+							System.out.println("Executed");
+							throw new IllegalStateException("WHOOPS");
+						}
+					}).transactionManager(transactionManager).build()).build();
 		}
 
 		@Bean
 		public Job jobFun() {
-			return this.jobBuilderFactory.get("jobSucceed")
-					.start(this.stepBuilderFactory.get("step1Succeed").tasklet(new Tasklet() {
+			return new JobBuilder("jobSucceed").repository(this.jobRepository)
+					.start(new StepBuilder("step1Succeed").repository(this.jobRepository).tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 							System.out.println("Executed");
@@ -270,7 +268,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 		}
 
 		protected JobLauncher createJobLauncher() throws Exception {
-			SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+			TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 			jobLauncher.setJobRepository(getJobRepository());
 			jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor());
 			jobLauncher.afterPropertiesSet();
