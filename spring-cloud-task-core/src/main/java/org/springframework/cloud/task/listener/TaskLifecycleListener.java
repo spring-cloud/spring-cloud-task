@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -277,8 +277,9 @@ public class TaskLifecycleListener
 					Assert.isNull(taskExecution.getEndTime(),
 							String.format("Invalid TaskExecution, ID %s task is already complete",
 									this.taskProperties.getExecutionid()));
+					Date startDate = (taskExecution.getStartTime() == null) ? new Date() : taskExecution.getStartTime();
 					this.taskExecution = this.taskRepository.startTaskExecution(this.taskProperties.getExecutionid(),
-							this.taskNameResolver.getTaskName(), new Date(), args,
+							this.taskNameResolver.getTaskName(), startDate, args,
 							this.taskProperties.getExternalExecutionId(), this.taskProperties.getParentExecutionId());
 				}
 				else {
