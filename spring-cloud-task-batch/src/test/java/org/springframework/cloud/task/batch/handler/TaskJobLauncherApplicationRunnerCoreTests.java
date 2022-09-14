@@ -277,11 +277,6 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		}
 
 		@Override
-		public PlatformTransactionManager getTransactionManager() {
-			return this.transactionManager;
-		}
-
-		@Override
 		public JobLauncher getJobLauncher() throws Exception {
 			TaskExecutorJobLauncher launcher = new TaskExecutorJobLauncher();
 
