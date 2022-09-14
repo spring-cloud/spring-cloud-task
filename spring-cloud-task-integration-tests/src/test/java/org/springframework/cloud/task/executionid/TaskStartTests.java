@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -195,6 +196,27 @@ public class TaskStartTests {
 				.as("return code should be 0").isEqualTo(0);
 		assertThat(this.taskExplorer.getTaskExecution(1).getTaskName())
 				.isEqualTo("batchEvents");
+	}
+
+	@Test
+	public void testWithGeneratedTaskExecutionWithExistingDate() throws Exception {
+		final String TASK_EXECUTION_NAME = "PRE-EXECUTION-TEST-NAME";
+		Date startDate = new Date();
+		Thread.sleep(500);
+		TaskExecution taskExecution = new TaskExecution(1, 0, TASK_EXECUTION_NAME, startDate, new Date(), "foo",
+				Collections.emptyList(), "foo", "bar", null);
+		this.taskRepository.createTaskExecution(taskExecution);
+		assertThat(this.taskExplorer.getTaskExecutionCount()).as("Only one row is expected").isEqualTo(1);
+
+		this.applicationContext = getTaskApplication(1).run(new String[0]);
+		assertThat(waitForDBToBePopulated()).isTrue();
+
+		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
+		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
+		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
+				.isEqualTo(0);
+		assertThat(this.taskExplorer.getTaskExecution(1).getStartTime().getTime()).isEqualTo(startDate.getTime());
+
 	}
 
 	@Test
