@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.file.FlatFileFooterCallback;
@@ -361,7 +360,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class DelimitedJobConfiguration {
 
 		@Bean
@@ -384,7 +382,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class LineAggregatorConfiguration {
 
 		@Bean
@@ -412,7 +409,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class HeaderFooterConfiguration {
 
 		@Bean
@@ -445,7 +441,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class FieldExtractorConfiguration {
 
 		@Bean
@@ -478,7 +473,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class FormattedJobConfiguration {
 
 		@Bean
@@ -501,7 +495,6 @@ public class FlatFileItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class FormattedFieldExtractorJobConfiguration {
 
 		@Bean

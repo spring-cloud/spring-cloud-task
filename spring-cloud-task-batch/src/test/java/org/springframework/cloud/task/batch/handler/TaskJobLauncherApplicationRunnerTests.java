@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.handler;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -27,26 +28,26 @@ import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer;
+import org.springframework.boot.sql.init.DatabaseInitializationSettings;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchTest;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
@@ -61,7 +62,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,28 +178,48 @@ public class TaskJobLauncherApplicationRunnerTests {
 				});
 	}
 
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@Import(EmbeddedDataSourceConfiguration.class)
 	@EnableTask
 	public static class JobConfiguration {
 
-		@Autowired
-		private JobRepository jobRepository;
-
-		@Autowired
-		private PlatformTransactionManager transactionManager;
-
 		@Bean
-		public Job job() {
-			return new JobBuilder("job").repository(this.jobRepository)
-					.start(new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
+		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job", jobRepository)
+					.start(new StepBuilder("step1", jobRepository).tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
-					}).transactionManager(transactionManager).build()).build();
+					}, transactionManager).build()).build();
+		}
+
+		@Bean
+		public PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+	}
+
+	@Configuration(proxyBeanMethods = false)
+	public static class TransactionManagerTestConfiguration {
+
+		@Bean
+		public PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
+		@Bean
+		public BatchProperties batchProperties() {
+			return new BatchProperties();
+		}
+
+		@Bean
+		DataSourceScriptDatabaseInitializer batchDataSourceInitializer(DataSource dataSource) {
+			DatabaseInitializationSettings settings = new DatabaseInitializationSettings();
+			settings.setSchemaLocations(Arrays.asList("classpath:org/springframework/batch/core/schema-h2.sql"));
+			return new DataSourceScriptDatabaseInitializer(dataSource, settings);
 		}
 
 	}
@@ -207,7 +227,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 	@EnableBatchProcessing
 	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
 			TaskBatchAutoConfiguration.class, TaskJobLauncherAutoConfiguration.class, SingleTaskConfiguration.class,
-			SimpleTaskAutoConfiguration.class })
+			SimpleTaskAutoConfiguration.class, TransactionManagerTestConfiguration.class })
 	@Import(EmbeddedDataSourceConfiguration.class)
 	@EnableTask
 	public static class JobWithFailureConfiguration {
@@ -254,27 +274,27 @@ public class TaskJobLauncherApplicationRunnerTests {
 	@Configuration
 	public static class JobWithFailureTaskExecutorConfiguration {
 
-		@Bean
-		public BatchConfigurer batchConfigurer(DataSource dataSource) {
-			return new TestBatchConfigurer(dataSource);
-		}
+		// @Bean
+		// public BatchConfigurer batchConfigurer(DataSource dataSource) {
+		// return new TestBatchConfigurer(dataSource);
+		// }
 
 	}
 
-	private static class TestBatchConfigurer extends DefaultBatchConfigurer {
-
-		TestBatchConfigurer(DataSource dataSource) {
-			super(dataSource);
-		}
-
-		protected JobLauncher createJobLauncher() throws Exception {
-			TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
-			jobLauncher.setJobRepository(getJobRepository());
-			jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor());
-			jobLauncher.afterPropertiesSet();
-			return jobLauncher;
-		}
-
-	}
+	// private static class TestBatchConfigurer extends DefaultBatchConfigurer {
+	//
+	// TestBatchConfigurer(DataSource dataSource) {
+	// super(dataSource);
+	// }
+	//
+	// protected JobLauncher createJobLauncher() throws Exception {
+	// TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+	// jobLauncher.setJobRepository(getJobRepository());
+	// jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor());
+	// jobLauncher.afterPropertiesSet();
+	// return jobLauncher;
+	// }
+	//
+	// }
 
 }

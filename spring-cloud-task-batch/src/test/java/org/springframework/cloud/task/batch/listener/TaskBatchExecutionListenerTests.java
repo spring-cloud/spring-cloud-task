@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -41,7 +40,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -274,27 +272,30 @@ public class TaskBatchExecutionListenerTests {
 	@EnableTask
 	public static class NoJobConfiguration {
 
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
 	}
 
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobConfiguration {
 
-		@Autowired
-		private JobRepository jobRepository;
-
-		@Autowired
-		private PlatformTransactionManager transactionManager;
-
 		@Bean
-		public Job job() {
-			return new JobBuilder("job").repository(this.jobRepository).start(
-					new StepBuilder("step1").repository(this.jobRepository).tasklet((contribution, chunkContext) -> {
+		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job", jobRepository)
+					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).transactionManager(this.transactionManager).build()).build();
+					}, transactionManager).build()).build();
+		}
+
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
 		}
 
 	}
@@ -304,46 +305,37 @@ public class TaskBatchExecutionListenerTests {
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class TaskNotEnabledConfiguration {
 
-		@Autowired
-		private JobRepository jobRepository;
-
-		@Autowired
-		PlatformTransactionManager transactionManager;
-
 		@Bean
-		public Job job() {
-			return new JobBuilder("job").start(
-					new StepBuilder("step1").repository(this.jobRepository).tasklet((contribution, chunkContext) -> {
+		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job", jobRepository)
+					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).transactionManager(transactionManager).build()).repository(this.jobRepository).build();
+					}, transactionManager).build()).build();
+		}
+
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
 		}
 
 	}
 
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class JobFactoryBeanConfiguration {
 
-		@Autowired
-		private JobRepository jobRepository;
-
-		@Autowired
-		private PlatformTransactionManager transactionManager;
-
 		@Bean
-		public FactoryBean<Job> job() {
+		public FactoryBean<Job> job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new FactoryBean<Job>() {
 				@Override
 				public Job getObject() {
-					return new JobBuilder("job")
-							.start(new StepBuilder("step1").tasklet((contribution, chunkContext) -> {
+					return new JobBuilder("job", jobRepository)
+							.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
 								System.out.println("Executed");
 								return RepeatStatus.FINISHED;
-							}).transactionManager(transactionManager).repository(jobRepository).build())
-							.repository(jobRepository).build();
+							}, transactionManager).build()).build();
 				}
 
 				@Override
@@ -358,9 +350,13 @@ public class TaskBatchExecutionListenerTests {
 			};
 		}
 
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
+		}
+
 	}
 
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
@@ -368,16 +364,15 @@ public class TaskBatchExecutionListenerTests {
 
 		@Bean
 		public Job job(JobRepository jobRepository) {
-			return new JobBuilder("job").repository(jobRepository)
-					.start(new StepBuilder("step1").tasklet(new Tasklet() {
+			return new JobBuilder("job", jobRepository)
+					.start(new StepBuilder("step1", jobRepository).tasklet(new Tasklet() {
 						@Override
 						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
 								throws Exception {
 							System.out.println("Executed");
 							return RepeatStatus.FINISHED;
 						}
-					}).transactionManager(new ResourcelessTransactionManager()).repository(jobRepository).build())
-					.build();
+					}, new ResourcelessTransactionManager()).build()).build();
 		}
 
 		@Bean
@@ -401,40 +396,38 @@ public class TaskBatchExecutionListenerTests {
 		}
 
 		@Bean
-		public DefaultBatchConfigurer batchConfigurer() {
-			return new DefaultBatchConfigurer(myDataSource());
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
 		}
 
 	}
 
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask
 	@Import(EmbeddedDataSourceConfiguration.class)
 	public static class MultipleJobConfiguration {
 
-		@Autowired
-		private JobRepository jobRepository;
-
-		@Autowired
-		private PlatformTransactionManager transactionManager;
-
 		@Bean
-		public Job job1() {
-			return new JobBuilder("job1").repository(this.jobRepository)
-					.start(new StepBuilder("job1step1").tasklet((contribution, chunkContext) -> {
+		public Job job1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job1", jobRepository)
+					.start(new StepBuilder("job1step1", jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job1");
 						return RepeatStatus.FINISHED;
-					}).transactionManager(transactionManager).repository(this.jobRepository).build()).build();
+					}, transactionManager).build()).build();
 		}
 
 		@Bean
-		public Job job2() {
-			return new JobBuilder("job2").repository(this.jobRepository)
-					.start(new StepBuilder("job2step1").tasklet((contribution, chunkContext) -> {
+		public Job job2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job2", jobRepository)
+					.start(new StepBuilder("job2step1", jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed job2");
 						return RepeatStatus.FINISHED;
-					}).transactionManager(transactionManager).repository(this.jobRepository).build()).build();
+					}, transactionManager).build()).build();
+		}
+
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
 		}
 
 	}

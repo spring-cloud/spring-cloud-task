@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -353,7 +352,6 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 	}
 
-	@EnableBatchProcessing
 	@Configuration
 	public static class BaseConfiguration {
 
@@ -364,7 +362,6 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 	}
 
-	@EnableBatchProcessing
 	@Configuration
 	public static class RowMapperConfiguration {
 

@@ -24,7 +24,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -39,6 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,24 +67,28 @@ class PrimaryKeyTests {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@EnableBatchProcessing
 	@TaskBatchTest
 	@EnableTask
 	static class JobConfiguration {
 
 		@Bean
-		Job job(JobRepository jobRepository) {
-			return new JobBuilder("job").repository(jobRepository)
-					.start(new StepBuilder("step1").repository(jobRepository).tasklet((contribution, chunkContext) -> {
+		Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+			return new JobBuilder("job", jobRepository)
+					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
 						System.out.println("Executed");
 						return RepeatStatus.FINISHED;
-					}).transactionManager(new ResourcelessTransactionManager()).build()).build();
+					}, transactionManager).build()).build();
 		}
 
 		@Bean
 		DataSource dataSource() {
 			return new EmbeddedDatabaseBuilder().addScript("classpath:schema-with-primary-keys-h2.sql")
 					.setType(EmbeddedDatabaseType.H2).build();
+		}
+
+		@Bean
+		PlatformTransactionManager transactionManager() {
+			return new ResourcelessTransactionManager();
 		}
 
 	}

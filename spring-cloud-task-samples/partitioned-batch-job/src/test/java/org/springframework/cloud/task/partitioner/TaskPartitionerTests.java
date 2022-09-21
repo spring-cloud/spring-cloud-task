@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.partitioner;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -29,6 +30,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer;
+import org.springframework.boot.sql.init.DatabaseInitializationMode;
+import org.springframework.boot.sql.init.DatabaseInitializationSettings;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -91,6 +95,11 @@ public class TaskPartitionerTests {
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_EXECUTION");
 		template.execute("DROP TABLE IF EXISTS BATCH_JOB_INSTANCE");
+		DatabaseInitializationSettings settings = new DatabaseInitializationSettings();
+		settings.setSchemaLocations(Arrays.asList("classpath:org/springframework/batch/core/schema-h2.sql"));
+		settings.setMode(DatabaseInitializationMode.ALWAYS);
+		DataSourceScriptDatabaseInitializer dbInit =  new DataSourceScriptDatabaseInitializer(this.dataSource, settings);
+		boolean result = dbInit.initializeDatabase();
 	}
 
 	@Test

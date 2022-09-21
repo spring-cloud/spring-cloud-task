@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
@@ -262,7 +261,6 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class DelimitedJobConfiguration {
 
 		@Bean
@@ -285,7 +283,6 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class DelimitedDifferentKeyNameJobConfiguration {
 
 		@Bean
@@ -308,7 +305,6 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class CustomSqlParameterSourceProviderConfiguration {
 
 		@Bean
@@ -323,7 +319,6 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 	}
 
 	@Configuration
-	@EnableBatchProcessing
 	public static class ItemPreparedStatementSetterConfiguration {
 
 		@Bean

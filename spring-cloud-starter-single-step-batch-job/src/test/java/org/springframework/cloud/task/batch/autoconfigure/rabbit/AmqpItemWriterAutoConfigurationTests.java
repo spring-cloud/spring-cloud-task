@@ -42,7 +42,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.ItemReader;
@@ -173,13 +172,11 @@ public class AmqpItemWriterAutoConfigurationTests {
 		return jobLauncher.run(job, new JobParameters());
 	}
 
-	@EnableBatchProcessing
 	@Configuration
 	public static class BaseConfiguration extends ItemWriterConfiguration {
 
 	}
 
-	@EnableBatchProcessing
 	@Configuration
 	public static class MockConfiguration extends ItemWriterConfiguration {
 
