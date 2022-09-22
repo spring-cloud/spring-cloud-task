@@ -1,2 +1,4 @@
 org.springframework.cloud.task.listener.TaskEventAutoConfiguration
 org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration
+org.springframework.cloud.deployer.autoconfigure.ResourceLoadingAutoConfiguration
+
