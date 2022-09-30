@@ -18,14 +18,14 @@ package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.item.Chunk;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
 /**
- * Provides informational messages around the
- * {@link org.springframework.batch.core.step.item.Chunk} of a batch job.
+ * Provides informational messages around the {@link Chunk} of a batch job.
  *
  * The {@link ChunkListener#beforeChunk(ChunkContext)} and
  * {@link ChunkListener#afterChunk(ChunkContext)} are both no-ops in this implementation.

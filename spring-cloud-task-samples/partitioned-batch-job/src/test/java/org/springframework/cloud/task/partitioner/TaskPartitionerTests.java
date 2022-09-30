@@ -98,7 +98,7 @@ public class TaskPartitionerTests {
 		DatabaseInitializationSettings settings = new DatabaseInitializationSettings();
 		settings.setSchemaLocations(Arrays.asList("classpath:org/springframework/batch/core/schema-h2.sql"));
 		settings.setMode(DatabaseInitializationMode.ALWAYS);
-		DataSourceScriptDatabaseInitializer dbInit =  new DataSourceScriptDatabaseInitializer(this.dataSource, settings);
+		DataSourceScriptDatabaseInitializer dbInit = new DataSourceScriptDatabaseInitializer(this.dataSource, settings);
 		boolean result = dbInit.initializeDatabase();
 	}
 
