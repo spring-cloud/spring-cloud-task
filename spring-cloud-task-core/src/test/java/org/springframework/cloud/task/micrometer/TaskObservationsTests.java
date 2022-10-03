@@ -51,6 +51,9 @@ import static org.springframework.cloud.task.listener.TaskObservations.UNKNOWN;
  */
 public class TaskObservationsTests {
 
+	/**
+	 * Prefix for the spring cloud task project.
+	 */
 	public static final String PREFIX = "spring.cloud.task";
 
 	private TaskObservations taskObservations;

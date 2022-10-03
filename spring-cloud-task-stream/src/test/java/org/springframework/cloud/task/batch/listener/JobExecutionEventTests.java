@@ -99,10 +99,10 @@ public class JobExecutionEventTests {
 	public void testJobParameters() {
 		String[] JOB_PARAM_KEYS = { "A", "B", "C", "D" };
 		Date testDate = new Date();
-		JobParameter[] PARAMETERS = { new JobParameter("FOO", true), new JobParameter(1L, true),
-				new JobParameter(1D, true), new JobParameter(testDate, false) };
+		JobParameter[] PARAMETERS = { new JobParameter("FOO", String.class), new JobParameter(1L, Long.class),
+				new JobParameter(1D, Double.class), new JobParameter(testDate, Date.class) };
 
-		Map<String, JobParameter> jobParamMap = new LinkedHashMap<>();
+		Map<String, JobParameter<?>> jobParamMap = new LinkedHashMap<>();
 		for (int paramCount = 0; paramCount < JOB_PARAM_KEYS.length; paramCount++) {
 			jobParamMap.put(JOB_PARAM_KEYS[paramCount], PARAMETERS[paramCount]);
 		}

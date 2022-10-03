@@ -197,10 +197,10 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	}
 
 	private JobParameters removeNonIdentifying(JobParameters parameters) {
-		Map<String, JobParameter> parameterMap = parameters.getParameters();
-		HashMap<String, JobParameter> copy = new HashMap<>();
+		Map<String, JobParameter<?>> parameterMap = parameters.getParameters();
+		HashMap<String, JobParameter<?>> copy = new HashMap<>();
 
-		for (Map.Entry<String, JobParameter> parameter : parameterMap.entrySet()) {
+		for (Map.Entry<String, JobParameter<?>> parameter : parameterMap.entrySet()) {
 			if (parameter.getValue().isIdentifying()) {
 				copy.put(parameter.getKey(), parameter.getValue());
 			}
@@ -215,7 +215,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	}
 
 	private JobParameters merge(JobParameters parameters, JobParameters additionals) {
-		Map<String, JobParameter> merged = new HashMap<>();
+		Map<String, JobParameter<?>> merged = new HashMap<>();
 		merged.putAll(parameters.getParameters());
 		merged.putAll(additionals.getParameters());
 		return new JobParameters(merged);

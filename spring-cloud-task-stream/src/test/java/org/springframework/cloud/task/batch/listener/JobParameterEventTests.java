@@ -34,7 +34,6 @@ public class JobParameterEventTests {
 	public void testDefaultConstructor() {
 		JobParameterEvent jobParameterEvent = new JobParameterEvent();
 		assertThat(jobParameterEvent.getValue()).isNull();
-		assertThat(jobParameterEvent.getType()).isNull();
 		assertThat(jobParameterEvent.isIdentifying()).isFalse();
 		assertThat(jobParameterEvent).isEqualTo(new JobParameterEvent());
 	}
@@ -43,16 +42,14 @@ public class JobParameterEventTests {
 	public void testConstructor() {
 		final String EXPECTED_VALUE = "FOO";
 		final Date EXPECTED_DATE_VALUE = new Date();
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, true);
+		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_VALUE);
-		assertThat(jobParameterEvent.getType()).isEqualTo(JobParameterEvent.ParameterType.STRING);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 
-		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, true);
+		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, Date.class);
 		jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_DATE_VALUE);
-		assertThat(jobParameterEvent.getType()).isEqualTo(JobParameterEvent.ParameterType.DATE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 		assertThat(new JobParameterEvent(jobParameter).equals(jobParameterEvent)).isTrue();
 	}
@@ -60,7 +57,7 @@ public class JobParameterEventTests {
 	@Test
 	public void testEquals() {
 		final String EXPECTED_VALUE = "FOO";
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, true);
+		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		JobParameterEvent anotherJobParameterEvent = new JobParameterEvent(jobParameter);
 
@@ -72,7 +69,7 @@ public class JobParameterEventTests {
 	@Test
 	public void testValidHashCode() {
 		final String EXPECTED_VALUE = "FOO";
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, true);
+		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.hashCode()).isNotNull();
 	}

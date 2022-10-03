@@ -38,9 +38,9 @@ public class JobParametersEvent {
 		this.parameters = new LinkedHashMap<>();
 	}
 
-	public JobParametersEvent(Map<String, JobParameter> jobParameters) {
+	public JobParametersEvent(Map<String, JobParameter<?>> jobParameters) {
 		this.parameters = new LinkedHashMap<>();
-		for (Map.Entry<String, JobParameter> entry : jobParameters.entrySet()) {
+		for (Map.Entry<String, JobParameter<?>> entry : jobParameters.entrySet()) {
 			if (entry.getValue().getValue() instanceof String) {
 				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 			}

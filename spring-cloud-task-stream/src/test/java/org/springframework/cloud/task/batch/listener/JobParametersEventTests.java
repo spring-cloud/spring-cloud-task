@@ -33,13 +33,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class JobParametersEventTests {
 
-	private final static JobParameter STRING_PARAM = new JobParameter("FOO", true);
+	private final static JobParameter STRING_PARAM = new JobParameter("FOO", String.class);
 
-	private final static JobParameter DATE_PARAM = new JobParameter(new Date(), true);
+	private final static JobParameter DATE_PARAM = new JobParameter(new Date(), Date.class);
 
-	private final static JobParameter LONG_PARAM = new JobParameter(1L, true);
+	private final static JobParameter LONG_PARAM = new JobParameter(1L, Long.class);
 
-	private final static JobParameter DOUBLE_PARAM = new JobParameter(2D, true);
+	private final static JobParameter DOUBLE_PARAM = new JobParameter(2D, Double.class);
 
 	private final static String DATE_KEY = "DATE_KEY";
 
@@ -120,7 +120,7 @@ public class JobParametersEventTests {
 	}
 
 	public JobParametersEvent getPopulatedParametersEvent() {
-		Map<String, JobParameter> jobParameters = new HashMap<>();
+		Map<String, JobParameter<?>> jobParameters = new HashMap<>();
 		jobParameters.put(DATE_KEY, DATE_PARAM);
 		jobParameters.put(STRING_KEY, STRING_PARAM);
 		jobParameters.put(LONG_KEY, LONG_PARAM);
