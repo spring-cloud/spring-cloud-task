@@ -19,7 +19,7 @@ package org.springframework.cloud.task.listener;
 import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationConvention;
-import io.micrometer.observation.docs.DocumentedObservation;
+import io.micrometer.observation.docs.ObservationDocumentation;
 
 /**
  * Enumeration for task execution observations.
@@ -27,7 +27,7 @@ import io.micrometer.observation.docs.DocumentedObservation;
  * @author Glenn Renfro
  * @since 3.0.0
  */
-public enum TaskExecutionObservation implements DocumentedObservation {
+public enum TaskExecutionObservation implements ObservationDocumentation {
 
 	/**
 	 * Metrics created around a task execution.

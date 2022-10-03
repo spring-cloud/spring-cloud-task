@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.listener;
 
+import java.util.function.Supplier;
+
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 
@@ -27,7 +29,8 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @author Glenn Renfro
  * @since 3.0.0
  */
-public class TaskExecutionObservationContext extends Observation.Context {
+public class TaskExecutionObservationContext extends Observation.Context
+		implements Supplier<TaskExecutionObservationContext> {
 
 	private final TaskExecution taskExecution;
 
@@ -57,6 +60,11 @@ public class TaskExecutionObservationContext extends Observation.Context {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Override
+	public TaskExecutionObservationContext get() {
+		return this;
 	}
 
 }

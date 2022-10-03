@@ -19,9 +19,9 @@ package org.springframework.cloud.task.configuration.observation;
 import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationConvention;
-import io.micrometer.observation.docs.DocumentedObservation;
+import io.micrometer.observation.docs.ObservationDocumentation;
 
-enum TaskDocumentedObservation implements DocumentedObservation {
+enum TaskDocumentedObservation implements ObservationDocumentation {
 
 	/**
 	 * Observation created when a task runner is executed.

@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.configuration.observation;
 
+import java.util.function.Supplier;
+
 import io.micrometer.observation.Observation;
 
 /**
@@ -24,7 +26,7 @@ import io.micrometer.observation.Observation;
  * @author Marcin Grzejszczak
  * @since 3.0.0
  */
-public class TaskObservationContext extends Observation.Context {
+public class TaskObservationContext extends Observation.Context implements Supplier<TaskObservationContext> {
 
 	private final String beanName;
 
@@ -34,6 +36,11 @@ public class TaskObservationContext extends Observation.Context {
 
 	public String getBeanName() {
 		return beanName;
+	}
+
+	@Override
+	public TaskObservationContext get() {
+		return this;
 	}
 
 }
