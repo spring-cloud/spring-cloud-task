@@ -24,7 +24,7 @@ Spring Cloud Task Framework at app startup establishes the next available id as 
 
 |END_TIME |FALSE | DATETIME | X | Spring Cloud Task Framework at app exit establishes the value.
 
-|TASK_NAME |FALSE | VARCHAR | 100 | Spring Cloud Task Framework at app startup will set this to "Application" unless user establish the name using the spring.cloud.task.name as discussed <<features-task-name,here>>
+|TASK_NAME |FALSE | VARCHAR | 100 | Spring Cloud Task Framework at app startup will set this to "Application" unless user establish the name using the `spring.application.name`.
 
 |EXIT_CODE |FALSE | INTEGER | X | Follows Spring Boot defaults unless overridden by the user as discussed https://docs.spring.io/spring-cloud-task/docs/current/reference/#features-lifecycle-exit-codes[here].
 

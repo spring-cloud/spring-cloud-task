@@ -243,23 +243,6 @@ may be required.
 NOTE: Users should not directly use getter methods from a `TaskConfigurer` directly
 unless they are using it to supply implementations to be exposed as Spring Beans.
 
-[[features-task-name]]
-=== Task Name
-
-In most cases, the name of the task is the application name as configured in Spring
-Boot. However, there are some cases where you may want to map the run of a task to a
-different name. Spring Cloud Data Flow is an example of this (because you probably want
-the task to be run with the name of the task definition). Because of this, we offer the
-ability to customize how the task is named, through the `TaskNameResolver` interface.
-
-By default, Spring Cloud Task provides the `SimpleTaskNameResolver`, which uses the
-following options (in order of precedence):
-
-. A Spring Boot property (configured in any of the ways Spring Boot allows) called
-`spring.cloud.task.name`.
-. The application name as resolved using Spring Boot's rules (obtained through
-`ApplicationContext#getId`).
-
 [[features-task-execution-listener]]
 === Task Execution Listener
 
@@ -422,7 +405,6 @@ Spring Cloud Task captures the following metrics with the following fields:
 ** task.exit.code - The exit code of the application.
 ** service - Service name assigned by the `management.metrics.tags.service` property.
 ** task.execution.id  - The execution id associated with the task execution.
-** task.name - The name associated with the task execution via the `spring.cloud.task.name` property.
 ** task.parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
 ** count - as recorded by the timer.
 ** total_time - as recorded by the timer.
@@ -439,7 +421,6 @@ Spring Cloud Task establishes the following Observation with the following field
 ** error - Exception that was thrown during `ApplicationRunner` or `CommandLineRunner` execution.
 ** spring.cloud.task.runner.bean-name - The name of the bean for the `ApplicationRunner` or `CommandLineRunner`
 ** task.execution.id  - The execution id associated with the task execution.
-** task.name - The name associated with the task execution via the `spring.cloud.task.name` property.
 ** task.parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
 ** count - as recorded by the Observation.
 ** total_time - as recorded by the Observation.
