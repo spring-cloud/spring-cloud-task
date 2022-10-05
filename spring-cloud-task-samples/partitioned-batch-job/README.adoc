@@ -9,14 +9,14 @@ An example of the usage of the `DeployerPartitionHandler` and
 
 == Build:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ ./mvnw clean install
+./mvnw clean install
 ----
 
 == Execute:
 
-[source,shell,indent=2]
+[source,shell]
 ----
 export SPRING_APPLICATION_JSON='{"spring.datasource.url":"jdbc:mariadb://localhost:3306/<your database>","spring.datasource.password":"<your password>","spring.datasource.username":"<your username>","spring.datasource.driverClassName":"org.mariadb.jdbc.Driver"}'
 java -jar target/partitioned-batch-job-3.0.0.jar

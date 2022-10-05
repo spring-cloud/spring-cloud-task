@@ -373,9 +373,8 @@ NOTE: The exit code for the application will be 1 if the task fails because this
 is enabled and another task is running with the same task name.
 
 ==== Single Instance Usage for Spring AOT And Native Compilation
-To utilize Spring Cloud Task's single instance feature when creating a natively compiled app, the feature needs to enabled at build time.
-This is done by adding the `process-aot` execution and setting the `spring.cloud.task.single-step-instance-enabled=true` as a JVM argument as shown below:
-
+To use Spring Cloud Task's single instance feature when creating a natively compiled app, you need to enable the feature at build time.
+To do so, add the process-aot execution and set the spring.cloud.task.single-step-instance-enabled=true as a JVM argument, as follows:
 [source,xml]
 <plugin>
     <groupId>org.springframework.boot</groupId>

@@ -11,9 +11,9 @@ specified.
 NOTE: if using defaults make sure to install the timestamp-task into your local maven repo
 by executing the following build in the timestamp-task module:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ ./mvnw clean install
+./mvnw clean install
 ----
 
 == The arguments offered by the TaskProcessor are as follows:
@@ -32,9 +32,9 @@ $ ./mvnw clean install
 
 == Build:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ ./mvnw clean install
+./mvnw clean install
 ----
 
 == Dependencies:

@@ -8,24 +8,24 @@ This is a task application that emits events on a channel named `task-events`
 
 == Build:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ ./mvnw clean install
+./mvnw clean install
 ----
 
 == Execution:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ java -jar target/task-events-3.0.0.RELEASE.jar
+java -jar target/task-events-3.0.0.RELEASE.jar
 ----
 
 You can listen for the events on the task-events channel with a Spring Cloud Stream Sink
 like the https://github.com/spring-cloud/stream-applications/tree/main/applications/sink/log-sink[log sink] using the following:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-3.1.1.jar --server.port=9090 --spring.cloud.stream.bindings.input.destination=task-events
+java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-3.1.1.jar --server.port=9090 --spring.cloud.stream.bindings.input.destination=task-events
 ----
 
 == Dependencies:
