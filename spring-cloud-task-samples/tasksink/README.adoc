@@ -9,9 +9,9 @@ launch the task that was specified in the request.
 
 == Build:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ ./mvnw clean install
+./mvnw clean install
 ----
 
 == Dependencies:

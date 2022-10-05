@@ -18,16 +18,30 @@ which one to be used for the Spring Cloud Task repository.
 
 == Build:
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ mvn clean package
+mvn clean package
 ----
 
 == Execute sample using 2 embedded databases (default):
 
-[source,shell,indent=2]
+[source,shell]
 ----
-$ java -jar target/multiple-datasources-3.0.0.jar
+java -jar target/multiple-datasources-3.0.0.jar
+----
+
+== Native Build:
+
+[source,shell]
+----
+mvn -Pnative clean package
+----
+
+== RUn sample using 2 embedded databases (default) with native app:
+
+[source,shell]
+----
+./target/multiple-datasources
 ----
 
 == Execute sample using 2 external databases:
