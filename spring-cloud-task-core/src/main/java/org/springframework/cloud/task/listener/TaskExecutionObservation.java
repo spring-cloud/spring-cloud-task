@@ -39,15 +39,15 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 			return DefaultTaskExecutionObservationConvention.class;
 		}
 
+		@Override
+		public KeyName[] getLowCardinalityKeyNames() {
+			return TaskKeyValues.values();
+		}
+
 		public String getPrefix() {
 			return "spring.cloud.task";
 		}
 	};
-
-	@Override
-	public KeyName[] getLowCardinalityKeyNames() {
-		return TaskKeyValues.values();
-	}
 
 	public enum TaskKeyValues implements KeyName {
 
@@ -115,7 +115,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_ORG_NAME {
 			@Override
 			public String asString() {
-				return "cf.org.name";
+				return "spring.cloud.task.cf.org.name";
 			}
 		},
 
@@ -125,7 +125,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_SPACE_ID {
 			@Override
 			public String asString() {
-				return "cf.space.id";
+				return "spring.cloud.task.cf.space.id";
 			}
 		},
 
@@ -135,7 +135,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_SPACE_NAME {
 			@Override
 			public String asString() {
-				return "cf.space.name";
+				return "spring.cloud.task.cf.space.name";
 			}
 		},
 
@@ -145,7 +145,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_APP_NAME {
 			@Override
 			public String asString() {
-				return "cf.app.name";
+				return "spring.cloud.task.cf.app.name";
 			}
 		},
 
@@ -155,7 +155,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_APP_ID {
 			@Override
 			public String asString() {
-				return "cf.app.id";
+				return "spring.cloud.task.cf.app.id";
 			}
 		},
 
@@ -165,7 +165,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_APP_VERSION {
 			@Override
 			public String asString() {
-				return "cf.app.version";
+				return "spring.cloud.task.cf.app.version";
 			}
 		},
 
@@ -175,7 +175,7 @@ public enum TaskExecutionObservation implements ObservationDocumentation {
 		TASK_CF_INSTANCE_INDEX {
 			@Override
 			public String asString() {
-				return "cf.instance.index";
+				return "spring.cloud.task.cf.instance.index";
 			}
 		}
 
