@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -217,7 +218,7 @@ public class JobExecutionEventTests {
 
 	@Test
 	public void testGetterSetters() {
-		Date date = new Date();
+		LocalDateTime date = LocalDateTime.now();
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent();
 		jobExecutionEvent.setLastUpdated(date);
 		assertThat(jobExecutionEvent.getLastUpdated()).isEqualTo(date);

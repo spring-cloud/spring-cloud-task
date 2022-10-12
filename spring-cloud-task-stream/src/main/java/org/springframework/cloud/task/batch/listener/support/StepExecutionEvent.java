@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -55,11 +55,11 @@ public class StepExecutionEvent extends Entity {
 
 	private long writeSkipCount = 0;
 
-	private Date startTime = new Date(System.currentTimeMillis());
+	private LocalDateTime startTime = LocalDateTime.now();
 
-	private Date endTime = null;
+	private LocalDateTime endTime = null;
 
-	private Date lastUpdated = null;
+	private LocalDateTime lastUpdated = null;
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
@@ -147,7 +147,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the time that this execution ended.
 	 * @return the time that this execution ended
 	 */
-	public Date getEndTime() {
+	public LocalDateTime getEndTime() {
 		return this.endTime;
 	}
 
@@ -155,7 +155,7 @@ public class StepExecutionEvent extends Entity {
 	 * Sets the time that this execution ended.
 	 * @param endTime the time that this execution ended
 	 */
-	public void setEndTime(Date endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
@@ -227,7 +227,7 @@ public class StepExecutionEvent extends Entity {
 	 * Gets the time this execution started.
 	 * @return the time this execution started
 	 */
-	public Date getStartTime() {
+	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
@@ -235,7 +235,7 @@ public class StepExecutionEvent extends Entity {
 	 * Sets the time this execution started.
 	 * @param startTime the time this execution started
 	 */
-	public void setStartTime(Date startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
@@ -357,15 +357,15 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the Date representing the last time this execution was persisted.
 	 */
-	public Date getLastUpdated() {
+	public LocalDateTime getLastUpdated() {
 		return this.lastUpdated;
 	}
 
 	/**
 	 * Set the time when the StepExecution was last updated before persisting.
-	 * @param lastUpdated the {@link Date} the StepExecution was last updated.
+	 * @param lastUpdated the {@link LocalDateTime} the StepExecution was last updated.
 	 */
-	public void setLastUpdated(Date lastUpdated) {
+	public void setLastUpdated(LocalDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
 

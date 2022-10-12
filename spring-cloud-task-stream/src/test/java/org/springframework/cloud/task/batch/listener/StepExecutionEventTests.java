@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -124,7 +124,7 @@ public class StepExecutionEventTests {
 	@Test
 	public void testSettersGetters() {
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(getBasicStepExecution());
-		Date date = new Date();
+		LocalDateTime date = LocalDateTime.now();
 		stepExecutionEvent.setLastUpdated(date);
 		assertThat(stepExecutionEvent.getLastUpdated()).isEqualTo(date);
 

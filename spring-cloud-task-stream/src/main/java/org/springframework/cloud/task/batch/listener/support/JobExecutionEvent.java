@@ -16,10 +16,10 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,13 +49,13 @@ public class JobExecutionEvent extends Entity {
 
 	private BatchStatus status = BatchStatus.STARTING;
 
-	private Date startTime = null;
+	private LocalDateTime startTime = null;
 
-	private Date createTime = new Date(System.currentTimeMillis());
+	private LocalDateTime createTime = LocalDateTime.now();
 
-	private Date endTime = null;
+	private LocalDateTime endTime = null;
 
-	private Date lastUpdated = null;
+	private LocalDateTime lastUpdated = null;
 
 	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN"));
 
@@ -94,19 +94,19 @@ public class JobExecutionEvent extends Entity {
 		return this.jobParameters;
 	}
 
-	public Date getEndTime() {
+	public LocalDateTime getEndTime() {
 		return this.endTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
-	public Date getStartTime() {
+	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
@@ -197,14 +197,14 @@ public class JobExecutionEvent extends Entity {
 	/**
 	 * @return the time when this execution was created.
 	 */
-	public Date getCreateTime() {
+	public LocalDateTime getCreateTime() {
 		return this.createTime;
 	}
 
 	/**
 	 * @param createTime creation time of this execution.
 	 */
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(LocalDateTime createTime) {
 		this.createTime = createTime;
 	}
 
@@ -213,7 +213,7 @@ public class JobExecutionEvent extends Entity {
 	 * JobRepository.
 	 * @return Date representing the last time this JobExecution was updated.
 	 */
-	public Date getLastUpdated() {
+	public LocalDateTime getLastUpdated() {
 		return this.lastUpdated;
 	}
 
@@ -221,7 +221,7 @@ public class JobExecutionEvent extends Entity {
 	 * Set the last time this {@link JobExecution} was updated.
 	 * @param lastUpdated The date the {@link JobExecution} was updated.
 	 */
-	public void setLastUpdated(Date lastUpdated) {
+	public void setLastUpdated(LocalDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
 

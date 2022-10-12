@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,8 @@ public class EventListenerTests {
 
 	@BeforeEach
 	public void beforeTests() {
+		objectMapper.registerModule(new JavaTimeModule());
+
 		this.applicationContext = new SpringApplicationBuilder()
 				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
 				.web(WebApplicationType.NONE).build().run();
