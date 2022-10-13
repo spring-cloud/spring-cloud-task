@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import configuration.JobConfiguration;
 import configuration.JobSkipConfiguration;
 import org.assertj.core.api.Assertions;
@@ -56,6 +57,7 @@ public class BatchExecutionEventTests {
 	@BeforeEach
 	public void setup() {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.registerModule(new JavaTimeModule());
 	}
 
 	@AfterEach
