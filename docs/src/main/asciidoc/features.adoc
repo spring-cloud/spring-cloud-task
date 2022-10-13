@@ -394,77 +394,12 @@ To do so, add the process-aot execution and set `spring.cloud.task.single-step-i
     </executions>
 </plugin>
 
-=== Enabling Micrometer Metrics and Observations for Spring Cloud Task
-
-==== Timer
-The `spring.cloud.task` metric captures the information of a task following the execution of the task.
-Spring Cloud Task captures the following information for a Timer:
-
-* spring.cloud.task - Task timer measurements. Records information about task duration and status.
-** application - Name assigned by `management.metrics.tags.application` property.
-** exit.code - The exit code of the application.
-** service - Service name assigned by the `management.metrics.tags.service` property.
-** execution.id  - The execution id associated with the task execution.
-** parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
-** count - as recorded by the timer.
-** total_time - as recorded by the timer in seconds.
-** max - as recorded by the timer in seconds.
-*  - LongTask timer measurement. Records the run-time status of long-time lasting tasks.
-
-==== Long Task Timer
-The `spring.cloud.task.active` metric captures the information of a task during the task execution.
-Spring Cloud Task captures the following information for a  Long Task Timer (active):
-
-* spring.cloud.task - Task timer measurements. Records information about task duration and status.
-** application - Name assigned by `management.metrics.tags.application` property.
-** exit.code - The exit code of the application.
-** service - Service name assigned by the `management.metrics.tags.service` property.
-** execution.id  - The execution id associated with the task execution.
-** parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
-** active_tasks - as recorded by the long task timer.
-** duration - as recorded by the long task timer.
-* spring.cloud.task.active - LongTask timer measurement. Records the run-time status of long-time lasting tasks.
+=== Enabling  Observations for ApplicationRunner and CommandLineRunner
 
 
-==== Observations
-Spring Cloud Task allows user to enable Observations for `CommandLineRunner` and `ApplicationRunner` s.
-
-To Enable Task Observations for `ApplicationRunner` s or `CommandLineRunner` s set `spring.cloud.task.observation.enabled` to true.
+To Enable Task Observations for `ApplicationRunner` or `CommandLineRunner` set `spring.cloud.task.observation.enabled` to true.
 
 An example task application with observations enables using the `SimpleMeterRegistry` can be found https://github.com/spring-cloud/spring-cloud-task/tree/main/spring-cloud-task-samples/task-metrics[here].
-
-===== Runner Timer
-The `spring.cloud.task.runner` metric captures the information of a task application/commandline runner following the execution of the application/commandline runner.
-Spring Cloud Task captures the following information for a runner's Timer:
-
-Spring Cloud Task establishes the following Observation with the following fields:
-
-* spring.cloud.task.runner - Observed representation of a `CommandLineRunner` or `ApplicationRunner`.
-** application - Name assigned by `management.metrics.tags.application` property.
-** error - Exception that was thrown during `ApplicationRunner` or `CommandLineRunner` execution.
-** spring.cloud.task.runner.bean-name - The name of the bean for the `ApplicationRunner` or `CommandLineRunner`
-** execution.id  - The execution id associated with the task execution.
-** parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
-** count - as recorded by the Observation.
-** total_time - as recorded by the Observation.
-** max - as recorded by the Observation.
-
-===== Long Task Runner Timer
-The `spring.cloud.task.runner.active` metric captures the information of a task application/commandline runner during the execution of the application/commandline runner.
-Spring Cloud Task captures the following information for a runner's Long Task Timer:
-
-Spring Cloud Task establishes the following Observation with the following fields:
-
-* spring.cloud.task.runner - Observed representation of a `CommandLineRunner` or `ApplicationRunner`.
-** application - Name assigned by `management.metrics.tags.application` property.
-** error - Exception that was thrown during `ApplicationRunner` or `CommandLineRunner` execution.
-** spring.cloud.task.runner.bean-name - The name of the bean for the `ApplicationRunner` or `CommandLineRunner`
-** execution.id  - The execution id associated with the task execution.
-** parent.execution.id - The parent execution id associated with the task execution via the `spring.cloud.task.parent-execution-id` proeprty.
-** count - as recorded by the Observation.
-** total_time - as recorded by the Observation.
-** max - as recorded by the Observation.
-
 
 === Disabling Spring Cloud Task Auto Configuration
 
