@@ -19,7 +19,6 @@ package org.springframework.cloud.task.batch.handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,8 +154,6 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private void monitorJobExecutions() {
 		RepeatTemplate template = new RepeatTemplate();
-
-		Date startDate = new Date();
 
 		template.iterate(context -> {
 

@@ -17,10 +17,10 @@
 package org.springframework.cloud.task.repository.dao;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,13 +58,13 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId) {
 		return createTaskExecution(taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId) {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName, startTime, null, null,
@@ -74,14 +74,14 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionid) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionid) {
 		return startTaskExecution(executionId, taskName, startTime, arguments, externalExecutionid, null);
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionid, Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionid, Long parentExecutionId) {
 		TaskExecution taskExecution = this.taskExecutions.get(executionId);
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(startTime);
@@ -94,7 +94,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
 			String errorMessage) {
 		if (!this.taskExecutions.containsKey(executionId)) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + executionId + " not found.");
@@ -108,7 +108,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage) {
 		completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
@@ -287,7 +287,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			final TaskExecution tempTaskExecution = tempTaskExecutions
 					.get(taskExecutionMapEntry.getValue().getTaskName());
 			if (tempTaskExecution == null
-					|| tempTaskExecution.getStartTime().before(taskExecutionMapEntry.getValue().getStartTime())
+					|| tempTaskExecution.getStartTime().isBefore(taskExecutionMapEntry.getValue().getStartTime())
 					|| (tempTaskExecution.getStartTime().equals(taskExecutionMapEntry.getValue().getStartTime())
 							&& tempTaskExecution.getExecutionId() < taskExecutionMapEntry.getValue()
 									.getExecutionId())) {

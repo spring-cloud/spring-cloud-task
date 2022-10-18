@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.configuration;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -93,7 +93,7 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 			TaskExecution taskExecution = taskRepository.createTaskExecution("transactionManagerTask");
 			taskExecution = taskRepository.startTaskExecution(taskExecution.getExecutionId(),
-					taskExecution.getTaskName(), new Date(), new ArrayList<>(0), null);
+					taskExecution.getTaskName(), LocalDateTime.now(), new ArrayList<>(0), null);
 
 			TaskLifecycleListener listener = context.getBean(TaskLifecycleListener.class);
 

@@ -16,11 +16,11 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -418,7 +418,7 @@ public class SimpleTaskExplorerTests {
 	private TaskExecution getSimpleTaskExecution() {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName(TASK_NAME);
-		taskExecution.setStartTime(new Date());
+		taskExecution.setStartTime(LocalDateTime.now());
 		taskExecution.setExternalExecutionId(EXTERNAL_EXECUTION_ID);
 		return taskExecution;
 	}

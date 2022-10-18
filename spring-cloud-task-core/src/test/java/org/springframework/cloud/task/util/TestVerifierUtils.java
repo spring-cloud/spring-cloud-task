@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.util;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -86,11 +86,11 @@ public final class TestVerifierUtils {
 	 */
 	public static TaskExecution createSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
-		Date startTime = new Date();
 		long executionId = randomGenerator.nextLong();
 		String taskName = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, null, taskName, startTime, null, null, new ArrayList<>(), null, null);
+		return new TaskExecution(executionId, null, taskName, LocalDateTime.now(), null, null, new ArrayList<>(), null,
+				null);
 	}
 
 	/**
@@ -100,14 +100,12 @@ public final class TestVerifierUtils {
 	public static TaskExecution endSampleTaskExecutionNoArg() {
 		Random randomGenerator = new Random();
 		int exitCode = randomGenerator.nextInt();
-		Date startTime = new Date();
-		Date endTime = new Date();
 		long executionId = randomGenerator.nextLong();
 		String taskName = UUID.randomUUID().toString();
 		String exitMessage = UUID.randomUUID().toString();
 
-		return new TaskExecution(executionId, exitCode, taskName, startTime, endTime, exitMessage, new ArrayList<>(),
-				null, null);
+		return new TaskExecution(executionId, exitCode, taskName, LocalDateTime.now(), LocalDateTime.now(), exitMessage,
+				new ArrayList<>(), null, null);
 	}
 
 	/**
@@ -116,14 +114,14 @@ public final class TestVerifierUtils {
 	 * @return instance of the TaskExecution.
 	 */
 	public static TaskExecution createSampleTaskExecution(long executionId) {
-		Date startTime = new Date();
 		String taskName = UUID.randomUUID().toString();
 		String externalExecutionId = UUID.randomUUID().toString();
 		List<String> args = new ArrayList<>(ARG_SIZE);
 		for (int i = 0; i < ARG_SIZE; i++) {
 			args.add(UUID.randomUUID().toString());
 		}
-		return new TaskExecution(executionId, null, taskName, startTime, null, null, args, null, externalExecutionId);
+		return new TaskExecution(executionId, null, taskName, LocalDateTime.now(), null, null, args, null,
+				externalExecutionId);
 	}
 
 	/**
@@ -135,12 +133,12 @@ public final class TestVerifierUtils {
 		assertThat(actualTaskExecution.getExecutionId()).as("taskExecutionId must be equal")
 				.isEqualTo(expectedTaskExecution.getExecutionId());
 		if (actualTaskExecution.getStartTime() != null) {
-			assertThat(actualTaskExecution.getStartTime()).as("startTime must be equal")
-					.hasSameTimeAs(expectedTaskExecution.getStartTime());
+			assertThat(actualTaskExecution.getStartTime().isEqual(expectedTaskExecution.getStartTime()))
+					.as("startTime must be equal").isTrue();
 		}
 		if (actualTaskExecution.getEndTime() != null) {
-			assertThat(actualTaskExecution.getEndTime()).as("endTime must be equal")
-					.hasSameTimeAs(expectedTaskExecution.getEndTime());
+			assertThat(actualTaskExecution.getEndTime().isEqual(expectedTaskExecution.getEndTime()))
+					.as("endTime must be equal").isTrue();
 		}
 		assertThat(actualTaskExecution.getExitCode()).as("exitCode must be equal")
 				.isEqualTo(expectedTaskExecution.getExitCode());

@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -110,7 +110,7 @@ public class SimpleTaskRepositoryMapTests {
 				.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
-		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(
@@ -126,7 +126,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreEmptyTaskExecution(this.taskRepository);
 
-		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		TaskExecution actualTaskExecution = this.taskRepository.startTaskExecution(
@@ -142,7 +142,7 @@ public class SimpleTaskRepositoryMapTests {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreEmptyTaskExecution(this.taskRepository);
 
-		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 		expectedTaskExecution.setParentExecutionId(12345L);
 
@@ -158,7 +158,7 @@ public class SimpleTaskRepositoryMapTests {
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
 				.createAndStoreTaskExecutionNoParams(this.taskRepository);
-		expectedTaskExecution.setEndTime(new Date());
+		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(this.taskRepository,
 				expectedTaskExecution);

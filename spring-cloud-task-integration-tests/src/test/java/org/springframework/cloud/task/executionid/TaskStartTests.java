@@ -19,9 +19,9 @@ package org.springframework.cloud.task.executionid;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -189,10 +189,10 @@ public class TaskStartTests {
 	@Test
 	public void testWithGeneratedTaskExecutionWithExistingDate() throws Exception {
 		final String TASK_EXECUTION_NAME = "PRE-EXECUTION-TEST-NAME";
-		Date startDate = new Date();
+		LocalDateTime startDate = LocalDateTime.now();
 		Thread.sleep(500);
-		TaskExecution taskExecution = new TaskExecution(1, 0, TASK_EXECUTION_NAME, startDate, new Date(), "foo",
-				Collections.emptyList(), "foo", "bar", null);
+		TaskExecution taskExecution = new TaskExecution(1, 0, TASK_EXECUTION_NAME, startDate, LocalDateTime.now(),
+				"foo", Collections.emptyList(), "foo", "bar", null);
 		this.taskRepository.createTaskExecution(taskExecution);
 		assertThat(this.taskExplorer.getTaskExecutionCount()).as("Only one row is expected").isEqualTo(1);
 
@@ -203,7 +203,7 @@ public class TaskStartTests {
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
 				.isEqualTo(0);
-		assertThat(this.taskExplorer.getTaskExecution(1).getStartTime().getTime()).isEqualTo(startDate.getTime());
+		assertThat(this.taskExplorer.getTaskExecution(1).getStartTime().isEqual(startDate)).isTrue();
 
 	}
 
@@ -218,7 +218,7 @@ public class TaskStartTests {
 	public void testCompletedTaskExecution() throws Exception {
 		this.taskRepository.createTaskExecution();
 		assertThat(this.taskExplorer.getTaskExecutionCount()).as("Only one row is expected").isEqualTo(1);
-		this.taskRepository.completeTaskExecution(1, 0, new Date(), "");
+		this.taskRepository.completeTaskExecution(1, 0, LocalDateTime.now(), "");
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
 			this.applicationContext = getTaskApplication(1).run(new String[0]);
 		});
@@ -248,7 +248,8 @@ public class TaskStartTests {
 	public void testDuplicateTaskExecutionWithSingleInstanceDisabled() throws Exception {
 		this.taskRepository.createTaskExecution();
 		TaskExecution execution = this.taskRepository.createTaskExecution();
-		this.taskRepository.startTaskExecution(execution.getExecutionId(), "bar", new Date(), new ArrayList<>(), "");
+		this.taskRepository.startTaskExecution(execution.getExecutionId(), "bar", LocalDateTime.now(),
+				new ArrayList<>(), "");
 		String[] params = { "--spring.cloud.task.name=bar" };
 		enableLock("bar");
 		this.applicationContext = getTaskApplication(1).run(params);
@@ -293,7 +294,7 @@ public class TaskStartTests {
 		taskLockParams.put("LOCK_KEY", UUID.nameUUIDFromBytes(lockKey.getBytes()).toString());
 		taskLockParams.put("REGION", "DEFAULT");
 		taskLockParams.put("CLIENT_ID", "aClientID");
-		taskLockParams.put("CREATED_DATE", new Date());
+		taskLockParams.put("CREATED_DATE", LocalDateTime.now());
 		taskLockInsert.execute(taskLockParams);
 	}
 

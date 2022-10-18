@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.partition;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,7 +92,7 @@ public class DeployerPartitionHandlerTests {
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 		this.environment = new MockEnvironment();
-		TaskExecution taskExecution = new TaskExecution(2, 0, "name", new Date(), new Date(), "",
+		TaskExecution taskExecution = new TaskExecution(2, 0, "name", LocalDateTime.now(), LocalDateTime.now(), "",
 				Collections.emptyList(), null, null, null);
 		Mockito.lenient().when(taskRepository.createTaskExecution()).thenReturn(taskExecution);
 	}

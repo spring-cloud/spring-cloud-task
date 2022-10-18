@@ -19,11 +19,11 @@ package org.springframework.cloud.task.listener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import io.micrometer.observation.ObservationConvention;
@@ -191,7 +191,7 @@ public class TaskLifecycleListener
 
 	private void doTaskEnd() {
 		if ((this.listenerFailed || this.started) && !this.finished) {
-			this.taskExecution.setEndTime(new Date());
+			this.taskExecution.setEndTime(LocalDateTime.now());
 
 			if (this.applicationFailedException != null) {
 				this.taskExecution.setErrorMessage(stackTraceToString(this.applicationFailedException));
@@ -277,7 +277,8 @@ public class TaskLifecycleListener
 					Assert.isNull(taskExecution.getEndTime(),
 							String.format("Invalid TaskExecution, ID %s task is already complete",
 									this.taskProperties.getExecutionid()));
-					Date startDate = (taskExecution.getStartTime() == null) ? new Date() : taskExecution.getStartTime();
+					LocalDateTime startDate = (taskExecution.getStartTime() == null) ? LocalDateTime.now()
+							: taskExecution.getStartTime();
 					this.taskExecution = this.taskRepository.startTaskExecution(this.taskProperties.getExecutionid(),
 							this.taskNameResolver.getTaskName(), startDate, args,
 							this.taskProperties.getExternalExecutionId(), this.taskProperties.getParentExecutionId());
@@ -285,7 +286,7 @@ public class TaskLifecycleListener
 				else {
 					TaskExecution taskExecution = new TaskExecution();
 					taskExecution.setTaskName(this.taskNameResolver.getTaskName());
-					taskExecution.setStartTime(new Date());
+					taskExecution.setStartTime(LocalDateTime.now());
 					taskExecution.setArguments(args);
 					taskExecution.setExternalExecutionId(this.taskProperties.getExternalExecutionId());
 					taskExecution.setParentExecutionId(this.taskProperties.getParentExecutionId());
@@ -384,8 +385,8 @@ public class TaskLifecycleListener
 	}
 
 	private TaskExecution getTaskExecutionCopy(TaskExecution taskExecution) {
-		Date startTime = new Date(taskExecution.getStartTime().getTime());
-		Date endTime = (taskExecution.getEndTime() == null) ? null : new Date(taskExecution.getEndTime().getTime());
+		LocalDateTime startTime = taskExecution.getStartTime();
+		LocalDateTime endTime = taskExecution.getEndTime();
 
 		return new TaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
 				taskExecution.getTaskName(), startTime, endTime, taskExecution.getExitMessage(),

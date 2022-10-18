@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.WebApplicationType;
@@ -46,6 +48,11 @@ public class TaskEventTests {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private ConfigurableApplicationContext applicationContext;
+
+	@BeforeEach
+	public void setup() {
+		this.objectMapper.registerModule(new JavaTimeModule());
+	}
 
 	@AfterEach
 	public void tearDown() {

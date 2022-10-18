@@ -41,18 +41,7 @@ public class JobParametersEvent {
 	public JobParametersEvent(Map<String, JobParameter<?>> jobParameters) {
 		this.parameters = new LinkedHashMap<>();
 		for (Map.Entry<String, JobParameter<?>> entry : jobParameters.entrySet()) {
-			if (entry.getValue().getValue() instanceof String) {
-				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
-			}
-			else if (entry.getValue().getValue() instanceof Long) {
-				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
-			}
-			else if (entry.getValue().getValue() instanceof Date) {
-				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
-			}
-			else if (entry.getValue().getValue() instanceof Double) {
-				this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
-			}
+			this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
 		}
 	}
 
@@ -61,6 +50,7 @@ public class JobParametersEvent {
 	 * @param key The key to get a value for
 	 * @return The <code>Long</code> value
 	 */
+	@Deprecated(since = "3.0")
 	public Long getLong(String key) {
 		if (!this.parameters.containsKey(key)) {
 			return 0L;
@@ -76,6 +66,7 @@ public class JobParametersEvent {
 	 * @param defaultValue to return if the value doesn't exist
 	 * @return the parameter represented by the provided key, defaultValue otherwise.
 	 */
+	@Deprecated(since = "3.0")
 	public Long getLong(String key, long defaultValue) {
 		if (this.parameters.containsKey(key)) {
 			return getLong(key);
@@ -90,6 +81,7 @@ public class JobParametersEvent {
 	 * @param key The key to get a value for
 	 * @return The <code>String</code> value
 	 */
+	@Deprecated(since = "3.0")
 	public String getString(String key) {
 		JobParameterEvent value = this.parameters.get(key);
 		return value == null ? null : value.toString();
@@ -102,6 +94,7 @@ public class JobParametersEvent {
 	 * @param defaultValue to return if the value doesn't exist
 	 * @return the parameter represented by the provided key, defaultValue otherwise.
 	 */
+	@Deprecated(since = "3.0")
 	public String getString(String key, String defaultValue) {
 		if (this.parameters.containsKey(key)) {
 			return getString(key);
@@ -116,6 +109,7 @@ public class JobParametersEvent {
 	 * @param key The key to get a value for
 	 * @return The <code>Double</code> value
 	 */
+	@Deprecated(since = "3.0")
 	public Double getDouble(String key) {
 		if (!this.parameters.containsKey(key)) {
 			return 0.0;
@@ -131,6 +125,7 @@ public class JobParametersEvent {
 	 * @param defaultValue to return if the value doesn't exist
 	 * @return the parameter represented by the provided key, defaultValue otherwise.
 	 */
+	@Deprecated(since = "3.0")
 	public Double getDouble(String key, double defaultValue) {
 		if (this.parameters.containsKey(key)) {
 			return getDouble(key);
@@ -145,6 +140,7 @@ public class JobParametersEvent {
 	 * @param key The key to get a value for
 	 * @return The <code>java.util.Date</code> value
 	 */
+	@Deprecated(since = "3.0")
 	public Date getDate(String key) {
 		return this.getDate(key, null);
 	}
@@ -156,6 +152,7 @@ public class JobParametersEvent {
 	 * @param defaultValue to return if the value doesn't exist
 	 * @return the parameter represented by the provided key, defaultValue otherwise.
 	 */
+	@Deprecated(since = "3.0")
 	public Date getDate(String key, Date defaultValue) {
 		if (this.parameters.containsKey(key)) {
 			return (Date) this.parameters.get(key).getValue();

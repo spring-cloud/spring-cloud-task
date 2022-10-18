@@ -17,8 +17,8 @@
 package org.springframework.cloud.task.listener;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -81,8 +81,8 @@ public class TaskExecutionListenerTests {
 		setupContextForTaskExecutionListener();
 		DefaultTaskListenerConfiguration.TestTaskExecutionListener taskExecutionListener = this.context
 				.getBean(DefaultTaskListenerConfiguration.TestTaskExecutionListener.class);
-		TaskExecution taskExecution = new TaskExecution(0, null, "wombat", new Date(), new Date(), null,
-				new ArrayList<>(), null, null);
+		TaskExecution taskExecution = new TaskExecution(0, null, "wombat", LocalDateTime.now(), LocalDateTime.now(),
+				null, new ArrayList<>(), null, null);
 		verifyListenerResults(false, false, taskExecution, taskExecutionListener);
 	}
 
@@ -155,8 +155,8 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], this.context,
 				Duration.ofSeconds(50)));
 
-		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", new Date(), new Date(), null, new ArrayList<>(),
-				null, null);
+		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", LocalDateTime.now(), LocalDateTime.now(), null,
+				new ArrayList<>(), null, null);
 		verifyListenerResults(true, false, taskExecution, taskExecutionListener);
 	}
 
@@ -175,8 +175,8 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(
 				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
-		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(), new Date(), null, new ArrayList<>(),
-				null, null);
+		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", LocalDateTime.now(), LocalDateTime.now(), null,
+				new ArrayList<>(), null, null);
 		verifyListenerResults(true, true, taskExecution, taskExecutionListener);
 	}
 
@@ -189,8 +189,8 @@ public class TaskExecutionListenerTests {
 		setupContextForAnnotatedListener();
 		DefaultAnnotationConfiguration.AnnotatedTaskListener annotatedListener = this.context
 				.getBean(DefaultAnnotationConfiguration.AnnotatedTaskListener.class);
-		TaskExecution taskExecution = new TaskExecution(0, null, "wombat", new Date(), new Date(), null,
-				new ArrayList<>(), null, null);
+		TaskExecution taskExecution = new TaskExecution(0, null, "wombat", LocalDateTime.now(), LocalDateTime.now(),
+				null, new ArrayList<>(), null, null);
 		verifyListenerResults(false, false, taskExecution, annotatedListener);
 	}
 
@@ -206,8 +206,8 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], this.context,
 				Duration.ofSeconds(50)));
 
-		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", new Date(), new Date(), null, new ArrayList<>(),
-				null, null);
+		TaskExecution taskExecution = new TaskExecution(0, 0, "wombat", LocalDateTime.now(), LocalDateTime.now(), null,
+				new ArrayList<>(), null, null);
 		verifyListenerResults(true, false, taskExecution, annotatedListener);
 	}
 
@@ -226,8 +226,8 @@ public class TaskExecutionListenerTests {
 		this.context.publishEvent(
 				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
-		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", new Date(), new Date(), null, new ArrayList<>(),
-				null, null);
+		TaskExecution taskExecution = new TaskExecution(0, 1, "wombat", LocalDateTime.now(), LocalDateTime.now(), null,
+				new ArrayList<>(), null, null);
 		verifyListenerResults(true, true, taskExecution, annotatedListener);
 	}
 

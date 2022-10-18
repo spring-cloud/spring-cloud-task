@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,13 +41,13 @@ public class JobParameterEventTests {
 	@Test
 	public void testConstructor() {
 		final String EXPECTED_VALUE = "FOO";
-		final Date EXPECTED_DATE_VALUE = new Date();
+		final LocalDateTime EXPECTED_DATE_VALUE = LocalDateTime.now();
 		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_VALUE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 
-		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, Date.class);
+		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, LocalDateTime.class);
 		jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_DATE_VALUE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();

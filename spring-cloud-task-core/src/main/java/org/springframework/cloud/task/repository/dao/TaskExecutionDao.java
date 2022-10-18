@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.repository.dao;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +42,7 @@ public interface TaskExecutionDao {
 	 * @param externalExecutionId id assigned to the task by the platform
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
-	TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId);
 
 	/**
@@ -55,7 +55,7 @@ public interface TaskExecutionDao {
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 * @since 1.2.0
 	 */
-	TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId);
 
 	/**
@@ -69,7 +69,7 @@ public interface TaskExecutionDao {
 	 * start.
 	 * @since 1.1.0
 	 */
-	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+	TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId);
 
 	/**
@@ -84,7 +84,7 @@ public interface TaskExecutionDao {
 	 * start.
 	 * @since 1.2.0
 	 */
-	TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
+	TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId);
 
 	/**
@@ -96,7 +96,7 @@ public interface TaskExecutionDao {
 	 * @param errorMessage error information available upon failure of a task.
 	 * @since 1.1.0
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
 			String errorMessage);
 
 	/**
@@ -106,7 +106,7 @@ public interface TaskExecutionDao {
 	 * @param endTime the time the task completed.
 	 * @param exitMessage the message assigned to the task upon completion.
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
+	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage);
 
 	/**
 	 * Retrieves a task execution from the task repository.

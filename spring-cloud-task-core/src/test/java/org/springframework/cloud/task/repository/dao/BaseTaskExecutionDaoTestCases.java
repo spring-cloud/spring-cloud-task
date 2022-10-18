@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.task.repository.dao;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
 
@@ -90,15 +88,12 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		final TaskExecution lastTaskExecution = latestTaskExecutions.get(0);
 		assertThat(lastTaskExecution.getTaskName()).isEqualTo("FOO1");
 
-		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTime.setTime(lastTaskExecution.getStartTime());
-
-		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
-		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
-		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(lastTaskExecution.getStartTime().getYear()).isEqualTo(2015);
+		assertThat(lastTaskExecution.getStartTime().getMonthValue()).isEqualTo(2);
+		assertThat(lastTaskExecution.getStartTime().getDayOfMonth()).isEqualTo(22);
+		assertThat(lastTaskExecution.getStartTime().getHour()).isEqualTo(23);
+		assertThat(lastTaskExecution.getStartTime().getMinute()).isEqualTo(59);
+		assertThat(lastTaskExecution.getStartTime().getSecond()).isEqualTo(0);
 	}
 
 	@Test
@@ -110,35 +105,31 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		assertThat(latestTaskExecutions.size() == 3)
 				.as("Expected 3 taskExecutions but got " + latestTaskExecutions.size()).isTrue();
 
-		final Calendar dateTimeFoo3 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTimeFoo3.setTime(latestTaskExecutions.get(0).getStartTime());
+		LocalDateTime startDateTime = latestTaskExecutions.get(0).getStartTime();
+		assertThat(startDateTime.getYear()).isEqualTo(2016);
+		assertThat(startDateTime.getMonthValue()).isEqualTo(8);
+		assertThat(startDateTime.getDayOfMonth()).isEqualTo(20);
+		assertThat(startDateTime.getHour()).isEqualTo(14);
+		assertThat(startDateTime.getMinute()).isEqualTo(45);
+		assertThat(startDateTime.getSecond()).isEqualTo(0);
 
-		assertThat(dateTimeFoo3.get(Calendar.YEAR)).isEqualTo(2016);
-		assertThat(dateTimeFoo3.get(Calendar.MONTH) + 1).isEqualTo(8);
-		assertThat(dateTimeFoo3.get(Calendar.DAY_OF_MONTH)).isEqualTo(20);
-		assertThat(dateTimeFoo3.get(Calendar.HOUR_OF_DAY)).isEqualTo(14);
-		assertThat(dateTimeFoo3.get(Calendar.MINUTE)).isEqualTo(45);
-		assertThat(dateTimeFoo3.get(Calendar.SECOND)).isEqualTo(0);
+		LocalDateTime startDateTimeOne = latestTaskExecutions.get(1).getStartTime();
 
-		final Calendar dateTimeFoo1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTimeFoo1.setTime(latestTaskExecutions.get(1).getStartTime());
+		assertThat(startDateTimeOne.getYear()).isEqualTo(2015);
+		assertThat(startDateTimeOne.getMonthValue()).isEqualTo(2);
+		assertThat(startDateTimeOne.getDayOfMonth()).isEqualTo(22);
+		assertThat(startDateTimeOne.getHour()).isEqualTo(23);
+		assertThat(startDateTimeOne.getMinute()).isEqualTo(59);
+		assertThat(startDateTimeOne.getSecond()).isEqualTo(0);
 
-		assertThat(dateTimeFoo1.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTimeFoo1.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTimeFoo1.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
-		assertThat(dateTimeFoo1.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-		assertThat(dateTimeFoo1.get(Calendar.MINUTE)).isEqualTo(59);
-		assertThat(dateTimeFoo1.get(Calendar.SECOND)).isEqualTo(0);
+		LocalDateTime startDateTimeTwo = latestTaskExecutions.get(2).getStartTime();
 
-		final Calendar dateTimeFoo4 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTimeFoo4.setTime(latestTaskExecutions.get(2).getStartTime());
-
-		assertThat(dateTimeFoo4.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTimeFoo4.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTimeFoo4.get(Calendar.DAY_OF_MONTH)).isEqualTo(20);
-		assertThat(dateTimeFoo4.get(Calendar.HOUR_OF_DAY)).isEqualTo(14);
-		assertThat(dateTimeFoo4.get(Calendar.MINUTE)).isEqualTo(45);
-		assertThat(dateTimeFoo4.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(startDateTimeTwo.getYear()).isEqualTo(2015);
+		assertThat(startDateTimeTwo.getMonthValue()).isEqualTo(2);
+		assertThat(startDateTimeTwo.getDayOfMonth()).isEqualTo(20);
+		assertThat(startDateTimeTwo.getHour()).isEqualTo(14);
+		assertThat(startDateTimeTwo.getMinute()).isEqualTo(45);
+		assertThat(startDateTimeTwo.getSecond()).isEqualTo(0);
 	}
 
 	/**
@@ -154,15 +145,14 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		assertThat(latestTaskExecutions.size() == 1)
 				.as("Expected only 1 taskExecution but got " + latestTaskExecutions.size()).isTrue();
 
-		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTime.setTime(latestTaskExecutions.get(0).getStartTime());
+		LocalDateTime startDateTime = latestTaskExecutions.get(0).getStartTime();
 
-		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
-		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
-		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(startDateTime.getYear()).isEqualTo(2015);
+		assertThat(startDateTime.getMonthValue()).isEqualTo(2);
+		assertThat(startDateTime.getDayOfMonth()).isEqualTo(22);
+		assertThat(startDateTime.getHour()).isEqualTo(23);
+		assertThat(startDateTime.getMinute()).isEqualTo(59);
+		assertThat(startDateTime.getSecond()).isEqualTo(0);
 		assertThat(latestTaskExecutions.get(0).getExecutionId()).isEqualTo(9 + executionIdOffset);
 	}
 
@@ -208,15 +198,14 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		final TaskExecution latestTaskExecution = this.dao.getLatestTaskExecutionForTaskName("FOO1");
 		assertThat(latestTaskExecution).as("Expected the latestTaskExecution not to be null").isNotNull();
 
-		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTime.setTime(latestTaskExecution.getStartTime());
+		LocalDateTime startDateTime = latestTaskExecution.getStartTime();
 
-		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
-		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
-		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(startDateTime.getYear()).isEqualTo(2015);
+		assertThat(startDateTime.getMonthValue()).isEqualTo(2);
+		assertThat(startDateTime.getDayOfMonth()).isEqualTo(22);
+		assertThat(startDateTime.getHour()).isEqualTo(23);
+		assertThat(startDateTime.getMinute()).isEqualTo(59);
+		assertThat(startDateTime.getSecond()).isEqualTo(0);
 	}
 
 	/**
@@ -231,15 +220,14 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		final TaskExecution latestTaskExecution = this.dao.getLatestTaskExecutionForTaskName("FOO5");
 		assertThat(latestTaskExecution).as("Expected the latestTaskExecution not to be null").isNotNull();
 
-		final Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		dateTime.setTime(latestTaskExecution.getStartTime());
+		LocalDateTime startDateTime = latestTaskExecution.getStartTime();
 
-		assertThat(dateTime.get(Calendar.YEAR)).isEqualTo(2015);
-		assertThat(dateTime.get(Calendar.MONTH) + 1).isEqualTo(2);
-		assertThat(dateTime.get(Calendar.DAY_OF_MONTH)).isEqualTo(22);
-		assertThat(dateTime.get(Calendar.HOUR_OF_DAY)).isEqualTo(23);
-		assertThat(dateTime.get(Calendar.MINUTE)).isEqualTo(59);
-		assertThat(dateTime.get(Calendar.SECOND)).isEqualTo(0);
+		assertThat(startDateTime.getYear()).isEqualTo(2015);
+		assertThat(startDateTime.getMonthValue()).isEqualTo(2);
+		assertThat(startDateTime.getDayOfMonth()).isEqualTo(22);
+		assertThat(startDateTime.getHour()).isEqualTo(23);
+		assertThat(startDateTime.getMinute()).isEqualTo(59);
+		assertThat(startDateTime.getSecond()).isEqualTo(0);
 		assertThat(latestTaskExecution.getExecutionId()).isEqualTo(9 + executionIdOffset);
 	}
 
@@ -248,7 +236,7 @@ public abstract class BaseTaskExecutionDaoTestCases {
 	public void getRunningTaskExecutions() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThat(this.dao.getRunningTaskExecutionCount()).isEqualTo(this.dao.getTaskExecutionCount());
-		this.dao.completeTaskExecution(1, 0, new Date(), "c'est fini!");
+		this.dao.completeTaskExecution(1, 0, LocalDateTime.now(), "c'est fini!");
 		assertThat(this.dao.getRunningTaskExecutionCount()).isEqualTo(this.dao.getTaskExecutionCount() - 1);
 	}
 
@@ -300,11 +288,9 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		return executionIdOffset;
 	}
 
-	private Date getDate(int year, int month, int day, int hour, int minute) {
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		calendar.clear();
-		calendar.set(year, month - 1, day, hour, minute);
-		return calendar.getTime();
+	private LocalDateTime getDate(int year, int month, int day, int hour, int minute) {
+		return LocalDateTime.now().withYear(year).withMonth(month).withDayOfMonth(day).withHour(hour).withMinute(minute)
+				.withSecond(0);
 	}
 
 	private long createTaskExecution(TaskExecution te) {
@@ -316,7 +302,7 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		TaskExecution taskExecution = new TaskExecution();
 		taskExecution.setTaskName(taskName);
 		taskExecution.setExternalExecutionId(externalExecutionId);
-		taskExecution.setStartTime(new Date());
+		taskExecution.setStartTime(LocalDateTime.now());
 		return taskExecution;
 	}
 

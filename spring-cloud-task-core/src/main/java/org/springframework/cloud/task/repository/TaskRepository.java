@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.repository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,7 @@ public interface TaskRepository {
 	 * @return the updated {@link TaskExecution}
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution has completed.
@@ -53,7 +53,7 @@ public interface TaskRepository {
 	 * @since 1.1.0
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
 			String errorMessage);
 
 	/**
@@ -99,7 +99,7 @@ public interface TaskRepository {
 	 * @return TaskExecution created based on the parameters.
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
+	TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId);
 
 	/**
@@ -122,7 +122,7 @@ public interface TaskRepository {
 	 * a TaskExecution.
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
+	TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId);
 
 }

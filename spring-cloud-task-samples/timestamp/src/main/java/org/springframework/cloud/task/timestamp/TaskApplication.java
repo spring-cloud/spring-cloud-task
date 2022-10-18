@@ -59,7 +59,7 @@ public class TaskApplication {
 		private TimestampTaskProperties config;
 
 		@Override
-		public void run(String... strings) throws Exception {
+		public void run(String... strings) {
 			DateFormat dateFormat = new SimpleDateFormat(this.config.getFormat());
 			logger.info(dateFormat.format(new Date()));
 		}

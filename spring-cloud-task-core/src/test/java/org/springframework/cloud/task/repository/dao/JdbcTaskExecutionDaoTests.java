@@ -16,9 +16,9 @@
 
 package org.springframework.cloud.task.repository.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -79,7 +79,7 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<>(0), null);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
-		expectedTaskExecution.setStartTime(new Date());
+		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
 
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),

@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.Assert;
@@ -55,12 +55,12 @@ public class TaskExecution {
 	/**
 	 * Time of when the task was started.
 	 */
-	private Date startTime;
+	private LocalDateTime startTime;
 
 	/**
 	 * Timestamp of when the task was completed/terminated.
 	 */
-	private Date endTime;
+	private LocalDateTime endTime;
 
 	/**
 	 * Message returned from the task or stacktrace.
@@ -90,9 +90,9 @@ public class TaskExecution {
 		this.arguments = new ArrayList<>();
 	}
 
-	public TaskExecution(long executionId, Integer exitCode, String taskName, Date startTime, Date endTime,
-			String exitMessage, List<String> arguments, String errorMessage, String externalExecutionId,
-			Long parentExecutionId) {
+	public TaskExecution(long executionId, Integer exitCode, String taskName, LocalDateTime startTime,
+			LocalDateTime endTime, String exitMessage, List<String> arguments, String errorMessage,
+			String externalExecutionId, Long parentExecutionId) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		this.executionId = executionId;
@@ -100,15 +100,16 @@ public class TaskExecution {
 		this.taskName = taskName;
 		this.exitMessage = exitMessage;
 		this.arguments = new ArrayList<>(arguments);
-		this.startTime = (startTime != null) ? (Date) startTime.clone() : null;
-		this.endTime = (endTime != null) ? (Date) endTime.clone() : null;
+		this.startTime = startTime;
+		this.endTime = endTime;
 		this.errorMessage = errorMessage;
 		this.externalExecutionId = externalExecutionId;
 		this.parentExecutionId = parentExecutionId;
 	}
 
-	public TaskExecution(long executionId, Integer exitCode, String taskName, Date startTime, Date endTime,
-			String exitMessage, List<String> arguments, String errorMessage, String externalExecutionId) {
+	public TaskExecution(long executionId, Integer exitCode, String taskName, LocalDateTime startTime,
+			LocalDateTime endTime, String exitMessage, List<String> arguments, String errorMessage,
+			String externalExecutionId) {
 
 		this(executionId, exitCode, taskName, startTime, endTime, exitMessage, arguments, errorMessage,
 				externalExecutionId, null);
@@ -134,20 +135,20 @@ public class TaskExecution {
 		this.taskName = taskName;
 	}
 
-	public Date getStartTime() {
-		return (this.startTime != null) ? (Date) this.startTime.clone() : null;
+	public LocalDateTime getStartTime() {
+		return this.startTime;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = (startTime != null) ? (Date) startTime.clone() : null;
+	public void setStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
 	}
 
-	public Date getEndTime() {
-		return (this.endTime != null) ? (Date) this.endTime.clone() : null;
+	public LocalDateTime getEndTime() {
+		return this.endTime;
 	}
 
-	public void setEndTime(Date endTime) {
-		this.endTime = (endTime != null) ? (Date) endTime.clone() : null;
+	public void setEndTime(LocalDateTime endTime) {
+		this.endTime = endTime;
 	}
 
 	public String getExitMessage() {

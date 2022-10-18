@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.micrometer;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Tags;
@@ -99,8 +99,8 @@ public class TaskObservationsTests {
 	@Test
 	public void defaultTaskTest() {
 
-		TaskExecution taskExecution = new TaskExecution(123L, 0, null, new Date(), new Date(), null, new ArrayList<>(),
-				null, null, null);
+		TaskExecution taskExecution = new TaskExecution(123L, 0, null, LocalDateTime.now(), LocalDateTime.now(), null,
+				new ArrayList<>(), null, null, null);
 
 		// Start Task
 		taskObservations.onTaskStartup(taskExecution);
@@ -274,8 +274,8 @@ public class TaskObservationsTests {
 	}
 
 	private TaskExecution startupObservationForBasicTests(String taskName, long taskExecutionId) {
-		TaskExecution taskExecution = new TaskExecution(taskExecutionId, 0, taskName, new Date(), new Date(), null,
-				new ArrayList<>(), null, "-1", -1L);
+		TaskExecution taskExecution = new TaskExecution(taskExecutionId, 0, taskName, LocalDateTime.now(),
+				LocalDateTime.now(), null, new ArrayList<>(), null, "-1", -1L);
 
 		// Start Task
 		taskObservations.onTaskStartup(taskExecution);

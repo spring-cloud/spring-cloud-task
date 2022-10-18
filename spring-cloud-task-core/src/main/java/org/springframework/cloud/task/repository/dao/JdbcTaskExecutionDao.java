@@ -18,10 +18,11 @@ package org.springframework.cloud.task.repository.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -199,13 +200,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId) {
 		return createTaskExecution(taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, Date startTime, List<String> arguments,
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId) {
 		long nextExecutionId = getNextExecutionId();
 
@@ -214,8 +215,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
 				.addValue("taskExecutionId", nextExecutionId, Types.BIGINT).addValue("exitCode", null, Types.INTEGER)
-				.addValue("startTime", startTime, Types.TIMESTAMP).addValue("taskName", taskName, Types.VARCHAR)
-				.addValue("lastUpdated", new Date(), Types.TIMESTAMP)
+				.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
+				.addValue("taskName", taskName, Types.VARCHAR)
+				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
 				.addValue("externalExecutionId", externalExecutionId, Types.VARCHAR)
 				.addValue("parentExecutionId", parentExecutionId, Types.BIGINT);
 
@@ -225,20 +227,21 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId) {
 		return startTaskExecution(executionId, taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId, Long parentExecutionId) {
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName, startTime, null, null, arguments,
 				null, externalExecutionId, parentExecutionId);
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
-				.addValue("startTime", startTime, Types.TIMESTAMP).addValue("exitCode", null, Types.INTEGER)
-				.addValue("taskName", taskName, Types.VARCHAR).addValue("lastUpdated", new Date(), Types.TIMESTAMP)
+				.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
+				.addValue("exitCode", null, Types.INTEGER).addValue("taskName", taskName, Types.VARCHAR)
+				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
 				.addValue("parentExecutionId", parentExecutionId, Types.BIGINT)
 				.addValue("taskExecutionId", executionId, Types.BIGINT);
 
@@ -258,7 +261,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime, String exitMessage,
+	public void completeTaskExecution(long taskExecutionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
 			String errorMessage) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource().addValue("taskExecutionId",
 				taskExecutionId, Types.BIGINT);
@@ -271,17 +274,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		}
 
 		final MapSqlParameterSource parameters = new MapSqlParameterSource()
-				.addValue("endTime", endTime, Types.TIMESTAMP).addValue("exitCode", exitCode, Types.INTEGER)
-				.addValue("exitMessage", exitMessage, Types.VARCHAR)
+				.addValue("endTime", endTime == null ? null : Timestamp.valueOf(endTime), Types.TIMESTAMP)
+				.addValue("exitCode", exitCode, Types.INTEGER).addValue("exitMessage", exitMessage, Types.VARCHAR)
 				.addValue("errorMessage", errorMessage, Types.VARCHAR)
-				.addValue("lastUpdated", new Date(), Types.TIMESTAMP)
+				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
 				.addValue("taskExecutionId", taskExecutionId, Types.BIGINT);
 
 		this.jdbcTemplate.update(getQuery(UPDATE_TASK_EXECUTION), parameters);
 	}
 
 	@Override
-	public void completeTaskExecution(long taskExecutionId, Integer exitCode, Date endTime, String exitMessage) {
+	public void completeTaskExecution(long taskExecutionId, Integer exitCode, LocalDateTime endTime,
+			String exitMessage) {
 		completeTaskExecution(taskExecutionId, exitCode, endTime, exitMessage, null);
 	}
 
@@ -582,9 +586,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				parentExecutionId = null;
 			}
 			return new TaskExecution(id, getNullableExitCode(rs), rs.getString("TASK_NAME"),
-					rs.getTimestamp("START_TIME"), rs.getTimestamp("END_TIME"), rs.getString("EXIT_MESSAGE"),
-					getTaskArguments(id), rs.getString("ERROR_MESSAGE"), rs.getString("EXTERNAL_EXECUTION_ID"),
-					parentExecutionId);
+					rs.getObject("START_TIME", LocalDateTime.class), rs.getObject("END_TIME", LocalDateTime.class),
+					rs.getString("EXIT_MESSAGE"), getTaskArguments(id), rs.getString("ERROR_MESSAGE"),
+					rs.getString("EXTERNAL_EXECUTION_ID"), parentExecutionId);
 		}
 
 		private Integer getNullableExitCode(ResultSet rs) throws SQLException {

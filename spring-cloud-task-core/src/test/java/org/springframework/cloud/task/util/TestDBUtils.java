@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,9 +74,9 @@ public final class TestDBUtils {
 				TaskExecution taskExecution = new TaskExecution(rs.getLong("TASK_EXECUTION_ID"),
 						StringUtils.hasText(rs.getString("EXIT_CODE")) ? Integer.valueOf(rs.getString("EXIT_CODE"))
 								: null,
-						rs.getString("TASK_NAME"), rs.getTimestamp("START_TIME"), rs.getTimestamp("END_TIME"),
-						rs.getString("EXIT_MESSAGE"), new ArrayList<>(0), rs.getString("ERROR_MESSAGE"),
-						rs.getString("EXTERNAL_EXECUTION_ID"));
+						rs.getString("TASK_NAME"), rs.getObject("START_TIME", LocalDateTime.class),
+						rs.getObject("END_TIME", LocalDateTime.class), rs.getString("EXIT_MESSAGE"), new ArrayList<>(0),
+						rs.getString("ERROR_MESSAGE"), rs.getString("EXTERNAL_EXECUTION_ID"));
 				return taskExecution;
 			}
 		});

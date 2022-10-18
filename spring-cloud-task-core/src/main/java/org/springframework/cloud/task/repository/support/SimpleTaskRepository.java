@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.repository.support;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -87,13 +87,14 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			String exitMessage) {
 		return completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override
-	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
-			String errorMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			String exitMessage, String errorMessage) {
 		initialize();
 
 		validateCompletedTaskExitInformation(executionId, exitCode, endTime);
@@ -133,8 +134,8 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionId) {
+	public TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId) {
 		return startTaskExecution(executionid, taskName, startTime, arguments, externalExecutionId, null);
 	}
 
@@ -145,8 +146,8 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId, Long parentExecutionId) {
 		initialize();
 		TaskExecution taskExecution = this.taskExecutionDao.startTaskExecution(executionid, taskName, startTime,
 				arguments, externalExecutionId, parentExecutionId);
@@ -187,7 +188,7 @@ public class SimpleTaskRepository implements TaskRepository {
 		}
 	}
 
-	private void validateCompletedTaskExitInformation(long executionId, Integer exitCode, Date endTime) {
+	private void validateCompletedTaskExitInformation(long executionId, Integer exitCode, LocalDateTime endTime) {
 		Assert.notNull(exitCode, "exitCode should not be null");
 		Assert.isTrue(exitCode >= 0, "exit code must be greater than or equal to zero");
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");

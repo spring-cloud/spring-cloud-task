@@ -255,7 +255,8 @@ public class TaskLifecycleListenerTests {
 		}
 
 		if (update) {
-			assertThat(taskExecution.getEndTime().getTime() >= taskExecution.getStartTime().getTime()).isTrue();
+			assertThat(taskExecution.getEndTime().isAfter(taskExecution.getStartTime())
+					|| taskExecution.getEndTime().isEqual(taskExecution.getStartTime())).isTrue();
 			assertThat(taskExecution.getExitCode()).isNotNull();
 		}
 		else {
