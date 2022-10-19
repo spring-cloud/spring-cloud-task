@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.configuration;
 
 import org.springframework.batch.core.Job;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,7 +30,6 @@ import org.springframework.cloud.task.listener.TaskLifecycleListener;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Provides auto configuration for the {@link TaskBatchExecutionListener}.
@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Michael Minella
  */
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @ConditionalOnBean({ Job.class, TaskLifecycleListener.class })
 @ConditionalOnProperty(name = { "spring.cloud.task.batch.listener.enable", "spring.cloud.task.batch.listener.enabled" },
 		havingValue = "true", matchIfMissing = true)
@@ -54,7 +54,7 @@ public class TaskBatchAutoConfiguration {
 	/**
 	 * Auto configuration for {@link TaskBatchExecutionListener}.
 	 */
-	@Configuration(proxyBeanMethods = false)
+	@AutoConfiguration
 	@ConditionalOnMissingBean(name = "taskBatchExecutionListener")
 	@EnableConfigurationProperties(TaskProperties.class)
 	public static class TaskBatchExecutionListenerAutoconfiguration {

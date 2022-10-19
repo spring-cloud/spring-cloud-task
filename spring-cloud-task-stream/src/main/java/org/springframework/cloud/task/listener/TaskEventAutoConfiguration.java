@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.listener;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -29,14 +30,13 @@ import org.springframework.cloud.task.batch.listener.support.TaskEventProperties
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Michael Minella
  * @author Glenn Renfro
  */
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @ConditionalOnClass(StreamBridge.class)
 @ConditionalOnBean(TaskLifecycleListener.class)
 @ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('${spring.batch.job.jobName:}')")
@@ -53,7 +53,7 @@ public class TaskEventAutoConfiguration {
 	/**
 	 * Configuration for a {@link TaskExecutionListener}.
 	 */
-	@Configuration(proxyBeanMethods = false)
+	@AutoConfiguration
 	public static class ListenerConfiguration {
 
 		@Bean

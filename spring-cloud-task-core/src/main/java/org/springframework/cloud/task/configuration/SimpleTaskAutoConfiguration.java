@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -38,7 +39,6 @@ import org.springframework.cloud.task.repository.support.TaskRepositoryInitializ
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -54,7 +54,7 @@ import org.springframework.util.CollectionUtils;
  * @author Michael Minella
  * @author Mahmoud Ben Hassine
  */
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @EnableTransactionManagement
 @EnableConfigurationProperties({ TaskProperties.class })
 // @checkstyle:off

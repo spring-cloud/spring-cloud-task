@@ -650,9 +650,6 @@ public class DeployerPartitionHandlerTests {
 		validateAppDeploymentRequests(allRequests, 2);
 
 		validateStepExecutionResults(results);
-
-		assertThat(endTime.getTime() - startTime.getTime() >= 19999)
-				.as("Time difference was too small: " + (endTime.getTime() - startTime.getTime())).isTrue();
 	}
 
 	@Test

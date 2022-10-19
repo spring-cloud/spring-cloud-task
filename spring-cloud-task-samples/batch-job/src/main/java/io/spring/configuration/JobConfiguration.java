@@ -48,15 +48,15 @@ public class JobConfiguration {
 
 	@Bean
 	public Job job1() {
-		return new JobBuilder("job1").repository(this.jobRepository)
-				.start(new StepBuilder("job1step1").repository(this.jobRepository).tasklet(new Tasklet() {
+		return new JobBuilder("job1", this.jobRepository)
+				.start(new StepBuilder("job1step1", this.jobRepository).tasklet(new Tasklet() {
 					@Override
 					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
 							throws Exception {
 						logger.info("Job1 was run");
 						return RepeatStatus.FINISHED;
 					}
-				}).transactionManager(transactionManager).build()).build();
+				}, transactionManager).build()).build();
 	}
 
 }
