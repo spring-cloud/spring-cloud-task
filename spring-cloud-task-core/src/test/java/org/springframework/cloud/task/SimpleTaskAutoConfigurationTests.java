@@ -27,9 +27,9 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.boot.LazyInitializationBeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -103,16 +103,19 @@ public class SimpleTaskAutoConfigurationTests {
 	}
 
 	@Test
-	public void testRepositoryInitializedWithLazyInitialization() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner().withInitializer(
-				(context) -> context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor()))
-				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class))
+	public void testRepositoryBeansDependOnTaskRepositoryInitializer() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner().withConfiguration(
+				AutoConfigurations.of(EmbeddedDataSourceConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
 				.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
 		applicationContextRunner.run((context) -> {
-			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
-			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1L);
+			ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+			String[] taskRepositoryNames = beanFactory.getBeanNamesForType(TaskRepository.class);
+			assertThat(taskRepositoryNames).isNotEmpty();
+			for (String taskRepositoryName : taskRepositoryNames) {
+				assertThat(beanFactory.getBeanDefinition(taskRepositoryName).getDependsOn())
+						.contains("taskRepositoryInitializer");
+			}
 		});
 	}
 
