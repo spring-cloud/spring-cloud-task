@@ -1,0 +1,5 @@
+org.springframework.boot.sql.init.dependency.DatabaseInitializerDetector=\
+org.springframework.cloud.task.configuration.TaskRepositoryDatabaseInitializerDetector
+
+org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
+org.springframework.cloud.task.configuration.TaskRepositoryDependsOnDatabaseInitializationDetector

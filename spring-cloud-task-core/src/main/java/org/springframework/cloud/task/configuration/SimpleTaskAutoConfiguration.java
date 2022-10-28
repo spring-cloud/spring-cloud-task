@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.sql.init.dependency.DatabaseInitializationDependencyConfigurer;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -39,7 +40,7 @@ import org.springframework.cloud.task.repository.support.TaskRepositoryInitializ
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -61,6 +62,7 @@ import org.springframework.util.CollectionUtils;
 @ConditionalOnProperty(prefix = "spring.cloud.task.autoconfiguration", name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 // @checkstyle:on
+@Import(DatabaseInitializationDependencyConfigurer.class)
 public class SimpleTaskAutoConfiguration {
 
 	protected static final Log logger = LogFactory.getLog(SimpleTaskAutoConfiguration.class);
@@ -104,7 +106,6 @@ public class SimpleTaskAutoConfiguration {
 	}
 
 	@Bean
-	@Lazy(false)
 	public TaskRepositoryInitializer taskRepositoryInitializer() {
 		TaskRepositoryInitializer taskRepositoryInitializer = new TaskRepositoryInitializer(this.taskProperties);
 		DataSource initializerDataSource = getDefaultConfigurer().getTaskDataSource();
