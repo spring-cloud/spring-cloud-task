@@ -29,7 +29,7 @@ java -jar target/batch-job-3.0.0.jar
 
 [source,shell]
 ----
-mvn -Pnative clean package
+mvn -Pnative native:compile
 ----
 
 == Native Run:
