@@ -107,7 +107,7 @@
 		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
-		<jakarta-ee-api.version>9.1.0</jakarta-ee-api.version>
+		<jakarta-ee-api.version>10.0.0</jakarta-ee-api.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>
