@@ -32,6 +32,7 @@ import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.jdbc.support.incrementer.SqlServerSequenceMaxValueIncrementer;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
