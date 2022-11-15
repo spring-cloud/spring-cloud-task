@@ -399,7 +399,7 @@ To do so, add the process-aot execution and set `spring.cloud.task.single-step-i
 
 To Enable Task Observations for `ApplicationRunner` or `CommandLineRunner` set `spring.cloud.task.observation.enabled` to true.
 
-An example task application with observations enables using the `SimpleMeterRegistry` can be found https://github.com/spring-cloud/spring-cloud-task/tree/main/spring-cloud-task-samples/task-metrics[here].
+An example task application with observations enables using the `SimpleMeterRegistry` can be found https://github.com/spring-cloud/spring-cloud-task/tree/main/spring-cloud-task-samples/task-observations[here].
 
 === Disabling Spring Cloud Task Auto Configuration
 

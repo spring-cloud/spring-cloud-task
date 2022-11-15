@@ -14,13 +14,13 @@ discussing some core principles as we go.
 == Introducing Spring Cloud Task
 
 Spring Cloud Task makes it easy to create short-lived microservices. It provides
-capabilities that let short lived JVM processes be executed on demand in a production
+capabilities that let short-lived JVM processes be executed on demand in a production
 environment.
 
 [[getting-started-system-requirements]]
 == System Requirements
 
-You need to have Java installed (Java 8 or better). To build, you need to have Maven
+You need to have Java installed (Java 17 or better). To build, you need to have Maven
 installed as well.
 
 === Database Requirements
@@ -72,11 +72,14 @@ To do so:
 To finish our application, we need to update the generated `HelloworldApplication` with the following contents so that it launches a Task.
 [source,java]
 ----
-package io.spring.demo.helloworld;
+package io.spring.Helloworld;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
@@ -84,19 +87,20 @@ import org.springframework.context.annotation.Bean;
 public class HelloworldApplication {
 
 	@Bean
-	public CommandLineRunner commandLineRunner() {
-		return new HelloWorldCommandLineRunner();
+	public ApplicationRunner applicationRunner() {
+		return new HelloWorldApplicationRunner();
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(HelloworldApplication.class, args);
 	}
 
-	public static class HelloWorldCommandLineRunner implements CommandLineRunner {
+	public static class HelloWorldApplicationRunner implements ApplicationRunner {
 
 		@Override
-		public void run(String... strings) throws Exception {
+		public void run(ApplicationArguments args) throws Exception {
 			System.out.println("Hello, World!");
+
 		}
 	}
 }
@@ -147,7 +151,7 @@ The main method serves as the entry point to any java application.  Our main met
 delegates to Spring Boot's https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html[SpringApplication] class.
 
 [[getting-started-clr]]
-==== The CommandLineRunner
+==== The ApplicationRunner
 
 Spring includes many ways to bootstrap an application's logic. Spring Boot provides
 a convenient method of doing so in an organized manner through its `*Runner` interfaces

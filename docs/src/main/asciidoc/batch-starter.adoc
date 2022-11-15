@@ -92,7 +92,7 @@ You can read from a queue or topic with AMQP by using the `AmqpItemReader`. The
 autoconfiguration for this `ItemReader` implementation is dependent upon two sets of
 configuration. The first is the configuration of an `AmqpTemplate`. You can either
 configure this yourself or use the autoconfiguration provided by Spring Boot. See the
- https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[Spring Boot AMQP documentation].
+https://docs.spring.io/spring-boot/docs/3.0.x/reference/htmlsingle/#messaging.amqp.rabbitmq[Spring Boot AMQP documentation].
 Once you have configured the `AmqpTemplate`, you can enable the batch capabilities to support it
 by setting the following properties:
 
@@ -412,7 +412,8 @@ covers how to use autoconfiguration to configure a supported `ItemWriter`.
 
 To write to a RabbitMQ queue, you need two sets of configuration. First, you need an
 `AmqpTemplate`. The easiest way to get this is by using Spring Boot's
-RabbitMQ autoconfiguration. See the https://docs.spring.io/spring-boot/docs/2.4.x/reference/htmlsingle/#boot-features-amqp[Spring Boot RabbitMQ documentation].
+RabbitMQ autoconfiguration. See the https://docs.spring.io/spring-boot/docs/3.0.x/reference/htmlsingle/#messaging.amqp.rabbitmq[Spring Boot AMQP documentation].
+
 Once you have configured the `AmqpTemplate`, you can configure the `AmqpItemWriter` by setting the
 following properties:
 

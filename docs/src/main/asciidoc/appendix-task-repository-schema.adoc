@@ -20,9 +20,9 @@ Stores the task execution information.
 |TASK_EXECUTION_ID |TRUE |BIGINT | X |
 Spring Cloud Task Framework at app startup establishes the next available id as obtained from the `TASK_SEQ`. Or if the record is created outside of task then the value must be populated at record creation time.
 
-|START_TIME |FALSE | DATETIME | X | Spring Cloud Task Framework at app startup establishes the value.
+|START_TIME |FALSE | DATETIME(6) | X | Spring Cloud Task Framework at app startup establishes the value.
 
-|END_TIME |FALSE | DATETIME | X | Spring Cloud Task Framework at app exit establishes the value.
+|END_TIME |FALSE | DATETIME(6) | X | Spring Cloud Task Framework at app exit establishes the value.
 
 |TASK_NAME |FALSE | VARCHAR | 100 | Spring Cloud Task Framework at app startup will set this to "Application" unless user establish the name using the `spring.application.name`.
 
@@ -32,7 +32,7 @@ Spring Cloud Task Framework at app startup establishes the next available id as 
 
 |ERROR_MESSAGE |FALSE | VARCHAR | 2500 | Spring Cloud Task Framework at app exit establishes the value.
 
-|LAST_UPDATED |TRUE | DATETIME | X | Spring Cloud Task Framework at app startup establishes the value. Or if the record is created outside of task then the value must be populated at record creation time.
+|LAST_UPDATED |TRUE | TIMESTAMP | X | Spring Cloud Task Framework at app startup establishes the value. Or if the record is created outside of task then the value must be populated at record creation time.
 
 |EXTERNAL_EXECUTION_ID |FALSE | VARCHAR | 250 | If the `spring.cloud.task.external-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found <<features-external_task_id,here>>
 
