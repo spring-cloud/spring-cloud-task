@@ -38,12 +38,12 @@ public class TaskBatchProperties {
 	private String jobNames = "";
 
 	/**
-	 * The order for the {@code CommandLineRunner} used to run batch jobs when
+	 * The order for the {@code ApplicationRunner} used to run batch jobs when
 	 * {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as
 	 * the
-	 * {@link org.springframework.boot.autoconfigure.batch.JobLauncherCommandLineRunner}).
+	 * {@link org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner}).
 	 */
-	private int commandLineRunnerOrder = 0;
+	private int applicationRunnerOrder = 0;
 
 	/**
 	 * Fixed delay in milliseconds that Spring Cloud Task will wait when checking if
@@ -60,12 +60,22 @@ public class TaskBatchProperties {
 		this.jobNames = jobNames;
 	}
 
+	@Deprecated
 	public int getCommandLineRunnerOrder() {
-		return this.commandLineRunnerOrder;
+		return this.applicationRunnerOrder;
 	}
 
+	@Deprecated
 	public void setCommandLineRunnerOrder(int commandLineRunnerOrder) {
-		this.commandLineRunnerOrder = commandLineRunnerOrder;
+		this.applicationRunnerOrder = commandLineRunnerOrder;
+	}
+
+	public int getApplicationRunnerOrder() {
+		return this.applicationRunnerOrder;
+	}
+
+	public void setApplicationRunnerOrder(int applicationRunnerOrder) {
+		this.applicationRunnerOrder = applicationRunnerOrder;
 	}
 
 	public long getFailOnJobFailurePollInterval() {

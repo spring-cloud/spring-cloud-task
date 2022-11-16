@@ -72,7 +72,7 @@ public class TaskJobLauncherApplicationRunnerFactoryBean implements FactoryBean<
 		else {
 			this.jobName = taskBatchProperties.getJobNames();
 		}
-		this.order = taskBatchProperties.getCommandLineRunnerOrder();
+		this.order = taskBatchProperties.getApplicationRunnerOrder();
 		this.jobRepository = jobRepository;
 	}
 

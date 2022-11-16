@@ -53,7 +53,7 @@ public class TaskJobLauncherAutoConfigurationTests {
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLROrder() {
 		this.contextRunner.withPropertyValues("spring.cloud.task.batch.fail-on-job-failure=true",
-				"spring.cloud.task.batch.commandLineRunnerOrder=100").run(context -> {
+				"spring.cloud.task.batch.applicationRunnerOrder=100").run(context -> {
 					assertThat(context.getBean(TaskJobLauncherApplicationRunner.class).getOrder()).isEqualTo(100);
 				});
 	}
