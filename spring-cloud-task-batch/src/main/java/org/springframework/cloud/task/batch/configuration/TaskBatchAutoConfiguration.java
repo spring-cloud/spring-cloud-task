@@ -47,7 +47,7 @@ public class TaskBatchAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
+	public static TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
 		return new TaskBatchExecutionListenerBeanPostProcessor();
 	}
 

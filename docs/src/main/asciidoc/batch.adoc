@@ -38,7 +38,7 @@ in the following example:
 
 [source,java]
 ----
-public TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
+public static TaskBatchExecutionListenerBeanPostProcessor batchTaskExecutionListenerBeanPostProcessor() {
 	TaskBatchExecutionListenerBeanPostProcessor postProcessor =
 		new TaskBatchExecutionListenerBeanPostProcessor();
 

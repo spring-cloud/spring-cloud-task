@@ -26,7 +26,6 @@ import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -60,14 +59,13 @@ import org.springframework.context.annotation.Lazy;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-@AutoConfiguration
+@AutoConfiguration(after = SimpleTaskAutoConfiguration.class)
 @ConditionalOnClass(Job.class)
 @ConditionalOnBean({ Job.class, TaskLifecycleListener.class })
 // @checkstyle:off
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 // @checkstyle:on
-@AutoConfigureAfter(SimpleTaskAutoConfiguration.class)
 public class BatchEventAutoConfiguration {
 
 	/**
@@ -107,7 +105,7 @@ public class BatchEventAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public TaskBatchEventListenerBeanPostProcessor batchTaskEventListenerBeanPostProcessor() {
+	public static TaskBatchEventListenerBeanPostProcessor batchTaskEventListenerBeanPostProcessor() {
 		return new TaskBatchEventListenerBeanPostProcessor();
 	}
 
