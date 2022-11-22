@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.cloud.task.listener.annotation.BeforeTask;
+import org.springframework.cloud.task.listener.TaskExecutionListener;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
@@ -32,13 +32,13 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  */
-public class TaskBatchExecutionListener implements JobExecutionListener, Ordered {
+public class TaskBatchExecutionListener implements JobExecutionListener, Ordered, TaskExecutionListener {
 
 	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
 
 	private TaskExecution taskExecution;
 
-	private TaskBatchDao taskBatchDao;
+	private final TaskBatchDao taskBatchDao;
 
 	/**
 	 * @param taskBatchDao dao used to persist the relationship. Must not be null
@@ -49,7 +49,7 @@ public class TaskBatchExecutionListener implements JobExecutionListener, Ordered
 		this.taskBatchDao = taskBatchDao;
 	}
 
-	@BeforeTask
+	@Override
 	public void onTaskStartup(TaskExecution taskExecution) {
 		this.taskExecution = taskExecution;
 	}
