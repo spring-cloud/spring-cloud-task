@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2016-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package org.springframework.cloud.task.batch.listener.support;
 
 import java.lang.reflect.Field;
 
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
@@ -36,16 +39,18 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration;
+import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListenerBeanPostProcessor.RuntimeHint;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.util.ReflectionUtils;
 
 /**
  * Attaches the listeners to the job and its steps. Based on the type of bean that is
  * being processed will determine what listener is attached.
  * <ul>
- * <li>If the bean is of type AbstactJob then the JobExecutionListener is registered with
+ * <li>If the bean is of type AbstractJob then the JobExecutionListener is registered with
  * this bean.</li>
- * <li>If the bean is of type AbstactStep then the StepExecutionListener is registered
+ * <li>If the bean is of type AbstractStep then the StepExecutionListener is registered
  * with this bean.</li>
  * <li>If the bean is of type TaskletStep then the ChunkEventListener is registered with
  * this bean.</li>
@@ -64,6 +69,7 @@ import org.springframework.util.ReflectionUtils;
  * @author Michael Minella
  * @author Glenn Renfro
  */
+@ImportRuntimeHints(RuntimeHint.class)
 public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcessor {
 
 	@Autowired
@@ -76,8 +82,7 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 
 		if (bean instanceof AbstractStep) {
 			registerStepExecutionEventListener(bean);
-			if (bean instanceof TaskletStep) {
-				TaskletStep taskletStep = (TaskletStep) bean;
+			if (bean instanceof TaskletStep taskletStep) {
 				Tasklet tasklet = taskletStep.getTasklet();
 				registerChunkEventsListener(bean);
 
@@ -150,12 +155,11 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	}
 
 	private void registerJobExecutionEventListener(Object bean) {
-		if (bean instanceof AbstractJob
+		if (bean instanceof AbstractJob job
 				&& this.applicationContext.containsBean(BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER)) {
 			JobExecutionListener jobExecutionEventsListener = (JobExecutionListener) this.applicationContext
 					.getBean(BatchEventAutoConfiguration.JOB_EXECUTION_EVENTS_LISTENER);
 
-			AbstractJob job = (AbstractJob) bean;
 			job.registerJobExecutionListener(jobExecutionEventsListener);
 		}
 	}
@@ -167,6 +171,15 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 			AbstractStep step = (AbstractStep) bean;
 			step.registerStepExecutionListener(stepExecutionListener);
 		}
+	}
+
+	static class RuntimeHint implements RuntimeHintsRegistrar {
+
+		@Override
+		public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+			hints.reflection().registerType(ChunkOrientedTasklet.class, MemberCategory.DECLARED_FIELDS);
+		}
+
 	}
 
 }
