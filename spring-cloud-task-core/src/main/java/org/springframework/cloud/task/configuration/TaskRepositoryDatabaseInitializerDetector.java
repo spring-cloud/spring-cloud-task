@@ -30,7 +30,7 @@ import org.springframework.core.Ordered;
  */
 class TaskRepositoryDatabaseInitializerDetector extends AbstractBeansOfTypeDatabaseInitializerDetector {
 
-	private static final int PRECEDENCE = Ordered.LOWEST_PRECEDENCE - 100;
+	private static final int PRECEDENCE = Ordered.LOWEST_PRECEDENCE - 99;
 
 	@Override
 	protected Set<Class<?>> getDatabaseInitializerBeanTypes() {
