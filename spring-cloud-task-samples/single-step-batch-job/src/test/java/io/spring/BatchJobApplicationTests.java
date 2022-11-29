@@ -34,12 +34,12 @@ import org.junit.jupiter.api.Test;
 //import org.springframework.batch.test.AssertFile;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.cloud.test.TestSocketUtils;
 import org.springframework.core.io.ClassPathResource;
 //import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.util.TestSocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
