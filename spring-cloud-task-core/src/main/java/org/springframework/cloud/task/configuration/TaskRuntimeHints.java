@@ -28,6 +28,7 @@ import org.springframework.util.ClassUtils;
  * Native Hints for Spring Cloud Task.
  *
  * @author Glenn Renfro
+ * @author Mahmoud Ben Hassine
  * @since 3.0
  */
 public class TaskRuntimeHints implements RuntimeHintsRegistrar {
@@ -36,8 +37,10 @@ public class TaskRuntimeHints implements RuntimeHintsRegistrar {
 	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
 		hints.reflection().registerType(TypeReference.of("java.sql.DatabaseMetaData"), hint -> {
 		});
+		hints.resources().registerPattern("org/springframework/cloud/task/schema-db2.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-h2.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-mysql.sql");
+		hints.resources().registerPattern("org/springframework/cloud/task/schema-mariadb.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-oracle.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-postgresql.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-hsqldb.sql");
