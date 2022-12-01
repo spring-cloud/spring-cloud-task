@@ -59,10 +59,10 @@ import org.springframework.context.annotation.Lazy;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
+// @checkstyle:off
 @AutoConfiguration(after = SimpleTaskAutoConfiguration.class)
 @ConditionalOnClass(Job.class)
 @ConditionalOnBean({ Job.class, TaskLifecycleListener.class })
-// @checkstyle:off
 @ConditionalOnProperty(prefix = "spring.cloud.task.batch.events", name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 // @checkstyle:on
