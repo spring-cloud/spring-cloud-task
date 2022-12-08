@@ -34,7 +34,7 @@ java -jar target/multiple-datasources-3.0.0.jar
 
 [source,shell]
 ----
-mvn -Pnative clean package
+mvn -Pnative native:compile
 ----
 
 == RUn sample using 2 embedded databases (default) with native app:
