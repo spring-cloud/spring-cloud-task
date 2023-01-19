@@ -44,6 +44,9 @@ public class MariaDbTaskRepositoryIntegrationTests {
 
 	private static final DockerImageName MARIADB_IMAGE = DockerImageName.parse("mariadb:10.9.3");
 
+	/**
+	 * Provide a mariadb test container for tests.
+	 */
 	@Container
 	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
 

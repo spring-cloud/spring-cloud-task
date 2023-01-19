@@ -73,6 +73,9 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 
 	private static final DockerImageName MARIADB_IMAGE = DockerImageName.parse("mariadb:10.9.3");
 
+	/**
+	 * Provide mariadb test container for tests.
+	 */
 	@Container
 	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
 
