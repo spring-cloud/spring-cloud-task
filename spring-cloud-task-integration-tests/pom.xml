@@ -14,8 +14,8 @@
 
 	<properties>
 		<spring-cloud-commons.version>4.0.1-SNAPSHOT</spring-cloud-commons.version>
-		<test.containers.version>1.17.5</test.containers.version>
-		<test.rabbit.containers.version>1.17.5</test.rabbit.containers.version>
+		<test.containers.version>1.17.6</test.containers.version>
+		<test.rabbit.containers.version>1.17.6</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 	</properties>
 

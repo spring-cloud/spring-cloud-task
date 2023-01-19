@@ -120,7 +120,7 @@
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<java.version>17</java.version>
 		<spring-javaformat-maven-plugin.version>0.0.34</spring-javaformat-maven-plugin.version>
-		<test.containers.version>1.17.5</test.containers.version>
+		<test.containers.version>1.17.6</test.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
 	</properties>
 
