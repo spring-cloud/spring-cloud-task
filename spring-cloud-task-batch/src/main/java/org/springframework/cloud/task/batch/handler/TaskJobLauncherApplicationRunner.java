@@ -19,9 +19,7 @@ package org.springframework.cloud.task.batch.handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,10 +28,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionException;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -70,17 +65,11 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private static final Log logger = LogFactory.getLog(TaskJobLauncherApplicationRunner.class);
 
-	private JobLauncher taskJobLauncher;
+	private final JobExplorer taskJobExplorer;
 
-	private JobExplorer taskJobExplorer;
+	private final List<JobExecution> jobExecutionList = new ArrayList<>();
 
-	private JobRepository taskJobRepository;
-
-	private List<JobExecution> jobExecutionList = new ArrayList<>();
-
-	private ApplicationEventPublisher taskApplicationEventPublisher;
-
-	private TaskBatchProperties taskBatchProperties;
+	private final TaskBatchProperties taskBatchProperties;
 
 	/**
 	 * Create a new {@link TaskJobLauncherApplicationRunner}.
@@ -94,15 +83,14 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
 			JobRepository jobRepository, TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer, jobRepository);
-		this.taskJobLauncher = jobLauncher;
 		this.taskJobExplorer = jobExplorer;
-		this.taskJobRepository = jobRepository;
 		this.taskBatchProperties = taskBatchProperties;
+		super.setApplicationEventPublisher(new TaskJobExecutionEventPublisher(null));
 	}
 
+	@Override
 	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-		super.setApplicationEventPublisher(publisher);
-		this.taskApplicationEventPublisher = publisher;
+		super.setApplicationEventPublisher(new TaskJobExecutionEventPublisher(publisher));
 	}
 
 	@Override
@@ -112,44 +100,11 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		monitorJobExecutions();
 	}
 
+	@Override
 	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
 			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-		String jobName = job.getName();
-		JobParameters parameters = jobParameters;
-		boolean jobInstanceExists = this.taskJobRepository.isJobInstanceExists(jobName, parameters);
-		if (jobInstanceExists) {
-			JobExecution lastJobExecution = this.taskJobRepository.getLastJobExecution(jobName, jobParameters);
-			if (lastJobExecution != null && isStoppedOrFailed(lastJobExecution) && job.isRestartable()) {
-				// Retry a failed or stopped execution with previous parameters
-				JobParameters previousParameters = lastJobExecution.getJobParameters();
-				/*
-				 * remove Non-identifying parameters from the previous execution's
-				 * parameters since there is no way to remove them programmatically. If
-				 * they are required (or need to be modified) on a restart, they need to
-				 * be (re)specified.
-				 */
-				JobParameters previousIdentifyingParameters = removeNonIdentifying(previousParameters);
-				// merge additional parameters with previous ones (overriding those with
-				// the same key)
-				parameters = merge(previousIdentifyingParameters, jobParameters);
-			}
-		}
-		else {
-			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
-			if (incrementer != null) {
-				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobExplorer)
-						.getNextJobParameters(job).toJobParameters();
-				parameters = merge(nextParameters, jobParameters);
-			}
-		}
-		JobExecution execution = this.taskJobLauncher.run(job, parameters);
-		if (this.taskApplicationEventPublisher != null) {
-			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
-		}
-		this.jobExecutionList.add(execution);
-		if (execution.getStatus().equals(BatchStatus.FAILED)) {
-			throwJobFailedException(Collections.singletonList(execution));
-		}
+		// method is only kept to keep TaskJobLauncherApplicationRunnerCoreTests compiling
+		super.execute(job, jobParameters);
 	}
 
 	private void monitorJobExecutions() {
@@ -193,29 +148,28 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	}
 
-	private JobParameters removeNonIdentifying(JobParameters parameters) {
-		Map<String, JobParameter<?>> parameterMap = parameters.getParameters();
-		HashMap<String, JobParameter<?>> copy = new HashMap<>();
+	private final class TaskJobExecutionEventPublisher implements ApplicationEventPublisher {
 
-		for (Map.Entry<String, JobParameter<?>> parameter : parameterMap.entrySet()) {
-			if (parameter.getValue().isIdentifying()) {
-				copy.put(parameter.getKey(), parameter.getValue());
+		private final ApplicationEventPublisher delegate;
+
+		private TaskJobExecutionEventPublisher(ApplicationEventPublisher delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public void publishEvent(Object event) {
+			if (event instanceof JobExecutionEvent jobExecutionEvent) {
+				JobExecution execution = jobExecutionEvent.getJobExecution();
+				TaskJobLauncherApplicationRunner.this.jobExecutionList.add(execution);
+				if (execution.getStatus().equals(BatchStatus.FAILED)) {
+					throwJobFailedException(Collections.singletonList(execution));
+				}
+			}
+			if (delegate != null) {
+				delegate.publishEvent(event);
 			}
 		}
 
-		return new JobParameters(copy);
-	}
-
-	private boolean isStoppedOrFailed(JobExecution execution) {
-		BatchStatus status = execution.getStatus();
-		return (status == BatchStatus.STOPPED || status == BatchStatus.FAILED);
-	}
-
-	private JobParameters merge(JobParameters parameters, JobParameters additionals) {
-		Map<String, JobParameter<?>> merged = new HashMap<>();
-		merged.putAll(parameters.getParameters());
-		merged.putAll(additionals.getParameters());
-		return new JobParameters(merged);
 	}
 
 }
