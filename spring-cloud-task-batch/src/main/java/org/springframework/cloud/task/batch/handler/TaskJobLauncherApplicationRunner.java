@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,17 +72,17 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	private static final Log logger = LogFactory
 			.getLog(TaskJobLauncherApplicationRunner.class);
 
-	private JobLauncher taskJobLauncher;
+	private final JobLauncher taskJobLauncher;
 
-	private JobExplorer taskJobExplorer;
+	private final JobExplorer taskJobExplorer;
 
-	private JobRepository taskJobRepository;
+	private final JobRepository taskJobRepository;
 
-	private List<JobExecution> jobExecutionList = new ArrayList<>();
+	private final List<JobExecution> jobExecutionList = new ArrayList<>();
 
 	private ApplicationEventPublisher taskApplicationEventPublisher;
 
-	private TaskBatchProperties taskBatchProperties;
+	private final TaskBatchProperties taskBatchProperties;
 
 	/**
 	 * Create a new {@link TaskJobLauncherApplicationRunner}.
@@ -103,6 +103,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		this.taskBatchProperties = taskBatchProperties;
 	}
 
+	@Override
 	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
 		super.setApplicationEventPublisher(publisher);
 		this.taskApplicationEventPublisher = publisher;
@@ -115,9 +116,9 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		monitorJobExecutions();
 	}
 
-	protected void execute(Job job, JobParameters jobParameters)
-			throws JobExecutionAlreadyRunningException, JobRestartException,
-			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+	@Override
+	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
+			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		String jobName = job.getName();
 		JobParameters parameters = jobParameters;
 		boolean jobInstanceExists = this.taskJobRepository.isJobInstanceExists(jobName,
@@ -169,26 +170,29 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		template.iterate(context -> {
 
 			List<JobExecution> failedJobExecutions = new ArrayList<>();
-			RepeatStatus repeatStatus = RepeatStatus.FINISHED;
 			for (JobExecution jobExecution : this.jobExecutionList) {
-				JobExecution currentJobExecution = this.taskJobExplorer
-						.getJobExecution(jobExecution.getId());
-				BatchStatus batchStatus = currentJobExecution.getStatus();
+				BatchStatus batchStatus = getCurrentBatchStatus(jobExecution);
 				if (batchStatus.isRunning()) {
-					repeatStatus = RepeatStatus.CONTINUABLE;
+					Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
+					return RepeatStatus.CONTINUABLE;
 				}
 				if (batchStatus.equals(BatchStatus.FAILED)) {
 					failedJobExecutions.add(jobExecution);
 				}
 			}
-			Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
 
-			if (repeatStatus.equals(RepeatStatus.FINISHED)
-					&& failedJobExecutions.size() > 0) {
+			if (failedJobExecutions.size() > 0) {
 				throwJobFailedException(failedJobExecutions);
 			}
-			return repeatStatus;
+			return RepeatStatus.FINISHED;
 		});
+	}
+
+	private BatchStatus getCurrentBatchStatus(JobExecution jobExecution) {
+		if (jobExecution.getStatus().isRunning()) {
+			return this.taskJobExplorer.getJobExecution(jobExecution.getId()).getStatus();
+		}
+		return jobExecution.getStatus();
 	}
 
 	private void throwJobFailedException(List<JobExecution> failedJobExecutions) {
