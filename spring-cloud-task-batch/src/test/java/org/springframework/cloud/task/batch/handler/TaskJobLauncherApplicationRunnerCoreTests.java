@@ -49,6 +49,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -193,6 +194,8 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			this.jobExplorer = context.getBean(JobExplorer.class);
 			this.runner = new TaskJobLauncherApplicationRunner(jobLauncher, this.jobExplorer, jobRepository,
 					new TaskBatchProperties());
+			this.runner.setApplicationEventPublisher(context);
+			((ConfigurableApplicationContext) context).addApplicationListener(this.runner);
 		}
 
 		List<JobInstance> jobInstances() {

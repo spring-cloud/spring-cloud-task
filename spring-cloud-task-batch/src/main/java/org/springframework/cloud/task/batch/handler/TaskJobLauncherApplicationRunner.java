@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.task.batch.handler;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +43,7 @@ import org.springframework.boot.autoconfigure.batch.JobExecutionEvent;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.util.StringUtils;
 
@@ -62,19 +61,16 @@ import org.springframework.util.StringUtils;
  * @author Glenn Renfro
  * @since 2.3.0
  */
-public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunner {
+public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunner
+		implements ApplicationListener<JobExecutionEvent> {
 
 	private static final Log logger = LogFactory.getLog(TaskJobLauncherApplicationRunner.class);
 
-	private JobLauncher taskJobLauncher;
+	private final JobExplorer taskJobExplorer;
 
-	private JobExplorer taskJobExplorer;
+	private final List<JobExecution> jobExecutionList = new ArrayList<>();
 
-	private List<JobExecution> jobExecutionList = new ArrayList<>();
-
-	private ApplicationEventPublisher taskApplicationEventPublisher;
-
-	private TaskBatchProperties taskBatchProperties;
+	private final TaskBatchProperties taskBatchProperties;
 
 	/**
 	 * Create a new {@link TaskJobLauncherApplicationRunner}.
@@ -88,15 +84,8 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
 			JobRepository jobRepository, TaskBatchProperties taskBatchProperties) {
 		super(jobLauncher, jobExplorer, jobRepository);
-		this.taskJobLauncher = jobLauncher;
 		this.taskJobExplorer = jobExplorer;
 		this.taskBatchProperties = taskBatchProperties;
-	}
-
-	@Override
-	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-		super.setApplicationEventPublisher(publisher);
-		this.taskApplicationEventPublisher = publisher;
 	}
 
 	@Override
@@ -109,21 +98,14 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	@Override
 	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
 			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-		JobParameters parameters;
-		try {
-			Method m = getClass().getSuperclass().getDeclaredMethod("getNextJobParameters", Job.class,
-					JobParameters.class);
-			m.setAccessible(true);
-			parameters = (JobParameters) m.invoke(this, job, jobParameters);
-		}
-		catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
-		JobExecution execution = this.taskJobLauncher.run(job, parameters);
-		if (this.taskApplicationEventPublisher != null) {
-			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
-		}
-		this.jobExecutionList.add(execution);
+		// method is only kept to keep TaskJobLauncherApplicationRunnerCoreTests compiling
+		super.execute(job, jobParameters);
+	}
+
+	@Override
+	public void onApplicationEvent(JobExecutionEvent event) {
+		JobExecution execution = event.getJobExecution();
+		TaskJobLauncherApplicationRunner.this.jobExecutionList.add(execution);
 		if (execution.getStatus().equals(BatchStatus.FAILED)) {
 			throwJobFailedException(Collections.singletonList(execution));
 		}
