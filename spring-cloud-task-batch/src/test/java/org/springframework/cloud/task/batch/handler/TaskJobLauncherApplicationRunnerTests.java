@@ -39,6 +39,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchProperties;
+import org.springframework.boot.autoconfigure.batch.JobExecutionEvent;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -52,12 +53,14 @@ import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -159,6 +162,9 @@ public class TaskJobLauncherApplicationRunnerTests {
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
+
+		JobExecutionEventListener listener = this.applicationContext.getBean(JobExecutionEventListener.class);
+		assertThat(listener.getEventCounter()).isEqualTo(1);
 	}
 
 	private void validateForFail(String errorMessage, Class<?> clazz, String[] enabledArgs) {
@@ -169,8 +175,24 @@ public class TaskJobLauncherApplicationRunnerTests {
 				.withMessage(errorMessage);
 	}
 
+	@Component
+	private static class JobExecutionEventListener implements ApplicationListener<JobExecutionEvent> {
+
+		private int eventCounter = 0;
+
+		@Override
+		public void onApplicationEvent(JobExecutionEvent event) {
+			eventCounter++;
+		}
+
+		public int getEventCounter() {
+			return eventCounter;
+		}
+
+	}
+
 	@TaskBatchTest
-	@Import(EmbeddedDataSourceConfiguration.class)
+	@Import({ EmbeddedDataSourceConfiguration.class, JobExecutionEventListener.class })
 	@EnableTask
 	public static class JobConfiguration {
 
@@ -191,6 +213,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 	}
 
 	@Configuration(proxyBeanMethods = false)
+	@Import(JobExecutionEventListener.class)
 	public static class TransactionManagerTestConfiguration {
 
 		@Bean

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -35,23 +37,26 @@ import org.springframework.util.StringUtils;
  * @author Glenn Renfro
  * @since 2.3.0
  */
-public class TaskJobLauncherApplicationRunnerFactoryBean implements FactoryBean<TaskJobLauncherApplicationRunner> {
+public class TaskJobLauncherApplicationRunnerFactoryBean
+		implements FactoryBean<TaskJobLauncherApplicationRunner>, ApplicationEventPublisherAware {
 
-	private JobLauncher jobLauncher;
+	private final JobLauncher jobLauncher;
 
-	private JobExplorer jobExplorer;
+	private final JobExplorer jobExplorer;
 
-	private List<Job> jobs;
+	private final List<Job> jobs;
 
 	private String jobName;
 
-	private JobRegistry jobRegistry;
+	private final JobRegistry jobRegistry;
 
-	private Integer order = 0;
+	private Integer order;
 
-	private TaskBatchProperties taskBatchProperties;
+	private final TaskBatchProperties taskBatchProperties;
 
-	private JobRepository jobRepository;
+	private final JobRepository jobRepository;
+
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	public TaskJobLauncherApplicationRunnerFactoryBean(JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
 			TaskBatchProperties taskBatchProperties, JobRegistry jobRegistry, JobRepository jobRepository,
@@ -93,12 +98,20 @@ public class TaskJobLauncherApplicationRunnerFactoryBean implements FactoryBean<
 		if (this.order != null) {
 			taskJobLauncherApplicationRunner.setOrder(this.order);
 		}
+		if (this.applicationEventPublisher != null) {
+			taskJobLauncherApplicationRunner.setApplicationEventPublisher(this.applicationEventPublisher);
+		}
 		return taskJobLauncherApplicationRunner;
 	}
 
 	@Override
 	public Class<?> getObjectType() {
 		return TaskJobLauncherApplicationRunner.class;
+	}
+
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 }
