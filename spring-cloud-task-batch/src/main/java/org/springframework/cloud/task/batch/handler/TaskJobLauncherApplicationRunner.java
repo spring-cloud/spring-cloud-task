@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2020 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,24 +117,29 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		template.iterate(context -> {
 
 			List<JobExecution> failedJobExecutions = new ArrayList<>();
-			RepeatStatus repeatStatus = RepeatStatus.FINISHED;
 			for (JobExecution jobExecution : this.jobExecutionList) {
-				JobExecution currentJobExecution = this.taskJobExplorer.getJobExecution(jobExecution.getId());
-				BatchStatus batchStatus = currentJobExecution.getStatus();
+				BatchStatus batchStatus = getCurrentBatchStatus(jobExecution);
 				if (batchStatus.isRunning()) {
-					repeatStatus = RepeatStatus.CONTINUABLE;
+					Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
+					return RepeatStatus.CONTINUABLE;
 				}
 				if (batchStatus.equals(BatchStatus.FAILED)) {
 					failedJobExecutions.add(jobExecution);
 				}
 			}
-			Thread.sleep(this.taskBatchProperties.getFailOnJobFailurePollInterval());
 
-			if (repeatStatus.equals(RepeatStatus.FINISHED) && failedJobExecutions.size() > 0) {
+			if (failedJobExecutions.size() > 0) {
 				throwJobFailedException(failedJobExecutions);
 			}
-			return repeatStatus;
+			return RepeatStatus.FINISHED;
 		});
+	}
+
+	private BatchStatus getCurrentBatchStatus(JobExecution jobExecution) {
+		if (jobExecution.getStatus().isRunning()) {
+			return this.taskJobExplorer.getJobExecution(jobExecution.getId()).getStatus();
+		}
+		return jobExecution.getStatus();
 	}
 
 	private void throwJobFailedException(List<JobExecution> failedJobExecutions) {

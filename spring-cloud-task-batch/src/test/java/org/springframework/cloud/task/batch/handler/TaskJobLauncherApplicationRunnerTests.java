@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 the original author or authors.
+ * Copyright 2018-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,16 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -43,6 +39,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.batch.BatchProperties;
+import org.springframework.boot.autoconfigure.batch.JobExecutionEvent;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
@@ -56,12 +53,14 @@ import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -163,35 +162,46 @@ public class TaskJobLauncherApplicationRunnerTests {
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
+
+		JobExecutionEventListener listener = this.applicationContext.getBean(JobExecutionEventListener.class);
+		assertThat(listener.getEventCounter()).isEqualTo(1);
 	}
 
-	private void validateForFail(String errorMessage, Class clazz, String[] enabledArgs) {
+	private void validateForFail(String errorMessage, Class<?> clazz, String[] enabledArgs) {
 		Executable executable = () -> this.applicationContext = SpringApplication
 				.run(new Class[] { clazz, PropertyPlaceholderAutoConfiguration.class }, enabledArgs);
 
-		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(executable::execute)
-				.has(new Condition<Throwable>() {
-					@Override
-					public boolean matches(Throwable value) {
-						return errorMessage.equals(value.getCause().getMessage());
-					}
-				});
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(executable::execute).havingCause()
+				.withMessage(errorMessage);
+	}
+
+	@Component
+	private static class JobExecutionEventListener implements ApplicationListener<JobExecutionEvent> {
+
+		private int eventCounter = 0;
+
+		@Override
+		public void onApplicationEvent(JobExecutionEvent event) {
+			eventCounter++;
+		}
+
+		public int getEventCounter() {
+			return eventCounter;
+		}
+
 	}
 
 	@TaskBatchTest
-	@Import(EmbeddedDataSourceConfiguration.class)
+	@Import({ EmbeddedDataSourceConfiguration.class, JobExecutionEventListener.class })
 	@EnableTask
 	public static class JobConfiguration {
 
 		@Bean
 		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
+					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
 					}, transactionManager).build()).build();
 		}
 
@@ -203,6 +213,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 	}
 
 	@Configuration(proxyBeanMethods = false)
+	@Import(JobExecutionEventListener.class)
 	public static class TransactionManagerTestConfiguration {
 
 		@Bean
@@ -240,27 +251,20 @@ public class TaskJobLauncherApplicationRunnerTests {
 
 		@Bean
 		public Job jobFail() {
-			return new JobBuilder("jobA").repository(this.jobRepository)
-					.start(new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-								throws Exception {
-							System.out.println("Executed");
-							throw new IllegalStateException("WHOOPS");
-						}
-					}).transactionManager(transactionManager).build()).build();
+			return new JobBuilder("jobA", this.jobRepository)
+					.start(new StepBuilder("step1", this.jobRepository).tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						throw new IllegalStateException("WHOOPS");
+					}, transactionManager).build()).build();
 		}
 
 		@Bean
 		public Job jobFun() {
-			return new JobBuilder("jobSucceed").repository(this.jobRepository)
-					.start(new StepBuilder("step1Succeed").repository(this.jobRepository).tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
-					}).transactionManager(transactionManager).build()).build();
+			return new JobBuilder("jobSucceed", this.jobRepository)
+					.start(new StepBuilder("step1Succeed", this.jobRepository).tasklet((contribution, chunkContext) -> {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
+					}, transactionManager).build()).build();
 		}
 
 	}

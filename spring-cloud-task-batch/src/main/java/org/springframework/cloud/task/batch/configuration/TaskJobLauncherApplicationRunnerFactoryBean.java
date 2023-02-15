@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,21 +40,21 @@ import org.springframework.util.StringUtils;
 public class TaskJobLauncherApplicationRunnerFactoryBean
 		implements FactoryBean<TaskJobLauncherApplicationRunner>, ApplicationEventPublisherAware {
 
-	private JobLauncher jobLauncher;
+	private final JobLauncher jobLauncher;
 
-	private JobExplorer jobExplorer;
+	private final JobExplorer jobExplorer;
 
-	private List<Job> jobs;
+	private final List<Job> jobs;
 
 	private String jobName;
 
-	private JobRegistry jobRegistry;
+	private final JobRegistry jobRegistry;
 
-	private Integer order = 0;
+	private Integer order;
 
-	private TaskBatchProperties taskBatchProperties;
+	private final TaskBatchProperties taskBatchProperties;
 
-	private JobRepository jobRepository;
+	private final JobRepository jobRepository;
 
 	private ApplicationEventPublisher applicationEventPublisher;
 
@@ -98,7 +98,6 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 		if (this.order != null) {
 			taskJobLauncherApplicationRunner.setOrder(this.order);
 		}
-
 		if (this.applicationEventPublisher != null) {
 			taskJobLauncherApplicationRunner.setApplicationEventPublisher(this.applicationEventPublisher);
 		}
