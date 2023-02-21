@@ -441,3 +441,11 @@ An example maven set of dependencies to enable task observability and metrics us
     <scope>runtime</scope>
 </dependency>
 
+[[spring-task-and-spring-cloud-task]]
+=== Spring Task and Spring Cloud Task Properties
+
+The term `task` is frequently used word in the industry. In one such example Spring Boot offers the `spring.task` while Spring Cloud Task offers the `spring.cloud.task` properties.
+This has caused some confusion in the past that these two groups of properties are directly related.   However, they represent 2 different set of features offered in the Spring ecosystem.
+
+* `spring.task` refers to the properties that configure the `ThreadPoolTaskScheduler`.
+* `spring.cloud.task` refers to the properties that configure features of Spring Cloud Task.
