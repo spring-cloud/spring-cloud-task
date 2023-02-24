@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -27,6 +28,8 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -58,7 +61,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestConfiguration.class, EmbeddedDataSourceConfiguration.class,
 		PropertyPlaceholderAutoConfiguration.class })
-public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
+public class TaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 
 	@Autowired
 	TaskRepository repository;
@@ -73,9 +76,11 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		super.dao = dao;
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void testStartTaskExecution() {
+	@ValueSource(strings = { "db", "map" })
+	public void testStartTaskExecutionGeneric(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<>(0), null);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
@@ -86,47 +91,78 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	private TaskExecutionDao getDao(String type) {
+		if (type.equals("db")) {
+			final JdbcTaskExecutionDao jdbcDao = new JdbcTaskExecutionDao(this.dataSource);
+			jdbcDao.setTaskIncrementer(TestDBUtils.getIncrementer(this.dataSource));
+			this.dao = jdbcDao;
+		}
+		else {
+			this.dao = new MapTaskExecutionDao();
+		}
+		return this.dao;
+
+	}
+
+	private TaskExecution getTaskExecution(String type, TaskExecution expectedTaskExecution) {
+		TaskExecution taskExecution;
+		if (type.equals("db")) {
+			taskExecution = TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId());
+		}
+		else {
+			Map<Long, TaskExecution> taskExecutionMap = ((MapTaskExecutionDao) dao).getTaskExecutions();
+
+			taskExecution = taskExecutionMap.get(expectedTaskExecution.getExecutionId());
+		}
+		return taskExecution;
+
+	}
+
+	@ParameterizedTest
 	@DirtiesContext
-	public void createTaskExecution() {
+	@ValueSource(strings = { "db", "map" })
+	public void createTaskExecution(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = TestVerifierUtils.createSampleTaskExecutionNoArg();
 		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void createEmptyTaskExecution() {
+	@ValueSource(strings = { "db", "map" })
+	public void createEmptyTaskExecution(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = this.dao.createTaskExecution(null, null, new ArrayList<>(0), null);
 
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void completeTaskExecution() {
+	@ValueSource(strings = { "db", "map" })
+	public void completeTaskExecution(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
 		expectedTaskExecution = this.dao.createTaskExecution(expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(),
 				expectedTaskExecution.getExternalExecutionId());
 		this.dao.completeTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getExitCode(),
 				expectedTaskExecution.getEndTime(), expectedTaskExecution.getExitMessage());
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void completeTaskExecutionWithNoCreate() {
+	@ValueSource(strings = { "db", "map" })
+	public void completeTaskExecutionWithNoCreate(String testType) {
+		getDao(testType);
 		JdbcTaskExecutionDao dao = new JdbcTaskExecutionDao(this.dataSource);
 
 		TaskExecution expectedTaskExecution = TestVerifierUtils.endSampleTaskExecutionNoArg();
@@ -167,36 +203,39 @@ public class JdbcTaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		assertThat(taskExecution.getTaskName()).isEqualTo("FOO3");
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void testStartExecutionWithNullExternalExecutionIdExisting() {
+	@ValueSource(strings = { "db", "map" })
+	public void testStartExecutionWithNullExternalExecutionIdExisting(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(), null);
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void testStartExecutionWithNullExternalExecutionIdNonExisting() {
+	@ValueSource(strings = { "db", "map" })
+	public void testStartExecutionWithNullExternalExecutionIdNonExisting(String testType) {
+		getDao(testType);
 		TaskExecution expectedTaskExecution = initializeTaskExecutionWithExternalExecutionId();
 
 		this.dao.startTaskExecution(expectedTaskExecution.getExecutionId(), expectedTaskExecution.getTaskName(),
 				expectedTaskExecution.getStartTime(), expectedTaskExecution.getArguments(), "BAR");
 		expectedTaskExecution.setExternalExecutionId("BAR");
-		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
-				TestDBUtils.getTaskExecutionFromDB(this.dataSource, expectedTaskExecution.getExecutionId()));
+		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, getTaskExecution(testType, expectedTaskExecution));
 	}
 
-	@Test
+	@ParameterizedTest
 	@DirtiesContext
-	public void testFindRunningTaskExecutions() {
+	@ValueSource(strings = { "db", "map" })
+	public void testFindRunningTaskExecutions(String testType) {
+		getDao(testType);
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
-		assertThat(
-				this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("START_TIME")))
-						.getTotalElements()).isEqualTo(4);
+		assertThat(this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, 4, Sort.by("START_TIME")))
+				.getTotalElements()).isEqualTo(4);
 	}
 
 	@Test

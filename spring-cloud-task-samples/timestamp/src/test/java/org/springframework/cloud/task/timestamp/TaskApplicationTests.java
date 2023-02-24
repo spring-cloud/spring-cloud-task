@@ -49,9 +49,9 @@ public class TaskApplicationTests {
 		String output = capturedOutput.toString();
 		assertThat(output.contains(TEST_DATE_DOTS)).as("Unable to find the timestamp: " + output).isTrue();
 		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output).isTrue();
 
 		String taskTitle = "Demo Timestamp Task";

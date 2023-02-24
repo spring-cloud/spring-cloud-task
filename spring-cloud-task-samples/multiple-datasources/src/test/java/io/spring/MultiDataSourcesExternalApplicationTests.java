@@ -78,11 +78,12 @@ public class MultiDataSourcesExternalApplicationTests {
 		String output = capturedOutput.toString();
 
 		assertThat(output.contains("There are 2 DataSources within this application"))
-				.as("Unable to find CommandLineRunner output: " + output).isTrue();
+			.as("Unable to find CommandLineRunner output: " + output)
+			.isTrue();
 		assertThat(output.contains("Creating: TaskExecution{")).as("Unable to find start task message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains("Updating: TaskExecution")).as("Unable to find update task message: " + output)
-				.isTrue();
+			.isTrue();
 	}
 
 	@Configuration(proxyBeanMethods = false)
@@ -97,8 +98,10 @@ public class MultiDataSourcesExternalApplicationTests {
 			Server server = null;
 			try {
 				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
-							String.valueOf(randomPort)).start();
+					server = Server
+						.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+								String.valueOf(randomPort))
+						.start();
 					defaultServer = server;
 				}
 			}
@@ -113,8 +116,10 @@ public class MultiDataSourcesExternalApplicationTests {
 			Server server = null;
 			try {
 				if (secondServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
-							String.valueOf(secondRandomPort)).start();
+					server = Server
+						.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
+								String.valueOf(secondRandomPort))
+						.start();
 					secondServer = server;
 				}
 			}

@@ -55,17 +55,23 @@ public class ExternalDataSourceConfiguration {
 	@Primary
 	public DataSource dataSource(
 			@Qualifier("springDataSourceProperties") DataSourceProperties springDataSourceProperties) {
-		return DataSourceBuilder.create().driverClassName(springDataSourceProperties.getDriverClassName())
-				.url(springDataSourceProperties.getUrl()).password(springDataSourceProperties.getPassword())
-				.username(springDataSourceProperties.getUsername()).build();
+		return DataSourceBuilder.create()
+			.driverClassName(springDataSourceProperties.getDriverClassName())
+			.url(springDataSourceProperties.getUrl())
+			.password(springDataSourceProperties.getPassword())
+			.username(springDataSourceProperties.getUsername())
+			.build();
 	}
 
 	@Bean
 	public DataSource secondDataSource(
 			@Qualifier("secondDataSourceProperties") DataSourceProperties secondDataSourceProperties) {
-		return DataSourceBuilder.create().driverClassName(secondDataSourceProperties.getDriverClassName())
-				.url(secondDataSourceProperties.getUrl()).password(secondDataSourceProperties.getPassword())
-				.username(secondDataSourceProperties.getUsername()).build();
+		return DataSourceBuilder.create()
+			.driverClassName(secondDataSourceProperties.getDriverClassName())
+			.url(secondDataSourceProperties.getUrl())
+			.password(secondDataSourceProperties.getPassword())
+			.username(secondDataSourceProperties.getUsername())
+			.build();
 	}
 
 }

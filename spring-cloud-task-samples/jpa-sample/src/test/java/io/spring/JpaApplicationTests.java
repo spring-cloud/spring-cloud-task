@@ -77,8 +77,8 @@ public class JpaApplicationTests {
 		this.dataSource = dataSource;
 		try {
 			this.server = Server
-					.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-					.start();
+				.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+				.start();
 		}
 		catch (SQLException e) {
 			throw new IllegalStateException(e);

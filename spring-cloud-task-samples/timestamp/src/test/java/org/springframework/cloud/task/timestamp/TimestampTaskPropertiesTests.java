@@ -51,7 +51,7 @@ public class TimestampTaskPropertiesTests {
 		context.refresh();
 		TimestampTaskProperties properties = context.getBean(TimestampTaskProperties.class);
 		assertThat(properties.getFormat()).as("result does not match default format.")
-				.isEqualTo("yyyy-MM-dd HH:mm:ss.SSS");
+			.isEqualTo("yyyy-MM-dd HH:mm:ss.SSS");
 	}
 
 	@Test

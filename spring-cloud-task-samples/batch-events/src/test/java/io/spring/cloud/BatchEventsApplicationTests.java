@@ -84,8 +84,10 @@ public class BatchEventsApplicationTests {
 	private List<Message<byte[]>> testListener(String bindingName, int numberToRead) {
 		List<Message<byte[]>> results = new ArrayList<>();
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsTestApplication.class))
-				.web(WebApplicationType.NONE).build().run(getCommandLineParams(true));
+			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsTestApplication.class))
+			.web(WebApplicationType.NONE)
+			.build()
+			.run(getCommandLineParams(true));
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
 		for (int i = 0; i < numberToRead; i++) {
 			results.add(target.receive(10000, bindingName));

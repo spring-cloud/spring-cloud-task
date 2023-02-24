@@ -117,7 +117,8 @@ public class TaskPartitionerTests {
 		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
 		assertThat(taskExecutions.getTotalElements()).as("Five rows are expected").isEqualTo(5);
 		assertThat(this.taskExplorer.getTaskExecutionCountByTaskName("PartitionedBatchJobTask"))
-				.as("Only One master is expected").isEqualTo(1);
+			.as("Only One master is expected")
+			.isEqualTo(1);
 		for (TaskExecution taskExecution : taskExecutions) {
 			assertThat(taskExecution.getExitCode().intValue()).as("return code should be 0").isEqualTo(0);
 		}
@@ -130,8 +131,9 @@ public class TaskPartitionerTests {
 		public org.h2.tools.Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort",
-						String.valueOf(randomPort)).start();
+				server = Server
+					.createTcpServer("-tcp", "-ifNotExists", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+					.start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);

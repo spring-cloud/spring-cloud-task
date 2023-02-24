@@ -83,8 +83,9 @@ public class TaskProcessorApplicationTests {
 	private List<Message<byte[]>> testListener(String bindingName, int numberToRead) {
 		List<Message<byte[]>> results = new ArrayList<>();
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(TaskProcessorTestApplication.class))
-				.web(WebApplicationType.NONE).run();
+			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(TaskProcessorTestApplication.class))
+			.web(WebApplicationType.NONE)
+			.run();
 
 		InputDestination input = this.applicationContext.getBean(InputDestination.class);
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);

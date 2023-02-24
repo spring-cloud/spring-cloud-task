@@ -90,7 +90,7 @@ public class JobConfiguration {
 			TaskRepository taskRepository, @Autowired(required = false) ThreadPoolTaskExecutor executor)
 			throws Exception {
 		Resource resource = this.resourceLoader
-				.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource,
 				"workerStep", taskRepository, executor);
@@ -161,14 +161,18 @@ public class JobConfiguration {
 	@Bean
 	public Step step1(PartitionHandler partitionHandler) throws Exception {
 		return new StepBuilder("step1").repository(this.jobRepository)
-				.partitioner(workerStep().getName(), partitioner()).step(workerStep())
-				.partitionHandler(partitionHandler).build();
+			.partitioner(workerStep().getName(), partitioner())
+			.step(workerStep())
+			.partitionHandler(partitionHandler)
+			.build();
 	}
 
 	@Bean
 	public Step workerStep() {
-		return new StepBuilder("workerStep").repository(this.jobRepository).tasklet(workerTasklet(null))
-				.transactionManager(this.transactionManager).build();
+		return new StepBuilder("workerStep").repository(this.jobRepository)
+			.tasklet(workerTasklet(null))
+			.transactionManager(this.transactionManager)
+			.build();
 	}
 
 	@Bean
@@ -176,7 +180,8 @@ public class JobConfiguration {
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
 		return new JobBuilder("partitionedJob" + random.nextInt()).repository(this.jobRepository)
-				.start(step1(partitionHandler)).build();
+			.start(step1(partitionHandler))
+			.build();
 	}
 
 }

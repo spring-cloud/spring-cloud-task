@@ -71,8 +71,9 @@ public class TaskSinkApplicationTests {
 
 		assertThat(actualRequest.getCommandlineArguments().isEmpty()).isTrue();
 		assertThat(actualRequest.getDefinition().getProperties().get("server.port")).isEqualTo("0");
-		assertThat(actualRequest.getResource().toString()
-				.contains("org.springframework.cloud.task.app:timestamp-task:jar:1.0.1.RELEASE")).isTrue();
+		assertThat(actualRequest.getResource()
+			.toString()
+			.contains("org.springframework.cloud.task.app:timestamp-task:jar:1.0.1.RELEASE")).isTrue();
 	}
 
 }

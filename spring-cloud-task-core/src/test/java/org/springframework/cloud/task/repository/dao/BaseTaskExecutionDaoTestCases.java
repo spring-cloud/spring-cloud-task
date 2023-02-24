@@ -28,8 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Defines test cases that shall be shared between {@link JdbcTaskExecutionDaoTests} and
- * {@link MapTaskExecutionDaoTests}.
+ * Defines test cases that shall be between {@link TaskExecutionDao} tests.
  *
  * @author Gunnar Hillert
  */

@@ -128,8 +128,8 @@ public class BatchJobApplicationTests {
 
 		if (defaultServer == null) {
 			server = Server
-					.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
-					.start();
+				.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+				.start();
 			defaultServer = server;
 			DriverManagerDataSource dataSource = new DriverManagerDataSource();
 			dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
