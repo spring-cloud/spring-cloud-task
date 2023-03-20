@@ -33,7 +33,7 @@ public class TaskBatchProperties {
 	/**
 	 * Comma-separated list of job names to execute on startup (for instance,
 	 * `job1,job2`). By default, all Jobs found in the context are executed.
-	 * @deprecated use spring.batch.job.names instead of spring.cloud.task.batch.jobNames.
+	 * @deprecated use spring.batch.job.name instead of spring.cloud.task.batch.jobNames.
 	 */
 	private String jobNames = "";
 
