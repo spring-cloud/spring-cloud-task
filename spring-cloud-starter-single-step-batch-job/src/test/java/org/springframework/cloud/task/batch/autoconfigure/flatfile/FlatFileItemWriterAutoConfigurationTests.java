@@ -18,11 +18,13 @@ package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,6 @@ import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
-import org.springframework.batch.test.AssertFile;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -166,9 +167,9 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			FlatFileItemWriter writer = context.getBean(FlatFileItemWriter.class);
 
-			AssertFile.assertLineCount(3, this.outputFile);
-			AssertFile.assertFileEquals(new ClassPathResource("writerTestUTF16.txt"),
-					new FileSystemResource(this.outputFile));
+			assertThat(Assertions.linesOf(this.outputFile, StandardCharsets.UTF_16).size()).isEqualTo(3);
+			assertThat(Assertions.contentOf((new ClassPathResource("writerTestUTF16.txt")).getFile())
+					.equals(new FileSystemResource(this.outputFile)));
 
 			assertThat((Boolean) ReflectionTestUtils.getField(writer, "saveState")).isFalse();
 			assertThat((Boolean) ReflectionTestUtils.getField(writer, "append")).isTrue();
@@ -209,7 +210,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			AssertFile.assertLineCount(2, this.outputFile);
+			assertThat(Assertions.linesOf(this.outputFile).size()).isEqualTo(2);
 
 			String results = FileCopyUtils
 					.copyToString(new InputStreamReader(new FileSystemResource(this.outputFile).getInputStream()));
@@ -246,7 +247,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			AssertFile.assertLineCount(3, this.outputFile);
+			assertThat(Assertions.linesOf(this.outputFile).size()).isEqualTo(3);
 
 			String results = FileCopyUtils
 					.copyToString(new InputStreamReader(new FileSystemResource(this.outputFile).getInputStream()));
@@ -281,7 +282,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			AssertFile.assertLineCount(3, this.outputFile);
+			assertThat(Assertions.linesOf(this.outputFile, StandardCharsets.UTF_8).size()).isEqualTo(3);
 
 			String results = FileCopyUtils
 					.copyToString(new InputStreamReader(new FileSystemResource(this.outputFile).getInputStream()));
@@ -315,7 +316,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			AssertFile.assertLineCount(3, this.outputFile);
+			assertThat(Assertions.linesOf(this.outputFile, StandardCharsets.UTF_8).size()).isEqualTo(3);
 
 			String results = FileCopyUtils
 					.copyToString(new InputStreamReader(new FileSystemResource(this.outputFile).getInputStream()));
@@ -351,7 +352,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 				Thread.sleep(1000);
 			}
 
-			AssertFile.assertLineCount(5, this.outputFile);
+			assertThat(Assertions.linesOf(this.outputFile, StandardCharsets.UTF_8).size()).isEqualTo(5);
 
 			String results = FileCopyUtils
 					.copyToString(new InputStreamReader(new FileSystemResource(this.outputFile).getInputStream()));

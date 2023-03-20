@@ -160,8 +160,7 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step1(PartitionHandler partitionHandler) throws Exception {
-		return new StepBuilder("step1").repository(this.jobRepository)
-			.partitioner(workerStep().getName(), partitioner())
+		return new StepBuilder("step1", this.jobRepository).partitioner(workerStep().getName(), partitioner())
 			.step(workerStep())
 			.partitionHandler(partitionHandler)
 			.build();
@@ -169,9 +168,8 @@ public class JobConfiguration {
 
 	@Bean
 	public Step workerStep() {
-		return new StepBuilder("workerStep").repository(this.jobRepository)
-			.tasklet(workerTasklet(null))
-			.transactionManager(this.transactionManager)
+		return new StepBuilder("workerStep", this.jobRepository).repository(this.jobRepository)
+			.tasklet(workerTasklet(null), this.transactionManager)
 			.build();
 	}
 
@@ -179,8 +177,7 @@ public class JobConfiguration {
 	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
-		return new JobBuilder("partitionedJob" + random.nextInt()).repository(this.jobRepository)
-			.start(step1(partitionHandler))
+		return new JobBuilder("partitionedJob" + random.nextInt(), this.jobRepository).start(step1(partitionHandler))
 			.build();
 	}
 

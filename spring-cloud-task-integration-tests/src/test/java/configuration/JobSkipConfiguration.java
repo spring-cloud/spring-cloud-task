@@ -47,30 +47,30 @@ public class JobSkipConfiguration {
 
 	@Bean
 	public Job job() {
-		return new JobBuilder("job").repository(this.jobRepository).start(step1()).next(step2()).build();
+		return new JobBuilder("job", this.jobRepository).start(step1()).next(step2()).build();
 	}
 
 	@Bean
 	public Step step1() {
-		return new StepBuilder("step1").repository(this.jobRepository).tasklet(new Tasklet() {
+		return new StepBuilder("step1", this.jobRepository).tasklet(new Tasklet() {
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				System.out.println("Executed");
 				return RepeatStatus.FINISHED;
 			}
-		}).transactionManager(transactionManager).build();
+		}, transactionManager).build();
 	}
 
 	@Bean
 	public Step step2() {
-		return new StepBuilder("step2").repository(this.jobRepository).chunk(3).faultTolerant()
+		return new StepBuilder("step2", this.jobRepository).chunk(3, transactionManager).faultTolerant()
 				.skip(IllegalStateException.class).skipLimit(100).reader(new SkipItemReader())
 				.processor(new ItemProcessor<Object, Object>() {
 					@Override
 					public String process(Object item) throws Exception {
 						return String.valueOf(Integer.parseInt((String) item) * -1);
 					}
-				}).writer(new SkipItemWriter()).transactionManager(transactionManager).build();
+				}).writer(new SkipItemWriter()).build();
 	}
 
 }

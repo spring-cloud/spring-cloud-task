@@ -278,27 +278,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 	@Configuration
 	public static class JobWithFailureTaskExecutorConfiguration {
 
-		// @Bean
-		// public BatchConfigurer batchConfigurer(DataSource dataSource) {
-		// return new TestBatchConfigurer(dataSource);
-		// }
-
 	}
-
-	// private static class TestBatchConfigurer extends DefaultBatchConfigurer {
-	//
-	// TestBatchConfigurer(DataSource dataSource) {
-	// super(dataSource);
-	// }
-	//
-	// protected JobLauncher createJobLauncher() throws Exception {
-	// TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
-	// jobLauncher.setJobRepository(getJobRepository());
-	// jobLauncher.setTaskExecutor(new ConcurrentTaskExecutor());
-	// jobLauncher.afterPropertiesSet();
-	// return jobLauncher;
-	// }
-	//
-	// }
 
 }
