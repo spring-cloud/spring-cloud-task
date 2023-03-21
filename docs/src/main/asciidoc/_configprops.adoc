@@ -28,7 +28,7 @@
 |spring.cloud.task.batch.events.task-event-binding-name | `+++task-events+++` | 
 |spring.cloud.task.batch.fail-on-job-failure | `+++false+++` | This property is used to determine if a task app should return with a non zero exit code if a batch job fails.
 |spring.cloud.task.batch.fail-on-job-failure-poll-interval | `+++5000+++` | Fixed delay in milliseconds that Spring Cloud Task will wait when checking if {@link org.springframework.batch.core.JobExecution}s have completed, when spring.cloud.task.batch.failOnJobFailure is set to true. Defaults to 5000.
-|spring.cloud.task.batch.job-names |  | Comma-separated list of job names to execute on startup (for instance, `job1,job2`). By default, all Jobs found in the context are executed. @deprecated use spring.batch.job.names instead of spring.cloud.task.batch.jobNames.
+|spring.cloud.task.batch.job-names |  | Comma-separated list of job names to execute on startup (for instance, `job1,job2`). By default, all Jobs found in the context are executed. @deprecated use spring.batch.job.name instead of spring.cloud.task.batch.jobNames.
 |spring.cloud.task.batch.listener.enabled | `+++true+++` | This property is used to determine if a task will be linked to the batch jobs that are run.
 |spring.cloud.task.closecontext-enabled | `+++false+++` | When set to true the context is closed at the end of the task. Else the context remains open.
 |spring.cloud.task.events.enabled | `+++true+++` | This property is used to determine if a task app should emit task events.
