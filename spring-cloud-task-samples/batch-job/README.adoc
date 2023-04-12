@@ -1,6 +1,6 @@
 = Spring Batch Job Task
 
-This is a Spring Cloud Task application that executions a single Spring Batch Job.
+This is a Spring Cloud Task application that executes a single Spring Batch Job.
 
 == Requirements:
 
