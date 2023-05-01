@@ -57,7 +57,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { TaskLauncherSinkApplication.class, TaskLauncherSinkTests.TaskLauncherConfiguration.class },
-		properties = { "maven.remote-repositories.repo1.url=https://repo.spring.io/libs-release",
+		properties = { "maven.remote-repositories.repo1.url=https://repo.spring.io/release",
 				"spring.cloud.stream.function.bindings.taskLauncherSink-in-0=input",
 				"spring.cloud.stream.bindings.input.destination=taskLauncherSinkExchange" })
 public class TaskLauncherSinkTests {
