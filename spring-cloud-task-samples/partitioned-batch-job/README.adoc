@@ -40,3 +40,59 @@ Currently partitions are launched sequentially.   To launch them asynchronously 
 
 NOTE: We need to close the context since the use of ThreadPoolTaskExecutor leaves a thread active thus the app will not terminate.
 To close the application appropriately, we will need to set `spring.cloud.task.closecontextEnabled`` to true.
+
+== Running Partitioned sample on Kubernetes
+The current sample is set up to run the partitioning using the `local` deployer, so to change this sample so that it work with the `kubernetes` deployer.
+
+=== Changes to the application in order to partition on Kubernetes
+. Replace the `spring-cloud-deployer-local` dependency with `spring-cloud-deployer-kubernetes` in the pom.xml.  For example:
++
+[source,xml]
+----
+# Replace
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-deployer-local</artifactId>
+			<version>${spring-cloud-deployer}</version>
+		</dependency>
+# With
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-deployer-kubernetes</artifactId>
+			<version>${spring-cloud-deployer}</version>
+		</dependency>
+----
+
+. Add the following dependency so that we can use docker as a resource:
++
+[source,xml]
+----
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-deployer-resource-docker</artifactId>
+			<version>${spring-cloud-deployer}</version>
+		</dependency>
+----
+. Replace the resource that is used to retrieve the jar from maven with the docker resource to obtain the docker image as follows:
++
+[source,java]
+----
+// Replace
+		Resource resource = this.resourceLoader
+			.getResource("maven://io.spring.cloud:partitioned-batch-job:3.0.0-SNAPSHOT");
+// With
+		Resource resource = new DockerResource("partitioned-batch-job:3.0.0-SNAPSHOT");
+----
+. Build a docker image using the following command:
++
+[source,bash]
+----
+./mvnw spring-boot:build-image
+----
+
+=== Notes on when launching this application on Kubernetes
+
+* Be sure to make sure the application has the proper permissions to launch another pod.   For example in Spring Cloud Data Flow be sure to set the `deployment-service-account-name` ot `scdf-sa`.
+* When using Spring Cloud Data Flow be sure to set the `entry-point-style` to `boot`.
+
+
