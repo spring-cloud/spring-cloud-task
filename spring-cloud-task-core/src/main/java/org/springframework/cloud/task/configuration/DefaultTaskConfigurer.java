@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2022 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,12 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.dao.MapTaskExecutionDao;
 import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
+import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -127,6 +129,11 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	@Override
 	public DataSource getTaskDataSource() {
 		return this.dataSource;
+	}
+
+	@Override
+	public TaskNameResolver getTaskNameResolver() {
+		return new SimpleTaskNameResolver();
 	}
 
 	@Override

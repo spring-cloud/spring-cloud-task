@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.springframework.cloud.task.configuration;
 import javax.sql.DataSource;
 
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -57,5 +58,11 @@ public interface TaskConfigurer {
 	 * @return {@link DataSource} that will be used for task operations.
 	 */
 	DataSource getTaskDataSource();
+
+	/**
+	 * Create a {@link TaskNameResolver} for use with the task application.
+	 * @return A <code>TaskNameResolver</code>
+	 */
+	TaskNameResolver getTaskNameResolver();
 
 }

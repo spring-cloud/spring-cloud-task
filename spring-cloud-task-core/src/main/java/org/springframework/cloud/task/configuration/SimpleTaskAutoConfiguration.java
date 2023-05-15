@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2022 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.springframework.boot.sql.init.dependency.DatabaseInitializationDepend
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -84,6 +83,8 @@ public class SimpleTaskAutoConfiguration {
 
 	private TaskExplorer taskExplorer;
 
+	private TaskNameResolver taskNameResolver;
+
 	@Bean
 	public SimpleTaskRepository taskRepository() {
 		return (SimpleTaskRepository) this.taskRepository;
@@ -102,7 +103,7 @@ public class SimpleTaskAutoConfiguration {
 
 	@Bean
 	public TaskNameResolver taskNameResolver() {
-		return new SimpleTaskNameResolver();
+		return taskNameResolver;
 	}
 
 	@Bean
@@ -138,6 +139,7 @@ public class SimpleTaskAutoConfiguration {
 		this.taskRepository = taskConfigurer.getTaskRepository();
 		this.platformTransactionManager = taskConfigurer.getTransactionManager();
 		this.taskExplorer = taskConfigurer.getTaskExplorer();
+		this.taskNameResolver = taskConfigurer.getTaskNameResolver();
 		this.initialized = true;
 	}
 

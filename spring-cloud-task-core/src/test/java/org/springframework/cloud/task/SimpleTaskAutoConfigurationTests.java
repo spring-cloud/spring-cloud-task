@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2022 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExplorer;
+import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.context.ApplicationContextException;
@@ -129,6 +130,20 @@ public class SimpleTaskAutoConfigurationTests {
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class, applicationContextRunner);
+	}
+
+	@Test
+	public void testTaskNameResolver() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
+				.withPropertyValues("spring.cloud.task.name=myTestName");
+		applicationContextRunner.run((context) -> {
+			TaskNameResolver taskNameResolver = context.getBean(TaskNameResolver.class);
+			assertThat(taskNameResolver.getTaskName()).isEqualTo("myTestName");
+		});
 	}
 
 	@Test
