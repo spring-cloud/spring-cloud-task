@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Simple implementation of the {@link TaskNameResolver} interface. Names the task based
- * on the following order of precidence:
+ * on the following order of precedence:
  * <ol>
  * <li>A configured property <code>spring.cloud.task.name</code></li>
  * <li>The {@link ApplicationContext}'s id.</li>
