@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,11 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
+	public Page<TaskExecution> findTaskExecutionsByExecutionId(String externalExecutionId, Pageable pageable) {
+		return this.taskExecutionDao.findTaskExecutionsByExternalExecutionId(externalExecutionId, pageable);
+	}
+
+	@Override
 	public List<String> getTaskNames() {
 		return this.taskExecutionDao.getTaskNames();
 	}
@@ -77,6 +82,11 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	@Override
 	public long getRunningTaskExecutionCount() {
 		return this.taskExecutionDao.getRunningTaskExecutionCount();
+	}
+
+	@Override
+	public long getTaskExecutionCountByExternalExecutionId(String externalExecutionId) {
+		return this.taskExecutionDao.getTaskExecutionCountByExternalExecutionId(externalExecutionId);
 	}
 
 	@Override

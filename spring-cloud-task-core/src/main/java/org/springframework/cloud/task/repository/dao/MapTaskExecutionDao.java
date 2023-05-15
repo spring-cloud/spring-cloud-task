@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,17 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
+	public long getTaskExecutionCountByExternalExecutionId(String externalExecutionId) {
+		int count = 0;
+		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
+			if (entry.getValue().getExternalExecutionId().equals(externalExecutionId)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
 	public long getRunningTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
@@ -164,6 +175,18 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			}
 		}
 		return getPageFromList(new ArrayList<>(result), pageable, getRunningTaskExecutionCountByTaskName(taskName));
+	}
+
+	@Override
+	public Page<TaskExecution> findTaskExecutionsByExternalExecutionId(String externalExecutionId, Pageable pageable) {
+		Set<TaskExecution> result = getTaskExecutionTreeSet();
+		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
+			if (entry.getValue().getExternalExecutionId().equals(externalExecutionId)) {
+				result.add(entry.getValue());
+			}
+		}
+		return getPageFromList(new ArrayList<>(result), pageable,
+				getTaskExecutionCountByExternalExecutionId(externalExecutionId));
 	}
 
 	@Override
