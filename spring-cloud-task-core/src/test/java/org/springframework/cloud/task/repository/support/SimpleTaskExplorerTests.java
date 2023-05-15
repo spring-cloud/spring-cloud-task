@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ public class SimpleTaskExplorerTests {
 		final int COMPLETE_COUNT = 5;
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
-		// Store completed jobs
+		// Store completed task executions
 		int i = 0;
 		for (; i < COMPLETE_COUNT; i++) {
 			createAndSaveTaskExecution(i);
@@ -180,13 +180,62 @@ public class SimpleTaskExplorerTests {
 
 	@ParameterizedTest
 	@MethodSource("data")
+	public void findTasksByExternalExecutionId(DaoType testType) {
+		testDefaultContext(testType);
+		Map<Long, TaskExecution> sampleDataSet = createSampleDataSet(33);
+		sampleDataSet.values().forEach(taskExecution -> {
+			Page<TaskExecution> taskExecutionsByExecutionId = this.taskExplorer
+					.findTaskExecutionsByExecutionId(taskExecution.getExternalExecutionId(), PageRequest.of(0, 5));
+			assertThat(taskExecutionsByExecutionId.getTotalElements()).isEqualTo(1);
+			assertThat(this.taskExplorer
+					.getTaskExecutionCountByExternalExecutionId(taskExecution.getExternalExecutionId())).isEqualTo(1);
+			TaskExecution resultTaskExecution = taskExecutionsByExecutionId.getContent().get(0);
+			assertThat(resultTaskExecution.getExecutionId()).isEqualTo(taskExecution.getExecutionId());
+		});
+	}
+
+	@ParameterizedTest
+	@MethodSource("data")
+	public void findTasksByExternalExecutionIdMultipleEntry(DaoType testType) {
+		testDefaultContext(testType);
+
+		testDefaultContext(testType);
+		final int SAME_EXTERNAL_ID_COUNT = 2;
+		final int UNIQUE_COUNT = 3;
+
+		Map<Long, TaskExecution> expectedResults = new HashMap<>();
+		// Store task executions each with a unique external execution id
+		int i = 0;
+		for (; i < UNIQUE_COUNT; i++) {
+			createAndSaveTaskExecution(i);
+		}
+		// Create task execution with same external execution id
+		for (; i < (UNIQUE_COUNT + SAME_EXTERNAL_ID_COUNT); i++) {
+			TaskExecution expectedTaskExecution = this.taskRepository.createTaskExecution(getSimpleTaskExecution());
+			expectedResults.put(expectedTaskExecution.getExecutionId(), expectedTaskExecution);
+		}
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<TaskExecution> resultSet = this.taskExplorer.findTaskExecutionsByExecutionId(EXTERNAL_EXECUTION_ID,
+				pageable);
+		assertThat(resultSet.getTotalElements()).isEqualTo(SAME_EXTERNAL_ID_COUNT);
+		List<TaskExecution> taskExecutions = resultSet.getContent();
+		taskExecutions.forEach(taskExecution -> {
+			assertThat(expectedResults.keySet()).contains(taskExecution.getExecutionId());
+		});
+		assertThat(this.taskExplorer.getTaskExecutionCountByExternalExecutionId(EXTERNAL_EXECUTION_ID))
+				.isEqualTo(SAME_EXTERNAL_ID_COUNT);
+
+	}
+
+	@ParameterizedTest
+	@MethodSource("data")
 	public void findTasksByName(DaoType testType) {
 		testDefaultContext(testType);
 		final int TEST_COUNT = 5;
 		final int COMPLETE_COUNT = 7;
 
 		Map<Long, TaskExecution> expectedResults = new HashMap<>();
-		// Store completed jobs
+		// Store completed task executions
 		for (int i = 0; i < COMPLETE_COUNT; i++) {
 			createAndSaveTaskExecution(i);
 		}

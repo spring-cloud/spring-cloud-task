@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2021 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,11 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 */
 	public static final String TASK_NAME_WHERE_CLAUSE = "where TASK_NAME = :taskName ";
 
+	/**
+	 * WHERE clause for external execution id.
+	 */
+	public static final String EXTERNAL_EXECUTION_ID_WHERE_CLAUSE = "where EXTERNAL_EXECUTION_ID = :externalExecutionId ";
+
 	private static final String SAVE_TASK_EXECUTION = "INSERT into %PREFIX%EXECUTION"
 			+ "(TASK_EXECUTION_ID, EXIT_CODE, START_TIME, TASK_NAME, LAST_UPDATED, EXTERNAL_EXECUTION_ID, PARENT_EXECUTION_ID)"
 			+ "values (:taskExecutionId, :exitCode, :startTime, "
@@ -125,6 +130,9 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private static final String TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM "
 			+ "%PREFIX%EXECUTION where TASK_NAME = :taskName";
+
+	private static final String TASK_EXECUTION_COUNT_BY_EXTERNAL_EXECUTION_ID = "SELECT COUNT(*) FROM "
+			+ "%PREFIX%EXECUTION where EXTERNAL_EXECUTION_ID = :externalExecutionId";
 
 	private static final String RUNNING_TASK_EXECUTION_COUNT_BY_NAME = "SELECT COUNT(*) FROM "
 			+ "%PREFIX%EXECUTION where TASK_NAME = :taskName AND END_TIME IS NULL ";
@@ -405,6 +413,27 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
 		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE, RUNNING_TASK_WHERE_CLAUSE,
 				new MapSqlParameterSource("taskName", taskName), getRunningTaskExecutionCountByTaskName(taskName));
+	}
+
+	@Override
+	public Page<TaskExecution> findTaskExecutionsByExternalExecutionId(String externalExecutionId, Pageable pageable) {
+		return queryForPageableResults(pageable, SELECT_CLAUSE, FROM_CLAUSE, EXTERNAL_EXECUTION_ID_WHERE_CLAUSE,
+				new MapSqlParameterSource("externalExecutionId", externalExecutionId),
+				getTaskExecutionCountByExternalExecutionId(externalExecutionId));
+	}
+
+	@Override
+	public long getTaskExecutionCountByExternalExecutionId(String externalExecutionId) {
+		final MapSqlParameterSource queryParameters = new MapSqlParameterSource().addValue("externalExecutionId",
+				externalExecutionId, Types.VARCHAR);
+
+		try {
+			return this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT_BY_EXTERNAL_EXECUTION_ID),
+					queryParameters, Long.class);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return 0;
+		}
 	}
 
 	@Override

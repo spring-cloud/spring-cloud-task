@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,15 @@ public interface TaskExplorer {
 	Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable);
 
 	/**
+	 * Retrieve a collection of taskExecutions that contain the provided external
+	 * execution id.
+	 * @param externalExecutionId the external execution id of the tasks
+	 * @param pageable the constraints for the search
+	 * @return the set of task executions for tasks with the external execution id
+	 */
+	Page<TaskExecution> findTaskExecutionsByExecutionId(String externalExecutionId, Pageable pageable);
+
+	/**
 	 * Retrieve a list of available task names.
 	 * @return the set of task names that have been executed
 	 */
@@ -70,6 +79,13 @@ public interface TaskExplorer {
 	 * @return current number of running task executions.
 	 */
 	long getRunningTaskExecutionCount();
+
+	/**
+	 * Retrieves current number of task executions by external executionId.
+	 * @param externalExecutionId The externalExecutionId to be searched.
+	 * @return current number of task executions for a specific externalExecutionId.
+	 */
+	long getTaskExecutionCountByExternalExecutionId(String externalExecutionId);
 
 	/**
 	 * Get a collection/page of executions.
