@@ -10,13 +10,13 @@
 	<description>Displays task observations as well as commandline and application runner observations</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.3-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>2022.0.3</spring-cloud.version>
 	</properties>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.0.7</version>
 		<relativePath />
 	</parent>
 
