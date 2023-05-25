@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.7</version>
+		<version>3.0.5</version>
 		<relativePath />
 	</parent>
 
@@ -23,8 +23,8 @@
 		<test.containers.version>1.17.6</test.containers.version>
 		<test.rabbit.containers.version>1.17.6</test.rabbit.containers.version>
 		<test.ducttape.version>1.0.8</test.ducttape.version>
-		<spring-cloud-stream.version>4.0.4-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-task.version>3.0.4-SNAPSHOT</spring-cloud-task.version>
+		<spring-cloud-stream.version>4.0.3-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud-task.version>3.0.3-SNAPSHOT</spring-cloud-task.version>
 	</properties>
 
 	<dependencyManagement>
