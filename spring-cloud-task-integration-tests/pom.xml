@@ -14,24 +14,13 @@
 
 	<properties>
 		<spring-cloud-commons.version>4.1.0-SNAPSHOT</spring-cloud-commons.version>
-		<test.containers.version>1.17.6</test.containers.version>
-		<test.rabbit.containers.version>1.17.6</test.rabbit.containers.version>
-		<test.ducttape.version>1.0.8</test.ducttape.version>
 	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-task-dependencies</artifactId>
 				<version>${project.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.testcontainers</groupId>
-				<artifactId>testcontainers-bom</artifactId>
-				<version>${test.containers.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -107,7 +96,6 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers</artifactId>
-			<version>${test.containers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -118,19 +106,11 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>rabbitmq</artifactId>
-			<version>${test.rabbit.containers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>db2</artifactId>
-			<version>${test.containers.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.rnorth.duct-tape</groupId>
-			<artifactId>duct-tape</artifactId>
-			<version>${test.ducttape.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -5,18 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.spring</groupId>
 	<artifactId>task-observations</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.1.0-SNAPSHOT</version>
 	<name>task observation sample</name>
 	<description>Displays task observations as well as commandline and application runner observations</description>
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.4-SNAPSHOT</spring-cloud.version>
 	</properties>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.7</version>
+		<version>3.2.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
