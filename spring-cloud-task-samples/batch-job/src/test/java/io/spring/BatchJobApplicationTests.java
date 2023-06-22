@@ -56,7 +56,7 @@ public class BatchJobApplicationTests {
 
 		assertThat(i).isGreaterThan(0);
 
-		String taskTitle = "Demo Batch Job Task";
+		String taskTitle = "taskName='Demo Batch Job Task'";
 		Pattern pattern = Pattern.compile(taskTitle);
 		Matcher matcher = pattern.matcher(output);
 

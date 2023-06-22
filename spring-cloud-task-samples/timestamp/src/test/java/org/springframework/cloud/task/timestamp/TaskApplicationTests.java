@@ -54,7 +54,7 @@ public class TaskApplicationTests {
 			.isTrue();
 		assertThat(output.contains(EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output).isTrue();
 
-		String taskTitle = "Demo Timestamp Task";
+		String taskTitle = " taskName='Demo Timestamp Task'";
 		Pattern pattern = Pattern.compile(taskTitle);
 		Matcher matcher = pattern.matcher(output);
 		int count = 0;
