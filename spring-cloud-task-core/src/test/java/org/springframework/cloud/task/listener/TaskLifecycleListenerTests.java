@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +88,12 @@ public class TaskLifecycleListenerTests {
 	public void tearDown() {
 		if (this.context != null && this.context.isActive()) {
 			this.context.close();
+		}
+		ObservationRegistry observationRegistry = TestObservationRegistry.create();
+		if (observationRegistry.getCurrentObservationScope() != null) {
+			Observation.Scope scope = observationRegistry.getCurrentObservationScope();
+			scope.close();
+			scope.getCurrentObservation().stop();
 		}
 	}
 
@@ -183,6 +192,7 @@ public class TaskLifecycleListenerTests {
 	@Test
 	public void testRestartExistingTask(CapturedOutput capturedOutput) {
 		this.context.refresh();
+
 		TaskLifecycleListener taskLifecycleListener = this.context.getBean(TaskLifecycleListener.class);
 		taskLifecycleListener.start();
 		String output = capturedOutput.toString();
