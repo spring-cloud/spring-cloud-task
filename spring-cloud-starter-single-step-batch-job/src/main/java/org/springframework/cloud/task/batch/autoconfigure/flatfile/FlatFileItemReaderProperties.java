@@ -113,7 +113,7 @@ public class FlatFileItemReaderProperties {
 	/**
 	 * The column ranges to be used to parse a fixed width file.
 	 */
-	private List<Range> ranges = new ArrayList<>();
+	private List<String> ranges = new ArrayList<>();
 
 	/**
 	 * The names of the fields to be parsed from the file.
@@ -373,7 +373,7 @@ public class FlatFileItemReaderProperties {
 	 * The column ranges to be used to parsed a fixed width file.
 	 * @return a list of {@link Range} instances
 	 */
-	public List<Range> getRanges() {
+	public List<String> getRanges() {
 		return this.ranges;
 	}
 
@@ -381,7 +381,7 @@ public class FlatFileItemReaderProperties {
 	 * Column ranges for each field.
 	 * @param ranges list of ranges in start-end format (end is optional)
 	 */
-	public void setRanges(List<Range> ranges) {
+	public void setRanges(List<String> ranges) {
 		this.ranges = ranges;
 	}
 

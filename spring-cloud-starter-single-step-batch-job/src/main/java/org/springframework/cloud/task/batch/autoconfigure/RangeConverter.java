@@ -17,9 +17,7 @@
 package org.springframework.cloud.task.batch.autoconfigure;
 
 import org.springframework.batch.item.file.transform.Range;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
 /**
  * Converter for taking properties of format {@code start-end} or {@code start} (where
@@ -29,8 +27,6 @@ import org.springframework.stereotype.Component;
  * @author Michael Minella
  * @since 2.3
  */
-@Component
-@ConfigurationPropertiesBinding
 public class RangeConverter implements Converter<String, Range> {
 
 	@Override

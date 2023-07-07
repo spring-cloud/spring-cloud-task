@@ -16,7 +16,9 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -35,6 +37,7 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.task.batch.autoconfigure.RangeConverter;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -86,7 +89,10 @@ public class FlatFileItemReaderAutoConfiguration {
 					.fieldSetMapper(new MapFieldSetMapper());
 		}
 		else if (this.properties.isFixedLength()) {
-			mapFlatFileItemReaderBuilder.fixedLength().columns(this.properties.getRanges().toArray(new Range[0]))
+			RangeConverter rangeConverter = new RangeConverter();
+			List<Range> ranges = new ArrayList<>();
+			this.properties.getRanges().forEach(range -> ranges.add(rangeConverter.convert(range)));
+			mapFlatFileItemReaderBuilder.fixedLength().columns(ranges.toArray(new Range[0]))
 					.names(this.properties.getNames()).fieldSetMapper(new MapFieldSetMapper())
 					.beanMapperStrict(this.properties.isParsingStrict());
 		}
