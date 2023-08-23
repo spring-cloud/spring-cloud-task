@@ -9,7 +9,7 @@ This is a Spring Cloud Task application that logs a timestamp.
 == Classes:
 
 * TaskApplication - the Spring Boot Main Application
-* TimestampTask - the module that writes the log entry as Spring Task
+* TimestampTask - the module that writes the log entry as Spring cloud Task
 
 == Build:
 
