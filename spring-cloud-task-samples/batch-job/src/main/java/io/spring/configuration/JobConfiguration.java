@@ -19,11 +19,6 @@ package io.spring.configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.aop.SpringProxy;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.RuntimeHintsRegistrar;
-import org.springframework.aot.hint.TypeReference;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -35,15 +30,12 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportRuntimeHints;
-import org.springframework.core.DecoratingProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Michael Minella
  */
 @Configuration(proxyBeanMethods = false)
-@ImportRuntimeHints(JobConfiguration.RuntimeHint.class)
 public class JobConfiguration {
 
 	private static final Log logger = LogFactory.getLog(JobConfiguration.class);
@@ -66,17 +58,4 @@ public class JobConfiguration {
 			}, transactionManager).build())
 			.build();
 	}
-
-	static class RuntimeHint implements RuntimeHintsRegistrar {
-
-		@Override
-		public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-			hints.proxies()
-				.registerJdkProxy(builder -> builder
-					.proxiedInterfaces(TypeReference.of("org.springframework.batch.core.launch.JobOperator"))
-					.proxiedInterfaces(SpringProxy.class, Advised.class, DecoratingProxy.class));
-		}
-
-	}
-
 }
