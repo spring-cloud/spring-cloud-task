@@ -10,7 +10,3 @@
 * xref:appendix.adoc[]
 * xref:appendix-task-repository-schema.adoc[]
 * xref:appendix-building-the-documentation.adoc[]
-* xref:_observability.adoc[]
-* xref:README.adoc[]
-* xref:_configprops.adoc[]
-* xref:sagan-index.adoc[]
