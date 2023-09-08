@@ -2,11 +2,8 @@
 [[appendix]]
 = Appendices
 
-include::appendix-task-repository-schema.adoc[]
 
-include::appendix-building-the-documentation.adoc[]
 
 ifndef::train-docs[]
-include::_observability.adoc[]
 endif::[]
 
