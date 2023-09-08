@@ -98,7 +98,7 @@ boot application.
 === Mapping Exit Codes
 
 When a task completes, it tries to return an exit code to the OS. If we take a look
-at our <<getting-started-developing-first-task,original example>>, we can see that we are
+at our xref:getting-started.adoc#getting-started-developing-first-task[original example], we can see that we are
 not controlling that aspect of our application. So, if an exception is thrown, the JVM
 returns a code that may or may not be of any use to you in debugging.
 

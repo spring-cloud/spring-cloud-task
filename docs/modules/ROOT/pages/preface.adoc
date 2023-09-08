@@ -33,14 +33,14 @@ involved].
 [[task-documentation-first-steps]]
 == First Steps
 If you are just getting started with Spring Cloud Task or with 'Spring' in general, we
-suggesting reading the <<getting-started.adoc#getting-started>> chapter.
+suggesting reading the xref:getting-started.adoc[Getting started] chapter.
 
 To get started from scratch, read the following sections:
 
-* <<getting-started.adoc#getting-started-introducing-spring-cloud-task, Introducing Spring Cloud Task>>
-* <<getting-started.adoc#getting-started-system-requirements, System Requirements>> +
+* xref:getting-started.adoc#getting-started-introducing-spring-cloud-task[Introducing Spring Cloud Task]
+* xref:getting-started.adoc#getting-started-system-requirements[System Requirements] +
 
 To follow the tutorial, read
-<<getting-started.adoc#getting-started-developing-first-task, Developing Your First Spring Cloud Task Application>> +
+xref:getting-started.adoc#getting-started-developing-first-task[Developing Your First Spring Cloud Task Application] +
 To run your example, read
-<<getting-started.adoc#getting-started-running-the-example, Running the Example>>
+xref:getting-started.adoc#getting-started-running-the-example[Running the Example]

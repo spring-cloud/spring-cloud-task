@@ -35,9 +35,9 @@ Spring Cloud Task Framework at app startup establishes the next available id as 
 
 |LAST_UPDATED |TRUE | TIMESTAMP | X | Spring Cloud Task Framework at app startup establishes the value. Or if the record is created outside of task then the value must be populated at record creation time.
 
-|EXTERNAL_EXECUTION_ID |FALSE | VARCHAR | 250 | If the `spring.cloud.task.external-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found <<features-external_task_id,here>>
+|EXTERNAL_EXECUTION_ID |FALSE | VARCHAR | 250 | If the `spring.cloud.task.external-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found xref:features.adoc#features-external_task_id[here]
 
-|PARENT_TASK_EXECUTION_ID |FALSE |BIGINT | X | If the `spring.cloud.task.parent-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found <<features-parent_task_id,here>>
+|PARENT_TASK_EXECUTION_ID |FALSE |BIGINT | X | If the `spring.cloud.task.parent-execution-id` property is set then Spring Cloud Task Framework at app startup will set this to the value specified.   More information can be found xref:features.adoc#features-parent_task_id[here]
 
 |=========================================================
 
@@ -66,7 +66,7 @@ Used to link the task execution to the batch execution.
 
 
 .TASK_LOCK
-Used for the `single-instance-enabled` feature discussed <<features-single-instance-enabled,here>>.
+Used for the `single-instance-enabled` feature discussed xref:features.adoc#features-single-instance-enabled[here].
 [width="80%", cols="1,1,1,1,10", options="header"]
 |=========================================================
 |Column Name |Required |Type | Field Length |Notes

@@ -192,12 +192,12 @@ Otherwise, an exception is thrown.
 == Batch Informational Messages
 
 Spring Cloud Task provides the ability for batch jobs to emit informational messages. The
-"`<<stream.adoc#stream-integration-batch-events>>`" section covers this feature in detail.
+"`xref:stream.adoc#stream-integration-batch-events[Spring Batch Events]`" section covers this feature in detail.
 
 [[batch-failures-and-tasks]]
 == Batch Job Exit Codes
 
-As discussed <<features.adoc#features-lifecycle-exit-codes,earlier>>, Spring Cloud Task
+As discussed xref:features.adoc#features-lifecycle-exit-codes[earlier], Spring Cloud Task
 applications support the ability to record the exit code of a task execution. However, in
 cases where you run a Spring Batch Job within a task, regardless of how the Batch Job
 Execution completes, the result of the task is always zero when using the default
