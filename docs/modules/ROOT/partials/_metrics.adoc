@@ -1,0 +1,82 @@
+[[observability-metrics]]
+=== Observability - Metrics
+
+Below you can find a list of all metrics declared by this project.
+
+[[observability-metrics-task-active]]
+==== Task Active
+
+____
+Metrics created around a task execution.
+____
+
+
+**Metric name** `spring.cloud.task` (defined by convention class `org.springframework.cloud.task.listener.DefaultTaskExecutionObservationConvention`). **Type** `timer`.
+
+**Metric name** `spring.cloud.task.active` (defined by convention class `org.springframework.cloud.task.listener.DefaultTaskExecutionObservationConvention`). **Type** `long task timer`.
+
+
+IMPORTANT: KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+
+
+IMPORTANT: Micrometer internally uses `nanoseconds` for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+
+
+Fully qualified name of the enclosing class `org.springframework.cloud.task.listener.TaskExecutionObservation`.
+
+IMPORTANT: All tags must be prefixed with `spring.cloud.task` prefix!
+
+.Low cardinality Keys
+[cols="a,a"]
+|===
+|Name | Description
+|`spring.cloud.task.cf.app.id` _(required)_|App id for CF cloud.
+|`spring.cloud.task.cf.app.name` _(required)_|App name for CF cloud.
+|`spring.cloud.task.cf.app.version` _(required)_|App version for CF cloud.
+|`spring.cloud.task.cf.instance.index` _(required)_|Instance index for CF cloud.
+|`spring.cloud.task.cf.org.name` _(required)_|Organization Name for CF cloud.
+|`spring.cloud.task.cf.space.id` _(required)_|Space id for CF cloud.
+|`spring.cloud.task.cf.space.name` _(required)_|Space name for CF cloud.
+|`spring.cloud.task.execution.id` _(required)_|Task execution id.
+|`spring.cloud.task.exit.code` _(required)_|Task exit code.
+|`spring.cloud.task.external.execution.id` _(required)_|External execution id for task.
+|`spring.cloud.task.name` _(required)_|Task name measurement.
+|`spring.cloud.task.parent.execution.id` _(required)_|Task parent execution id.
+|`spring.cloud.task.status` _(required)_|task status. Can be either success or failure.
+|===
+
+
+
+[[observability-metrics-task-runner-observation]]
+==== Task Runner Observation
+
+____
+Observation created when a task runner is executed.
+____
+
+
+**Metric name** `spring.cloud.task.runner` (defined by convention class `org.springframework.cloud.task.configuration.observation.DefaultTaskObservationConvention`). **Type** `timer`.
+
+**Metric name** `spring.cloud.task.runner.active` (defined by convention class `org.springframework.cloud.task.configuration.observation.DefaultTaskObservationConvention`). **Type** `long task timer`.
+
+
+IMPORTANT: KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+
+
+IMPORTANT: Micrometer internally uses `nanoseconds` for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+
+
+Fully qualified name of the enclosing class `org.springframework.cloud.task.configuration.observation.TaskDocumentedObservation`.
+
+IMPORTANT: All tags must be prefixed with `spring.cloud.task` prefix!
+
+.Low cardinality Keys
+[cols="a,a"]
+|===
+|Name | Description
+|`spring.cloud.task.runner.bean-name` _(required)_|Name of the bean that was executed by Spring Cloud Task.
+|===
+
+
+
+

@@ -162,6 +162,7 @@ NOTE: A sample batch event application can be found in the samples module
 of the Spring Cloud Task Project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/batch-events[here].
 
+[[sending-batch-events-to-different-channels]]
 === Sending Batch Events to Different Channels
 
 One of the options that Spring Cloud Task offers for batch events is the ability to alter
@@ -174,6 +175,7 @@ following configuration:
 
 `spring.cloud.task.batch.events.step-execution-events-binding-name=my-step-execution-events`
 
+[[disabling-batch-events]]
 === Disabling Batch Events
 To disable the listener functionality for all batch events, use the following
 configuration:
@@ -197,6 +199,7 @@ spring.cloud.task.batch.events.item-write.enabled=false
 spring.cloud.task.batch.events.skip.enabled=false
 ----
 
+[[emit-order-for-batch-events]]
 === Emit Order for Batch Events
 By default, batch events have `Ordered.LOWEST_PRECEDENCE`. To change this value (for
 example, to 5 ), use the following configuration:

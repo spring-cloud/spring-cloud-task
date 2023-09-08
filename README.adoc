@@ -5,6 +5,7 @@ Edit the files in the src/main/asciidoc/ directory instead.
 ////
 
 
+[[spring-cloud-task]]
 = Spring Cloud Task
 
 Is a project centered around the idea of processing on demand.  A user is able to develop
@@ -12,10 +13,12 @@ a “task” that can be deployed, executed and removed on demand, yet the resul
 process persists beyond the life of the task for future reporting.
 
 
+[[requirements:]]
 == Requirements:
 
 * Java 17 or Above
 
+[[build-main-project:]]
 == Build Main Project:
 
 [source,shell,indent=2]
@@ -23,6 +26,7 @@ process persists beyond the life of the task for future reporting.
 $ ./mvnw clean install
 ----
 
+[[example:]]
 == Example:
 
 [source,java,indent=2]
@@ -50,9 +54,11 @@ public class MyApp {
 }
 ----
 
+[[code-of-conduct]]
 == Code of Conduct
 This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct]. By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
 
+[[building-the-project]]
 == Building the Project
 
 This project requires that you invoke the Javadoc engine from the Maven command line. You can do so by appending `javadoc:aggregate` to the rest of your Maven command.

@@ -1,7 +1,8 @@
+[[spring-cloud-task-reference-guide]]
 = Spring Cloud Task Reference Guide
+:page-section-summary-toc: 1
 Michael Minella, Glenn Renfro, Jay Bryant
 
-include::_attributes.adoc[]
 
 // ======================================================================================
 
@@ -14,18 +15,11 @@ others, provided that you do not charge any fee for such copies and further
 provided that each copy contains this Copyright Notice, whether distributed in
 print or electronically.
 
-include::preface.adoc[]
 
-include::getting-started.adoc[]
 
-include::features.adoc[]
 
-include::batch.adoc[]
 
-include::batch-starter.adoc[]
 
-include::stream.adoc[]
 
-include::appendix.adoc[]
 
 // ======================================================================================

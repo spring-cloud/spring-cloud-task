@@ -1,0 +1,13 @@
+[[observability-conventions]]
+=== Observability - Conventions
+
+Below you can find a list of all `GlobalObservationConvention` and `ObservationConvention` declared by this project.
+
+.ObservationConvention implementations
+|===
+|ObservationConvention Class Name | Applicable ObservationContext Class Name
+|`org.springframework.cloud.task.listener.DefaultTaskExecutionObservationConvention`|`TaskExecutionObservationContext`
+|`org.springframework.cloud.task.listener.TaskExecutionObservationConvention`|`TaskExecutionObservationContext`
+|`org.springframework.cloud.task.configuration.observation.DefaultTaskObservationConvention`|`TaskObservationContext`
+|`org.springframework.cloud.task.configuration.observation.TaskObservationConvention`|`TaskObservationContext`
+|===

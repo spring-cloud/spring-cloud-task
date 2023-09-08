@@ -98,7 +98,7 @@ boot application.
 === Mapping Exit Codes
 
 When a task completes, it tries to return an exit code to the OS. If we take a look
-at our <<getting-started-developing-first-task,original example>>, we can see that we are
+at our xref:getting-started.adoc#getting-started-developing-first-task[original example], we can see that we are
 not controlling that aspect of our application. So, if an exception is thrown, the JVM
 returns a code that may or may not be of any use to you in debugging.
 
@@ -372,6 +372,7 @@ application:
 NOTE: The exit code for the application will be 1 if the task fails because this feature
 is enabled and another task is running with the same task name.
 
+[[single-instance-usage-for-spring-aot-and-native-compilation]]
 ==== Single Instance Usage for Spring AOT And Native Compilation
 To use Spring Cloud Task's single-instance feature when creating a natively compiled app, you need to enable the feature at build time.
 To do so, add the process-aot execution and set `spring.cloud.task.single-step-instance-enabled=true` as a JVM argument, as follows:
@@ -394,6 +395,7 @@ To do so, add the process-aot execution and set `spring.cloud.task.single-step-i
     </executions>
 </plugin>
 
+[[enabling-observations-for-applicationrunner-and-commandlinerunner]]
 === Enabling  Observations for ApplicationRunner and CommandLineRunner
 
 
@@ -401,6 +403,7 @@ To Enable Task Observations for `ApplicationRunner` or `CommandLineRunner` set `
 
 An example task application with observations enables using the `SimpleMeterRegistry` can be found https://github.com/spring-cloud/spring-cloud-task/tree/main/spring-cloud-task-samples/task-observations[here].
 
+[[disabling-spring-cloud-task-auto-configuration]]
 === Disabling Spring Cloud Task Auto Configuration
 
 In cases where Spring Cloud Task should not be autoconfigured for an implementation, you can disable Task's auto configuration.

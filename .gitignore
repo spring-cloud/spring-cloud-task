@@ -34,3 +34,9 @@ spring-*/src/main/java/META-INF/MANIFEST.MF
 
 # Github Actions
 .m2
+
+node
+node_modules
+build
+package.json
+package-lock.json

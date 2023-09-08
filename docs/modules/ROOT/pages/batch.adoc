@@ -135,6 +135,7 @@ NOTE: You can find a sample remote partition application in the samples module o
 Spring Cloud Task project,
 https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-samples/partitioned-batch-job[here].
 
+[[asynchronously-launch-remote-batch-partitions]]
 === Asynchronously launch remote batch partitions
 
 By default batch partitions are launched sequentially.   However, in some cases this may affect performance as each launch will block until the resource (For example: provisioning a pod in Kubernetes) is provisioned.
@@ -169,6 +170,7 @@ For example:
 NOTE: We need to close the context since the use of `ThreadPoolTaskExecutor` leaves a thread active thus the app will not terminate. To close the application appropriately, we will need to set `spring.cloud.task.closecontextEnabled` property to `true`.
 
 
+[[notes-on-developing-a-batch-partitioned-application-for-the-kubernetes-platform]]
 === Notes on Developing a Batch-partitioned application for the Kubernetes Platform
 
 * When deploying partitioned apps on the Kubernetes platform, you must use the following
@@ -190,12 +192,12 @@ Otherwise, an exception is thrown.
 == Batch Informational Messages
 
 Spring Cloud Task provides the ability for batch jobs to emit informational messages. The
-"`<<stream.adoc#stream-integration-batch-events>>`" section covers this feature in detail.
+"`xref:stream.adoc#stream-integration-batch-events[Spring Batch Events]`" section covers this feature in detail.
 
 [[batch-failures-and-tasks]]
 == Batch Job Exit Codes
 
-As discussed <<features.adoc#features-lifecycle-exit-codes,earlier>>, Spring Cloud Task
+As discussed xref:features.adoc#features-lifecycle-exit-codes[earlier], Spring Cloud Task
 applications support the ability to record the exit code of a task execution. However, in
 cases where you run a Spring Batch Job within a task, regardless of how the Batch Job
 Execution completes, the result of the task is always zero when using the default
