@@ -23,6 +23,7 @@ environment.
 You need to have Java installed (Java 17 or better). To build, you need to have Maven
 installed as well.
 
+[[database-requirements]]
 === Database Requirements
 
 Spring Cloud Task uses a relational database to store the results of an executed task.

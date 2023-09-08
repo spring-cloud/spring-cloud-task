@@ -8,6 +8,7 @@ This appendix provides an ERD for the database schema used in the task repositor
 
 image::task_schema.png[]
 
+[[table-information]]
 === Table Information
 --
 
@@ -84,6 +85,7 @@ Used for the `single-instance-enabled` feature discussed <<features-single-insta
 NOTE: The DDL for setting up tables for each database type can be found https://github.com/spring-cloud/spring-cloud-task/tree/master/spring-cloud-task-core/src/main/resources/org/springframework/cloud/task[here].
 --
 
+[[sql-server]]
 === SQL Server
 By default Spring Cloud Task uses a sequence table for determining the `TASK_EXECUTION_ID` for the `TASK_EXECUTION` table.
 However, when launching multiple tasks simultaneously while using SQL Server, this can cause a deadlock to occur on the `TASK_SEQ` table.

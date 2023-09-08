@@ -625,6 +625,7 @@ Second, this starter lets you configure two properties on the writer.
 
 For more about the configuration options for the `KafkaItemWriter`, see the  https://docs.spring.io/spring-batch/docs/4.3.x/api/org/springframework/batch/item/kafka/KafkaItemWriter.html[`KafkaItemWiter` documentation].
 
+[[spring-aot]]
 === Spring AOT
 When using Spring AOT with Single Step Batch Starter you must set the reader and
 writer name properties at compile time (unless you create a bean(s) for the reader and or writer).

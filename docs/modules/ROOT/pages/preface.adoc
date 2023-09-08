@@ -7,6 +7,7 @@ This section provides a brief overview of the Spring Cloud Task reference docume
 Think of it as a map for the rest of the document. You can read this reference guide in a
 linear fashion or you can skip sections if something does not interest you.
 
+[[about-the-documentation]]
 == About the documentation
 The Spring Cloud Task reference guide is available in {spring-cloud-task-docs}[html] 
 and {spring-cloud-task-docs}/index.pdf[pdf]. The latest copy is available at
