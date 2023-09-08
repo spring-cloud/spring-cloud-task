@@ -1,7 +1,0 @@
-
-[[appendix-building-the-documentation]]
-= Building This Documentation
-:page-section-summary-toc: 1
-
-This project uses Maven to generate this documentation. To generate it for yourself,
-run the following command: `$ mvn clean install -DskipTests -P docs`.

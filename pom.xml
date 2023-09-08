@@ -1,342 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-build</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
-		<relativePath />
-	</parent>
-
 	<groupId>org.springframework.cloud</groupId>
-	<artifactId>spring-cloud-task-parent</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>Spring Cloud Task Build</name>
-	<description>Spring Cloud Task Build</description>
-	<url>https://cloud.spring.io/spring-cloud-task/</url>
-	<organization>
-		<name>VMware, Inc.</name>
-		<url>https://www.spring.io</url>
-	</organization>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
-		</license>
-	</licenses>
+	<artifactId>spring-cloud-task-docs-build</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>Spring Cloud Task Docs Build</name>
+	<description>Builds Spring Cloud Task Docs.</description>
+	<url>https://spring.io/projects/spring-cloud-task</url>
 	<scm>
+		<connection>scm:git:https://github.com/spring-cloud/spring-cloud-task.git
+		</connection>
+		<developerConnection>
+			scm:git:git@github.com:spring-cloud/spring-cloud-task.git
+		</developerConnection>
 		<url>https://github.com/spring-cloud/spring-cloud-task</url>
 	</scm>
-	<developers>
-		<developer>
-			<id>mminella</id>
-			<name>Michael Minella</name>
-			<email>mminella at vmware.com</email>
-			<organization>VMware, Inc.</organization>
-			<organizationUrl>https://www.spring.io</organizationUrl>
-			<roles>
-				<role>Project Lead</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>cppwfs</id>
-			<name>Glenn Renfro</name>
-			<email>grenfro at vmware</email>
-			<organization>VMware, Inc.</organization>
-			<organizationUrl>https://www.spring.io</organizationUrl>
-		</developer>
-	</developers>
-	<prerequisites>
-		<maven>3.2.1</maven>
-	</prerequisites>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-task-dependencies</artifactId>
-				<version>${project.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-deployer-dependencies</artifactId>
-				<version>${spring-cloud-deployer.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-deployer-local</artifactId>
-				<version>${spring-cloud-deployer-local.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-				<version>${spring-cloud-stream-binder-rabbit.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-stream</artifactId>
-				<version>${spring-cloud-stream.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<modules>
-		<module>spring-cloud-task-dependencies</module>
-		<module>spring-cloud-task-core</module>
-		<module>spring-cloud-task-batch</module>
-		<module>spring-cloud-task-stream</module>
-		<module>spring-cloud-starter-task</module>
-		<module>spring-cloud-task-samples</module>
-		<module>spring-cloud-task-integration-tests</module>
-		<module>docs</module>
-		<module>spring-cloud-starter-single-step-batch-job</module>
-	</modules>
+	<issueManagement>
+		<url>https://github.com/spring-cloud/spring-cloud-task/issues</url>
+	</issueManagement>
 
 	<properties>
-
-		<spring-cloud-stream.version>4.1.0-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-deployer.version>2.8.3</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.8.3
-		</spring-cloud-deployer-local.version>
-		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
-		</spring-cloud-stream-binder-rabbit.version>
-		<jakarta-ee-api.version>10.0.0</jakarta-ee-api.version>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.jacoco.reportPath>
-			${project.build.directory}/coverage-reports/jacoco-ut.exec
-		</sonar.jacoco.reportPath>
-		<maven-checkstyle-plugin.failsOnError>true</maven-checkstyle-plugin.failsOnError>
-		<maven-checkstyle-plugin.failsOnViolation>true
-		</maven-checkstyle-plugin.failsOnViolation>
-		<maven-checkstyle-plugin.includeTestSourceDirectory>true
-		</maven-checkstyle-plugin.includeTestSourceDirectory>
-		<java.version>17</java.version>
-		<spring-javaformat-maven-plugin.version>0.0.34</spring-javaformat-maven-plugin.version>
+		<io.spring.maven.antora-version>0.0.3</io.spring.maven.antora-version>
 	</properties>
 
+
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>flatten-maven-plugin</artifactId>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+				<groupId>io.spring.maven.antora</groupId>
+				<artifactId>antora-maven-plugin</artifactId>
+				<version>${io.spring.maven.antora-version}</version>
+				<extensions>true</extensions>
 				<configuration>
-					<includes>
-						<include>**/*Tests.java</include>
-					</includes>
-					<argLine>${surefireArgLine}</argLine>
+					<options>
+						<option>--to-dir=target/antora/site</option>
+						<option>--stacktrace</option>
+						<option>--fetch</option>
+					</options>
+					<environment>
+						<ALGOLIA_API_KEY>9d489079e5ec46dbb238909fee5c9c29</ALGOLIA_API_KEY>
+						<ALGOLIA_APP_ID>WB1FQYI187</ALGOLIA_APP_ID>
+						<ALGOLIA_INDEX_NAME>springcloudtask</ALGOLIA_INDEX_NAME>
+					</environment>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>17</source>
-					<target>17</target>
-					<testSource>17</testSource>
-					<testTarget>17</testTarget>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<source>17</source>
-					<doclint>all,-missing</doclint>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>aggregate</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>aggregate</goal>
-						</goals>
-					</execution>
-				</executions>
-
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<executions>
-					<!--
-						Prepares the property pointing to the JaCoCo runtime agent which
-						is passed as VM argument when Maven the Surefire plugin is executed.
-					-->
-					<execution>
-						<id>pre-unit-test</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>
-								${project.build.directory}/coverage-reports/jacoco-ut.exec
-							</destFile>
-							<!--
-								Sets the name of the property containing the settings
-								for JaCoCo runtime agent.
-							-->
-							<propertyName>surefireArgLine</propertyName>
-						</configuration>
-					</execution>
-					<!--
-						Ensures that the code coverage report for unit tests is created after
-						unit tests have been run.
-					-->
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>
-								${project.build.directory}/coverage-reports/jacoco-ut.exec
-							</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>
-								${project.reporting.outputDirectory}/jacoco-ut
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-				<version>0.8.7</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>io.spring.javaformat</groupId>
-				<artifactId>spring-javaformat-maven-plugin</artifactId>
-				<version>${spring-javaformat-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<inherited>true</inherited>
-						<goals>
-							<goal>validate</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>spring-snapshot</id>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>spring-milestone</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
+	</repositories>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
-
-	<profiles>
-		<profile>
-			<id>spring</id>
-			<repositories>
-				<repository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-			<pluginRepositories>
-				<pluginRepository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-			</pluginRepositories>
-		</profile>
-		<profile>
-			<id>withoutDockerTests</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<excludedGroups>DockerRequired</excludedGroups>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
