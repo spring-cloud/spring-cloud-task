@@ -1,5 +1,6 @@
 [[spring-cloud-task-reference-guide]]
 = Spring Cloud Task Reference Guide
+:page-section-summary-toc: 1
 Michael Minella, Glenn Renfro, Jay Bryant
 
 

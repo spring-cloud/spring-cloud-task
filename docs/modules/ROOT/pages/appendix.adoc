@@ -1,6 +1,7 @@
 
 [[appendix]]
 = Appendices
+:page-section-summary-toc: 1
 
 
 
