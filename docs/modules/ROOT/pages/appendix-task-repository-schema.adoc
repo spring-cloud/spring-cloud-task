@@ -1,5 +1,5 @@
 [[appendix-task-repository-schema]]
-== Task Repository Schema
+= Task Repository Schema
 
 [[partintro]]
 --
@@ -9,7 +9,7 @@ This appendix provides an ERD for the database schema used in the task repositor
 image::task_schema.png[]
 
 [[table-information]]
-=== Table Information
+== Table Information
 --
 
 .TASK_EXECUTION
@@ -86,7 +86,7 @@ NOTE: The DDL for setting up tables for each database type can be found https://
 --
 
 [[sql-server]]
-=== SQL Server
+== SQL Server
 By default Spring Cloud Task uses a sequence table for determining the `TASK_EXECUTION_ID` for the `TASK_EXECUTION` table.
 However, when launching multiple tasks simultaneously while using SQL Server, this can cause a deadlock to occur on the `TASK_SEQ` table.
 The resolution is to drop the `TASK_EXECUTION_SEQ` table and create a sequence using the same name.   For example:
