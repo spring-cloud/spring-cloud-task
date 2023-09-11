@@ -19,18 +19,21 @@ package org.springframework.cloud.task.initializer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.task.executionid.TaskStartApplication;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -38,51 +41,38 @@ import org.springframework.cloud.task.repository.support.SimpleTaskExplorer;
 import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.TestSocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = { TaskInitializerTests.TaskLauncherConfiguration.class })
+@Testcontainers
 public class TaskInitializerTests {
 
 	private final static int WAIT_INTERVAL = 500;
 
 	private final static int MAX_WAIT_TIME = 5000;
 
-	private final static String URL = "maven://io.spring.cloud:" + "timestamp-task:jar:1.1.0.RELEASE";
-
-	private final static String DATASOURCE_URL;
-
-	private final static String DATASOURCE_USER_NAME = "SA";
-
-	private final static String DATASOURCE_USER_PASSWORD = "''";
-
-	private final static String DATASOURCE_DRIVER_CLASS_NAME = "org.h2.Driver";
-
-	private final static String TASK_NAME = "TASK_LAUNCHER_SINK_TEST";
-
-	private static int randomPort;
-
-	static {
-		randomPort = TestSocketUtils.findAvailableTcpPort();
-		DATASOURCE_URL = "jdbc:h2:tcp://localhost:" + randomPort + "/mem:dataflow;DB_CLOSE_DELAY=-1;"
-				+ "DB_CLOSE_ON_EXIT=FALSE";
-	}
-
 	private DataSource dataSource;
 
 	private TaskExplorer taskExplorer;
 
 	private ConfigurableApplicationContext applicationContext;
+
+	private static final DockerImageName MARIADB_IMAGE = DockerImageName.parse("mariadb:10.9.3");
+
+	/**
+	 * Provide mariadb test container for tests.
+	 */
+	@Container
+	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
 
 	@AfterEach
 	public void tearDown() {
@@ -100,6 +90,14 @@ public class TaskInitializerTests {
 
 	@BeforeEach
 	public void setup() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(mariaDBContainer.getDriverClassName());
+		dataSource.setUrl(mariaDBContainer.getJdbcUrl());
+		dataSource.setUsername(mariaDBContainer.getUsername());
+		dataSource.setPassword(mariaDBContainer.getPassword());
+		this.dataSource = dataSource;
+		TaskExecutionDaoFactoryBean factoryBean = new TaskExecutionDaoFactoryBean(dataSource);
+		this.taskExplorer = new SimpleTaskExplorer(factoryBean);
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource);
 		template.execute("DROP TABLE IF EXISTS TASK_TASK_BATCH");
@@ -121,7 +119,7 @@ public class TaskInitializerTests {
 
 	@Test
 	public void testNotInitialized() throws Exception {
-		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		SpringApplication myapp = getTaskApplication();
 		String[] properties = { "--spring.cloud.task.initialize-enabled=false" };
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
 			this.applicationContext = myapp.run(properties);
@@ -130,7 +128,7 @@ public class TaskInitializerTests {
 
 	@Test
 	public void testWithInitialized() throws Exception {
-		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		SpringApplication myapp = getTaskApplication();
 		String[] properties = { "--spring.cloud.task.initialize-enabled=true" };
 		this.applicationContext = myapp.run(properties);
 		assertThat(waitForDBToBePopulated()).isTrue();
@@ -144,7 +142,7 @@ public class TaskInitializerTests {
 
 	@Test
 	public void testNotInitializedOriginalProperty() throws Exception {
-		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		SpringApplication myapp = getTaskApplication();
 		String[] properties = { "--spring.cloud.task.initialize.enable=false" };
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() -> {
 			this.applicationContext = myapp.run(properties);
@@ -153,7 +151,7 @@ public class TaskInitializerTests {
 
 	@Test
 	public void testWithInitializedOriginalProperty() throws Exception {
-		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		SpringApplication myapp = getTaskApplication();
 		String[] properties = { "--spring.cloud.task.initialize.enable=true" };
 		this.applicationContext = myapp.run(properties);
 		assertThat(waitForDBToBePopulated()).isTrue();
@@ -186,37 +184,19 @@ public class TaskInitializerTests {
 		return isDbPopulated;
 	}
 
-	@Configuration
-	public static class TaskLauncherConfiguration {
+	private SpringApplication getTaskApplication() {
+		SpringApplication myapp = new SpringApplication(TaskStartApplication.class);
+		Map<String, Object> myMap = new HashMap<>();
+		ConfigurableEnvironment environment = new StandardEnvironment();
+		MutablePropertySources propertySources = environment.getPropertySources();
+		myMap.put("spring.datasource.url", mariaDBContainer.getJdbcUrl());
+		myMap.put("spring.datasource.username", mariaDBContainer.getUsername());
+		myMap.put("spring.datasource.password", mariaDBContainer.getPassword());
+		myMap.put("spring.datasource.driverClassName", mariaDBContainer.getDriverClassName());
 
-		private static Server defaultServer;
-
-		@Bean
-		public Server initH2TCPServer() {
-			Server server = null;
-			try {
-				if (defaultServer == null) {
-					server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
-							String.valueOf(randomPort)).start();
-					defaultServer = server;
-				}
-			}
-			catch (SQLException e) {
-				throw new IllegalStateException(e);
-			}
-			return defaultServer;
-		}
-
-		@Bean
-		public DataSource dataSource() {
-			DriverManagerDataSource dataSource = new DriverManagerDataSource();
-			dataSource.setDriverClassName(DATASOURCE_DRIVER_CLASS_NAME);
-			dataSource.setUrl(DATASOURCE_URL);
-			dataSource.setUsername(DATASOURCE_USER_NAME);
-			dataSource.setPassword(DATASOURCE_USER_PASSWORD);
-			return dataSource;
-		}
-
+		propertySources.addFirst(new MapPropertySource("EnvrionmentTestPropsource", myMap));
+		myapp.setEnvironment(environment);
+		return myapp;
 	}
 
 }

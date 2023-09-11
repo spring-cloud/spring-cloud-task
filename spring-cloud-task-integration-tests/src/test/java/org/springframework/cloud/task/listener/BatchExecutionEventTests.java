@@ -37,6 +37,7 @@ import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
+import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.messaging.Message;
@@ -223,12 +224,14 @@ public class BatchExecutionEventTests {
 	}
 
 	@SpringBootApplication
+	@EnableTask
 	@Import(JobConfiguration.class)
 	public static class BatchEventsApplication {
 
 	}
 
 	@SpringBootApplication
+	@EnableTask
 	@Import(JobSkipConfiguration.class)
 	public static class BatchSkipEventsApplication {
 
