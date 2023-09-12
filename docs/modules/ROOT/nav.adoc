@@ -1,5 +1,4 @@
-* xref:index.adoc[]
-* xref:preface.adoc[]
+* xref:index.adoc[Introduction]
 * xref:getting-started.adoc[]
 * xref:features.adoc[]
 * xref:batch.adoc[]
