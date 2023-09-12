@@ -349,7 +349,7 @@ Spring Cloud Task lets you establish that only one task with a given task name c
 at a time. To do so, you need to establish the <<features-task-name, task name>> and set
 `spring.cloud.task.single-instance-enabled=true` for each task execution. While the first
 task execution is running, any other time you try to run a task with the same
-<<features-task-name, task name>> and`spring.cloud.task.single-instance-enabled=true`, the
+<<features-task-name, task name>> and `spring.cloud.task.single-instance-enabled=true`, the
 task fails with the following error message: `Task with name "application" is already
 running.` The default value for `spring.cloud.task.single-instance-enabled` is `false`. The
 following example shows how to set `spring.cloud.task.single-instance-enabled` to `true`:
