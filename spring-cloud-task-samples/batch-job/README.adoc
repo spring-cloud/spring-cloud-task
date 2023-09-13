@@ -38,3 +38,9 @@ mvn -Pnative native:compile
 ----
 ./target/batch-job
 ----
+
+== Run the application with a Postgesql test container
+[source,shell]
+----
+./mvnw spring-boot:test-run
+----
