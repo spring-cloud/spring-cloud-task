@@ -23,7 +23,7 @@
 	</issueManagement>
 
 	<properties>
-		<io.spring.maven.antora-version>0.0.3</io.spring.maven.antora-version>
+		<io.spring.maven.antora-version>0.0.4</io.spring.maven.antora-version>
 	</properties>
 
 
