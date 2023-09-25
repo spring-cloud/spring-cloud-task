@@ -137,7 +137,7 @@ public class TaskInitializerTests {
 		TaskExecution te = taskExecutions.iterator().next();
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class TaskInitializerTests {
 		TaskExecution te = taskExecutions.iterator().next();
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 	}
 
 	private boolean tableExists() throws SQLException {

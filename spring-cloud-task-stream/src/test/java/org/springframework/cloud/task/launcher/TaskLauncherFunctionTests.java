@@ -60,7 +60,8 @@ public class TaskLauncherFunctionTests {
 	public void testProcessorFromFunction() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration.getCompleteConfiguration(TaskLauncherSinkTestApplication.class))
-						.web(WebApplicationType.NONE).run("--spring.jmx.enabled=false")) {
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 
 			InputDestination source = context.getBean(InputDestination.class);
 			TaskLaunchRequest request = new TaskLaunchRequest(VALID_URL, Collections.emptyList(),
@@ -79,7 +80,8 @@ public class TaskLauncherFunctionTests {
 		commandLineArgs.add(PARAM2);
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration.getCompleteConfiguration(TaskLauncherSinkTestApplication.class))
-						.web(WebApplicationType.NONE).run("--spring.jmx.enabled=false")) {
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 			TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL, commandLineArgs, null,
 					context);
 			verifySuccessWithParams(testTaskLauncher);
@@ -96,7 +98,8 @@ public class TaskLauncherFunctionTests {
 	public void testSuccessWithAppName() throws Exception {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration.getCompleteConfiguration(TaskLauncherSinkTestApplication.class))
-						.web(WebApplicationType.NONE).run("--spring.jmx.enabled=false")) {
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 			TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskString(VALID_URL, null, APP_NAME, context);
 			verifySuccessWithAppName(testTaskLauncher);
 
@@ -112,7 +115,8 @@ public class TaskLauncherFunctionTests {
 	public void testInvalidJar() throws Exception {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration.getCompleteConfiguration(TaskLauncherSinkTestApplication.class))
-						.web(WebApplicationType.NONE).run("--spring.jmx.enabled=false")) {
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 			TaskConfiguration.TestTaskLauncher testTaskLauncher = launchTaskTaskLaunchRequest(INVALID_URL, null,
 					APP_NAME, context);
 			verifySuccessWithAppName(testTaskLauncher);
@@ -123,9 +127,10 @@ public class TaskLauncherFunctionTests {
 	public void testNoRun() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration.getCompleteConfiguration(TaskLauncherSinkTestApplication.class))
-						.web(WebApplicationType.NONE).run("--spring.jmx.enabled=false")) {
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 			TaskConfiguration.TestTaskLauncher testTaskLauncher = context
-					.getBean(TaskConfiguration.TestTaskLauncher.class);
+				.getBean(TaskConfiguration.TestTaskLauncher.class);
 			assertThat(testTaskLauncher.status(DEFAULT_STATUS).getState()).isEqualTo(LaunchState.unknown);
 		}
 	}

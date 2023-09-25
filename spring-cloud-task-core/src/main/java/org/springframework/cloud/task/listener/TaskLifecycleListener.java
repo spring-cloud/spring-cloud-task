@@ -236,7 +236,7 @@ public class TaskLifecycleListener
 				TaskExecutionException taskExecutionException = (TaskExecutionException) exception;
 				if (taskExecutionException.getCause() instanceof InvocationTargetException) {
 					InvocationTargetException invocationTargetException = (InvocationTargetException) taskExecutionException
-							.getCause();
+						.getCause();
 					if (invocationTargetException != null && invocationTargetException.getTargetException() != null) {
 						exception = invocationTargetException.getTargetException();
 					}
@@ -271,7 +271,7 @@ public class TaskLifecycleListener
 				}
 				if (this.taskProperties.getExecutionid() != null) {
 					TaskExecution taskExecution = this.taskExplorer
-							.getTaskExecution(this.taskProperties.getExecutionid());
+						.getTaskExecution(this.taskProperties.getExecutionid());
 					Assert.notNull(taskExecution, String.format("Invalid TaskExecution, ID %s not found",
 							this.taskProperties.getExecutionid()));
 					Assert.isNull(taskExecution.getEndTime(),

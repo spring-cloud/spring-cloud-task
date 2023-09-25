@@ -181,13 +181,13 @@ public class DeployerPartitionHandlerTests {
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 		assertThat(request.getCommandlineArguments().contains(formatArgs("spring.cloud.task.executionid", "2")))
-				.isTrue();
+			.isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -236,18 +236,21 @@ public class DeployerPartitionHandlerTests {
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments().isEmpty()).isTrue();
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).isEqualTo("1");
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).isEqualTo("4");
+		assertThat(request.getDefinition()
+			.getProperties()
+			.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).isEqualTo("1");
+		assertThat(request.getDefinition()
+			.getProperties()
+			.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID)).isEqualTo("4");
 		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME))
-				.isEqualTo("step1");
+			.isEqualTo("step1");
 		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_NAME))
-				.isEqualTo("partitionedJobTask_partitionedJob_step1:partition1");
-		assertThat(request.getDefinition().getProperties()
-				.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID)).isEqualTo("55");
+			.isEqualTo("partitionedJobTask_partitionedJob_step1:partition1");
+		assertThat(request.getDefinition()
+			.getProperties()
+			.get(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID)).isEqualTo("55");
 		assertThat(request.getDefinition().getProperties().get(DeployerPartitionHandler.SPRING_CLOUD_TASK_EXECUTION_ID))
-				.isEqualTo("2");
+			.isEqualTo("2");
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -290,7 +293,7 @@ public class DeployerPartitionHandlerTests {
 
 		AppDeploymentRequest request = this.appDeploymentRequestArgumentCaptor.getValue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID, "55"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_PARENT_EXECUTION_ID, "55"))).isTrue();
 	}
 
 	@Test
@@ -526,11 +529,11 @@ public class DeployerPartitionHandlerTests {
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -592,11 +595,11 @@ public class DeployerPartitionHandlerTests {
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -787,11 +790,11 @@ public class DeployerPartitionHandlerTests {
 
 		assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, "4"))).isTrue();
 		assertThat(request.getCommandlineArguments()
-				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+			.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 
 		assertThat(results.size()).isEqualTo(1);
 		StepExecution resultStepExecution = results.iterator().next();
@@ -878,14 +881,14 @@ public class DeployerPartitionHandlerTests {
 			AppDefinition appDefinition = request.getDefinition();
 			assertThat(appDefinition.getName()).isEqualTo("partitionedJobTask");
 			assertThat(request.getCommandlineArguments()
-					.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
-			assertThat(request.getCommandlineArguments().contains(
-					formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(i))))
-							.isTrue();
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID, "1"))).isTrue();
 			assertThat(request.getCommandlineArguments()
-					.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID, String.valueOf(i))))
+				.isTrue();
+			assertThat(request.getCommandlineArguments()
+				.contains(formatArgs(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME, "step1"))).isTrue();
 			assertThat(request.getCommandlineArguments().contains(formatArgs("spring.cloud.task.executionid", "2")))
-					.isTrue();
+				.isTrue();
 		}
 	}
 

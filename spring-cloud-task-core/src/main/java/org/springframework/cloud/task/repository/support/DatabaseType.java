@@ -125,14 +125,14 @@ public enum DatabaseType {
 		if (StringUtils.hasText(databaseProductName) && !databaseProductName.equals("DB2/Linux")
 				&& databaseProductName.startsWith("DB2")) {
 			String databaseProductVersion = JdbcUtils
-					.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
+				.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
 
-						@Override
-						public Object processMetaData(DatabaseMetaData dbmd)
-								throws SQLException, MetaDataAccessException {
-							return dbmd.getDatabaseProductVersion();
-						}
-					}).toString();
+					@Override
+					public Object processMetaData(DatabaseMetaData dbmd) throws SQLException, MetaDataAccessException {
+						return dbmd.getDatabaseProductVersion();
+					}
+				})
+				.toString();
 
 			if (databaseProductVersion.startsWith("ARI")) {
 				databaseProductName = "DB2VSE";
@@ -140,9 +140,9 @@ public enum DatabaseType {
 			else if (databaseProductVersion.startsWith("DSN")) {
 				databaseProductName = "DB2ZOS";
 			}
-			else if (databaseProductName.indexOf("AS") != -1
-					&& (databaseProductVersion.startsWith("QSQ") || databaseProductVersion
-							.substring(databaseProductVersion.indexOf('V')).matches("V\\dR\\d[mM]\\d"))) {
+			else if (databaseProductName.indexOf("AS") != -1 && (databaseProductVersion.startsWith("QSQ")
+					|| databaseProductVersion.substring(databaseProductVersion.indexOf('V'))
+						.matches("V\\dR\\d[mM]\\d"))) {
 				databaseProductName = "DB2AS400";
 			}
 			else {

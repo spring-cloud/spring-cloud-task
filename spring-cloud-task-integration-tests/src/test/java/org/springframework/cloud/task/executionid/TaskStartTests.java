@@ -152,7 +152,7 @@ public class TaskStartTests {
 		TaskExecution te = taskExecutions.iterator().next();
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 	}
 
 	@Test
@@ -169,7 +169,7 @@ public class TaskStartTests {
 		TaskExecution te = taskExecutions.iterator().next();
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 		assertThat(this.taskExplorer.getTaskExecution(1).getTaskName()).isEqualTo("batchEvents");
 	}
 
@@ -189,7 +189,7 @@ public class TaskStartTests {
 		Page<TaskExecution> taskExecutions = this.taskExplorer.findAll(PageRequest.of(0, 10));
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 		assertThat(this.taskExplorer.getTaskExecution(1).getStartTime().isEqual(startDate)).isTrue();
 
 	}
@@ -227,7 +227,8 @@ public class TaskStartTests {
 			testFailed = true;
 		}
 		assertThat(testFailed)
-				.as("Expected TaskExecutionException for because  of " + "single-instance-enabled is enabled").isTrue();
+			.as("Expected TaskExecutionException for because  of " + "single-instance-enabled is enabled")
+			.isTrue();
 
 	}
 

@@ -67,11 +67,15 @@ public class FlatFileItemReaderAutoConfiguration {
 			@Autowired(required = false) LineCallbackHandler skippedLinesCallback,
 			@Autowired(required = false) RecordSeparatorPolicy recordSeparatorPolicy) {
 		FlatFileItemReaderBuilder<Map<String, Object>> mapFlatFileItemReaderBuilder = new FlatFileItemReaderBuilder<Map<String, Object>>()
-				.name(this.properties.getName()).resource(this.properties.getResource())
-				.saveState(this.properties.isSaveState()).maxItemCount(this.properties.getMaxItemCount())
-				.currentItemCount(this.properties.getCurrentItemCount()).strict(this.properties.isStrict())
-				.encoding(this.properties.getEncoding()).linesToSkip(this.properties.getLinesToSkip())
-				.comments(this.properties.getComments().toArray(new String[this.properties.getComments().size()]));
+			.name(this.properties.getName())
+			.resource(this.properties.getResource())
+			.saveState(this.properties.isSaveState())
+			.maxItemCount(this.properties.getMaxItemCount())
+			.currentItemCount(this.properties.getCurrentItemCount())
+			.strict(this.properties.isStrict())
+			.encoding(this.properties.getEncoding())
+			.linesToSkip(this.properties.getLinesToSkip())
+			.comments(this.properties.getComments().toArray(new String[this.properties.getComments().size()]));
 
 		mapFlatFileItemReaderBuilder.lineTokenizer(lineTokenizer);
 		if (recordSeparatorPolicy != null) {
@@ -82,19 +86,23 @@ public class FlatFileItemReaderAutoConfiguration {
 		mapFlatFileItemReaderBuilder.skippedLinesCallback(skippedLinesCallback);
 
 		if (this.properties.isDelimited()) {
-			mapFlatFileItemReaderBuilder.delimited().quoteCharacter(this.properties.getQuoteCharacter())
-					.delimiter(this.properties.getDelimiter())
-					.includedFields(this.properties.getIncludedFields().toArray(new Integer[0]))
-					.names(this.properties.getNames()).beanMapperStrict(this.properties.isParsingStrict())
-					.fieldSetMapper(new MapFieldSetMapper());
+			mapFlatFileItemReaderBuilder.delimited()
+				.quoteCharacter(this.properties.getQuoteCharacter())
+				.delimiter(this.properties.getDelimiter())
+				.includedFields(this.properties.getIncludedFields().toArray(new Integer[0]))
+				.names(this.properties.getNames())
+				.beanMapperStrict(this.properties.isParsingStrict())
+				.fieldSetMapper(new MapFieldSetMapper());
 		}
 		else if (this.properties.isFixedLength()) {
 			RangeConverter rangeConverter = new RangeConverter();
 			List<Range> ranges = new ArrayList<>();
 			this.properties.getRanges().forEach(range -> ranges.add(rangeConverter.convert(range)));
-			mapFlatFileItemReaderBuilder.fixedLength().columns(ranges.toArray(new Range[0]))
-					.names(this.properties.getNames()).fieldSetMapper(new MapFieldSetMapper())
-					.beanMapperStrict(this.properties.isParsingStrict());
+			mapFlatFileItemReaderBuilder.fixedLength()
+				.columns(ranges.toArray(new Range[0]))
+				.names(this.properties.getNames())
+				.fieldSetMapper(new MapFieldSetMapper())
+				.beanMapperStrict(this.properties.isParsingStrict());
 		}
 
 		return mapFlatFileItemReaderBuilder.build();

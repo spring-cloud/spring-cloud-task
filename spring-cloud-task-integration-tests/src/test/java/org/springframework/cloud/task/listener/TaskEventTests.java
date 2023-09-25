@@ -66,19 +66,23 @@ public class TaskEventTests {
 		List<Message<byte[]>> result = testListener(
 				"--spring.cloud.task.batch.events.itemWriteEventBindingName=task-events", "task-events", 2);
 		TaskExecution taskExecution = this.objectMapper.readValue(result.get(0).getPayload(), TaskExecution.class);
-		Assertions.assertThat(taskExecution.getTaskName()).isEqualTo(TASK_NAME)
-				.as(String.format("Task name should be '%s'", TASK_NAME));
+		Assertions.assertThat(taskExecution.getTaskName())
+			.isEqualTo(TASK_NAME)
+			.as(String.format("Task name should be '%s'", TASK_NAME));
 		taskExecution = this.objectMapper.readValue(result.get(1).getPayload(), TaskExecution.class);
-		Assertions.assertThat(taskExecution.getTaskName()).isEqualTo(TASK_NAME)
-				.as(String.format("Task name should be '%s'", TASK_NAME));
+		Assertions.assertThat(taskExecution.getTaskName())
+			.isEqualTo(TASK_NAME)
+			.as(String.format("Task name should be '%s'", TASK_NAME));
 	}
 
 	private List<Message<byte[]>> testListener(String channelBinding, String bindingName, int numberToRead) {
 		List<Message<byte[]>> results = new ArrayList<>();
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(TestChannelBinderConfiguration
-						.getCompleteConfiguration(BatchExecutionEventTests.BatchEventsApplication.class))
-				.web(WebApplicationType.NONE).build().run(getCommandLineParams(channelBinding));
+			.sources(TestChannelBinderConfiguration
+				.getCompleteConfiguration(BatchExecutionEventTests.BatchEventsApplication.class))
+			.web(WebApplicationType.NONE)
+			.build()
+			.run(getCommandLineParams(channelBinding));
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
 		for (int i = 0; i < numberToRead; i++) {
 			results.add(target.receive(10000, bindingName));

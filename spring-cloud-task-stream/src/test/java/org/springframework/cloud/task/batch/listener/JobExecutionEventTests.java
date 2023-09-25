@@ -88,12 +88,12 @@ public class JobExecutionEventTests {
 		assertThat(jobExecutionEvent.getJobParameters()).as("jobParameters should not be null").isNotNull();
 
 		assertThat(jobExecutionEvent.getJobParameters().getParameters().size()).as("jobParameters size did not match")
-				.isEqualTo(0);
+			.isEqualTo(0);
 		assertThat(jobExecutionEvent.getJobInstance().getJobName()).as("jobInstance name did not match")
-				.isEqualTo(JOB_NAME);
+			.isEqualTo(JOB_NAME);
 		assertThat(jobExecutionEvent.getStepExecutions().size()).as("no step executions were expected").isEqualTo(0);
 		assertThat(jobExecutionEvent.getExitStatus().getExitCode()).as("exitStatus did not match expected")
-				.isEqualTo("UNKNOWN");
+			.isEqualTo("UNKNOWN");
 	}
 
 	@Test
@@ -118,13 +118,13 @@ public class JobExecutionEventTests {
 		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D was expected").isNotNull();
 
 		assertThat(jobExecutionEvent.getJobParameters().getString("A")).as("Job Parameter A value was not correct")
-				.isEqualTo("FOO");
+			.isEqualTo("FOO");
 		assertThat(jobExecutionEvent.getJobParameters().getLong("B")).as("Job Parameter B value was not correct")
-				.isEqualTo(Long.valueOf(1));
+			.isEqualTo(Long.valueOf(1));
 		assertThat(jobExecutionEvent.getJobParameters().getDouble("C")).as("Job Parameter C value was not correct")
-				.isEqualTo(Double.valueOf(1));
+			.isEqualTo(Double.valueOf(1));
 		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D value was not correct")
-				.isEqualTo(testDate);
+			.isEqualTo(testDate);
 	}
 
 	@Test
@@ -285,20 +285,19 @@ public class JobExecutionEventTests {
 	@Test
 	public void testOrderConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
-				.withBean(
-						"org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
-						BatchEventTestApplication.class)
-				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
-						"--spring.main.web-environment=false", "--spring.cloud.task.batch.events.chunk-order=5",
-						"--spring.cloud.task.batch.events.item-process-order=5",
-						"--spring.cloud.task.batch.events.item-read-order=5",
-						"--spring.cloud.task.batch.events.item-write-order=5",
-						"--spring.cloud.task.batch.events.job-execution-order=5",
-						"--spring.cloud.task.batch.events.skip-order=5",
-						"--spring.cloud.task.batch.events.step-execution-order=5");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+			.withBean("org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
+					BatchEventTestApplication.class)
+			.withPropertyValues("--spring.cloud.task.closecontext_enabled=false", "--spring.main.web-environment=false",
+					"--spring.cloud.task.batch.events.chunk-order=5",
+					"--spring.cloud.task.batch.events.item-process-order=5",
+					"--spring.cloud.task.batch.events.item-read-order=5",
+					"--spring.cloud.task.batch.events.item-write-order=5",
+					"--spring.cloud.task.batch.events.job-execution-order=5",
+					"--spring.cloud.task.batch.events.skip-order=5",
+					"--spring.cloud.task.batch.events.step-execution-order=5");
 		applicationContextRunner.run((context) -> {
 			for (String beanName : LISTENER_BEAN_NAMES) {
 				Ordered ordered = (Ordered) context.getBean(beanName);
@@ -311,35 +310,33 @@ public class JobExecutionEventTests {
 	@Test
 	public void singleStepBatchJobSkip() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
-				.withBean(
-						"org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
-						BatchEventTestApplication.class)
-				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
-						"--spring.main.web-environment=false", "spring.batch.job.jobName=FOO");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+			.withBean("org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
+					BatchEventTestApplication.class)
+			.withPropertyValues("--spring.cloud.task.closecontext_enabled=false", "--spring.main.web-environment=false",
+					"spring.batch.job.jobName=FOO");
 		applicationContextRunner.run((context) -> {
 			NoSuchBeanDefinitionException exception = Assertions.assertThrows(NoSuchBeanDefinitionException.class,
 					() -> {
 						context.getBean("jobExecutionEventsListener");
 					});
 			assertThat(exception.getMessage())
-					.contains(String.format("No bean named 'jobExecutionEventsListener' available"));
+				.contains(String.format("No bean named 'jobExecutionEventsListener' available"));
 		});
 	}
 
 	private void testDisabledConfiguration(String property, String disabledListener) {
 		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
-				.withBean(
-						"org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
-						BatchEventTestApplication.class)
-				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
-						"--spring.main.web-environment=false", disabledPropertyArg);
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+			.withBean("org.springframework.cloud.task.batch.listener.JobExecutionEventTests$BatchEventTestApplication",
+					BatchEventTestApplication.class)
+			.withPropertyValues("--spring.cloud.task.closecontext_enabled=false", "--spring.main.web-environment=false",
+					disabledPropertyArg);
 		applicationContextRunner.run((context) -> {
 			boolean exceptionThrown = false;
 			for (String beanName : LISTENER_BEAN_NAMES) {
@@ -351,7 +348,7 @@ public class JobExecutionEventTests {
 						exceptionThrown = true;
 					}
 					assertThat(exceptionThrown).as(String.format("Did not expect %s bean in context", beanName))
-							.isTrue();
+						.isTrue();
 				}
 				else {
 					context.getBean(beanName);

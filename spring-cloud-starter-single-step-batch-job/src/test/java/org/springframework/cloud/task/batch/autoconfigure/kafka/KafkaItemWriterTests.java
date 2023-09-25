@@ -68,15 +68,15 @@ public class KafkaItemWriterTests {
 	public void testBaseKafkaItemWriter() {
 		final String topicName = "topic1";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(CustomMappingConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
-						KafkaItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
-						"spring.batch.job.chunkSize=5",
-						"spring.kafka.producer.bootstrap-servers=" + embeddedKafkaBroker.getBrokersAsString(),
-						"spring.kafka.producer.keySerializer=org.springframework.kafka.support.serializer.JsonSerializer",
-						"spring.batch.job.kafkaitemwriter.topic=" + topicName);
+			.withUserConfiguration(CustomMappingConfiguration.class)
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
+					KafkaItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+					"spring.batch.job.chunkSize=5",
+					"spring.kafka.producer.bootstrap-servers=" + embeddedKafkaBroker.getBrokersAsString(),
+					"spring.kafka.producer.keySerializer=org.springframework.kafka.support.serializer.JsonSerializer",
+					"spring.batch.job.kafkaitemwriter.topic=" + topicName);
 
 		applicationContextRunner.run((context) -> {
 			waitForTopicPopulation(context);
@@ -87,7 +87,8 @@ public class KafkaItemWriterTests {
 	private void validateResults(String topicName) {
 		Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps("1", "false", embeddedKafkaBroker));
 		Consumer<String, Object> consumer = new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(),
-				new JsonDeserializer<>()).createConsumer();
+				new JsonDeserializer<>())
+			.createConsumer();
 		consumer.subscribe(singleton(topicName));
 
 		ConsumerRecords<String, Object> consumerRecords = KafkaTestUtils.getRecords(consumer);

@@ -88,9 +88,9 @@ public class DeployerStepExecutionHandler implements CommandLineRunner {
 		validateRequest();
 
 		Long jobExecutionId = Long
-				.parseLong(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
+			.parseLong(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID));
 		Long stepExecutionId = Long
-				.parseLong(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
+			.parseLong(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID));
 		StepExecution stepExecution = this.jobExplorer.getStepExecution(jobExecutionId, stepExecutionId);
 
 		if (stepExecution == null) {
@@ -129,7 +129,7 @@ public class DeployerStepExecutionHandler implements CommandLineRunner {
 
 		Assert.isTrue(
 				this.stepLocator.getStepNames()
-						.contains(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)),
+					.contains(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)),
 				"The step requested cannot be found in the provided BeanFactory");
 	}
 

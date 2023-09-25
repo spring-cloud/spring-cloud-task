@@ -40,9 +40,9 @@ public class SimpleSingleTaskAutoConfigurationTests {
 	public void testConfiguration() {
 
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withPropertyValues("spring.cloud.task.singleInstanceEnabled=true");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withPropertyValues("spring.cloud.task.singleInstanceEnabled=true");
 		applicationContextRunner.run((context) -> {
 			SingleInstanceTaskListener singleInstanceTaskListener = context.getBean(SingleInstanceTaskListener.class);
 

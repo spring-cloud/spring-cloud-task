@@ -343,7 +343,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 				for (StepExecution curStepExecution : executed) {
 					if (!result.contains(curStepExecution)) {
 						StepExecution partitionStepExecution = DeployerPartitionHandler.this.jobExplorer
-								.getStepExecution(masterStepExecution.getJobExecutionId(), curStepExecution.getId());
+							.getStepExecution(masterStepExecution.getJobExecutionId(), curStepExecution.getId());
 
 						BatchStatus batchStatus = partitionStepExecution.getStatus();
 						if (batchStatus != null && isComplete(batchStatus)) {

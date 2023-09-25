@@ -43,8 +43,9 @@ public class TaskLaunchConfigurationExistingTests {
 	@Test
 	public void testTaskLauncher() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
-				TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class).web(WebApplicationType.NONE)
-						.run("--spring.jmx.enabled=false")) {
+				TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class)
+			.web(WebApplicationType.NONE)
+			.run("--spring.jmx.enabled=false")) {
 			LocalTaskLauncher taskLauncher = context.getBean(LocalTaskLauncher.class);
 			assertThat(testTaskLauncher).isNotNull();
 			assertThat(taskLauncher).isNotNull();

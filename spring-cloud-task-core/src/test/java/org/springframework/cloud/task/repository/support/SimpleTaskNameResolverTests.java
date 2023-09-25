@@ -35,7 +35,7 @@ public class SimpleTaskNameResolverTests {
 		taskNameResolver.setApplicationContext(context);
 
 		assertThat(taskNameResolver.getTaskName()
-				.startsWith("org.springframework.context.support.GenericApplicationContext")).isTrue();
+			.startsWith("org.springframework.context.support.GenericApplicationContext")).isTrue();
 	}
 
 	@Test

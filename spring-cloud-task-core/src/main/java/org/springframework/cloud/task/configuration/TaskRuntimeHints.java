@@ -46,22 +46,22 @@ public class TaskRuntimeHints implements RuntimeHintsRegistrar {
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-hsqldb.sql");
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-sqlserver.sql");
 
-		hints.reflection().registerType(
-				TypeReference.of("org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer"),
-				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-						MemberCategory.INVOKE_DECLARED_METHODS));
-		hints.reflection().registerType(TypeReference.of("org.springframework.cloud.task.repository.TaskExecution"),
-				hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-						MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection()
+			.registerType(TypeReference.of("org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer"),
+					hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+							MemberCategory.INVOKE_DECLARED_METHODS));
+		hints.reflection()
+			.registerType(TypeReference.of("org.springframework.cloud.task.repository.TaskExecution"), hint -> hint
+				.withMembers(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_METHODS));
 
 		if (!ClassUtils.isPresent("com.zaxxer.hikari.HikariDataSource", classLoader)) {
 			return;
 		}
 		hints.reflection().registerType(Statement[].class, hint -> {
 		});
-		hints.reflection().registerType(TypeReference.of("com.zaxxer.hikari.util.ConcurrentBag$IConcurrentBagEntry[]"),
-				hint -> {
-				});
+		hints.reflection()
+			.registerType(TypeReference.of("com.zaxxer.hikari.util.ConcurrentBag$IConcurrentBagEntry[]"), hint -> {
+			});
 	}
 
 }

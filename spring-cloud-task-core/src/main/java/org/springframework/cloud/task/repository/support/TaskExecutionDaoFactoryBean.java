@@ -137,7 +137,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 			throw new IllegalStateException(e);
 		}
 		((JdbcTaskExecutionDao) this.dao)
-				.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+			.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
 
 	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {

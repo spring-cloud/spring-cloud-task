@@ -58,7 +58,7 @@ public final class TestVerifierUtils {
 	 */
 	public static Appender getMockAppender() {
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory
-				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+			.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		final Appender mockAppender = mock(Appender.class);
 		when(mockAppender.getName()).thenReturn("MOCK");
 		root.addAppender(mockAppender);
@@ -131,55 +131,63 @@ public final class TestVerifierUtils {
 	 */
 	public static void verifyTaskExecution(TaskExecution expectedTaskExecution, TaskExecution actualTaskExecution) {
 		assertThat(actualTaskExecution.getExecutionId()).as("taskExecutionId must be equal")
-				.isEqualTo(expectedTaskExecution.getExecutionId());
+			.isEqualTo(expectedTaskExecution.getExecutionId());
 		if (actualTaskExecution.getStartTime() != null) {
 			assertThat(actualTaskExecution.getStartTime().getHour() == expectedTaskExecution.getStartTime().getHour())
-					.as("startTime hour must be equal").isTrue();
+				.as("startTime hour must be equal")
+				.isTrue();
 			assertThat(
 					actualTaskExecution.getStartTime().getMinute() == expectedTaskExecution.getStartTime().getMinute())
-							.as("startTime minute must be equal").isTrue();
+				.as("startTime minute must be equal")
+				.isTrue();
 			assertThat(
 					actualTaskExecution.getStartTime().getSecond() == expectedTaskExecution.getStartTime().getSecond())
-							.as("startTime second must be equal").isTrue();
+				.as("startTime second must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getStartTime().getDayOfYear() == expectedTaskExecution.getStartTime()
-					.getDayOfYear()).as("startTime day must be equal").isTrue();
+				.getDayOfYear()).as("startTime day must be equal").isTrue();
 			assertThat(actualTaskExecution.getStartTime().getYear() == expectedTaskExecution.getStartTime().getYear())
-					.as("startTime year must be equal").isTrue();
+				.as("startTime year must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getStartTime().getMonthValue() == expectedTaskExecution.getStartTime()
-					.getMonthValue()).as("startTime month must be equal").isTrue();
+				.getMonthValue()).as("startTime month must be equal").isTrue();
 		}
 		if (actualTaskExecution.getEndTime() != null) {
 			assertThat(actualTaskExecution.getEndTime().getHour() == expectedTaskExecution.getEndTime().getHour())
-					.as("endTime hour must be equal").isTrue();
+				.as("endTime hour must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getEndTime().getMinute() == expectedTaskExecution.getEndTime().getMinute())
-					.as("endTime minute must be equal").isTrue();
+				.as("endTime minute must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getEndTime().getSecond() == expectedTaskExecution.getEndTime().getSecond())
-					.as("endTime second must be equal").isTrue();
+				.as("endTime second must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getEndTime().getDayOfYear() == expectedTaskExecution.getEndTime()
-					.getDayOfYear()).as("endTime day must be equal").isTrue();
+				.getDayOfYear()).as("endTime day must be equal").isTrue();
 			assertThat(actualTaskExecution.getEndTime().getYear() == expectedTaskExecution.getEndTime().getYear())
-					.as("endTime year must be equal").isTrue();
+				.as("endTime year must be equal")
+				.isTrue();
 			assertThat(actualTaskExecution.getEndTime().getMonthValue() == expectedTaskExecution.getEndTime()
-					.getMonthValue()).as("endTime month must be equal").isTrue();
+				.getMonthValue()).as("endTime month must be equal").isTrue();
 		}
 		assertThat(actualTaskExecution.getExitCode()).as("exitCode must be equal")
-				.isEqualTo(expectedTaskExecution.getExitCode());
+			.isEqualTo(expectedTaskExecution.getExitCode());
 		assertThat(actualTaskExecution.getTaskName()).as("taskName must be equal")
-				.isEqualTo(expectedTaskExecution.getTaskName());
+			.isEqualTo(expectedTaskExecution.getTaskName());
 		assertThat(actualTaskExecution.getExitMessage()).as("exitMessage must be equal")
-				.isEqualTo(expectedTaskExecution.getExitMessage());
+			.isEqualTo(expectedTaskExecution.getExitMessage());
 		assertThat(actualTaskExecution.getErrorMessage()).as("errorMessage must be equal")
-				.isEqualTo(expectedTaskExecution.getErrorMessage());
+			.isEqualTo(expectedTaskExecution.getErrorMessage());
 		assertThat(actualTaskExecution.getExternalExecutionId()).as("externalExecutionId must be equal")
-				.isEqualTo(expectedTaskExecution.getExternalExecutionId());
+			.isEqualTo(expectedTaskExecution.getExternalExecutionId());
 		assertThat(actualTaskExecution.getParentExecutionId()).as("parentExecutionId must be equal")
-				.isEqualTo(expectedTaskExecution.getParentExecutionId());
+			.isEqualTo(expectedTaskExecution.getParentExecutionId());
 
 		if (expectedTaskExecution.getArguments() != null) {
 			assertThat(actualTaskExecution.getArguments()).as("arguments should not be null").isNotNull();
 			assertThat(actualTaskExecution.getArguments().size())
-					.as("arguments result set count should match expected count")
-					.isEqualTo(expectedTaskExecution.getArguments().size());
+				.as("arguments result set count should match expected count")
+				.isEqualTo(expectedTaskExecution.getArguments().size());
 		}
 		else {
 			assertThat(actualTaskExecution.getArguments()).as("arguments should be null").isNull();

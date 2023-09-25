@@ -70,7 +70,7 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		}
 		catch (IllegalArgumentException e) {
 			assertThat(e.getMessage())
-					.isEqualTo("Task names must not contain any empty elements but 2 of 4 were empty or null.");
+				.isEqualTo("Task names must not contain any empty elements but 2 of 4 were empty or null.");
 			return;
 		}
 		fail("Expected an IllegalArgumentException to be thrown.");
@@ -82,7 +82,8 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		final List<TaskExecution> latestTaskExecutions = this.dao.getLatestTaskExecutionsByTaskNames("FOO1");
 		assertThat(latestTaskExecutions.size() == 1)
-				.as("Expected only 1 taskExecution but got " + latestTaskExecutions.size()).isTrue();
+			.as("Expected only 1 taskExecution but got " + latestTaskExecutions.size())
+			.isTrue();
 
 		final TaskExecution lastTaskExecution = latestTaskExecutions.get(0);
 		assertThat(lastTaskExecution.getTaskName()).isEqualTo("FOO1");
@@ -102,7 +103,8 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		final List<TaskExecution> latestTaskExecutions = this.dao.getLatestTaskExecutionsByTaskNames("FOO1", "FOO3",
 				"FOO4");
 		assertThat(latestTaskExecutions.size() == 3)
-				.as("Expected 3 taskExecutions but got " + latestTaskExecutions.size()).isTrue();
+			.as("Expected 3 taskExecutions but got " + latestTaskExecutions.size())
+			.isTrue();
 
 		LocalDateTime startDateTime = latestTaskExecutions.get(0).getStartTime();
 		assertThat(startDateTime.getYear()).isEqualTo(2016);
@@ -142,7 +144,8 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		long executionIdOffset = initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		final List<TaskExecution> latestTaskExecutions = this.dao.getLatestTaskExecutionsByTaskNames("FOO5");
 		assertThat(latestTaskExecutions.size() == 1)
-				.as("Expected only 1 taskExecution but got " + latestTaskExecutions.size()).isTrue();
+			.as("Expected only 1 taskExecution but got " + latestTaskExecutions.size())
+			.isTrue();
 
 		LocalDateTime startDateTime = latestTaskExecutions.get(0).getStartTime();
 
@@ -187,7 +190,7 @@ public abstract class BaseTaskExecutionDaoTestCases {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		final TaskExecution latestTaskExecution = this.dao.getLatestTaskExecutionForTaskName("Bar5");
 		assertThat(latestTaskExecution).as("Expected the latestTaskExecution to be null but got" + latestTaskExecution)
-				.isNull();
+			.isNull();
 	}
 
 	@Test
@@ -288,13 +291,19 @@ public abstract class BaseTaskExecutionDaoTestCases {
 	}
 
 	private LocalDateTime getDate(int year, int month, int day, int hour, int minute) {
-		return LocalDateTime.now().withYear(year).withMonth(month).withDayOfMonth(day).withHour(hour).withMinute(minute)
-				.withSecond(0);
+		return LocalDateTime.now()
+			.withYear(year)
+			.withMonth(month)
+			.withDayOfMonth(day)
+			.withHour(hour)
+			.withMinute(minute)
+			.withSecond(0);
 	}
 
 	private long createTaskExecution(TaskExecution te) {
-		return this.dao.createTaskExecution(te.getTaskName(), te.getStartTime(), te.getArguments(),
-				te.getExternalExecutionId()).getExecutionId();
+		return this.dao
+			.createTaskExecution(te.getTaskName(), te.getStartTime(), te.getArguments(), te.getExternalExecutionId())
+			.getExecutionId();
 	}
 
 	protected TaskExecution getTaskExecution(String taskName, String externalExecutionId) {

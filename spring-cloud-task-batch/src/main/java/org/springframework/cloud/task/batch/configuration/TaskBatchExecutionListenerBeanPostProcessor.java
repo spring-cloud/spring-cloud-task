@@ -60,7 +60,7 @@ public class TaskBatchExecutionListenerBeanPostProcessor implements BeanPostProc
 						+ "have exactly 1 instance of the TaskBatchExecutionListener but has " + length);
 			}
 			((AbstractJob) bean)
-					.registerJobExecutionListener(this.applicationContext.getBean(TaskBatchExecutionListener.class));
+				.registerJobExecutionListener(this.applicationContext.getBean(TaskBatchExecutionListener.class));
 		}
 		return bean;
 	}

@@ -64,7 +64,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateEmptyExecution() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(this.dataSource,
 				expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
@@ -74,7 +74,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(this.dataSource,
 				expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
@@ -84,7 +84,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionWithParams(this.taskRepository);
+			.createAndStoreTaskExecutionWithParams(this.taskRepository);
 		TaskExecution actualTaskExecution = TestDBUtils.getTaskExecutionFromDB(this.dataSource,
 				expectedTaskExecution.getExecutionId());
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution, actualTaskExecution);
@@ -94,7 +94,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void startTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
@@ -112,7 +112,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void startTaskExecutionWithNoParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
@@ -128,7 +128,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test
 	public void testUpdateExternalExecutionId() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(UUID.randomUUID().toString());
 		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
@@ -139,7 +139,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test
 	public void testUpdateNullExternalExecutionId() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
 		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
@@ -150,7 +150,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@Test
 	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
 		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
 			this.taskRepository.updateExternalExecutionId(-1, expectedTaskExecution.getExternalExecutionId());
@@ -161,7 +161,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void startTaskExecutionWithParent() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
@@ -179,7 +179,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(77);
 		expectedTaskExecution.setExitMessage(UUID.randomUUID().toString());
@@ -193,7 +193,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxExitDefaultMessageSize() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
@@ -208,7 +208,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		simpleTaskRepository.setMaxExitMessageSize(5);
 
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
+			.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
 		expectedTaskExecution.setExitMessage(new String(new char[SimpleTaskRepository.MAX_EXIT_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
@@ -220,13 +220,13 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionNoParamMaxErrorDefaultMessageSize() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = completeTaskExecution(expectedTaskExecution, this.taskRepository);
 		assertThat(actualTaskExecution.getErrorMessage().length())
-				.isEqualTo(SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE);
+			.isEqualTo(SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE);
 	}
 
 	@Test
@@ -236,7 +236,7 @@ public class SimpleTaskRepositoryJdbcTests {
 		simpleTaskRepository.setMaxErrorMessageSize(5);
 
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
+			.createAndStoreTaskExecutionNoParams(simpleTaskRepository);
 		expectedTaskExecution.setErrorMessage(new String(new char[SimpleTaskRepository.MAX_ERROR_MESSAGE_SIZE + 1]));
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
@@ -302,7 +302,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionNegativeException() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(-1);
 
@@ -317,7 +317,7 @@ public class SimpleTaskRepositoryJdbcTests {
 	@DirtiesContext
 	public void testCreateTaskExecutionNullEndTime() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitCode(-1);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			TaskExecutionCreator.completeExecution(this.taskRepository, expectedTaskExecution);

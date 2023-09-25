@@ -85,14 +85,21 @@ public class JdbcCursorItemReaderAutoConfiguration {
 
 		}
 		return new JdbcCursorItemReaderBuilder<Map<String, Object>>().name(this.properties.getName())
-				.currentItemCount(this.properties.getCurrentItemCount()).dataSource(readerDataSource)
-				.driverSupportsAbsolute(this.properties.isDriverSupportsAbsolute())
-				.fetchSize(this.properties.getFetchSize()).ignoreWarnings(this.properties.isIgnoreWarnings())
-				.maxItemCount(this.properties.getMaxItemCount()).maxRows(this.properties.getMaxRows())
-				.queryTimeout(this.properties.getQueryTimeout()).saveState(this.properties.isSaveState())
-				.sql(this.properties.getSql()).rowMapper(rowMapper).preparedStatementSetter(preparedStatementSetter)
-				.verifyCursorPosition(this.properties.isVerifyCursorPosition())
-				.useSharedExtendedConnection(this.properties.isUseSharedExtendedConnection()).build();
+			.currentItemCount(this.properties.getCurrentItemCount())
+			.dataSource(readerDataSource)
+			.driverSupportsAbsolute(this.properties.isDriverSupportsAbsolute())
+			.fetchSize(this.properties.getFetchSize())
+			.ignoreWarnings(this.properties.isIgnoreWarnings())
+			.maxItemCount(this.properties.getMaxItemCount())
+			.maxRows(this.properties.getMaxRows())
+			.queryTimeout(this.properties.getQueryTimeout())
+			.saveState(this.properties.isSaveState())
+			.sql(this.properties.getSql())
+			.rowMapper(rowMapper)
+			.preparedStatementSetter(preparedStatementSetter)
+			.verifyCursorPosition(this.properties.isVerifyCursorPosition())
+			.useSharedExtendedConnection(this.properties.isUseSharedExtendedConnection())
+			.build();
 	}
 
 	@Bean

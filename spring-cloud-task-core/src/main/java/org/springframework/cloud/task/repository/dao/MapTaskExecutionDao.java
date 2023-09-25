@@ -308,12 +308,12 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 			}
 
 			final TaskExecution tempTaskExecution = tempTaskExecutions
-					.get(taskExecutionMapEntry.getValue().getTaskName());
+				.get(taskExecutionMapEntry.getValue().getTaskName());
 			if (tempTaskExecution == null
 					|| tempTaskExecution.getStartTime().isBefore(taskExecutionMapEntry.getValue().getStartTime())
 					|| (tempTaskExecution.getStartTime().equals(taskExecutionMapEntry.getValue().getStartTime())
 							&& tempTaskExecution.getExecutionId() < taskExecutionMapEntry.getValue()
-									.getExecutionId())) {
+								.getExecutionId())) {
 				tempTaskExecutions.put(taskExecutionMapEntry.getValue().getTaskName(),
 						taskExecutionMapEntry.getValue());
 			}

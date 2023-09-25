@@ -104,12 +104,12 @@ public class SingleStepJobAutoConfigurationTests {
 	@Test
 	public void testSimpleConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(SimpleConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
-						"spring.batch.job.chunkSize=5");
+			.withUserConfiguration(SimpleConfiguration.class)
+			.withConfiguration(
+					AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+							SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jobName=job", "spring.batch.job.stepName=step1",
+					"spring.batch.job.chunkSize=5");
 
 		validateConfiguration(applicationContextRunner);
 	}
@@ -117,12 +117,12 @@ public class SingleStepJobAutoConfigurationTests {
 	@Test
 	public void testSimpleConfigurationKabobStyle() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(SimpleConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.job-name=job", "spring.batch.job.step-name=step1",
-						"spring.batch.job.chunk-size=5");
+			.withUserConfiguration(SimpleConfiguration.class)
+			.withConfiguration(
+					AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+							SingleStepJobAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.job-name=job", "spring.batch.job.step-name=step1",
+					"spring.batch.job.chunk-size=5");
 
 		validateConfiguration(applicationContextRunner);
 	}

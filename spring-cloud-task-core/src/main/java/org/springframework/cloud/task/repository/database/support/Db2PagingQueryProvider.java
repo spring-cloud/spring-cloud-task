@@ -38,8 +38,12 @@ public class Db2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 	private String generateRowNumSqlQueryWithNesting(String selectClause, boolean remainingPageQuery,
 			String rowNumClause) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(selectClause).append(" FROM (SELECT ").append(selectClause).append(", ")
-				.append("ROW_NUMBER() OVER() as TMP_ROW_NUM");
+		sql.append("SELECT ")
+			.append(selectClause)
+			.append(" FROM (SELECT ")
+			.append(selectClause)
+			.append(", ")
+			.append("ROW_NUMBER() OVER() as TMP_ROW_NUM");
 		sql.append(" FROM (SELECT ").append(selectClause).append(" FROM ").append(this.getFromClause());
 		SqlPagingQueryUtils.buildWhereClause(this, remainingPageQuery, sql);
 		sql.append(" ORDER BY ").append(SqlPagingQueryUtils.buildSortClause(this));

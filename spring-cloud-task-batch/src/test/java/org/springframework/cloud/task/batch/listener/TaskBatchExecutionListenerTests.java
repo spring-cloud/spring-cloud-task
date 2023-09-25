@@ -144,7 +144,7 @@ public class TaskBatchExecutionListenerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
@@ -156,9 +156,9 @@ public class TaskBatchExecutionListenerTests {
 		this.applicationContext = SpringApplication.run(TaskNotEnabledConfiguration.class, ARGS);
 		assertThat(applicationContext.getBean(Job.class)).isNotNull();
 		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListenerBeanPostProcessor.class))
-				.isInstanceOf(NoSuchBeanDefinitionException.class);
+			.isInstanceOf(NoSuchBeanDefinitionException.class);
 		assertThatThrownBy(() -> applicationContext.getBean(TaskBatchExecutionListener.class))
-				.isInstanceOf(NoSuchBeanDefinitionException.class);
+			.isInstanceOf(NoSuchBeanDefinitionException.class);
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class TaskBatchExecutionListenerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
@@ -185,7 +185,7 @@ public class TaskBatchExecutionListenerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(0);
 	}
@@ -199,11 +199,11 @@ public class TaskBatchExecutionListenerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat((long) taskExplorer.getTaskExecutionIdByJobExecutionId(jobExecutionIds.iterator().next()))
-				.isEqualTo(1);
+			.isEqualTo(1);
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class TaskBatchExecutionListenerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		Iterator<Long> jobExecutionIdsIterator = jobExecutionIds.iterator();
@@ -260,7 +260,7 @@ public class TaskBatchExecutionListenerTests {
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor = this.applicationContext
-				.getBean(TaskBatchExecutionListenerBeanPostProcessor.class);
+			.getBean(TaskBatchExecutionListenerBeanPostProcessor.class);
 
 		beanPostProcessor.setJobNames(jobNames);
 		return beanPostProcessor;
@@ -287,10 +287,11 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
@@ -308,10 +309,11 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
@@ -332,10 +334,11 @@ public class TaskBatchExecutionListenerTests {
 				@Override
 				public Job getObject() {
 					return new JobBuilder("job", jobRepository)
-							.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
-								System.out.println("Executed");
-								return RepeatStatus.FINISHED;
-							}, transactionManager).build()).build();
+						.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+							System.out.println("Executed");
+							return RepeatStatus.FINISHED;
+						}, transactionManager).build())
+						.build();
 				}
 
 				@Override
@@ -365,28 +368,29 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job(JobRepository jobRepository) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet(new Tasklet() {
-						@Override
-						public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-								throws Exception {
-							System.out.println("Executed");
-							return RepeatStatus.FINISHED;
-						}
-					}, new ResourcelessTransactionManager()).build()).build();
+				.start(new StepBuilder("step1", jobRepository).tasklet(new Tasklet() {
+					@Override
+					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
+							throws Exception {
+						System.out.println("Executed");
+						return RepeatStatus.FINISHED;
+					}
+				}, new ResourcelessTransactionManager()).build())
+				.build();
 		}
 
 		@Bean
 		@Primary
 		public DataSource myDataSource() {
 			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-					.setName("myDataSource");
+				.setName("myDataSource");
 			return builder.build();
 		}
 
 		@Bean
 		public DataSource incorrectDataSource() {
 			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-					.setName("incorrectDataSource");
+				.setName("incorrectDataSource");
 			return builder.build();
 		}
 
@@ -410,19 +414,21 @@ public class TaskBatchExecutionListenerTests {
 		@Bean
 		public Job job1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job1", jobRepository)
-					.start(new StepBuilder("job1step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed job1");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("job1step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed job1");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
 		public Job job2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job2", jobRepository)
-					.start(new StepBuilder("job2step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed job2");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("job2step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed job2");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean

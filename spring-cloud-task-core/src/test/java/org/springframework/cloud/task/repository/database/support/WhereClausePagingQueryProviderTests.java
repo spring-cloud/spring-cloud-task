@@ -75,8 +75,8 @@ public class WhereClausePagingQueryProviderTests {
 				"TASK_EXECUTION_ID = '0000'");
 		String actualQuery = pagingQueryProvider.getPageQuery(this.pageable);
 		assertThat(actualQuery)
-				.as(String.format("the generated query for %s, was not the expected query", databaseProductName))
-				.isEqualTo(expectedQuery);
+			.as(String.format("the generated query for %s, was not the expected query", databaseProductName))
+			.isEqualTo(expectedQuery);
 	}
 
 }

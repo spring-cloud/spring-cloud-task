@@ -235,7 +235,7 @@ public class TaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		getDao(testType);
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThat(this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, 4, Sort.by("START_TIME")))
-				.getTotalElements()).isEqualTo(4);
+			.getTotalElements()).isEqualTo(4);
 	}
 
 	@Test
@@ -243,9 +243,9 @@ public class TaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 	public void testFindRunningTaskExecutionsIllegalSort() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThatThrownBy(() -> this.dao
-				.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("ILLEGAL_SORT")))
-				.getTotalElements()).isInstanceOf(IllegalArgumentException.class)
-						.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
+			.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("ILLEGAL_SORT")))
+			.getTotalElements()).isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
 	}
 
 	@Test
@@ -254,7 +254,8 @@ public class TaskExecutionDaoTests extends BaseTaskExecutionDaoTestCases {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThat(
 				this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("StArT_TiMe")))
-						.getTotalElements()).isEqualTo(4);
+					.getTotalElements())
+			.isEqualTo(4);
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {

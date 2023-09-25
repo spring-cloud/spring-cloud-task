@@ -71,9 +71,10 @@ public class BatchExecutionEventTests {
 	@Test
 	public void testContext() {
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
-				.web(WebApplicationType.NONE).build()
-				.run(getCommandLineParams("--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
+			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
+			.web(WebApplicationType.NONE)
+			.build()
+			.run(getCommandLineParams("--spring.cloud.stream.bindings.job-execution-events.destination=bazbar"));
 
 		assertThat(this.applicationContext.getBean("jobExecutionEventsListener")).isNotNull();
 		assertThat(this.applicationContext.getBean("stepExecutionEventsListener")).isNotNull();
@@ -90,8 +91,9 @@ public class BatchExecutionEventTests {
 				"--spring.cloud.task.batch.events.jobExecutionEventBindingName=foobar", "foobar", 1);
 		JobExecutionEvent jobExecutionEvent = this.objectMapper.readValue(result.get(0).getPayload(),
 				JobExecutionEvent.class);
-		Assertions.assertThat(jobExecutionEvent.getJobInstance().getJobName()).isEqualTo("job")
-				.as("Job name should be job");
+		Assertions.assertThat(jobExecutionEvent.getJobInstance().getJobName())
+			.isEqualTo("job")
+			.as("Job name should be job");
 	}
 
 	@Test
@@ -178,8 +180,10 @@ public class BatchExecutionEventTests {
 		List<Message<byte[]>> results = new ArrayList<>();
 
 		this.applicationContext = new SpringApplicationBuilder()
-				.sources(TestChannelBinderConfiguration.getCompleteConfiguration(clazz)).web(WebApplicationType.NONE)
-				.build().run(getCommandLineParams(channelBinding, enableFailJobConfig));
+			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(clazz))
+			.web(WebApplicationType.NONE)
+			.build()
+			.run(getCommandLineParams(channelBinding, enableFailJobConfig));
 
 		OutputDestination target = this.applicationContext.getBean(OutputDestination.class);
 

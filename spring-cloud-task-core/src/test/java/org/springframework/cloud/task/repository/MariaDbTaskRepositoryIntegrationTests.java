@@ -53,7 +53,7 @@ public class MariaDbTaskRepositoryIntegrationTests {
 	@Test
 	public void testTaskExplorer() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(MariaDbTaskRepositoryIntegrationTests.TestConfiguration.class);
+			.withUserConfiguration(MariaDbTaskRepositoryIntegrationTests.TestConfiguration.class);
 
 		applicationContextRunner.run((context -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
@@ -80,7 +80,7 @@ public class MariaDbTaskRepositoryIntegrationTests {
 			if (firstTime) {
 				ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
 				databasePopulator
-						.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-mariadb.sql"));
+					.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-mariadb.sql"));
 				databasePopulator.execute(datasource);
 				firstTime = false;
 			}

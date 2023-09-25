@@ -175,7 +175,8 @@ public class SimpleTaskAutoConfiguration {
 		// retrieve the count of dataSources (without instantiating them) excluding
 		// DataSource proxy beans
 		long dataSources = Arrays.stream(this.context.getBeanNamesForType(DataSource.class))
-				.filter((name -> !ScopedProxyUtils.isScopedTarget(name))).count();
+			.filter((name -> !ScopedProxyUtils.isScopedTarget(name)))
+			.count();
 
 		if (configurers == 0 && dataSources > 1) {
 			throw new IllegalStateException("To use the default TaskConfigurer the context must contain no more than"

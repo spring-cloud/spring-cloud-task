@@ -30,4 +30,5 @@ class BatchJobTestConfiguration {
 	public PostgreSQLContainer<?> postgresSQLContainer() {
 		return new PostgreSQLContainer(DockerImageName.parse("postgres:15.1"));
 	}
+
 }

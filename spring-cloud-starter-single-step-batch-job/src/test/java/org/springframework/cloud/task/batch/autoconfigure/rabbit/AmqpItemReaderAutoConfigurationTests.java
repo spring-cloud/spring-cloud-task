@@ -105,15 +105,15 @@ public class AmqpItemReaderAutoConfigurationTests {
 	@Test
 	void basicTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class, AmqpItemReaderAutoConfiguration.class,
-								RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
-						"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
-						"spring.rabbitmq.template.default-receive-queue=foo", "spring.rabbitmq.host=" + host,
-						"spring.rabbitmq.port=" + amqpPort);
+			.withUserConfiguration(BaseConfiguration.class)
+			.withConfiguration(
+					AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+							SingleStepJobAutoConfiguration.class, AmqpItemReaderAutoConfiguration.class,
+							RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
+					"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
+					"spring.rabbitmq.template.default-receive-queue=foo", "spring.rabbitmq.host=" + host,
+					"spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
 			JobExecution jobExecution = runJob(context);
@@ -131,15 +131,15 @@ public class AmqpItemReaderAutoConfigurationTests {
 	@Test
 	void basicTestWithItemType() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(ItemTypeConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class, AmqpItemReaderAutoConfiguration.class,
-								RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
-						"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
-						"spring.rabbitmq.template.default-receive-queue=foo", "spring.rabbitmq.host=" + host,
-						"spring.rabbitmq.port=" + amqpPort);
+			.withUserConfiguration(ItemTypeConfiguration.class)
+			.withConfiguration(
+					AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+							SingleStepJobAutoConfiguration.class, AmqpItemReaderAutoConfiguration.class,
+							RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
+					"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
+					"spring.rabbitmq.template.default-receive-queue=foo", "spring.rabbitmq.host=" + host,
+					"spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
 			JobExecution jobExecution = runJob(context);
@@ -156,13 +156,13 @@ public class AmqpItemReaderAutoConfigurationTests {
 	@Test
 	void useAmqpTemplateTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(MockTemplateConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
-						AmqpItemReaderAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
-						"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
-						"spring.rabbitmq.host=" + host, "spring.rabbitmq.port=" + amqpPort);
+			.withUserConfiguration(MockTemplateConfiguration.class)
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
+					AmqpItemReaderAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.batch.job.jobName=integrationJob", "spring.batch.job.stepName=step1",
+					"spring.batch.job.chunkSize=5", "spring.batch.job.amqpitemreader.enabled=true",
+					"spring.rabbitmq.host=" + host, "spring.rabbitmq.port=" + amqpPort);
 
 		applicationContextRunner.run((context) -> {
 			runJob(context);

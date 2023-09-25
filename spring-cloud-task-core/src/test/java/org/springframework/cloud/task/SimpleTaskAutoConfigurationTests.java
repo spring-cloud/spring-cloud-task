@@ -63,8 +63,8 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testRepository() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class));
 		applicationContextRunner.run((context) -> {
 
 			TaskRepository taskRepository = context.getBean(TaskRepository.class);
@@ -77,9 +77,9 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testAutoConfigurationDisabled() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withPropertyValues("spring.cloud.task.autoconfiguration.enabled=false");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withPropertyValues("spring.cloud.task.autoconfiguration.enabled=false");
 		Executable executable = () -> {
 			applicationContextRunner.run((context) -> {
 				context.getBean(TaskRepository.class);
@@ -93,10 +93,11 @@ public class SimpleTaskAutoConfigurationTests {
 
 	@Test
 	public void testRepositoryInitialized() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner().withConfiguration(
-				AutoConfigurations.of(EmbeddedDataSourceConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+					SingleTaskConfiguration.class))
+			.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
 		applicationContextRunner.run((context) -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
 			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1L);
@@ -105,17 +106,18 @@ public class SimpleTaskAutoConfigurationTests {
 
 	@Test
 	public void testRepositoryBeansDependOnTaskRepositoryInitializer() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner().withConfiguration(
-				AutoConfigurations.of(EmbeddedDataSourceConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+					SingleTaskConfiguration.class))
+			.withUserConfiguration(TaskLifecycleListenerConfiguration.class);
 		applicationContextRunner.run((context) -> {
 			ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 			String[] taskRepositoryNames = beanFactory.getBeanNamesForType(TaskRepository.class);
 			assertThat(taskRepositoryNames).isNotEmpty();
 			for (String taskRepositoryName : taskRepositoryNames) {
 				assertThat(beanFactory.getBeanDefinition(taskRepositoryName).getDependsOn())
-						.contains("taskRepositoryInitializer");
+					.contains("taskRepositoryInitializer");
 			}
 		});
 	}
@@ -123,11 +125,11 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testRepositoryNotInitialized() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class))
-				.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
-				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
+			.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+					SingleTaskConfiguration.class))
+			.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
+			.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 
 		verifyExceptionThrownDefaultExecutable(ApplicationContextException.class, applicationContextRunner);
 	}
@@ -135,11 +137,11 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testTaskNameResolver() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
-						PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class))
-				.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
-				.withPropertyValues("spring.cloud.task.name=myTestName");
+			.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+					SingleTaskConfiguration.class))
+			.withUserConfiguration(TaskLifecycleListenerConfiguration.class)
+			.withPropertyValues("spring.cloud.task.name=myTestName");
 		applicationContextRunner.run((context) -> {
 			TaskNameResolver taskNameResolver = context.getBean(TaskNameResolver.class);
 			assertThat(taskNameResolver.getTaskName()).isEqualTo("myTestName");
@@ -149,9 +151,9 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testMultipleConfigurers() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(MultipleConfigurers.class);
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(MultipleConfigurers.class);
 
 		verifyExceptionThrownDefaultExecutable(BeanCreationException.class,
 				"Error creating bean " + "with name 'simpleTaskAutoConfiguration': Invocation of init method failed",
@@ -161,9 +163,9 @@ public class SimpleTaskAutoConfigurationTests {
 	@Test
 	public void testMultipleDataSources() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(MultipleDataSources.class);
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withUserConfiguration(MultipleDataSources.class);
 
 		verifyExceptionThrownDefaultExecutable(BeanCreationException.class,
 				"Error creating bean " + "with name 'simpleTaskAutoConfiguration': Invocation of init method failed",
@@ -205,10 +207,11 @@ public class SimpleTaskAutoConfigurationTests {
 	 */
 	@Test
 	public void testWithDataSourceProxy() {
-		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner().withConfiguration(
-				AutoConfigurations.of(EmbeddedDataSourceConfiguration.class, PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
-				.withUserConfiguration(DataSourceProxyConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+					PropertyPlaceholderAutoConfiguration.class, SimpleTaskAutoConfiguration.class,
+					SingleTaskConfiguration.class))
+			.withUserConfiguration(DataSourceProxyConfiguration.class);
 		applicationContextRunner.run((context) -> {
 			assertThat(context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
 			SimpleTaskAutoConfiguration taskConfiguration = context.getBean(SimpleTaskAutoConfiguration.class);

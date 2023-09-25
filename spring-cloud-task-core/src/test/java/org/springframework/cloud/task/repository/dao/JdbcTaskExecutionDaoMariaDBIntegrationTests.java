@@ -219,7 +219,8 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThat(
 				this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("START_TIME")))
-						.getTotalElements()).isEqualTo(4);
+					.getTotalElements())
+			.isEqualTo(4);
 	}
 
 	@Test
@@ -227,9 +228,9 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 	public void testFindRunningTaskExecutionsIllegalSort() {
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThatThrownBy(() -> this.dao
-				.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("ILLEGAL_SORT")))
-				.getTotalElements()).isInstanceOf(IllegalArgumentException.class)
-						.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
+			.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("ILLEGAL_SORT")))
+			.getTotalElements()).isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("Invalid sort option selected: ILLEGAL_SORT");
 	}
 
 	@Test
@@ -238,7 +239,8 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 		initializeRepositoryNotInOrderWithMultipleTaskExecutions();
 		assertThat(
 				this.dao.findRunningTaskExecutions("FOO1", PageRequest.of(1, Integer.MAX_VALUE, Sort.by("StArT_TiMe")))
-						.getTotalElements()).isEqualTo(4);
+					.getTotalElements())
+			.isEqualTo(4);
 	}
 
 	private TaskExecution initializeTaskExecutionWithExternalExecutionId() {
@@ -282,7 +284,7 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 			if (firstTime) {
 				ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
 				databasePopulator
-						.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-mariadb.sql"));
+					.addScript(new ClassPathResource("/org/springframework/cloud/task/schema-mariadb.sql"));
 				databasePopulator.execute(datasource);
 				firstTime = false;
 			}

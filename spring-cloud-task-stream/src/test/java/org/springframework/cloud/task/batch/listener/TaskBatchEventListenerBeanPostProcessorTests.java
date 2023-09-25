@@ -97,7 +97,7 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 	@Test
 	public void testPostProcessor() {
 		TaskBatchEventListenerBeanPostProcessor postProcessor = this.context
-				.getBean(TaskBatchEventListenerBeanPostProcessor.class);
+			.getBean(TaskBatchEventListenerBeanPostProcessor.class);
 		assertThat(postProcessor).isNotNull();
 		TaskletStep updatedTaskletStep = (TaskletStep) postProcessor.postProcessBeforeInitialization(this.taskletStep,
 				"FOO");

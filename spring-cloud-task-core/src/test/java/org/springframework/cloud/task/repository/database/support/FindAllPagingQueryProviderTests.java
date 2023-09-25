@@ -79,8 +79,8 @@ public class FindAllPagingQueryProviderTests {
 	public void testGeneratedQuery(String databaseProductName, String expectedQuery) throws Exception {
 		String actualQuery = TestDBUtils.getPagingQueryProvider(databaseProductName).getPageQuery(this.pageable);
 		assertThat(actualQuery)
-				.as(String.format("the generated query for %s, was not the expected query", databaseProductName))
-				.isEqualTo(expectedQuery);
+			.as(String.format("the generated query for %s, was not the expected query", databaseProductName))
+			.isEqualTo(expectedQuery);
 	}
 
 }

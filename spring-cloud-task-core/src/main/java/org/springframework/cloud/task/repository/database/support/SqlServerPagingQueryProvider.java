@@ -37,9 +37,16 @@ public class SqlServerPagingQueryProvider extends AbstractSqlPagingQueryProvider
 	private String generateRowNumSqlQueryWithNesting(String selectClause, boolean remainingPageQuery,
 			String rowNumClause) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ").append(selectClause).append(" FROM (SELECT ").append(selectClause).append(", ")
-				.append("ROW_NUMBER() OVER (ORDER BY ").append(SqlPagingQueryUtils.buildSortClause(this))
-				.append(") AS TMP_ROW_NUM ").append(" FROM ").append(getFromClause());
+		sql.append("SELECT ")
+			.append(selectClause)
+			.append(" FROM (SELECT ")
+			.append(selectClause)
+			.append(", ")
+			.append("ROW_NUMBER() OVER (ORDER BY ")
+			.append(SqlPagingQueryUtils.buildSortClause(this))
+			.append(") AS TMP_ROW_NUM ")
+			.append(" FROM ")
+			.append(getFromClause());
 		SqlPagingQueryUtils.buildWhereClause(this, remainingPageQuery, sql);
 		sql.append(") TASK_EXECUTION_PAGE ");
 		sql.append(" WHERE ").append(rowNumClause);

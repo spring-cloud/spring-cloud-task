@@ -126,12 +126,12 @@ public class AmqpItemWriterAutoConfigurationTests {
 	@Test
 	void basicTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(BaseConfiguration.class)
-				.withConfiguration(
-						AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
-								SingleStepJobAutoConfiguration.class, AmqpItemWriterAutoConfiguration.class,
-								RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues(this.configurations);
+			.withUserConfiguration(BaseConfiguration.class)
+			.withConfiguration(
+					AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
+							SingleStepJobAutoConfiguration.class, AmqpItemWriterAutoConfiguration.class,
+							RabbitAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {
 			JobExecution jobExecution = runJob(context);
@@ -151,11 +151,11 @@ public class AmqpItemWriterAutoConfigurationTests {
 	@Test
 	void useAmqpTemplateTest() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withUserConfiguration(MockConfiguration.class)
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
-						AmqpItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
-				.withPropertyValues(this.configurations);
+			.withUserConfiguration(MockConfiguration.class)
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					BatchAutoConfiguration.class, SingleStepJobAutoConfiguration.class,
+					AmqpItemWriterAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues(this.configurations);
 
 		applicationContextRunner.run((context) -> {
 			runJob(context);

@@ -51,7 +51,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateEmptyExecution() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
@@ -59,7 +59,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateTaskExecutionNoParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
@@ -67,7 +67,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testUpdateExternalExecutionId() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(UUID.randomUUID().toString());
 		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
@@ -78,7 +78,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testUpdateNullExternalExecutionId() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
 		this.taskRepository.updateExternalExecutionId(expectedTaskExecution.getExecutionId(),
 				expectedTaskExecution.getExternalExecutionId());
@@ -89,7 +89,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testInvalidExecutionIdForExternalExecutionIdUpdate() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExternalExecutionId(null);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			this.taskRepository.updateExternalExecutionId(-1, expectedTaskExecution.getExternalExecutionId());
@@ -99,7 +99,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionWithParams(this.taskRepository);
+			.createAndStoreTaskExecutionWithParams(this.taskRepository);
 		TestVerifierUtils.verifyTaskExecution(expectedTaskExecution,
 				getSingleTaskExecutionFromMapRepository(expectedTaskExecution.getExecutionId()));
 	}
@@ -107,7 +107,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void startTaskExecutionWithParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setArguments(Collections.singletonList("foo=" + UUID.randomUUID().toString()));
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
@@ -124,7 +124,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void startTaskExecutionWithNoParam() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
@@ -140,7 +140,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void startTaskExecutionWithParent() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreEmptyTaskExecution(this.taskRepository);
+			.createAndStoreEmptyTaskExecution(this.taskRepository);
 
 		expectedTaskExecution.setStartTime(LocalDateTime.now());
 		expectedTaskExecution.setTaskName(UUID.randomUUID().toString());
@@ -157,7 +157,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCompleteTaskExecution() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setEndTime(LocalDateTime.now());
 		expectedTaskExecution.setExitCode(0);
 		TaskExecution actualTaskExecution = TaskExecutionCreator.completeExecution(this.taskRepository,
@@ -167,7 +167,7 @@ public class SimpleTaskRepositoryMapTests {
 
 	private TaskExecution getSingleTaskExecutionFromMapRepository(long taskExecutionId) {
 		Map<Long, TaskExecution> taskMap = ((MapTaskExecutionDao) ((SimpleTaskRepository) this.taskRepository)
-				.getTaskExecutionDao()).getTaskExecutions();
+			.getTaskExecutionDao()).getTaskExecutions();
 		assertTrue("taskExecutionId must be in MapTaskExecutionRepository", taskMap.containsKey(taskExecutionId));
 		return taskMap.get(taskExecutionId);
 	}
@@ -175,7 +175,7 @@ public class SimpleTaskRepositoryMapTests {
 	@Test
 	public void testCreateTaskExecutionNullEndTime() {
 		TaskExecution expectedTaskExecution = TaskExecutionCreator
-				.createAndStoreTaskExecutionNoParams(this.taskRepository);
+			.createAndStoreTaskExecutionNoParams(this.taskRepository);
 		expectedTaskExecution.setExitCode(-1);
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			TaskExecutionCreator.completeExecution(this.taskRepository, expectedTaskExecution);

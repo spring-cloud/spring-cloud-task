@@ -140,7 +140,8 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
 			if (incrementer != null) {
 				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobExplorer)
-						.getNextJobParameters(job).toJobParameters();
+					.getNextJobParameters(job)
+					.toJobParameters();
 				parameters = merge(nextParameters, jobParameters);
 			}
 		}

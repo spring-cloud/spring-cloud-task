@@ -51,8 +51,9 @@ public class MessagePublisher<P> {
 	}
 
 	public void publishWithThrowableHeader(String bindingName, P payload, String header) {
-		Message<P> message = MessageBuilder.withPayload(payload).setHeader(BatchJobHeaders.BATCH_EXCEPTION, header)
-				.build();
+		Message<P> message = MessageBuilder.withPayload(payload)
+			.setHeader(BatchJobHeaders.BATCH_EXCEPTION, header)
+			.build();
 		publishMessage(bindingName, message);
 	}
 

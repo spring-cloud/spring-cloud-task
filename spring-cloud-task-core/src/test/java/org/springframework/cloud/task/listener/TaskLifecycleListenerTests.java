@@ -130,8 +130,8 @@ public class TaskLifecycleListenerTests {
 		SpringApplication application = new SpringApplication();
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0], this.context, exception));
-		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
+		this.context
+			.publishEvent(new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, 1, exception, null);
 	}
@@ -148,8 +148,8 @@ public class TaskLifecycleListenerTests {
 		this.taskExplorer = this.context.getBean(TaskExplorer.class);
 		this.context.publishEvent(new ExitCodeEvent(this.context, exitCode));
 		this.context.publishEvent(new ApplicationFailedEvent(application, new String[0], this.context, exception));
-		this.context.publishEvent(
-				new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
+		this.context
+			.publishEvent(new ApplicationReadyEvent(application, new String[0], this.context, Duration.ofSeconds(50)));
 
 		verifyTaskExecution(0, true, exitCode, exception, null);
 		assertThat(TestListener.getStartupOrderList().size()).isEqualTo(2);
@@ -197,7 +197,8 @@ public class TaskLifecycleListenerTests {
 		taskLifecycleListener.start();
 		String output = capturedOutput.toString();
 		assertThat(output.contains("Multiple start events have been received"))
-				.as("Test results do not show error message: " + output).isTrue();
+			.as("Test results do not show error message: " + output)
+			.isTrue();
 	}
 
 	@Test
@@ -266,7 +267,8 @@ public class TaskLifecycleListenerTests {
 
 		if (update) {
 			assertThat(taskExecution.getEndTime().isAfter(taskExecution.getStartTime())
-					|| taskExecution.getEndTime().isEqual(taskExecution.getStartTime())).isTrue();
+					|| taskExecution.getEndTime().isEqual(taskExecution.getStartTime()))
+				.isTrue();
 			assertThat(taskExecution.getExitCode()).isNotNull();
 		}
 		else {

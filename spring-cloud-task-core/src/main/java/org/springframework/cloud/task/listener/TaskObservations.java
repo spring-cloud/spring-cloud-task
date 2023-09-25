@@ -73,18 +73,18 @@ public class TaskObservations {
 		this.taskObservationContext = new TaskExecutionObservationContext(taskExecution);
 
 		Observation observation = TaskExecutionObservation.TASK_ACTIVE
-				.observation(this.customObservationConvention, new DefaultTaskExecutionObservationConvention(),
-						this.taskObservationContext, this.observationRegistry)
-				.contextualName(String.valueOf(taskExecution.getExecutionId()))
-				.observationConvention(this.observationsProvider)
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(),
-						getValueOrDefault(taskExecution.getTaskName()))
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(),
-						"" + taskExecution.getExecutionId())
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(),
-						(getValueOrDefault(taskExecution.getParentExecutionId())))
-				.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.asString(),
-						(getValueOrDefault(taskExecution.getExternalExecutionId())));
+			.observation(this.customObservationConvention, new DefaultTaskExecutionObservationConvention(),
+					this.taskObservationContext, this.observationRegistry)
+			.contextualName(String.valueOf(taskExecution.getExecutionId()))
+			.observationConvention(this.observationsProvider)
+			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_NAME.asString(),
+					getValueOrDefault(taskExecution.getTaskName()))
+			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXECUTION_ID.asString(),
+					"" + taskExecution.getExecutionId())
+			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_PARENT_EXECUTION_ID.asString(),
+					(getValueOrDefault(taskExecution.getParentExecutionId())))
+			.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_EXTERNAL_EXECUTION_ID.asString(),
+					(getValueOrDefault(taskExecution.getExternalExecutionId())));
 
 		if (taskObservationCloudKeyValues != null) {
 			observation.lowCardinalityKeyValue(TaskExecutionObservation.TaskKeyValues.TASK_CF_ORG_NAME.asString(),

@@ -187,7 +187,7 @@ public class TaskLauncherHandler implements Runnable {
 		copyContext = new ExecutionContext(workerStepExecution.getExecutionContext());
 
 		Map<String, String> environmentVariables = this.environmentVariablesProvider
-				.getEnvironmentVariables(copyContext);
+			.getEnvironmentVariables(copyContext);
 
 		if (this.defaultArgsAsEnvironmentVars) {
 			environmentVariables.put(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID,

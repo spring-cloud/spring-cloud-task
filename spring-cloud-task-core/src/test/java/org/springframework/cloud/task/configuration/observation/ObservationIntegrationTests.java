@@ -63,15 +63,17 @@ class ObservationIntegrationTests {
 	void testSuccessfulObservation() {
 		List<FinishedSpan> finishedSpans = finishedSpans();
 
-		SpansAssert.then(finishedSpans).thenASpanWithNameEqualTo("my-command-line-runner")
-				.hasTag("spring.cloud.task.runner.bean-name", "myCommandLineRunner").backToSpans()
-				.thenASpanWithNameEqualTo("my-application-runner")
-				.hasTag("spring.cloud.task.runner.bean-name", "myApplicationRunner");
+		SpansAssert.then(finishedSpans)
+			.thenASpanWithNameEqualTo("my-command-line-runner")
+			.hasTag("spring.cloud.task.runner.bean-name", "myCommandLineRunner")
+			.backToSpans()
+			.thenASpanWithNameEqualTo("my-application-runner")
+			.hasTag("spring.cloud.task.runner.bean-name", "myApplicationRunner");
 		MeterRegistryAssert.then(this.meterRegistry)
-				.hasTimerWithNameAndTags("spring.cloud.task.runner",
-						KeyValues.of("spring.cloud.task.runner.bean-name", "myCommandLineRunner"))
-				.hasTimerWithNameAndTags("spring.cloud.task.runner",
-						KeyValues.of("spring.cloud.task.runner.bean-name", "myApplicationRunner"));
+			.hasTimerWithNameAndTags("spring.cloud.task.runner",
+					KeyValues.of("spring.cloud.task.runner.bean-name", "myCommandLineRunner"))
+			.hasTimerWithNameAndTags("spring.cloud.task.runner",
+					KeyValues.of("spring.cloud.task.runner.bean-name", "myApplicationRunner"));
 	}
 
 	private List<FinishedSpan> finishedSpans() {

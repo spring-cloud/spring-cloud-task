@@ -71,21 +71,23 @@ public class JobConfiguration {
 	@Bean
 	public Step step2() {
 		return new StepBuilder("step2", this.jobRepository)
-				.<String, String>chunk(DEFAULT_CHUNK_COUNT, transactionManager)
-				.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
-				.processor(new ItemProcessor<String, String>() {
-					@Override
-					public String process(String item) throws Exception {
-						return String.valueOf(Integer.parseInt(item) * -1);
+			.<String, String>chunk(DEFAULT_CHUNK_COUNT, transactionManager)
+			.reader(new ListItemReader<>(Arrays.asList("1", "2", "3", "4", "5", "6")))
+			.processor(new ItemProcessor<String, String>() {
+				@Override
+				public String process(String item) throws Exception {
+					return String.valueOf(Integer.parseInt(item) * -1);
+				}
+			})
+			.writer(new ItemWriter<String>() {
+				@Override
+				public void write(Chunk<? extends String> items) throws Exception {
+					for (Object item : items) {
+						System.out.println(">> " + item);
 					}
-				}).writer(new ItemWriter<String>() {
-					@Override
-					public void write(Chunk<? extends String> items) throws Exception {
-						for (Object item : items) {
-							System.out.println(">> " + item);
-						}
-					}
-				}).build();
+				}
+			})
+			.build();
 	}
 
 }

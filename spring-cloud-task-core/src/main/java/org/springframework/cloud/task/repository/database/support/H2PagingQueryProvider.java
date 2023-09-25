@@ -29,8 +29,12 @@ public class H2PagingQueryProvider extends AbstractSqlPagingQueryProvider {
 
 	@Override
 	public String getPageQuery(Pageable pageable) {
-		String limitClause = new StringBuilder().append("OFFSET ").append(pageable.getOffset())
-				.append(" ROWS FETCH NEXT ").append(pageable.getPageSize()).append(" ROWS ONLY").toString();
+		String limitClause = new StringBuilder().append("OFFSET ")
+			.append(pageable.getOffset())
+			.append(" ROWS FETCH NEXT ")
+			.append(pageable.getPageSize())
+			.append(" ROWS ONLY")
+			.toString();
 		return SqlPagingQueryUtils.generateLimitJumpToQuery(this, limitClause);
 	}
 

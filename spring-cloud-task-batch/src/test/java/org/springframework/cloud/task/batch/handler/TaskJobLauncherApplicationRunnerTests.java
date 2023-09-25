@@ -113,8 +113,8 @@ public class TaskJobLauncherApplicationRunnerTests {
 	public void testNoTaskJobLauncher() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true",
 				"--spring.cloud.task.batch.failOnJobFailurePollInterval=500", "--spring.batch.job.enabled=false" };
-		this.applicationContext = SpringApplication.run(
-				new Class[] { TaskJobLauncherApplicationRunnerTests.JobWithFailureConfiguration.class }, enabledArgs);
+		this.applicationContext = SpringApplication
+			.run(new Class[] { TaskJobLauncherApplicationRunnerTests.JobWithFailureConfiguration.class }, enabledArgs);
 		JobExplorer jobExplorer = this.applicationContext.getBean(JobExplorer.class);
 		assertThat(jobExplorer.getJobNames().size()).isEqualTo(0);
 	}
@@ -140,15 +140,15 @@ public class TaskJobLauncherApplicationRunnerTests {
 	public void testApplicationRunnerSetToFalse() {
 		String[] enabledArgs = new String[] {};
 		this.applicationContext = SpringApplication
-				.run(new Class[] { TaskJobLauncherApplicationRunnerTests.JobConfiguration.class }, enabledArgs);
+			.run(new Class[] { TaskJobLauncherApplicationRunnerTests.JobConfiguration.class }, enabledArgs);
 		validateContext();
 		assertThat(this.applicationContext.getBean(JobLauncherApplicationRunner.class)).isNotNull();
 
 		Executable executable = () -> this.applicationContext.getBean(TaskJobLauncherApplicationRunner.class);
 
 		assertThatExceptionOfType(NoSuchBeanDefinitionException.class).isThrownBy(executable::execute)
-				.withMessage("No qualifying bean of type "
-						+ "'org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner' available");
+			.withMessage("No qualifying bean of type "
+					+ "'org.springframework.cloud.task.batch.handler.TaskJobLauncherApplicationRunner' available");
 		validateContext();
 	}
 
@@ -158,7 +158,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 		Page<TaskExecution> page = taskExplorer.findTaskExecutionsByName("application", PageRequest.of(0, 1));
 
 		Set<Long> jobExecutionIds = taskExplorer
-				.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
+			.getJobExecutionIdsByTaskExecutionId(page.iterator().next().getExecutionId());
 
 		assertThat(jobExecutionIds.size()).isEqualTo(1);
 		assertThat(taskExplorer.getTaskExecution(jobExecutionIds.iterator().next()).getExecutionId()).isEqualTo(1);
@@ -169,10 +169,11 @@ public class TaskJobLauncherApplicationRunnerTests {
 
 	private void validateForFail(String errorMessage, Class<?> clazz, String[] enabledArgs) {
 		Executable executable = () -> this.applicationContext = SpringApplication
-				.run(new Class[] { clazz, PropertyPlaceholderAutoConfiguration.class }, enabledArgs);
+			.run(new Class[] { clazz, PropertyPlaceholderAutoConfiguration.class }, enabledArgs);
 
-		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(executable::execute).havingCause()
-				.withMessage(errorMessage);
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(executable::execute)
+			.havingCause()
+			.withMessage(errorMessage);
 	}
 
 	@Component
@@ -199,10 +200,11 @@ public class TaskJobLauncherApplicationRunnerTests {
 		@Bean
 		public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
@@ -252,19 +254,21 @@ public class TaskJobLauncherApplicationRunnerTests {
 		@Bean
 		public Job jobFail() {
 			return new JobBuilder("jobA", this.jobRepository)
-					.start(new StepBuilder("step1", this.jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						throw new IllegalStateException("WHOOPS");
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1", this.jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					throw new IllegalStateException("WHOOPS");
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
 		public Job jobFun() {
 			return new JobBuilder("jobSucceed", this.jobRepository)
-					.start(new StepBuilder("step1Succeed", this.jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1Succeed", this.jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 	}

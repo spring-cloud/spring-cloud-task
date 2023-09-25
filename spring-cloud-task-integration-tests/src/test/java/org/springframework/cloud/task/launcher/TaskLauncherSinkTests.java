@@ -132,7 +132,7 @@ public class TaskLauncherSinkTests {
 		assertThat(taskExecutions.getTotalElements()).as("Only one row is expected").isEqualTo(1);
 		assertThat(waitForTaskToComplete()).isTrue();
 		assertThat(taskExecutions.iterator().next().getExitCode().intValue()).as("return code should be 0")
-				.isEqualTo(0);
+			.isEqualTo(0);
 	}
 
 	private boolean tableExists() throws SQLException {
@@ -190,8 +190,9 @@ public class TaskLauncherSinkTests {
 		public Server initH2TCPServer() {
 			Server server;
 			try {
-				server = Server.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort",
-						String.valueOf(randomPort)).start();
+				server = Server
+					.createTcpServer("-ifNotExists", "-tcp", "-tcpAllowOthers", "-tcpPort", String.valueOf(randomPort))
+					.start();
 			}
 			catch (SQLException e) {
 				throw new IllegalStateException(e);

@@ -63,14 +63,19 @@ public class JobSkipConfiguration {
 
 	@Bean
 	public Step step2() {
-		return new StepBuilder("step2", this.jobRepository).chunk(3, transactionManager).faultTolerant()
-				.skip(IllegalStateException.class).skipLimit(100).reader(new SkipItemReader())
-				.processor(new ItemProcessor<Object, Object>() {
-					@Override
-					public String process(Object item) throws Exception {
-						return String.valueOf(Integer.parseInt((String) item) * -1);
-					}
-				}).writer(new SkipItemWriter()).build();
+		return new StepBuilder("step2", this.jobRepository).chunk(3, transactionManager)
+			.faultTolerant()
+			.skip(IllegalStateException.class)
+			.skipLimit(100)
+			.reader(new SkipItemReader())
+			.processor(new ItemProcessor<Object, Object>() {
+				@Override
+				public String process(Object item) throws Exception {
+					return String.valueOf(Integer.parseInt((String) item) * -1);
+				}
+			})
+			.writer(new SkipItemWriter())
+			.build();
 	}
 
 }

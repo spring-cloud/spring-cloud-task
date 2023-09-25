@@ -64,10 +64,13 @@ public class KafkaItemReaderAutoConfiguration {
 			kafkaItemReaderProperties.getPartitions().add(0);
 		}
 		return new KafkaItemReaderBuilder<Object, Map<String, Object>>()
-				.partitions(kafkaItemReaderProperties.getPartitions()).consumerProperties(consumerProperties)
-				.name(kafkaItemReaderProperties.getName())
-				.pollTimeout(Duration.ofSeconds(kafkaItemReaderProperties.getPollTimeOutInSeconds()))
-				.saveState(kafkaItemReaderProperties.isSaveState()).topic(kafkaItemReaderProperties.getTopic()).build();
+			.partitions(kafkaItemReaderProperties.getPartitions())
+			.consumerProperties(consumerProperties)
+			.name(kafkaItemReaderProperties.getName())
+			.pollTimeout(Duration.ofSeconds(kafkaItemReaderProperties.getPollTimeOutInSeconds()))
+			.saveState(kafkaItemReaderProperties.isSaveState())
+			.topic(kafkaItemReaderProperties.getTopic())
+			.build();
 	}
 
 	private void validateProperties(KafkaItemReaderProperties kafkaItemReaderProperties) {

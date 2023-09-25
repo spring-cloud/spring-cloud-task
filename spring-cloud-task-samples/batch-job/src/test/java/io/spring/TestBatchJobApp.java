@@ -21,9 +21,8 @@ import org.springframework.boot.SpringApplication;
 public class TestBatchJobApp {
 
 	public static void main(String[] args) {
-		String[] myArgs = {"--spring.batch.jdbc.initialize-schema=always"};
-		SpringApplication.from(BatchJobApplication::main).
-			with(BatchJobTestConfiguration.class).
-			run(myArgs);
+		String[] myArgs = { "--spring.batch.jdbc.initialize-schema=always" };
+		SpringApplication.from(BatchJobApplication::main).with(BatchJobTestConfiguration.class).run(myArgs);
 	}
+
 }

@@ -134,19 +134,19 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 			if (!beforeTaskMethods.isEmpty()) {
 				for (Method beforeTaskMethod : beforeTaskMethods.keySet()) {
 					this.beforeTaskInstances.computeIfAbsent(beforeTaskMethod, k -> new LinkedHashSet<>())
-							.add(this.context.getBean(beanName));
+						.add(this.context.getBean(beanName));
 				}
 			}
 			if (!afterTaskMethods.isEmpty()) {
 				for (Method afterTaskMethod : afterTaskMethods.keySet()) {
 					this.afterTaskInstances.computeIfAbsent(afterTaskMethod, k -> new LinkedHashSet<>())
-							.add(this.context.getBean(beanName));
+						.add(this.context.getBean(beanName));
 				}
 			}
 			if (!failedTaskMethods.isEmpty()) {
 				for (Method failedTaskMethod : failedTaskMethods.keySet()) {
 					this.failedTaskInstances.computeIfAbsent(failedTaskMethod, k -> new LinkedHashSet<>())
-							.add(this.context.getBean(beanName));
+						.add(this.context.getBean(beanName));
 				}
 			}
 		}

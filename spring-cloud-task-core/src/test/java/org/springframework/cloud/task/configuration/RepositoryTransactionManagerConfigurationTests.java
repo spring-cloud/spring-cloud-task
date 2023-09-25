@@ -51,9 +51,9 @@ public class RepositoryTransactionManagerConfigurationTests {
 	@Test
 	public void testZeroCustomTransactionManagerConfiguration() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, ZeroTransactionManagerConfiguration.class))
-				.withPropertyValues("application.name=transactionManagerTask");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, ZeroTransactionManagerConfiguration.class))
+			.withPropertyValues("application.name=transactionManagerTask");
 
 		applicationContextRunner.run((context) -> {
 			DataSource dataSource = context.getBean("dataSource", DataSource.class);
@@ -76,9 +76,9 @@ public class RepositoryTransactionManagerConfigurationTests {
 
 	private void testConfiguration(Class configurationClass) {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskAutoConfiguration.class, configurationClass))
-				.withPropertyValues("application.name=transactionManagerTask");
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, configurationClass))
+			.withPropertyValues("application.name=transactionManagerTask");
 
 		applicationContextRunner.run((context) -> {
 			DataSource dataSource = context.getBean("dataSource", DataSource.class);

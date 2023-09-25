@@ -74,16 +74,18 @@ class PrimaryKeyTests {
 		@Bean
 		Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new JobBuilder("job", jobRepository)
-					.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
-						System.out.println("Executed");
-						return RepeatStatus.FINISHED;
-					}, transactionManager).build()).build();
+				.start(new StepBuilder("step1", jobRepository).tasklet((contribution, chunkContext) -> {
+					System.out.println("Executed");
+					return RepeatStatus.FINISHED;
+				}, transactionManager).build())
+				.build();
 		}
 
 		@Bean
 		DataSource dataSource() {
 			return new EmbeddedDatabaseBuilder().addScript("classpath:schema-with-primary-keys-h2.sql")
-					.setType(EmbeddedDatabaseType.H2).build();
+				.setType(EmbeddedDatabaseType.H2)
+				.build();
 		}
 
 		@Bean

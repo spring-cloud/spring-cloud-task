@@ -58,7 +58,7 @@ public class TaskDatabaseInitializerTests {
 				PropertyPlaceholderAutoConfiguration.class);
 		this.context.refresh();
 		assertThat(new JdbcTemplate(this.context.getBean(DataSource.class)).queryForList("select * from TASK_EXECUTION")
-				.size()).isEqualTo(0);
+			.size()).isEqualTo(0);
 	}
 
 	@Test

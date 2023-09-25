@@ -87,7 +87,8 @@ public class JdbcBatchItemWriterAutoConfiguration {
 		}
 
 		JdbcBatchItemWriterBuilder<Map<String, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
-				.dataSource(writerDataSource).sql(this.properties.getSql());
+			.dataSource(writerDataSource)
+			.sql(this.properties.getSql());
 		if (this.itemPreparedStatementSetter != null) {
 			jdbcBatchItemWriterBuilder.itemPreparedStatementSetter(this.itemPreparedStatementSetter);
 		}

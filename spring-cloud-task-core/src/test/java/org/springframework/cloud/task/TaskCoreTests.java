@@ -77,11 +77,11 @@ public class TaskCoreTests {
 
 		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
-				.isTrue();
+			.isTrue();
 	}
 
 	/**
@@ -95,11 +95,11 @@ public class TaskCoreTests {
 
 		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(SUCCESS_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
-				.isTrue();
+			.isTrue();
 	}
 
 	@Test
@@ -117,11 +117,11 @@ public class TaskCoreTests {
 
 		String output = capturedOutput.toString();
 		assertThat(output.contains(CREATE_TASK_MESSAGE)).as("Test results do not show create task message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(UPDATE_TASK_MESSAGE)).as("Test results do not show success message: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(EXCEPTION_EXIT_CODE_MESSAGE)).as("Test results have incorrect exit code: " + output)
-				.isTrue();
+			.isTrue();
 		assertThat(output.contains(ERROR_MESSAGE)).as("Test results have incorrect exit message: " + output).isTrue();
 		assertThat(output.contains(EXCEPTION_MESSAGE)).as("Test results have exception message: " + output).isTrue();
 	}
@@ -141,7 +141,8 @@ public class TaskCoreTests {
 
 		String output = capturedOutput.toString();
 		assertThat(output.contains(EXCEPTION_INVALID_TASK_EXECUTION_ID))
-				.as("Test results do not show the correct exception message: " + output).isTrue();
+			.as("Test results do not show the correct exception message: " + output)
+			.isTrue();
 	}
 
 	@EnableTask

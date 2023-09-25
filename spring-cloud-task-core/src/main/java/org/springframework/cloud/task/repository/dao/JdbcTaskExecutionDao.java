@@ -222,12 +222,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				arguments, null, externalExecutionId);
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
-				.addValue("taskExecutionId", nextExecutionId, Types.BIGINT).addValue("exitCode", null, Types.INTEGER)
-				.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
-				.addValue("taskName", taskName, Types.VARCHAR)
-				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
-				.addValue("externalExecutionId", externalExecutionId, Types.VARCHAR)
-				.addValue("parentExecutionId", parentExecutionId, Types.BIGINT);
+			.addValue("taskExecutionId", nextExecutionId, Types.BIGINT)
+			.addValue("exitCode", null, Types.INTEGER)
+			.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
+			.addValue("taskName", taskName, Types.VARCHAR)
+			.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
+			.addValue("externalExecutionId", externalExecutionId, Types.VARCHAR)
+			.addValue("parentExecutionId", parentExecutionId, Types.BIGINT);
 
 		this.jdbcTemplate.update(getQuery(SAVE_TASK_EXECUTION), queryParameters);
 		insertTaskArguments(nextExecutionId, arguments);
@@ -247,11 +248,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				null, externalExecutionId, parentExecutionId);
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
-				.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
-				.addValue("exitCode", null, Types.INTEGER).addValue("taskName", taskName, Types.VARCHAR)
-				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
-				.addValue("parentExecutionId", parentExecutionId, Types.BIGINT)
-				.addValue("taskExecutionId", executionId, Types.BIGINT);
+			.addValue("startTime", startTime == null ? null : Timestamp.valueOf(startTime), Types.TIMESTAMP)
+			.addValue("exitCode", null, Types.INTEGER)
+			.addValue("taskName", taskName, Types.VARCHAR)
+			.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
+			.addValue("parentExecutionId", parentExecutionId, Types.BIGINT)
+			.addValue("taskExecutionId", executionId, Types.BIGINT);
 
 		String updateString = START_TASK_EXECUTION_PREFIX;
 
@@ -282,11 +284,12 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		}
 
 		final MapSqlParameterSource parameters = new MapSqlParameterSource()
-				.addValue("endTime", endTime == null ? null : Timestamp.valueOf(endTime), Types.TIMESTAMP)
-				.addValue("exitCode", exitCode, Types.INTEGER).addValue("exitMessage", exitMessage, Types.VARCHAR)
-				.addValue("errorMessage", errorMessage, Types.VARCHAR)
-				.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
-				.addValue("taskExecutionId", taskExecutionId, Types.BIGINT);
+			.addValue("endTime", endTime == null ? null : Timestamp.valueOf(endTime), Types.TIMESTAMP)
+			.addValue("exitCode", exitCode, Types.INTEGER)
+			.addValue("exitMessage", exitMessage, Types.VARCHAR)
+			.addValue("errorMessage", errorMessage, Types.VARCHAR)
+			.addValue("lastUpdated", Timestamp.valueOf(LocalDateTime.now()), Types.TIMESTAMP)
+			.addValue("taskExecutionId", taskExecutionId, Types.BIGINT);
 
 		this.jdbcTemplate.update(getQuery(UPDATE_TASK_EXECUTION), parameters);
 	}
@@ -503,8 +506,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	@Override
 	public void updateExternalExecutionId(long taskExecutionId, String externalExecutionId) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
-				.addValue("externalExecutionId", externalExecutionId, Types.VARCHAR)
-				.addValue("taskExecutionId", taskExecutionId, Types.BIGINT);
+			.addValue("externalExecutionId", externalExecutionId, Types.VARCHAR)
+			.addValue("taskExecutionId", taskExecutionId, Types.BIGINT);
 
 		if (this.jdbcTemplate.update(getQuery(UPDATE_TASK_EXECUTION_EXTERNAL_EXECUTION_ID), queryParameters) != 1) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
@@ -580,8 +583,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	 */
 	private void insertArgument(long taskExecutionId, String taskParam) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
-				.addValue("taskExecutionId", taskExecutionId, Types.BIGINT)
-				.addValue("taskParam", taskParam, Types.VARCHAR);
+			.addValue("taskExecutionId", taskExecutionId, Types.BIGINT)
+			.addValue("taskParam", taskParam, Types.VARCHAR);
 		this.jdbcTemplate.update(getQuery(CREATE_TASK_ARGUMENT), queryParameters);
 	}
 

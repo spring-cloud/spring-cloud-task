@@ -66,7 +66,9 @@ public class KafkaItemWriterAutoConfiguration {
 		KafkaTemplate template = new KafkaTemplate(producerFactory);
 		template.setDefaultTopic(kafkaItemWriterProperties.getTopic());
 		return new KafkaItemWriterBuilder<Object, Map<String, Object>>().delete(kafkaItemWriterProperties.isDelete())
-				.kafkaTemplate(template).itemKeyMapper(itemKeyMapper).build();
+			.kafkaTemplate(template)
+			.itemKeyMapper(itemKeyMapper)
+			.build();
 	}
 
 	@Bean
