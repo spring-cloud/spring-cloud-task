@@ -51,14 +51,11 @@ public class KafkaItemReaderAutoConfiguration {
 	@Autowired
 	private KafkaProperties kafkaProperties;
 
-	@Autowired
-	private SslBundles sslBundles;
-
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemreader", name = "name")
 	public KafkaItemReader<Object, Map<String, Object>> kafkaItemReader(
-			KafkaItemReaderProperties kafkaItemReaderProperties) {
+			KafkaItemReaderProperties kafkaItemReaderProperties, SslBundles sslBundles) {
 		Properties consumerProperties = new Properties();
 		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties(sslBundles));
 		validateProperties(kafkaItemReaderProperties);
