@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
 
@@ -50,13 +51,16 @@ public class KafkaItemReaderAutoConfiguration {
 	@Autowired
 	private KafkaProperties kafkaProperties;
 
+	@Autowired
+	private SslBundles sslBundles;
+
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemreader", name = "name")
 	public KafkaItemReader<Object, Map<String, Object>> kafkaItemReader(
 			KafkaItemReaderProperties kafkaItemReaderProperties) {
 		Properties consumerProperties = new Properties();
-		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties());
+		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties(sslBundles));
 		validateProperties(kafkaItemReaderProperties);
 		if (kafkaItemReaderProperties.getPartitions() == null
 				|| kafkaItemReaderProperties.getPartitions().size() == 0) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 the original author or authors.
+ * Copyright 2020-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.Producer;
@@ -40,6 +41,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.ssl.NoSuchSslBundleException;
+import org.springframework.boot.ssl.SslBundle;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -225,6 +229,22 @@ public class KafkaItemReaderAutoConfigurationTests {
 		@Bean
 		public ListItemWriter<Map<String, Object>> itemWriter() {
 			return new ListItemWriter<>();
+		}
+
+		@Bean
+		public SslBundles sslBundles() {
+			return new SslBundles() {
+				@Override
+				public SslBundle getBundle(String name) throws NoSuchSslBundleException {
+					return null;
+				}
+
+				@Override
+				public void addBundleUpdateHandler(String name, Consumer<SslBundle> updateHandler)
+						throws NoSuchSslBundleException {
+
+				}
+			};
 		}
 
 	}
