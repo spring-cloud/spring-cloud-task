@@ -32,7 +32,7 @@ mvn clean package
 
 [source,shell]
 ----
-java -jar target/single-step-batch-job-3.0.0-SNAPSHOT.jar --spring.config.name=<property file containing batch, reader, and writer properties>
+java -jar target/single-step-batch-job-3.1.0-SNAPSHOT.jar --spring.config.name=<property file containing batch, reader, and writer properties>
 ----
 
 == Examples
