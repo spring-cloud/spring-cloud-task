@@ -110,8 +110,8 @@
 	<properties>
 
 		<spring-cloud-stream.version>4.1.0-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-deployer.version>2.9.0</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.9.0
+		<spring-cloud-deployer.version>2.9.1</spring-cloud-deployer.version>
+		<spring-cloud-deployer-local.version>2.9.1
 		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
@@ -127,7 +127,7 @@
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<java.version>17</java.version>
-		<spring-javaformat-maven-plugin.version>0.0.39</spring-javaformat-maven-plugin.version>
+		<spring-javaformat-maven-plugin.version>0.0.40</spring-javaformat-maven-plugin.version>
 	</properties>
 
 	<build>
