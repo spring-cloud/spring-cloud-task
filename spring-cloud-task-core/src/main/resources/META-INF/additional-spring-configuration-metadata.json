@@ -5,6 +5,11 @@
 			"name": "spring.cloud.task.single-instance-enabled",
 			"description": "This property is used to determine if a task will execute if another task with the same app name is running.",
 			"type": "java.lang.Boolean"
+		},{
+			"defaultValue": "springCloudTaskTransactionManager",
+			"name": "spring.cloud.task.transaction-manager",
+			"description": "This property is used to specify the transaction manager for TaskRepository. By default, a dedicated transaction manager is created by spring.",
+			"type": "java.lang.String"
 		}
 	]
 }
