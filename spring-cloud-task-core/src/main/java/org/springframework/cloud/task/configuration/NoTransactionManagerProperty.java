@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.condition.NoneNestedConditions;
 class NoTransactionManagerProperty extends NoneNestedConditions {
 
 	NoTransactionManagerProperty() {
-		super(ConfigurationPhase.PARSE_CONFIGURATION);
+		super(ConfigurationPhase.REGISTER_BEAN);
 	}
 
 	@ConditionalOnProperty(prefix = "spring.cloud.task", name = "transaction-manager")

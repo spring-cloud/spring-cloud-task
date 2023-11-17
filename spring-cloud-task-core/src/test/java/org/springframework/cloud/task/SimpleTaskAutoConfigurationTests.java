@@ -23,6 +23,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.scope.ScopedProxyUtils;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -171,6 +173,32 @@ public class SimpleTaskAutoConfigurationTests {
 				"Error creating bean " + "with name 'simpleTaskAutoConfiguration': Invocation of init method failed",
 				applicationContextRunner);
 
+	}
+
+	@Test
+	void testSpecifyTransactionManager() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
+			.withBean("transactionManager", ResourcelessTransactionManager.class)
+			.withPropertyValues("spring.cloud.task.transaction-manager=transactionManager");
+		applicationContextRunner.run((context) -> {
+			assertThat(context.getBeanNamesForType(PlatformTransactionManager.class)).hasSize(1)
+				.contains("transactionManager")
+				.doesNotContain("springCloudTaskTransactionManager");
+		});
+	}
+
+	@Test
+	void testDefaultTransactionManager() {
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class));
+		applicationContextRunner.run((context) -> {
+			assertThat(context.getBeanNamesForType(PlatformTransactionManager.class)).hasSize(1)
+				.contains("springCloudTaskTransactionManager")
+				.doesNotContain("transactionManager");
+		});
 	}
 
 	public void verifyExceptionThrownDefaultExecutable(Class classToCheck,
