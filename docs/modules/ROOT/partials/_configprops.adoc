@@ -40,5 +40,6 @@
 |spring.cloud.task.single-instance-lock-check-interval | `+++500+++` | Declares the time (in millis) that a task execution will wait between checks. Default time is: 500 millis.
 |spring.cloud.task.single-instance-lock-ttl |  | Declares the maximum amount of time (in millis) that a task execution can hold a lock to prevent another task from executing with a specific task name when the single-instance-enabled is set to true. Default time is: Integer.MAX_VALUE.
 |spring.cloud.task.table-prefix | `+++TASK_+++` | The prefix to append to the table names created by Spring Cloud Task.
+|spring.cloud.task.transaction-manager | `+++springCloudTaskTransactionManager+++` | This property is used to specify the transaction manager for TaskRepository. By default, a dedicated transaction manager is created by spring.
 
 |===
