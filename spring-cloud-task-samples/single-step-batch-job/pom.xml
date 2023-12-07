@@ -7,7 +7,7 @@
 	<artifactId>single-step-batch-job</artifactId>
 	<packaging>jar</packaging>
 	<name>Single Step Batch Job Task</name>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.1.1-SNAPSHOT</version>
 	<description>Spring Cloud Single Step Batch Job Task</description>
 
 	<parent>
@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-single-step-batch-job</artifactId>
-			<version>3.1.0-SNAPSHOT</version>
+			<version>3.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
