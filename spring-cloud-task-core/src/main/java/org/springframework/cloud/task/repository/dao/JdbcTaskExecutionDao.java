@@ -219,7 +219,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 		long nextExecutionId = getNextExecutionId();
 
 		TaskExecution taskExecution = new TaskExecution(nextExecutionId, null, taskName, startTime, null, null,
-				arguments, null, externalExecutionId);
+				arguments, null, externalExecutionId, parentExecutionId);
 
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource()
 			.addValue("taskExecutionId", nextExecutionId, Types.BIGINT)

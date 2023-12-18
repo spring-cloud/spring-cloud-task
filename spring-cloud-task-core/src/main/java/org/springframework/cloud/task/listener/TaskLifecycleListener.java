@@ -391,7 +391,7 @@ public class TaskLifecycleListener
 		return new TaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
 				taskExecution.getTaskName(), startTime, endTime, taskExecution.getExitMessage(),
 				Collections.unmodifiableList(taskExecution.getArguments()), taskExecution.getErrorMessage(),
-				taskExecution.getExternalExecutionId());
+				taskExecution.getExternalExecutionId(), taskExecution.getParentExecutionId());
 	}
 
 	@Override
