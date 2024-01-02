@@ -66,7 +66,7 @@ public class DefaultTaskConfigurerTests {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource,
 				TaskProperties.DEFAULT_TABLE_PREFIX, localContext);
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-			.isEqualTo("org.springframework.jdbc.support.JdbcTransactionManager");
+			.isEqualTo("org.springframework.orm.jpa.JpaTransactionManager");
 	}
 
 	@Test

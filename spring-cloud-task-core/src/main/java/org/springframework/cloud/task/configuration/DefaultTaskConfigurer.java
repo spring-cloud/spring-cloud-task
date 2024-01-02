@@ -141,7 +141,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 		if (this.transactionManager == null) {
 			if (isDataSourceAvailable()) {
 				try {
-					Class.forName("javax.persistence.EntityManager");
+					Class.forName("jakarta.persistence.EntityManager");
 					if (this.context != null && this.context.getBeanNamesForType(EntityManager.class).length > 0) {
 						logger.debug("EntityManager was found, using JpaTransactionManager");
 						this.transactionManager = new JpaTransactionManager();
