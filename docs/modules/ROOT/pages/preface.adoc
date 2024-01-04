@@ -11,7 +11,7 @@ linear fashion or you can skip sections if something does not interest you.
 == About the documentation
 The Spring Cloud Task reference guide is available in https://docs.spring.io/spring-cloud-task/docs/current/reference[html].
 The latest copy is available at
-https://docs.spring.io/spring-cloud-task/docs/current-SNAPSHOT/reference/html/.
+https://docs.spring.io/spring-cloud-task/reference/.
 
 Copies of this document may be made for your own use and for distribution to others,
 provided that you do not charge any fee for such copies and further provided that each
