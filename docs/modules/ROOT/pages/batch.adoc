@@ -13,7 +13,7 @@ this section.
 [[batch-association]]
 == Associating a Job Execution to the Task in which It Was Executed
 
-Spring Boot provides facilities for the execution of batch jobs within an über-jar.
+Spring Boot provides facilities for the execution of batch jobs within a Spring Boot Uber-jar.
 Spring Boot's support of this functionality lets a developer execute multiple batch jobs
 within that execution. Spring Cloud Task provides the ability to associate the execution
 of a job (a job execution) with a task's execution so that one can be traced back to the
@@ -62,7 +62,7 @@ most cloud infrastructures. The `DeployerPartitionHandler` and
 Cloud Deployer.
 
 To configure the `DeployerStepExecutionHandler`, you must provide a `Resource`
-representing the Spring Boot über-jar to be executed, a `TaskLauncherHandler`, and a
+representing the Spring Boot Uber-jar to be executed, a `TaskLauncherHandler`, and a
 `JobExplorer`. You can configure any environment properties as well as the max number of
 workers to be executing at once, the interval to poll for the results (defaults to 10
 seconds), and a timeout (defaults to -1 or no timeout). The following example shows how
@@ -111,10 +111,10 @@ Notice in the example above that we have set the maximum number of workers to 2.
 Setting the maximum of workers establishes the maximum number of
 partitions that should be running at one time.
 
-The `Resource` to be executed is expected to be a Spring Boot über-jar with a
+The `Resource` to be executed is expected to be a Spring Boot Uber-jar with a
 `DeployerStepExecutionHandler` configured as a `CommandLineRunner` in the current context.
 The repository enumerated in the preceding example should be the remote repository in
-which the über-jar is located. Both the manager and worker are expected to have visibility
+which the Spring Boot Uber-jar is located. Both the manager and worker are expected to have visibility
 into the same data store being used as the job repository and task repository. Once the
 underlying infrastructure has bootstrapped the Spring Boot jar and Spring Boot has
 launched the `DeployerStepExecutionHandler`, the step handler executes the requested

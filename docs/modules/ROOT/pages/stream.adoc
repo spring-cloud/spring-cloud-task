@@ -54,7 +54,7 @@ shown in the following example:
 `mvn clean install`
 
 NOTE: The `maven.remoteRepositories.springRepo.url` property must be set to the location
-of the remote repository in which the über-jar is located. If not set, there is no remote
+of the remote repository in which the Spring Boot Uber-jar is located. If not set, there is no remote
 repository, so it relies upon the local repository only.
 
 [[stream-integration-launching-sink-dataflow]]
