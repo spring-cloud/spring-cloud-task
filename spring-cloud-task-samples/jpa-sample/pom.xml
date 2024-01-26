@@ -13,12 +13,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.13</version>
+		<version>3.0.9</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-commons.version>4.0.5</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.0.4-SNAPSHOT</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 	</properties>
