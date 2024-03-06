@@ -57,8 +57,7 @@ public class TaskCoreTests {
 	private static final String EXCEPTION_INVALID_TASK_EXECUTION_ID = "java.lang.IllegalArgumentException: "
 			+ "Invalid TaskExecution, ID 55 not found";
 
-	private static final String ERROR_MESSAGE = "errorMessage='java.lang.IllegalStateException: "
-			+ "Failed to execute CommandLineRunner";
+	private static final String ERROR_MESSAGE = "errorMessage='java.lang.IllegalStateException: " + "FOO EXCEPTION";
 
 	private ConfigurableApplicationContext applicationContext;
 

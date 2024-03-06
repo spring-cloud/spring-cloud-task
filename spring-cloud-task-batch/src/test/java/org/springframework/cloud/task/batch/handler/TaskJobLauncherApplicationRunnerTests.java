@@ -51,6 +51,7 @@ import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoCon
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
+import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ApplicationListener;
@@ -71,8 +72,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 public class TaskJobLauncherApplicationRunnerTests {
 
-	private static final String DEFAULT_ERROR_MESSAGE = "The following Jobs have failed: \n"
-			+ "Job jobA failed during execution for job instance id 1 with jobExecutionId of 1 \n";
+	private static final String DEFAULT_ERROR_MESSAGE = "Job jobA failed during execution for job instance id 1 with jobExecutionId of 1";
 
 	private ConfigurableApplicationContext applicationContext;
 
@@ -171,9 +171,8 @@ public class TaskJobLauncherApplicationRunnerTests {
 		Executable executable = () -> this.applicationContext = SpringApplication
 			.run(new Class[] { clazz, PropertyPlaceholderAutoConfiguration.class }, enabledArgs);
 
-		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(executable::execute)
-			.havingCause()
-			.withMessage(errorMessage);
+		assertThatExceptionOfType(TaskException.class).isThrownBy(executable::execute)
+			.withMessageContaining(errorMessage);
 	}
 
 	@Component
