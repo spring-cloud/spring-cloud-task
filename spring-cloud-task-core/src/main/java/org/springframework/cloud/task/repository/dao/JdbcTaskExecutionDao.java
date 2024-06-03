@@ -617,8 +617,26 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 			if (rs.wasNull()) {
 				parentExecutionId = null;
 			}
-			return new TaskExecution(id, getNullableExitCode(rs), rs.getString("TASK_NAME"),
-					rs.getObject("START_TIME", LocalDateTime.class), rs.getObject("END_TIME", LocalDateTime.class),
+			LocalDateTime startTime = null;
+			LocalDateTime endTime = null;
+			try {
+				startTime = rs.getObject("START_TIME", LocalDateTime.class);
+			}
+			catch (NullPointerException npe) {
+				if (!npe.getMessage().contains("<local4>")) {
+					throw npe;
+				}
+			}
+
+			try {
+				endTime = rs.getObject("END_TIME", LocalDateTime.class);
+			}
+			catch (NullPointerException npe) {
+				if (!npe.getMessage().contains("<local4>")) {
+					throw npe;
+				}
+			}
+			return new TaskExecution(id, getNullableExitCode(rs), rs.getString("TASK_NAME"), startTime, endTime,
 					rs.getString("EXIT_MESSAGE"), getTaskArguments(id), rs.getString("ERROR_MESSAGE"),
 					rs.getString("EXTERNAL_EXECUTION_ID"), parentExecutionId);
 		}
