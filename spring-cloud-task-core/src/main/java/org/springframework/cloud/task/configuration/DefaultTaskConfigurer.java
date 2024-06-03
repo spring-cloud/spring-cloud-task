@@ -56,6 +56,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private static final Log logger = LogFactory.getLog(DefaultTaskConfigurer.class);
 
+	private TaskProperties taskProperties;
+
 	private TaskRepository taskRepository;
 
 	private TaskExplorer taskExplorer;
@@ -71,6 +73,14 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	/**
+	 * Initializes the DefaultTaskConfigurer and retrieves table prefix from
+	 * {@link TaskProperties}.
+	 */
+	public DefaultTaskConfigurer(TaskProperties taskProperties) {
+		this(null, null, null, taskProperties);
+	}
+
+	/**
 	 * Initializes the DefaultTaskConfigurer and sets the default table prefix to
 	 * {@link TaskProperties#DEFAULT_TABLE_PREFIX}.
 	 * @param dataSource references the {@link DataSource} to be used as the Task
@@ -79,6 +89,19 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource) {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, null);
+	}
+
+	/**
+	 * Initializes the DefaultTaskConfigurer and retrieves table prefix from *
+	 * {@link TaskProperties}.
+	 * @param dataSource references the {@link DataSource} to be used as the Task
+	 * repository. If none is provided, a Map will be used (not recommended for production
+	 * use).
+	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
+	 * tablePrefix field.
+	 */
+	public DefaultTaskConfigurer(DataSource dataSource, TaskProperties taskProperties) {
+		this(dataSource, null, null, taskProperties);
 	}
 
 	/**
@@ -92,6 +115,17 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	/**
 	 * Initializes the DefaultTaskConfigurer.
+	 * @param tablePrefix the prefix to apply to the task table names used by task
+	 * infrastructure.
+	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
+	 * tablePrefix field.
+	 */
+	public DefaultTaskConfigurer(String tablePrefix, TaskProperties taskProperties) {
+		this(null, tablePrefix, null, taskProperties);
+	}
+
+	/**
+	 * Initializes the DefaultTaskConfigurer.
 	 * @param dataSource references the {@link DataSource} to be used as the Task
 	 * repository. If none is provided, a Map will be used (not recommended for production
 	 * use).
@@ -100,10 +134,32 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param context the context to be used.
 	 */
 	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
+		this(dataSource, tablePrefix, context, null);
+	}
+
+	/**
+	 * Initializes the DefaultTaskConfigurer.
+	 * @param dataSource references the {@link DataSource} to be used as the Task
+	 * repository. If none is provided, a Map will be used (not recommended for production
+	 * use).
+	 * @param tablePrefix the prefix to apply to the task table names used by task
+	 * infrastructure.
+	 * @param context the context to be used.
+	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
+	 * tablePrefix field.
+	 */
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context,
+			TaskProperties taskProperties) {
 		this.dataSource = dataSource;
 		this.context = context;
 
 		TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean;
+		this.taskProperties = taskProperties;
+
+		if (tablePrefix == null) {
+			tablePrefix = (taskProperties != null && !taskProperties.getTablePrefix().isEmpty())
+					? taskProperties.getTablePrefix() : TaskProperties.DEFAULT_TABLE_PREFIX;
+		}
 
 		if (this.dataSource != null) {
 			taskExecutionDaoFactoryBean = new TaskExecutionDaoFactoryBean(this.dataSource, tablePrefix);
@@ -161,7 +217,6 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 				this.transactionManager = new ResourcelessTransactionManager();
 			}
 		}
-
 		return this.transactionManager;
 	}
 

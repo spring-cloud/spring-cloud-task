@@ -24,12 +24,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
+import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -59,7 +62,7 @@ public class DefaultTaskConfigurerTests {
 	}
 
 	@Test
-	public void testDefaultContext() throws Exception {
+	public void testDefaultContext() {
 		AnnotationConfigApplicationContext localContext = new AnnotationConfigApplicationContext();
 		localContext.register(EmbeddedDataSourceConfiguration.class, EntityManagerConfiguration.class);
 		localContext.refresh();
@@ -112,6 +115,48 @@ public class DefaultTaskConfigurerTests {
 		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNotNull();
 		defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNull();
+	}
+
+	@Test
+	public void taskDataSourceWithProperties() {
+		TaskProperties taskProperties = new TaskProperties();
+		taskProperties.setTablePrefix("foo");
+		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, taskProperties);
+		assertThat(defaultTaskConfigurer.getTaskDataSource()).isNotNull();
+		String prefix = getPrefix(defaultTaskConfigurer);
+		assertThat(prefix).isEqualTo("foo");
+		System.out.println(prefix);
+		defaultTaskConfigurer = new DefaultTaskConfigurer();
+		validatePrefix(defaultTaskConfigurer, "TASK_");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(taskProperties);
+		validatePrefix(defaultTaskConfigurer, "TASK_");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource);
+		validatePrefix(defaultTaskConfigurer, "TASK_");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, taskProperties);
+		validatePrefix(defaultTaskConfigurer, "foo");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, new TaskProperties());
+		validatePrefix(defaultTaskConfigurer, "TASK_");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, null, null);
+		validatePrefix(defaultTaskConfigurer, "TASK_");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "bar", null);
+		validatePrefix(defaultTaskConfigurer, "bar");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "bar", null, null);
+		validatePrefix(defaultTaskConfigurer, "bar");
+		defaultTaskConfigurer = new DefaultTaskConfigurer(this.dataSource, "bar", null, taskProperties);
+		validatePrefix(defaultTaskConfigurer, "bar");
+	}
+
+	private void validatePrefix(DefaultTaskConfigurer defaultTaskConfigurer, String prefix) {
+		String result = getPrefix(defaultTaskConfigurer);
+		assertThat(result).isEqualTo(prefix);
+	}
+
+	private String getPrefix(DefaultTaskConfigurer defaultTaskConfigurer) {
+		SimpleTaskRepository taskRepository = (SimpleTaskRepository) ReflectionTestUtils.getField(defaultTaskConfigurer,
+				"taskRepository");
+		TaskExecutionDaoFactoryBean factoryBean = (TaskExecutionDaoFactoryBean) ReflectionTestUtils
+			.getField(taskRepository, "taskExecutionDaoFactoryBean");
+		return (String) ReflectionTestUtils.getField(factoryBean, "tablePrefix");
 	}
 
 	@Configuration
