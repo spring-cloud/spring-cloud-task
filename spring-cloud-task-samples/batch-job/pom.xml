@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>batch-job</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1.1-SNAPSHOT</version>
+	<version>3.1.2-SNAPSHOT</version>
 	<description>Spring Cloud Task Batch Example</description>
 
 	<name>Batch Job Sample Application</name>

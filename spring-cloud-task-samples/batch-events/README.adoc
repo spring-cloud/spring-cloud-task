@@ -35,7 +35,7 @@ like the https://github.com/spring-cloud/stream-applications/tree/main/applicati
 
 [source,shell]
 ----
-$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-3.1.1.jar --server.port=9090
+$ java -jar <PATH_TO_LOG_SINK_JAR>/log-sink-rabbit-3.1.2.jar --server.port=9090
 --spring.cloud.stream.bindings.input.destination=job-execution-events
 ----
 
