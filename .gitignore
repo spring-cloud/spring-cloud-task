@@ -38,5 +38,5 @@ spring-*/src/main/java/META-INF/MANIFEST.MF
 node
 node_modules
 build
-package.json
+/package.json
 package-lock.json
