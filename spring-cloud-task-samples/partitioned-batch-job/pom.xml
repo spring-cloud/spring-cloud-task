@@ -12,12 +12,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.8</version>
+		<version>3.4.0-M1</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-commons.version>4.1.5-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.2.0-SNAPSHOT</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-deployer>2.8.3</spring-cloud-deployer>
