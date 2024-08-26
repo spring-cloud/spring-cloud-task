@@ -244,6 +244,11 @@ public class KafkaItemReaderAutoConfigurationTests {
 						throws NoSuchSslBundleException {
 
 				}
+
+				@Override
+				public List<String> getBundleNames() {
+					return List.of();
+				}
 			};
 		}
 

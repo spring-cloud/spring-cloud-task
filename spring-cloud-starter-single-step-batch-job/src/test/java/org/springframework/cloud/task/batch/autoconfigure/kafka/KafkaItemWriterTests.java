@@ -159,6 +159,11 @@ public class KafkaItemWriterTests {
 						throws NoSuchSslBundleException {
 
 				}
+
+				@Override
+				public List<String> getBundleNames() {
+					return List.of();
+				}
 			};
 		}
 
