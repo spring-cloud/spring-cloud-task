@@ -115,7 +115,7 @@
 									</target>
 									<target>
 										<copy todir="${project.basedir}/target/generated-docs/apidocs">
-											<fileset dir="${maven.multiModuleProjectDirectory}/target/site/apidocs"/>
+											<fileset dir="${maven.multiModuleProjectDirectory}/target/reports/apidocs"/>
 										</copy>
 									</target>
 								</configuration>
