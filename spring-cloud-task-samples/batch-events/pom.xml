@@ -13,15 +13,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0-M2</version>
+		<version>3.4.0-M3</version>
 		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<spring-cloud-stream.version>4.2.0-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-task.version>3.2.0-SNAPSHOT</spring-cloud-task.version>
+		<spring-cloud-stream.version>4.2.0-M2</spring-cloud-stream.version>
+		<spring-cloud-task.version>3.2.0-M2</spring-cloud-task.version>
 	</properties>
 
 	<dependencyManagement>
