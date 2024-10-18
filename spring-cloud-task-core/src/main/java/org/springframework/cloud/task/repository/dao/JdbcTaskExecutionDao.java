@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -527,7 +528,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		if (sort != null) {
 			for (Sort.Order sortOrder : sort) {
-				if (validSortColumns.contains(sortOrder.getProperty().toUpperCase())) {
+				if (validSortColumns.contains(sortOrder.getProperty().toUpperCase(Locale.ROOT))) {
 					sortOrderMap.put(sortOrder.getProperty(),
 							sortOrder.isAscending() ? Order.ASCENDING : Order.DESCENDING);
 				}

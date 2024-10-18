@@ -17,6 +17,7 @@
 package org.springframework.cloud.task.repository.support;
 
 import java.sql.SQLException;
+import java.util.Locale;
 
 import javax.sql.DataSource;
 
@@ -84,7 +85,8 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private String getDatabaseType(DataSource dataSource) {
 		try {
-			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString()).toLowerCase();
+			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString())
+				.toLowerCase(Locale.ROOT);
 		}
 		catch (MetaDataAccessException ex) {
 			throw new IllegalStateException("Unable to detect database type", ex);
