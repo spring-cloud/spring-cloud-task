@@ -157,8 +157,8 @@ public class SimpleTaskAutoConfigurationTests {
 					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
 			.withUserConfiguration(MultipleConfigurers.class);
 
-		verifyExceptionThrownDefaultExecutable(BeanCreationException.class,
-				"Error creating bean " + "with name 'simpleTaskAutoConfiguration': Invocation of init method failed",
+		verifyExceptionThrownDefaultExecutable(BeanCreationException.class, "Error creating bean "
+				+ "with name 'org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration': Invocation of init method failed",
 				applicationContextRunner);
 	}
 
@@ -169,8 +169,8 @@ public class SimpleTaskAutoConfigurationTests {
 					SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class))
 			.withUserConfiguration(MultipleDataSources.class);
 
-		verifyExceptionThrownDefaultExecutable(BeanCreationException.class,
-				"Error creating bean " + "with name 'simpleTaskAutoConfiguration': Invocation of init method failed",
+		verifyExceptionThrownDefaultExecutable(BeanCreationException.class, "Error creating bean "
+				+ "with name 'org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration': Invocation of init method failed",
 				applicationContextRunner);
 
 	}
