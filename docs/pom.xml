@@ -26,7 +26,7 @@
 		<micrometer-docs-generator.inclusionPattern>.*</micrometer-docs-generator.inclusionPattern>
 		<micrometer-docs-generator.outputPath>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/partials/</micrometer-docs-generator.outputPath>
 	</properties>
-	<dependencies>
+<!-- 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>spring-cloud-starter-single-step-batch-job</artifactId>
@@ -37,7 +37,7 @@
 			<artifactId>spring-cloud-starter-task</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	</dependencies>
+	</dependencies> -->
 	<build>
 		<sourceDirectory>src/main/asciidoc</sourceDirectory>
 	</build>
