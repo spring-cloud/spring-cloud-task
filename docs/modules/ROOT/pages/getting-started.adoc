@@ -185,7 +185,7 @@ $ mvn clean spring-boot:run
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v3.2.1)
+ :: Spring Boot ::                (v3.3.0)
 
 2024-01-04T10:07:01.102-06:00  INFO 18248 --- [helloWorld] [           main] i.s.d.helloworld.HelloworldApplication   : Starting HelloworldApplication using Java 21.0.1 with PID 18248 (/Users/dashaun/fun/dashaun/spring-cloud-task/helloworld/target/classes started by dashaun in /Users/dashaun/fun/dashaun/spring-cloud-task/helloworld)
 2024-01-04T10:07:01.103-06:00  INFO 18248 --- [helloWorld] [           main] i.s.d.helloworld.HelloworldApplication   : No active profile set, falling back to 1 default profile: "default"
