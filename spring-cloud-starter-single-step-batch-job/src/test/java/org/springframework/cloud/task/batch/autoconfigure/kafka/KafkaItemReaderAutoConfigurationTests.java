@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.kafka.clients.admin.NewTopic;
@@ -242,6 +243,11 @@ public class KafkaItemReaderAutoConfigurationTests {
 				@Override
 				public void addBundleUpdateHandler(String name, Consumer<SslBundle> updateHandler)
 						throws NoSuchSslBundleException {
+
+				}
+
+				@Override
+				public void addBundleRegisterHandler(BiConsumer<String, SslBundle> registerHandler) {
 
 				}
 

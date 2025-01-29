@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -157,6 +158,11 @@ public class KafkaItemWriterTests {
 				@Override
 				public void addBundleUpdateHandler(String name, java.util.function.Consumer<SslBundle> updateHandler)
 						throws NoSuchSslBundleException {
+
+				}
+
+				@Override
+				public void addBundleRegisterHandler(BiConsumer<String, SslBundle> registerHandler) {
 
 				}
 
