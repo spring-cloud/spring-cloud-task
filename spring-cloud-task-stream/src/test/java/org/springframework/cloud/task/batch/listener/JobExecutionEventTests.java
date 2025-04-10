@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +47,7 @@ import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.core.Ordered;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 /**
  * @author Glenn Renfro.
@@ -318,12 +318,9 @@ public class JobExecutionEventTests {
 			.withPropertyValues("--spring.cloud.task.closecontext_enabled=false", "--spring.main.web-environment=false",
 					"spring.batch.job.jobName=FOO");
 		applicationContextRunner.run((context) -> {
-			NoSuchBeanDefinitionException exception = Assertions.assertThrows(NoSuchBeanDefinitionException.class,
-					() -> {
-						context.getBean("jobExecutionEventsListener");
-					});
-			assertThat(exception.getMessage())
-				.contains(String.format("No bean named 'jobExecutionEventsListener' available"));
+			assertThatThrownBy(() -> context.getBean("jobExecutionEventsListener"))
+				.isInstanceOf(NoSuchBeanDefinitionException.class)
+				.hasMessageContaining("No bean named 'jobExecutionEventsListener' available");
 		});
 	}
 

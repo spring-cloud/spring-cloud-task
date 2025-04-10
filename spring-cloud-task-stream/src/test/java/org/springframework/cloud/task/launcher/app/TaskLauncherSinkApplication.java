@@ -23,7 +23,7 @@ import org.springframework.cloud.task.launcher.annotation.EnableTaskLauncher;
 /**
  * @author Glenn Renfro
  */
-// @checkstyle:on
+// @checkstyle:off
 @SpringBootApplication
 @EnableTaskLauncher
 public class TaskLauncherSinkApplication {
@@ -33,4 +33,4 @@ public class TaskLauncherSinkApplication {
 	}
 
 }
-// @checkstyle:off
+// @checkstyle:on
