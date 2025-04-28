@@ -8,6 +8,8 @@ This section goes into more detail about Spring Cloud Task's integration with Sp
 Batch. Tracking the association between a job execution and the task in which it was
 executed as well as remote partitioning through Spring Cloud Deployer are covered in
 this section.
+
+NOTE: This feature is now end-of-life and will be removed in a future release.
 --
 
 [[batch-association]]

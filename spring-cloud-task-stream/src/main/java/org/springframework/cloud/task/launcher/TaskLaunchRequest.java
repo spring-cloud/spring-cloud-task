@@ -32,7 +32,10 @@ import org.springframework.util.StringUtils;
  * TaskLauncherSink to launch the task.
  *
  * @author Glenn Renfro
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
+@Deprecated
 public class TaskLaunchRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;

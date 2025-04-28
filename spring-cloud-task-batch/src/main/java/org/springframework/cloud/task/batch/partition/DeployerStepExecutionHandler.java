@@ -56,7 +56,10 @@ import org.springframework.util.Assert;
  * </ul>
  *
  * @author Michael Minella
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
+@Deprecated
 public class DeployerStepExecutionHandler implements CommandLineRunner {
 
 	private JobExplorer jobExplorer;

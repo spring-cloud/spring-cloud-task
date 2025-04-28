@@ -35,8 +35,10 @@ import org.springframework.util.Assert;
  * A sink stream application that launches a tasks.
  *
  * @author Glenn Renfro
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
-
+@Deprecated
 public class TaskLauncherSink {
 
 	private final static Logger logger = LoggerFactory.getLogger(TaskLauncherSink.class);

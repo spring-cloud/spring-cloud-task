@@ -73,7 +73,10 @@ import org.springframework.util.CollectionUtils;
  *
  * @author Michael Minella
  * @author Glenn Renfro
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
+@Deprecated
 public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAware, InitializingBean {
 
 	/**

@@ -57,23 +57,8 @@ NOTE: The `maven.remoteRepositories.springRepo.url` property must be set to the 
 of the remote repository in which the Spring Boot Uber-jar is located. If not set, there is no remote
 repository, so it relies upon the local repository only.
 
-[[stream-integration-launching-sink-dataflow]]
-=== Spring Cloud Data Flow
+NOTE: This feature is now end-of-life and will be removed in a future release.
 
-To create a stream in Spring Cloud Data Flow, you must first register the Task Sink
-Application we created. In the following example, we are registering the Processor and
-Sink sample applications by using the Spring Cloud Data Flow shell:
-
-[source,bash]
-----
-app register --name taskSink --type sink --uri maven://io.spring.cloud:tasksink:<version>
-app register --name taskProcessor --type processor --uri maven:io.spring.cloud:taskprocessor:<version>
-----
-
-The following example shows how to create a stream from the Spring Cloud Data Flow shell:
-
-[source,bash]
-stream create foo --definition "http --server.port=9000|taskProcessor|taskSink" --deploy
 
 [[stream-integration-events]]
 == Spring Cloud Task Events

@@ -50,12 +50,15 @@ import org.springframework.context.annotation.Import;
  * <code>&#064;EnableTaskLauncher</code> annotation.
  *
  * @author Glenn Renfro
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 @Import({ TaskLauncherSink.class })
+@Deprecated
 public @interface EnableTaskLauncher {
 
 }

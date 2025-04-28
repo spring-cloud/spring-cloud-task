@@ -36,7 +36,10 @@ import org.springframework.core.env.PropertySource;
  *
  * @author Michael Minella
  * @since 1.0.2
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
+@Deprecated
 public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesProvider {
 
 	private Environment environment;

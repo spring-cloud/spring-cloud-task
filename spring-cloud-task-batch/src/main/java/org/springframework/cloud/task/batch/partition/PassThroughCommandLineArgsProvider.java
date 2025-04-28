@@ -26,7 +26,10 @@ import org.springframework.util.Assert;
  *
  * @author Michael Minella
  * @since 1.1.0
+ * @deprecated This feature is now end-of-life and will be removed in a future release. No
+ * replacement is planned. Please migrate away from using this functionality.
  */
+@Deprecated
 public class PassThroughCommandLineArgsProvider implements CommandLineArgsProvider {
 
 	private final List<String> commandLineArgs;
