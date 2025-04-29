@@ -9,7 +9,6 @@ Batch. Tracking the association between a job execution and the task in which it
 executed as well as remote partitioning through Spring Cloud Deployer are covered in
 this section.
 
-NOTE: This feature is now end-of-life and will be removed in a future release.
 --
 
 [[batch-association]]
@@ -70,6 +69,7 @@ workers to be executing at once, the interval to poll for the results (defaults 
 seconds), and a timeout (defaults to -1 or no timeout). The following example shows how
 configuring this `PartitionHandler` might look:
 
+NOTE: This feature is now end-of-life and will be removed in a future release.
 
 [source,java]
 ----
