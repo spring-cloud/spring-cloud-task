@@ -18,7 +18,7 @@
 	</parent>
 
 	<properties>
-		<spring-cloud-commons.version>4.3.0</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.3.1-SNAPSHOT</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 	</properties>
