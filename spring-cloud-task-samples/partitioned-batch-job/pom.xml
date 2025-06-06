@@ -6,18 +6,18 @@
 	<artifactId>partitioned-batch-job</artifactId>
 	<packaging>jar</packaging>
 	<name>Partitioned Batch Job</name>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<description>Sample of using the DeployerPartitionHandler</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.0</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-commons.version>4.3.1-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>5.0.0-SNAPSHOT</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<spring-cloud-deployer>2.8.3</spring-cloud-deployer>
