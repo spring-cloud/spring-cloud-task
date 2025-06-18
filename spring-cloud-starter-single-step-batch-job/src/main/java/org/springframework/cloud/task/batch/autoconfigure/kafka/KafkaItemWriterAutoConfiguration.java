@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -85,9 +84,9 @@ public class KafkaItemWriterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	ProducerFactory<Object, Map<String, Object>> producerFactory(SslBundles sslBundles) {
+	ProducerFactory<Object, Map<String, Object>> producerFactory() {
 		Map<String, Object> configs = new HashMap<>();
-		configs.putAll(this.kafkaProperties.getProducer().buildProperties(sslBundles));
+		configs.putAll(this.kafkaProperties.getProducer().buildProperties());
 		return new DefaultKafkaProducerFactory<>(configs, null, new JsonSerializer<>());
 	}
 

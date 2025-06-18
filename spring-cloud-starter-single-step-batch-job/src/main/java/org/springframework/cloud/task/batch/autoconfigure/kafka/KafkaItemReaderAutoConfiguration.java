@@ -31,7 +31,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
 
@@ -55,9 +54,9 @@ public class KafkaItemReaderAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemreader", name = "name")
 	public KafkaItemReader<Object, Map<String, Object>> kafkaItemReader(
-			KafkaItemReaderProperties kafkaItemReaderProperties, SslBundles sslBundles) {
+			KafkaItemReaderProperties kafkaItemReaderProperties) {
 		Properties consumerProperties = new Properties();
-		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties(sslBundles));
+		consumerProperties.putAll(this.kafkaProperties.getConsumer().buildProperties());
 		validateProperties(kafkaItemReaderProperties);
 		if (kafkaItemReaderProperties.getPartitions() == null
 				|| kafkaItemReaderProperties.getPartitions().size() == 0) {
