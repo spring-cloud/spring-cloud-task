@@ -22,8 +22,6 @@
 	<modules>
 		<module>timestamp</module>
 		<module>batch-job</module>
-		<module>tasksink</module>
-		<module>taskprocessor</module>
 		<module>partitioned-batch-job</module>
 		<module>task-events</module>
 		<module>batch-events</module>
