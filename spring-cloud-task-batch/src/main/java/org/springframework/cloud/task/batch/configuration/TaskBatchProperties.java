@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class TaskBatchProperties {
 	 * The order for the {@code ApplicationRunner} used to run batch jobs when
 	 * {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as
 	 * the
-	 * {@link org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner}).
+	 * {@link org.springframework.boot.batch.autoconfigure.JobLauncherApplicationRunner}).
 	 */
 	private int applicationRunnerOrder = 0;
 
