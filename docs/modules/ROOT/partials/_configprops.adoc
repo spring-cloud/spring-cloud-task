@@ -1,7 +1,7 @@
 |===
 |Name | Default | Description
 
-|spring.cloud.task.batch.application-runner-order | `+++0+++` | The order for the {@code ApplicationRunner} used to run batch jobs when {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as the {@link org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner}).
+|spring.cloud.task.batch.application-runner-order | `+++0+++` | The order for the {@code ApplicationRunner} used to run batch jobs when {@code spring.cloud.task.batch.fail-on-job-failure=true}. Defaults to 0 (same as the {@link org.springframework.boot.batch.autoconfigure.JobLauncherApplicationRunner}).
 |spring.cloud.task.batch.command-line-runner-order |  | 
 |spring.cloud.task.batch.events.chunk-event-binding-name | `+++chunk-events+++` | 
 |spring.cloud.task.batch.events.chunk-order |  | Establishes the default {@link Ordered} precedence for {@link org.springframework.batch.core.ChunkListener}.
