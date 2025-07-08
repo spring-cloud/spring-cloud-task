@@ -22,7 +22,6 @@
 	<modules>
 		<module>timestamp</module>
 		<module>batch-job</module>
-		<module>partitioned-batch-job</module>
 		<module>task-events</module>
 		<module>batch-events</module>
 		<module>jpa-sample</module>

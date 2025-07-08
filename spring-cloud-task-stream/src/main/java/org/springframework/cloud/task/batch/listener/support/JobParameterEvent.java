@@ -19,12 +19,12 @@ package org.springframework.cloud.task.batch.listener.support;
 import java.util.Date;
 import java.util.Objects;
 
-import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameter;
 
 /**
  * This is a JobParameter DTO created so that a
- * {@link org.springframework.batch.core.JobParameter} can be serialized into Json without
- * having to add mixins to an ObjectMapper.
+ * {@link org.springframework.batch.core.job.parameters.JobParameter} can be serialized
+ * into Json without having to add mixins to an ObjectMapper.
  *
  * @author Glenn Renfro
  */

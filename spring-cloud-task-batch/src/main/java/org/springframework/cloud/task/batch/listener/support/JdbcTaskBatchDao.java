@@ -18,7 +18,7 @@ package org.springframework.cloud.task.batch.listener.support;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.job.JobExecution;
 import org.springframework.cloud.task.batch.listener.TaskBatchDao;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;

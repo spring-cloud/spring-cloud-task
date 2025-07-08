@@ -31,11 +31,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.support.ListItemWriter;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -89,17 +89,17 @@ public class KafkaItemReaderAutoConfigurationTests {
 					"spring.kafka.consumer.value-deserializer=" + JsonDeserializer.class.getName());
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
 			ListItemWriter itemWriter = context.getBean(ListItemWriter.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -132,17 +132,17 @@ public class KafkaItemReaderAutoConfigurationTests {
 					"spring.kafka.consumer.value-deserializer=" + JsonDeserializer.class.getName());
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
 			ListItemWriter itemWriter = context.getBean(ListItemWriter.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -167,17 +167,17 @@ public class KafkaItemReaderAutoConfigurationTests {
 					"spring.kafka.consumer.value-deserializer=" + JsonDeserializer.class.getName());
 		Date startTime = new Date();
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
 			ListItemWriter itemWriter = context.getBean(ListItemWriter.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 			Date endTime = new Date();

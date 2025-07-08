@@ -30,11 +30,11 @@ import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -203,15 +203,14 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 
 	private void runTest(ApplicationContextRunner applicationContextRunner, boolean isWriterDataSourcePresent) {
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
-
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

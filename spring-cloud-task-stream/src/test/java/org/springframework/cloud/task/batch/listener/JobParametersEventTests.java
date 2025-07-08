@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.cloud.task.batch.listener.support.JobParametersEvent;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -39,11 +39,11 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
@@ -135,9 +135,9 @@ public class AmqpItemWriterAutoConfigurationTests {
 
 		applicationContextRunner.run((context) -> {
 			JobExecution jobExecution = runJob(context);
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -165,11 +165,11 @@ public class AmqpItemWriterAutoConfigurationTests {
 	}
 
 	private JobExecution runJob(AssertableApplicationContext context) throws Exception {
-		JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+		JobOperator jobOperator = context.getBean(JobOperator.class);
 
 		Job job = context.getBean(Job.class);
 
-		return jobLauncher.run(job, new JobParameters());
+		return jobOperator.start(job, new JobParameters());
 	}
 
 	@Configuration

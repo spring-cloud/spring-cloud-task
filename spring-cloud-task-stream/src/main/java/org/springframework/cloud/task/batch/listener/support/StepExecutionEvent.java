@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.step.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.util.Assert;
 

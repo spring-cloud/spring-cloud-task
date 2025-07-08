@@ -16,8 +16,8 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;

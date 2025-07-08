@@ -21,12 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameter;
 
 /**
  * This is a JobParametersEvent DTO created so that a
- * {@link org.springframework.batch.core.JobParameters} can be serialized into Json
- * without having to add mixins to an ObjectMapper.
+ * {@link org.springframework.batch.core.job.parameters.JobParameters} can be serialized
+ * into Json without having to add mixins to an ObjectMapper.
  *
  * @author Glenn Renfro
  */

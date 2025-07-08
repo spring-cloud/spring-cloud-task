@@ -23,20 +23,20 @@ import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionException;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecutionException;
+import org.springframework.batch.core.job.JobInstance;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -176,7 +176,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 
 		private final TaskJobLauncherApplicationRunner runner;
 
-		private final JobExplorer jobExplorer;
+		private final JobRepository jobRepository;
 
 		private final JobBuilder jobBuilder;
 
@@ -187,20 +187,18 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		private final Step step;
 
 		JobLauncherApplicationRunnerContext(ApplicationContext context) {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
-			JobRepository jobRepository = context.getBean(JobRepository.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
+			jobRepository = context.getBean(JobRepository.class);
 			PlatformTransactionManager transactionManager = context.getBean(PlatformTransactionManager.class);
 			this.stepBuilder = new StepBuilder("step", jobRepository);
 			this.step = this.stepBuilder.tasklet((contribution, chunkContext) -> null, transactionManager).build();
 			this.jobBuilder = new JobBuilder("job", jobRepository);
 			this.job = this.jobBuilder.start(this.step).build();
-			this.jobExplorer = context.getBean(JobExplorer.class);
-			this.runner = new TaskJobLauncherApplicationRunner(jobLauncher, this.jobExplorer, jobRepository,
-					new TaskBatchProperties());
+			this.runner = new TaskJobLauncherApplicationRunner(jobOperator, jobRepository, new TaskBatchProperties());
 		}
 
 		List<JobInstance> jobInstances() {
-			return this.jobExplorer.getJobInstances("job", 0, 100);
+			return this.jobRepository.getJobInstances("job", 0, 100);
 		}
 
 		void executeJob(JobParameters jobParameters) throws JobExecutionException {
@@ -222,6 +220,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 	}
 
 	@EnableBatchProcessing
+	@EnableJdbcJobRepository
 	@Configuration(proxyBeanMethods = false)
 	static class BatchConfiguration {
 

@@ -16,14 +16,13 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.springframework.batch.core.ChunkListener;
-import org.springframework.batch.core.ItemProcessListener;
-import org.springframework.batch.core.ItemReadListener;
-import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.SkipListener;
-import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.listener.ItemProcessListener;
+import org.springframework.batch.core.listener.ItemReadListener;
+import org.springframework.batch.core.listener.ItemWriteListener;
+import org.springframework.batch.core.listener.JobExecutionListener;
+import org.springframework.batch.core.listener.SkipListener;
+import org.springframework.batch.core.listener.StepExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -48,7 +47,7 @@ import org.springframework.context.annotation.Lazy;
  * <ul>
  * <li>{@link EventEmittingJobExecutionListener} - job-execution-events</li>
  * <li>{@link EventEmittingStepExecutionListener} - step-execution-events</li>
- * <li>{@link ChunkListener} - chunk-events</li>
+ * <li>{@link org.springframework.batch.core.listener.ChunkListener} - chunk-events</li>
  * <li>{@link EventEmittingItemReadListener} - item-read-events</li>
  * <li>{@link EventEmittingItemProcessListener} - item-process-events</li>
  * <li>{@link EventEmittingItemWriteListener} - item-write-events</li>

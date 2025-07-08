@@ -27,16 +27,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionException;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersIncrementer;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.JobExecutionException;
+import org.springframework.batch.core.job.parameters.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.job.parameters.JobParametersIncrementer;
+import org.springframework.batch.core.job.parameters.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -53,11 +53,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link ApplicationRunner} to {@link JobLauncher launch} Spring Batch jobs. Runs all
+ * {@link ApplicationRunner} to {@link JobOperator launch} Spring Batch jobs. Runs all
  * jobs in the surrounding context by default and throws an exception upon the first job
  * that returns an {@link BatchStatus} of FAILED if a {@link TaskExecutor} in the
- * {@link JobLauncher} is not specified. If a {@link TaskExecutor} is specified in the
- * {@link JobLauncher} then all Jobs are launched and an exception is thrown if one or
+ * {@link JobOperator} is not specified. If a {@link TaskExecutor} is specified in the
+ * {@link JobOperator} then all Jobs are launched and an exception is thrown if one or
  * more of the jobs has an {@link BatchStatus} of FAILED. TaskJobLauncherApplicationRunner
  * can also be used to launch a specific job by providing a jobName. The
  * TaskJobLauncherApplicationRunner takes the place of the
@@ -70,9 +70,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private static final Log logger = LogFactory.getLog(TaskJobLauncherApplicationRunner.class);
 
-	private final JobLauncher taskJobLauncher;
-
-	private final JobExplorer taskJobExplorer;
+	private final JobOperator taskJobOperator;
 
 	private final JobRepository taskJobRepository;
 
@@ -84,18 +82,16 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	/**
 	 * Create a new {@link TaskJobLauncherApplicationRunner}.
-	 * @param jobLauncher to launch jobs
-	 * @param jobExplorer to check the job repository for previous executions
+	 * @param jobOperator to launch jobs
 	 * @param jobRepository to check if a job instance exists with the given parameters
 	 * when running a job
 	 * @param taskBatchProperties the properties used to configure the
 	 * taskBatchProperties.
 	 */
-	public TaskJobLauncherApplicationRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
-			JobRepository jobRepository, TaskBatchProperties taskBatchProperties) {
-		super(jobLauncher, jobExplorer, jobRepository);
-		this.taskJobLauncher = jobLauncher;
-		this.taskJobExplorer = jobExplorer;
+	public TaskJobLauncherApplicationRunner(JobOperator jobOperator, JobRepository jobRepository,
+			TaskBatchProperties taskBatchProperties) {
+		super(jobOperator, jobRepository);
+		this.taskJobOperator = jobOperator;
 		this.taskJobRepository = jobRepository;
 		this.taskBatchProperties = taskBatchProperties;
 	}
@@ -114,11 +110,12 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	}
 
 	@Override
-	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
-			JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+	protected void execute(Job job, JobParameters jobParameters)
+			throws JobExecutionAlreadyRunningException, NoSuchJobException, JobRestartException,
+			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		String jobName = job.getName();
 		JobParameters parameters = jobParameters;
-		boolean jobInstanceExists = this.taskJobRepository.isJobInstanceExists(jobName, parameters);
+		boolean jobInstanceExists = this.taskJobRepository.getJobInstance(job.getName(), jobParameters) != null;
 		if (jobInstanceExists) {
 			JobExecution lastJobExecution = this.taskJobRepository.getLastJobExecution(jobName, jobParameters);
 			if (lastJobExecution != null && isStoppedOrFailed(lastJobExecution) && job.isRestartable()) {
@@ -139,13 +136,13 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		else {
 			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
 			if (incrementer != null) {
-				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobExplorer)
+				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobRepository)
 					.getNextJobParameters(job)
 					.toJobParameters();
 				parameters = merge(nextParameters, jobParameters);
 			}
 		}
-		JobExecution execution = this.taskJobLauncher.run(job, parameters);
+		JobExecution execution = this.taskJobOperator.start(job, parameters);
 		if (this.taskApplicationEventPublisher != null) {
 			this.taskApplicationEventPublisher.publishEvent(new JobExecutionEvent(execution));
 		}
@@ -181,7 +178,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private BatchStatus getCurrentBatchStatus(JobExecution jobExecution) {
 		if (jobExecution.getStatus().isRunning()) {
-			return this.taskJobExplorer.getJobExecution(jobExecution.getId()).getStatus();
+			return this.taskJobRepository.getJobExecution(jobExecution.getId()).getStatus();
 		}
 		return jobExecution.getStatus();
 	}

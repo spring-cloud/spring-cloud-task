@@ -18,10 +18,9 @@ package org.springframework.cloud.task.batch.configuration;
 
 import java.util.List;
 
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.batch.autoconfigure.BatchProperties;
@@ -40,9 +39,7 @@ import org.springframework.util.StringUtils;
 public class TaskJobLauncherApplicationRunnerFactoryBean
 		implements FactoryBean<TaskJobLauncherApplicationRunner>, ApplicationEventPublisherAware {
 
-	private final JobLauncher jobLauncher;
-
-	private final JobExplorer jobExplorer;
+	private final JobOperator jobOperator;
 
 	private final List<Job> jobs;
 
@@ -58,15 +55,14 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	public TaskJobLauncherApplicationRunnerFactoryBean(JobLauncher jobLauncher, JobExplorer jobExplorer, List<Job> jobs,
+	public TaskJobLauncherApplicationRunnerFactoryBean(JobOperator jobOperator, List<Job> jobs,
 			TaskBatchProperties taskBatchProperties, JobRegistry jobRegistry, JobRepository jobRepository,
 			BatchProperties batchProperties) {
 		Assert.notNull(taskBatchProperties, "taskBatchProperties must not be null");
 		Assert.notNull(batchProperties, "batchProperties must not be null");
 		Assert.notEmpty(jobs, "jobs must not be null nor empty");
 
-		this.jobLauncher = jobLauncher;
-		this.jobExplorer = jobExplorer;
+		this.jobOperator = jobOperator;
 		this.jobs = jobs;
 		this.jobName = taskBatchProperties.getJobNames();
 		this.jobRegistry = jobRegistry;
@@ -88,7 +84,7 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 	@Override
 	public TaskJobLauncherApplicationRunner getObject() {
 		TaskJobLauncherApplicationRunner taskJobLauncherApplicationRunner = new TaskJobLauncherApplicationRunner(
-				this.jobLauncher, this.jobExplorer, this.jobRepository, this.taskBatchProperties);
+				this.jobOperator, this.jobRepository, this.taskBatchProperties);
 		taskJobLauncherApplicationRunner.setJobs(this.jobs);
 		if (StringUtils.hasText(this.jobName)) {
 			taskJobLauncherApplicationRunner.setJobName(this.jobName);

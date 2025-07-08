@@ -29,11 +29,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.file.FlatFileFooterCallback;
 import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.FlatFileItemWriter;
@@ -152,15 +152,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.transactional=false");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -197,15 +197,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.maximumLength=10");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -234,15 +234,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.format=item = %s");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -269,15 +269,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.delimited=true");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -303,15 +303,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.encoding=UTF-8");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -339,15 +339,15 @@ public class FlatFileItemWriterAutoConfigurationTests {
 					"spring.batch.job.flatfileitemwriter.names=item");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

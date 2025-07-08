@@ -28,14 +28,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.step.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
 /**
- * This is a JobEvent DTO created so that a
- * {@link org.springframework.batch.core.JobExecution} can be serialized into Json without
- * having to add mixins to an ObjectMapper.
+ * This is a JobEvent DTO created so that a {@link JobExecution} can be serialized into
+ * Json without having to add mixins to an ObjectMapper.
  *
  * @author Glenn Renfro
  */

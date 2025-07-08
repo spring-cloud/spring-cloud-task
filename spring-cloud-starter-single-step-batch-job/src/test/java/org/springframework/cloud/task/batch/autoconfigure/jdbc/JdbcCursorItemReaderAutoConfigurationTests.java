@@ -27,11 +27,11 @@ import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.support.ListItemWriter;
 import org.springframework.batch.item.util.ExecutionContextUserSupport;
@@ -102,15 +102,15 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				"spring.batch.job.jdbcsinglestep.datasource.enable=false");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -148,15 +148,15 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 				"jdbccursoritemreader.datasource.driverClassName=" + DATASOURCE_DRIVER_CLASS_NAME);
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -184,15 +184,15 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 					"spring.batch.job.jdbcsinglestep.datasource.enable=false");
 
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -285,15 +285,15 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 	private void runTest(ApplicationContextRunner applicationContextRunner) {
 		applicationContextRunner.run((context) -> {
-			JobLauncher jobLauncher = context.getBean(JobLauncher.class);
+			JobOperator jobOperator = context.getBean(JobOperator.class);
 
 			Job job = context.getBean(Job.class);
 
-			JobExecution jobExecution = jobLauncher.run(job, new JobParameters());
+			JobExecution jobExecution = jobOperator.start(job, new JobParameters());
 
-			JobExplorer jobExplorer = context.getBean(JobExplorer.class);
+			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobExplorer.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 		});

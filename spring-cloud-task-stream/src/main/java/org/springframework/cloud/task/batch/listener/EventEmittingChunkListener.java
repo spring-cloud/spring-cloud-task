@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.springframework.batch.core.ChunkListener;
+import org.springframework.batch.core.listener.ChunkListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.Chunk;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;

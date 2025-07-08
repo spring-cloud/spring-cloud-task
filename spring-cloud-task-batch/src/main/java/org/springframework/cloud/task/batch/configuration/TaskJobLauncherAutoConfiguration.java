@@ -18,10 +18,9 @@ package org.springframework.cloud.task.batch.configuration;
 
 import java.util.List;
 
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -50,12 +49,11 @@ public class TaskJobLauncherAutoConfiguration {
 
 	@Bean
 	@ConditionalOnClass(name = "org.springframework.boot.batch.autoconfigure.JobLauncherApplicationRunner")
-	public TaskJobLauncherApplicationRunnerFactoryBean taskJobLauncherApplicationRunner(JobLauncher jobLauncher,
-			JobExplorer jobExplorer, List<Job> jobs, JobRegistry jobRegistry, JobRepository jobRepository,
-			BatchProperties batchProperties) {
+	public TaskJobLauncherApplicationRunnerFactoryBean taskJobLauncherApplicationRunner(JobOperator jobLauncher,
+			List<Job> jobs, JobRegistry jobRegistry, JobRepository jobRepository, BatchProperties batchProperties) {
 		TaskJobLauncherApplicationRunnerFactoryBean taskJobLauncherApplicationRunnerFactoryBean;
-		taskJobLauncherApplicationRunnerFactoryBean = new TaskJobLauncherApplicationRunnerFactoryBean(jobLauncher,
-				jobExplorer, jobs, this.properties, jobRegistry, jobRepository, batchProperties);
+		taskJobLauncherApplicationRunnerFactoryBean = new TaskJobLauncherApplicationRunnerFactoryBean(jobLauncher, jobs,
+				this.properties, jobRegistry, jobRepository, batchProperties);
 
 		return taskJobLauncherApplicationRunnerFactoryBean;
 	}

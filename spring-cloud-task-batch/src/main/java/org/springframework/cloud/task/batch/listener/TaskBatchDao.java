@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
-import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.job.JobExecution;
 import org.springframework.cloud.task.repository.TaskExecution;
 
 /**

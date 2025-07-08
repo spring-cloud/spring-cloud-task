@@ -20,12 +20,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.springframework.batch.core.ChunkListener;
-import org.springframework.batch.core.ItemProcessListener;
-import org.springframework.batch.core.ItemReadListener;
-import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.SkipListener;
-import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.core.listener.ChunkListener;
+import org.springframework.batch.core.listener.ItemProcessListener;
+import org.springframework.batch.core.listener.ItemReadListener;
+import org.springframework.batch.core.listener.ItemWriteListener;
+import org.springframework.batch.core.listener.SkipListener;
+import org.springframework.batch.core.listener.StepExecutionListener;
 import org.springframework.batch.core.step.item.ChunkOrientedTasklet;
 import org.springframework.batch.core.step.item.SimpleChunkProcessor;
 import org.springframework.batch.core.step.item.SimpleChunkProvider;

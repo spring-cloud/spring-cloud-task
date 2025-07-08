@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.cloud.task.batch.listener.support.JobParameterEvent;
 
 import static org.assertj.core.api.Assertions.assertThat;

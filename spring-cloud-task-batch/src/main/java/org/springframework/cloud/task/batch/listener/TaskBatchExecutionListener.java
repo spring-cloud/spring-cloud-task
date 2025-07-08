@@ -19,8 +19,8 @@ package org.springframework.cloud.task.batch.listener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.cloud.task.listener.TaskExecutionListener;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.core.Ordered;

@@ -19,7 +19,7 @@ package org.springframework.cloud.task.batch.listener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.batch.core.ItemWriteListener;
+import org.springframework.batch.core.listener.ItemWriteListener;
 import org.springframework.batch.item.Chunk;
 import org.springframework.cloud.task.batch.listener.support.BatchJobHeaders;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
