@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>spring-cloud-task-parent</artifactId>
 		<groupId>org.springframework.cloud</groupId>
-		<version>3.2.2</version>
+		<version>3.2.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<name>Spring Cloud Task Integration Tests</name>
@@ -13,7 +13,7 @@
 	<artifactId>spring-cloud-task-integration-tests</artifactId>
 
 	<properties>
-		<spring-cloud-commons.version>4.2.2</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.2.2-SNAPSHOT</spring-cloud-commons.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
