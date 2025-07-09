@@ -13,7 +13,7 @@
 	<artifactId>spring-cloud-task-integration-tests</artifactId>
 
 	<properties>
-		<spring-cloud-commons.version>4.2.2-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.2.3-SNAPSHOT</spring-cloud-commons.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
