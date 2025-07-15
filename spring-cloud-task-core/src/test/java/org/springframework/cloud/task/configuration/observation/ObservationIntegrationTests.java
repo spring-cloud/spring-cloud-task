@@ -64,10 +64,10 @@ class ObservationIntegrationTests {
 		List<FinishedSpan> finishedSpans = finishedSpans();
 
 		SpansAssert.then(finishedSpans)
-			.thenASpanWithNameEqualTo("my-command-line-runner")
+			.thenASpanWithNameEqualTo("myCommandLineRunner")
 			.hasTag("spring.cloud.task.runner.bean-name", "myCommandLineRunner")
 			.backToSpans()
-			.thenASpanWithNameEqualTo("my-application-runner")
+			.thenASpanWithNameEqualTo("myApplicationRunner")
 			.hasTag("spring.cloud.task.runner.bean-name", "myApplicationRunner");
 		MeterRegistryAssert.then(this.meterRegistry)
 			.hasTimerWithNameAndTags("spring.cloud.task.runner",
