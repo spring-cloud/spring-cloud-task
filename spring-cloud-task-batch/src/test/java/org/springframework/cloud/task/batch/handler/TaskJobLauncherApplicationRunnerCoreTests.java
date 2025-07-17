@@ -35,7 +35,6 @@ import org.springframework.batch.core.job.parameters.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -124,12 +123,15 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			// A failed job that is not restartable does not re-use the job params of
 			// the last execution, but creates a new job instance when running it again.
 			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
-			assertThatExceptionOfType(JobRestartException.class).isThrownBy(() -> {
+			assertThatExceptionOfType(TaskException.class).isThrownBy(() -> {
 				// try to re-run a failed execution
+				// In this case the change from the previous behavior is that a new job
+				// instance is created
+				// https://github.com/spring-projects/spring-batch/issues/4910
 				jobLauncherContext.runner.execute(job,
 						new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
-				fail("expected JobRestartException");
-			}).withMessageContaining("JobInstance already exists and is not restartable");
+				fail("expected TaskException");
+			}).withMessageContaining("Job job failed during execution for job instance id 3 with jobExecutionId of 3 ");
 		});
 	}
 
@@ -148,9 +150,11 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			runFailedJob(jobLauncherContext, job, jobParameters);
 			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
 			// try to re-run a failed execution with non identifying parameters
+			// Updated to expect a new 2 instances are created because of this change
+			// https://github.com/spring-projects/spring-batch/issues/4910
 			runFailedJob(jobLauncherContext, job,
 					new JobParametersBuilder(jobParameters).addLong("run.id", 1L).toJobParameters());
-			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
+			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
 		});
 	}
 

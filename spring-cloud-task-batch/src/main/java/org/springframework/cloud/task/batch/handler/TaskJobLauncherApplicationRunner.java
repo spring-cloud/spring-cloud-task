@@ -30,9 +30,9 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobExecutionException;
+import org.springframework.batch.core.job.JobInstance;
 import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.batch.core.job.parameters.JobParameters;
-import org.springframework.batch.core.job.parameters.JobParametersBuilder;
 import org.springframework.batch.core.job.parameters.JobParametersIncrementer;
 import org.springframework.batch.core.job.parameters.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobOperator;
@@ -50,6 +50,7 @@ import org.springframework.cloud.task.batch.configuration.TaskBatchProperties;
 import org.springframework.cloud.task.listener.TaskException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -90,7 +91,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	 */
 	public TaskJobLauncherApplicationRunner(JobOperator jobOperator, JobRepository jobRepository,
 			TaskBatchProperties taskBatchProperties) {
-		super(jobOperator, jobRepository);
+		super(jobOperator);
 		this.taskJobOperator = jobOperator;
 		this.taskJobRepository = jobRepository;
 		this.taskBatchProperties = taskBatchProperties;
@@ -136,9 +137,12 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		else {
 			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
 			if (incrementer != null) {
-				JobParameters nextParameters = new JobParametersBuilder(jobParameters, this.taskJobRepository)
-					.getNextJobParameters(job)
-					.toJobParameters();
+				// JobParameters nextParameters = new JobParametersBuilder(jobParameters,
+				// this.taskJobRepository)
+				// .getNextJobParameters(job)
+				// .toJobParameters();
+				JobParameters nextParameters = getNextJobParameters(job, new HashMap<>(jobParameters.getParameters()),
+						this.taskJobRepository);
 				parameters = merge(nextParameters, jobParameters);
 			}
 		}
@@ -221,6 +225,53 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		merged.putAll(parameters.getParameters());
 		merged.putAll(additionals.getParameters());
 		return new JobParameters(merged);
+	}
+
+	/**
+	 * Initializes the {@link JobParameters} based on the state of the {@link Job}. This
+	 * should be called after all parameters have been entered into the builder. All
+	 * parameters already set on this builder instance are appended to those retrieved
+	 * from the job incrementer, overriding any with the same key (this is the same
+	 * behavior as
+	 * {@link org.springframework.batch.core.launch.support.CommandLineJobRunner} with the
+	 * {@code -next} option and
+	 * {@link org.springframework.batch.core.launch.JobOperator#startNextInstance(String)}).
+	 * @param job The job for which the {@link JobParameters} are being constructed.
+	 * @return a reference to this object.
+	 *
+	 * @since 4.0
+	 */
+	public JobParameters getNextJobParameters(Job job, Map<String, JobParameter<?>> parameterMap,
+			JobRepository taskJobRepository) {
+		Assert.notNull(job, "Job must not be null");
+		Assert.notNull(job.getJobParametersIncrementer(),
+				"No job parameters incrementer found for job=" + job.getName());
+
+		String name = job.getName();
+		JobParameters nextParameters;
+		JobInstance lastInstance = taskJobRepository.getLastJobInstance(name);
+		JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
+		if (lastInstance == null) {
+			// Start from a completely clean sheet
+			nextParameters = incrementer.getNext(new JobParameters());
+		}
+		else {
+			JobExecution previousExecution = taskJobRepository.getLastJobExecution(lastInstance);
+			if (previousExecution == null) {
+				// Normally this will not happen - an instance exists with no executions
+				nextParameters = incrementer.getNext(new JobParameters());
+			}
+			else {
+				nextParameters = incrementer.getNext(previousExecution.getJobParameters());
+			}
+		}
+
+		// start with parameters from the incrementer
+		Map<String, JobParameter<?>> nextParametersMap = new HashMap<>(nextParameters.getParameters());
+		// append new parameters (overriding those with the same key)
+		nextParametersMap.putAll(parameterMap);
+		parameterMap = nextParametersMap;
+		return new JobParameters(parameterMap);
 	}
 
 }
