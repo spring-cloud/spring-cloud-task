@@ -18,6 +18,7 @@ spring-shell.log
 target/
 test-output
 result.txt
+.flattened-pom.xml
 
 # Eclipse artifacts, including WTP generated manifests
 .classpath
