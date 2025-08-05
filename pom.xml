@@ -63,19 +63,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-deployer-dependencies</artifactId>
-				<version>${spring-cloud-deployer.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-deployer-local</artifactId>
-				<version>${spring-cloud-deployer-local.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
 				<version>${spring-cloud-stream-binder-rabbit.version}</version>
 			</dependency>
@@ -110,9 +97,6 @@
 	<properties>
 
 		<spring-cloud-stream.version>5.0.0-SNAPSHOT</spring-cloud-stream.version>
-		<spring-cloud-deployer.version>2.9.1</spring-cloud-deployer.version>
-		<spring-cloud-deployer-local.version>2.9.1
-		</spring-cloud-deployer-local.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
 		<jakarta-ee-api.version>10.0.0</jakarta-ee-api.version>
