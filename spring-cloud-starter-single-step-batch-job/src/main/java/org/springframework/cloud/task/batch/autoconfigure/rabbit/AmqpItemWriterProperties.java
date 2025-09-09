@@ -16,7 +16,7 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -32,7 +32,7 @@ public class AmqpItemWriterProperties {
 	private boolean enabled;
 
 	/**
-	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a
+	 * Establishes whether the {@link JacksonJsonMessageConverter} is to be used as a
 	 * message converter. Defaults to {@code true}.
 	 */
 	private boolean jsonConverterEnabled = true;
@@ -55,7 +55,7 @@ public class AmqpItemWriterProperties {
 	}
 
 	/**
-	 * States whether the {@link Jackson2JsonMessageConverter} is used as a message
+	 * States whether the {@link JacksonJsonMessageConverter} is used as a message
 	 * converter.
 	 * @return true if enabled else false.
 	 */
@@ -64,7 +64,7 @@ public class AmqpItemWriterProperties {
 	}
 
 	/**
-	 * Establishes whether the {@link Jackson2JsonMessageConverter} is to be used as a
+	 * Establishes whether the {@link JacksonJsonMessageConverter} is to be used as a
 	 * message converter.
 	 * @param jsonConverterEnabled true if it is to be enabled else false. Defaults to
 	 * true.

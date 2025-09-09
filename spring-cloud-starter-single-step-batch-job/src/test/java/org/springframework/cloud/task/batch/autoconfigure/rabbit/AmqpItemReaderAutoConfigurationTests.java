@@ -35,7 +35,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
@@ -80,7 +80,7 @@ public class AmqpItemReaderAutoConfigurationTests {
 	void setupTest() {
 		this.connectionFactory = new CachingConnectionFactory(host, amqpPort);
 		this.template = new RabbitTemplate(this.connectionFactory);
-		this.template.setMessageConverter(new Jackson2JsonMessageConverter());
+		this.template.setMessageConverter(new JacksonJsonMessageConverter());
 		AmqpAdmin admin = new RabbitAdmin(this.connectionFactory);
 		admin.declareQueue(new Queue("foo"));
 

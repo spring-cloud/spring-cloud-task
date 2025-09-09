@@ -19,7 +19,7 @@ package org.springframework.cloud.task.batch.autoconfigure.rabbit;
 import java.util.Map;
 
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.batch.item.amqp.AmqpItemWriter;
 import org.springframework.batch.item.amqp.builder.AmqpItemWriterBuilder;
@@ -57,7 +57,7 @@ public class AmqpItemWriterAutoConfiguration {
 			matchIfMissing = true)
 	@Bean
 	public MessageConverter messageConverter() {
-		return new Jackson2JsonMessageConverter();
+		return new JacksonJsonMessageConverter();
 	}
 
 }

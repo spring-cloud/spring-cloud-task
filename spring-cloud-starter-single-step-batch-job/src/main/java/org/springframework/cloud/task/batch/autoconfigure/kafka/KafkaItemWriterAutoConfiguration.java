@@ -35,7 +35,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 import org.springframework.util.Assert;
 
 /**
@@ -87,7 +87,7 @@ public class KafkaItemWriterAutoConfiguration {
 	ProducerFactory<Object, Map<String, Object>> producerFactory() {
 		Map<String, Object> configs = new HashMap<>();
 		configs.putAll(this.kafkaProperties.getProducer().buildProperties());
-		return new DefaultKafkaProducerFactory<>(configs, null, new JsonSerializer<>());
+		return new DefaultKafkaProducerFactory<>(configs, null, new JacksonJsonSerializer());
 	}
 
 	private void validateProperties(KafkaItemWriterProperties kafkaItemWriterProperties) {
