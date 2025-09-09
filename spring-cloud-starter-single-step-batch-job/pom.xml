@@ -79,10 +79,12 @@
 		<dependency>
 			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
+			<version>3.0.0-rc9</version>
 		</dependency>
 		<dependency>
 			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+			<version>3.0.0-rc9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
