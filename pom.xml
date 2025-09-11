@@ -99,7 +99,7 @@
 		<spring-cloud-stream.version>5.0.0-SNAPSHOT</spring-cloud-stream.version>
 		<spring-cloud-stream-binder-rabbit.version>${spring-cloud-stream.version}
 		</spring-cloud-stream-binder-rabbit.version>
-		<jakarta-ee-api.version>10.0.0</jakarta-ee-api.version>
+		<jakarta-ee-api.version>11.0.0</jakarta-ee-api.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.jacoco.reportPath>
@@ -232,7 +232,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				<version>0.8.7</version>
+				<version>0.8.13</version>
 			</plugin>
 			<!--Disabled until checkstyle format is updated-->
 <!--			<plugin>-->
