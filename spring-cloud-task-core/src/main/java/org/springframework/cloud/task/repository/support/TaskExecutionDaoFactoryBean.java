@@ -42,14 +42,19 @@ import org.springframework.util.StringUtils;
  *
  * @author Michael Minella
  * @author Glenn Renfro
+ * @author JongJun Kim
  */
 public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao> {
 
 	private DataSource dataSource;
 
+	private Object mongoOperations;
+
 	private TaskExecutionDao dao = null;
 
 	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
+
+	private TaskProperties taskProperties;
 
 	/**
 	 * Default constructor will result in a Map based TaskExecutionDao. <b>This is only
@@ -79,10 +84,30 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		this.dataSource = dataSource;
 	}
 
+	/**
+	 * MongoOperations to be used for MongoDB storage.
+	 * @param mongoOperations MongoOperations instance to be used
+	 * @param taskProperties the task properties for configuration
+	 */
+	public TaskExecutionDaoFactoryBean(Object mongoOperations, TaskProperties taskProperties) {
+		Assert.notNull(mongoOperations, "MongoOperations is required");
+		Assert.notNull(taskProperties, "TaskProperties is required");
+
+		if (!DatabaseType.isMongoDB(mongoOperations)) {
+			throw new IllegalArgumentException("Provided object is not a MongoDB operations instance");
+		}
+
+		this.mongoOperations = mongoOperations;
+		this.taskProperties = taskProperties;
+	}
+
 	@Override
 	public TaskExecutionDao getObject() throws Exception {
 		if (this.dao == null) {
-			if (this.dataSource != null) {
+			if (this.mongoOperations != null) {
+				buildMongoTaskExecutionDao();
+			}
+			else if (this.dataSource != null) {
 				buildTaskExecutionDao(this.dataSource);
 			}
 			else {
@@ -138,6 +163,40 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		}
 		((JdbcTaskExecutionDao) this.dao)
 			.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
+	}
+
+	private void buildMongoTaskExecutionDao() {
+		if (DatabaseType.isMongoDB(this.mongoOperations)) {
+			try {
+				// Verify MongoDB classes are available at runtime
+				Class.forName("org.springframework.data.mongodb.core.MongoOperations");
+
+				// Load MongoTaskExecutionDao class via reflection to avoid compile-time dependency
+				Class<?> daoClass = Class.forName(
+					"org.springframework.cloud.task.repository.dao.MongoTaskExecutionDao");
+
+				// Instantiate using the Object-type constructor
+				// (mongoOperations is kept as Object to avoid compile-time MongoDB dependency)
+				this.dao = (TaskExecutionDao) daoClass
+					.getConstructor(Object.class, TaskProperties.class)
+					.newInstance(this.mongoOperations, this.taskProperties);
+			}
+			catch (ClassNotFoundException e) {
+				throw new IllegalStateException(
+					"MongoDB support requires spring-data-mongodb dependency. " +
+					"Add org.springframework.boot:spring-boot-starter-data-mongodb to your dependencies.", e);
+			}
+			catch (Exception e) {
+				throw new IllegalStateException(
+					"Failed to create MongoTaskExecutionDao. " +
+					"Ensure MongoDB is properly configured.", e);
+			}
+		}
+		else {
+			throw new IllegalArgumentException(
+				String.format("Provided object is not a valid MongoOperations instance. Found: %s",
+					this.mongoOperations.getClass().getName()));
+		}
 	}
 
 	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {
