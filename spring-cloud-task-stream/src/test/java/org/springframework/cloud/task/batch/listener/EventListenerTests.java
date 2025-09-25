@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobInstance;
@@ -75,11 +75,11 @@ public class EventListenerTests {
 
 	private final TaskEventProperties taskEventProperties = new TaskEventProperties();
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	public void beforeTests() {
-		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper = JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
 
 		this.applicationContext = new SpringApplicationBuilder()
 			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
@@ -88,7 +88,6 @@ public class EventListenerTests {
 			.run();
 		StreamBridge streamBridge = this.applicationContext.getBean(StreamBridge.class);
 		MessagePublisher messagePublisher = new MessagePublisher(streamBridge);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		this.eventEmittingSkipListener = new EventEmittingSkipListener(messagePublisher, this.taskEventProperties);
 		this.eventEmittingItemProcessListener = new EventEmittingItemProcessListener(messagePublisher,
