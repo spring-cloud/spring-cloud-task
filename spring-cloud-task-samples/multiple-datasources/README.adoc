@@ -27,7 +27,7 @@ mvn clean package
 
 [source,shell]
 ----
-java -jar target/multiple-datasources-3.0.0.jar
+java -jar target/multiple-datasources-5.0.0.jar
 ----
 
 == Native Build:

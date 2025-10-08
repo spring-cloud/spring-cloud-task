@@ -17,7 +17,7 @@ This is a task application that emits events on a channel named `task-events`
 
 [source,shell]
 ----
-java -jar target/task-events-3.0.0.RELEASE.jar
+java -jar target/task-events-5.0.0.RELEASE.jar
 ----
 
 You can listen for the events on the task-events channel with a Spring Cloud Stream Sink

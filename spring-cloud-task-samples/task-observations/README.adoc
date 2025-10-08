@@ -22,7 +22,7 @@ mvn clean package
 
 [source,shell]
 ----
-java -jar target/task-observations-3.0.0.jar
+java -jar target/task-observations-5.0.0.jar
 ----
 
 == Native Build:
