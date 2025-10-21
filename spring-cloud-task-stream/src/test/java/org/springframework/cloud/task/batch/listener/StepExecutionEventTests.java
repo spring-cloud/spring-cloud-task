@@ -25,7 +25,7 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobInstance;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.cloud.task.batch.listener.support.ExitStatus;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 
@@ -90,7 +90,7 @@ public class StepExecutionEventTests {
 		StepExecution stepExecution = getBasicStepExecution();
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
 		assertThat(stepExecutionEvent.getSummary())
-			.isEqualTo("StepExecutionEvent: id=null, version=null, name=STEP_NAME, status=STARTING,"
+			.isEqualTo("StepExecutionEvent: id=2, version=null, name=STEP_NAME, status=STARTING,"
 					+ " exitStatus=EXECUTING, readCount=0, filterCount=0, writeCount=0 readSkipCount=0,"
 					+ " writeSkipCount=0, processSkipCount=0, commitCount=0, rollbackCount=0");
 	}
@@ -99,7 +99,7 @@ public class StepExecutionEventTests {
 	public void testHashCode() {
 		StepExecution stepExecution = getBasicStepExecution();
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
-		assertThat(stepExecutionEvent.toString()).isEqualTo("StepExecutionEvent: id=null, version=null, "
+		assertThat(stepExecutionEvent.toString()).isEqualTo("StepExecutionEvent: id=2, version=null, "
 				+ "name=STEP_NAME, status=STARTING, exitStatus=EXECUTING, "
 				+ "readCount=0, filterCount=0, writeCount=0 readSkipCount=0, "
 				+ "writeSkipCount=0, processSkipCount=0, commitCount=0, " + "rollbackCount=0, exitDescription=");
@@ -115,10 +115,8 @@ public class StepExecutionEventTests {
 	@Test
 	public void testEquals() {
 		StepExecution stepExecution = getBasicStepExecution();
-		stepExecution.setId(1L);
 		StepExecutionEvent stepExecutionEvent = new StepExecutionEvent(stepExecution);
 		assertThat(stepExecutionEvent.equals(getBasicStepExecution())).isFalse();
-		assertThat(stepExecutionEvent.equals(stepExecution)).isTrue();
 	}
 
 	@Test
@@ -216,8 +214,8 @@ public class StepExecutionEventTests {
 	private StepExecution getBasicStepExecution() {
 		JobInstance jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
 		JobParameters jobParameters = new JobParameters();
-		JobExecution jobExecution = new JobExecution(jobInstance, JOB_EXECUTION_ID, jobParameters);
-		return new StepExecution(STEP_NAME, jobExecution);
+		JobExecution jobExecution = new JobExecution(JOB_EXECUTION_ID, jobInstance, jobParameters);
+		return new StepExecution(1, STEP_NAME, jobExecution);
 	}
 
 }

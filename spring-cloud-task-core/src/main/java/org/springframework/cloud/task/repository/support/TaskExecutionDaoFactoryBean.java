@@ -22,8 +22,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
-import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
+import org.springframework.batch.infrastructure.item.database.support.DataFieldMaxValueIncrementerFactory;
+import org.springframework.batch.infrastructure.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.listener.TaskException;

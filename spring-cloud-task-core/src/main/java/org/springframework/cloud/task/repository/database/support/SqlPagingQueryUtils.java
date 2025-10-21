@@ -18,7 +18,7 @@ package org.springframework.cloud.task.repository.database.support;
 
 import java.util.Map;
 
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.Order;
 
 /**
  * Utility class that generates the actual SQL statements used by query providers.

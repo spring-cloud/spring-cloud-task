@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,14 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.file.LineCallbackHandler;
-import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.separator.RecordSeparatorPolicy;
-import org.springframework.batch.item.file.transform.DefaultFieldSet;
-import org.springframework.batch.item.file.transform.LineTokenizer;
-import org.springframework.batch.item.support.ListItemWriter;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.item.file.LineCallbackHandler;
+import org.springframework.batch.infrastructure.item.file.LineMapper;
+import org.springframework.batch.infrastructure.item.file.mapping.FieldSetMapper;
+import org.springframework.batch.infrastructure.item.file.separator.RecordSeparatorPolicy;
+import org.springframework.batch.infrastructure.item.file.transform.DefaultFieldSet;
+import org.springframework.batch.infrastructure.item.file.transform.LineTokenizer;
+import org.springframework.batch.infrastructure.item.support.ListItemWriter;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
@@ -75,6 +76,8 @@ public class FlatFileItemReaderAutoConfigurationTests {
 	 */
 	@Test
 	public void testFullDelimitedConfiguration() {
+		BigInteger tokenizerValidator = BigInteger.ZERO;
+		tokenizerValidator = tokenizerValidator.flipBit(0);
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 			.withUserConfiguration(JobConfiguration.class)
 			.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
@@ -108,7 +111,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -156,7 +159,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -207,7 +210,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -247,7 +250,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -285,7 +288,7 @@ public class FlatFileItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

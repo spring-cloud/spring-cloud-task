@@ -34,7 +34,7 @@ import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.Chunk;
+import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -265,7 +265,7 @@ public class EventListenerTests {
 	@Test
 	public void EventEmittingChunkExecutionListenerBeforeChunk() {
 		final String CHUNK_MESSAGE = "Before Chunk Processing";
-		this.eventEmittingChunkListener.beforeChunk(getChunkContext());
+		this.eventEmittingChunkListener.beforeChunk(new Chunk<>(CHUNK_MESSAGE));
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);
 	}
@@ -273,7 +273,7 @@ public class EventListenerTests {
 	@Test
 	public void EventEmittingChunkExecutionListenerAfterChunk() {
 		final String CHUNK_MESSAGE = "After Chunk Processing";
-		this.eventEmittingChunkListener.afterChunk(getChunkContext());
+		this.eventEmittingChunkListener.afterChunk(new Chunk<>());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);
 	}
@@ -287,7 +287,7 @@ public class EventListenerTests {
 	private JobExecution getJobExecution() {
 		final String JOB_NAME = UUID.randomUUID().toString();
 		JobInstance jobInstance = new JobInstance(1L, JOB_NAME);
-		return new JobExecution(jobInstance, 1L, new JobParameters());
+		return new JobExecution(1L, jobInstance, new JobParameters());
 	}
 
 	private Chunk<String> getSampleList() {

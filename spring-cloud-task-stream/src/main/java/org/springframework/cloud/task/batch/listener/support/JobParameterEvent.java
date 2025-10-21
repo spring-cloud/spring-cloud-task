@@ -38,8 +38,8 @@ public class JobParameterEvent {
 	}
 
 	public JobParameterEvent(JobParameter jobParameter) {
-		this.parameter = jobParameter.getValue();
-		this.identifying = jobParameter.isIdentifying();
+		this.parameter = jobParameter.value();
+		this.identifying = jobParameter.identifying();
 	}
 
 	public boolean isIdentifying() {

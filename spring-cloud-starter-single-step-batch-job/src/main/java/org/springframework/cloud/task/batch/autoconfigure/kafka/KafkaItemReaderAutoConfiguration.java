@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
-import org.springframework.batch.item.kafka.KafkaItemReader;
-import org.springframework.batch.item.kafka.builder.KafkaItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.kafka.KafkaItemReader;
+import org.springframework.batch.infrastructure.item.kafka.builder.KafkaItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

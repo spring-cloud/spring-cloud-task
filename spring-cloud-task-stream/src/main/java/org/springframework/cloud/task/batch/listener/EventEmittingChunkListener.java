@@ -17,8 +17,7 @@
 package org.springframework.cloud.task.batch.listener;
 
 import org.springframework.batch.core.listener.ChunkListener;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.item.Chunk;
+import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.cloud.task.batch.listener.support.MessagePublisher;
 import org.springframework.cloud.task.batch.listener.support.TaskEventProperties;
 import org.springframework.core.Ordered;
@@ -27,9 +26,9 @@ import org.springframework.util.Assert;
 /**
  * Provides informational messages around the {@link Chunk} of a batch job.
  *
- * The {@link ChunkListener#beforeChunk(ChunkContext)} and
- * {@link ChunkListener#afterChunk(ChunkContext)} are both no-ops in this implementation.
- * {@link ChunkListener#afterChunkError(ChunkContext)}.
+ * The {@link ChunkListener#beforeChunk(Chunk)} and
+ * {@link ChunkListener#afterChunk(Chunk)} are both no-ops in this implementation.
+ * {@link ChunkListener#onChunkError(Exception,Chunk)}.
  *
  * @author Ali Shahbour
  */
@@ -54,17 +53,17 @@ public class EventEmittingChunkListener implements ChunkListener, Ordered {
 	}
 
 	@Override
-	public void beforeChunk(ChunkContext context) {
+	public void beforeChunk(Chunk chunk) {
 		this.messagePublisher.publish(this.properties.getChunkEventBindingName(), "Before Chunk Processing");
 	}
 
 	@Override
-	public void afterChunk(ChunkContext context) {
+	public void afterChunk(Chunk chunk) {
 		this.messagePublisher.publish(this.properties.getChunkEventBindingName(), "After Chunk Processing");
 	}
 
 	@Override
-	public void afterChunkError(ChunkContext context) {
+	public void onChunkError(Exception exception, Chunk chunk) {
 
 	}
 

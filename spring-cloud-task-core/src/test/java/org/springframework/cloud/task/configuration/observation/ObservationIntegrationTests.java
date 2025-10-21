@@ -41,7 +41,7 @@ import org.springframework.boot.micrometer.metrics.autoconfigure.MetricsAutoConf
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationAutoConfiguration;
 import org.springframework.boot.micrometer.tracing.autoconfigure.BraveAutoConfiguration;
 import org.springframework.boot.micrometer.tracing.autoconfigure.MicrometerTracingAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
+import org.springframework.boot.micrometer.tracing.test.autoconfigure.AutoConfigureTracing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.zipkin.autoconfigure.ZipkinAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
@@ -49,7 +49,7 @@ import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@AutoConfigureObservability
+@AutoConfigureTracing
 @SpringBootTest(classes = ObservationIntegrationTests.Config.class)
 class ObservationIntegrationTests {
 

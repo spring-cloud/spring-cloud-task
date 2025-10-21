@@ -28,9 +28,9 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.support.ListItemReader;
-import org.springframework.batch.item.support.ListItemWriter;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.item.support.ListItemReader;
+import org.springframework.batch.infrastructure.item.support.ListItemWriter;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
@@ -139,7 +139,7 @@ public class SingleStepJobAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

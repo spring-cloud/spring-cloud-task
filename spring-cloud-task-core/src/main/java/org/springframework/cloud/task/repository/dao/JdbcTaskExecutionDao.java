@@ -33,7 +33,7 @@ import java.util.TreeSet;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;

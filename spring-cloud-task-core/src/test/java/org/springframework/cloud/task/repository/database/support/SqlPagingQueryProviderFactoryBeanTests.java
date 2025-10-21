@@ -22,7 +22,7 @@ import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.cloud.task.repository.dao.JdbcTaskExecutionDao;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.util.TestDBUtils;

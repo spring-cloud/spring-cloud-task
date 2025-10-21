@@ -19,8 +19,8 @@ package org.springframework.cloud.task.batch.autoconfigure.kafka;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.batch.item.kafka.KafkaItemWriter;
-import org.springframework.batch.item.kafka.builder.KafkaItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.kafka.KafkaItemWriter;
+import org.springframework.batch.infrastructure.item.kafka.builder.KafkaItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

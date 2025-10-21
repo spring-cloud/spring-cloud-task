@@ -27,7 +27,7 @@ import org.h2.engine.Mode.ModeEnum;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;

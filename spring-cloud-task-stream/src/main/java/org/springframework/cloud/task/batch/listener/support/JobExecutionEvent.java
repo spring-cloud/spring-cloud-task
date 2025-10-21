@@ -30,7 +30,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.infrastructure.item.ExecutionContext;
 
 /**
  * This is a JobEvent DTO created so that a {@link JobExecution} can be serialized into
@@ -63,7 +63,7 @@ public class JobExecutionEvent extends Entity {
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
 	public JobExecutionEvent() {
-		super();
+		super(0);
 	}
 
 	/**
@@ -71,7 +71,8 @@ public class JobExecutionEvent extends Entity {
 	 * @param original the StepExecution to build this DTO around.
 	 */
 	public JobExecutionEvent(JobExecution original) {
-		this.jobParameters = new JobParametersEvent(original.getJobParameters().getParameters());
+		super(original.getId());
+		this.jobParameters = new JobParametersEvent(original.getJobParameters().parameters());
 		this.jobInstance = new JobInstanceEvent(original.getJobInstance().getId(),
 				original.getJobInstance().getJobName());
 		for (StepExecution stepExecution : original.getStepExecutions()) {
@@ -85,7 +86,6 @@ public class JobExecutionEvent extends Entity {
 		this.exitStatus = new ExitStatus(original.getExitStatus());
 		this.executionContext = original.getExecutionContext();
 		this.failureExceptions = original.getFailureExceptions();
-		this.setId(original.getId());
 		this.setVersion(original.getVersion());
 	}
 
@@ -132,8 +132,7 @@ public class JobExecutionEvent extends Entity {
 	}
 
 	/**
-	 * Convenience getter for for the id of the enclosing job. Useful for DAO
-	 * implementations.
+	 * Convenience getter for the id of the enclosing job. Useful for DAO implementations.
 	 * @return the id of the enclosing job
 	 */
 	public Long getJobId() {

@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.batch.item.file.FlatFileFooterCallback;
-import org.springframework.batch.item.file.FlatFileHeaderCallback;
-import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
-import org.springframework.batch.item.file.transform.FieldExtractor;
-import org.springframework.batch.item.file.transform.LineAggregator;
+import org.springframework.batch.infrastructure.item.file.FlatFileFooterCallback;
+import org.springframework.batch.infrastructure.item.file.FlatFileHeaderCallback;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.file.transform.FieldExtractor;
+import org.springframework.batch.infrastructure.item.file.transform.LineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

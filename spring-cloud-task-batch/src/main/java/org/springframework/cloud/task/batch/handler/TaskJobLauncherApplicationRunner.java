@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,18 +33,17 @@ import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobExecutionException;
 import org.springframework.batch.core.job.JobInstance;
+import org.springframework.batch.core.job.parameters.InvalidJobParametersException;
 import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersIncrementer;
-import org.springframework.batch.core.job.parameters.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.launch.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.launch.JobRestartException;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.batch.repeat.support.RepeatTemplate;
+import org.springframework.batch.infrastructure.repeat.RepeatStatus;
+import org.springframework.batch.infrastructure.repeat.support.RepeatTemplate;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.batch.autoconfigure.JobExecutionEvent;
 import org.springframework.boot.batch.autoconfigure.JobLauncherApplicationRunner;
@@ -111,9 +112,8 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	}
 
 	@Override
-	protected void execute(Job job, JobParameters jobParameters)
-			throws JobExecutionAlreadyRunningException, NoSuchJobException, JobRestartException,
-			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+	protected void execute(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
+			JobRestartException, JobInstanceAlreadyCompleteException, InvalidJobParametersException {
 		String jobName = job.getName();
 		JobParameters parameters = jobParameters;
 		boolean jobInstanceExists = this.taskJobRepository.getJobInstance(job.getName(), jobParameters) != null;
@@ -137,11 +137,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		else {
 			JobParametersIncrementer incrementer = job.getJobParametersIncrementer();
 			if (incrementer != null) {
-				// JobParameters nextParameters = new JobParametersBuilder(jobParameters,
-				// this.taskJobRepository)
-				// .getNextJobParameters(job)
-				// .toJobParameters();
-				JobParameters nextParameters = getNextJobParameters(job, new HashMap<>(jobParameters.getParameters()),
+				JobParameters nextParameters = getNextJobParameters(job, new HashSet<>(jobParameters.parameters()),
 						this.taskJobRepository);
 				parameters = merge(nextParameters, jobParameters);
 			}
@@ -192,7 +188,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		for (JobExecution failedJobExecution : failedJobExecutions) {
 			message.append(String.format(
 					"Job %s failed during " + "execution for job instance id %s with jobExecutionId of %s \n",
-					failedJobExecution.getJobInstance().getJobName(), failedJobExecution.getJobId(),
+					failedJobExecution.getJobInstance().getJobName(), failedJobExecution.getId(),
 					failedJobExecution.getId()));
 		}
 
@@ -203,12 +199,12 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	}
 
 	private JobParameters removeNonIdentifying(JobParameters parameters) {
-		Map<String, JobParameter<?>> parameterMap = parameters.getParameters();
-		HashMap<String, JobParameter<?>> copy = new HashMap<>();
+		Set<JobParameter<?>> parameterMap = parameters.parameters();
+		Set<JobParameter<?>> copy = new HashSet<>();
 
-		for (Map.Entry<String, JobParameter<?>> parameter : parameterMap.entrySet()) {
-			if (parameter.getValue().isIdentifying()) {
-				copy.put(parameter.getKey(), parameter.getValue());
+		for (JobParameter<?> parameter : parameterMap) {
+			if (parameter.identifying()) {
+				copy.add(parameter);
 			}
 		}
 
@@ -222,9 +218,15 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private JobParameters merge(JobParameters parameters, JobParameters additionals) {
 		Map<String, JobParameter<?>> merged = new HashMap<>();
-		merged.putAll(parameters.getParameters());
-		merged.putAll(additionals.getParameters());
-		return new JobParameters(merged);
+		// Add base parameters
+		for (JobParameter<?> param : parameters.parameters()) {
+			merged.put(param.name(), param);
+		}
+		// Override with additionals
+		for (JobParameter<?> param : additionals.parameters()) {
+			merged.put(param.name(), param);
+		}
+		return new JobParameters(new HashSet<>(merged.values()));
 	}
 
 	/**
@@ -241,7 +243,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	 *
 	 * @since 4.0
 	 */
-	public JobParameters getNextJobParameters(Job job, Map<String, JobParameter<?>> parameterMap,
+	public JobParameters getNextJobParameters(Job job, Set<JobParameter<?>> parameterMap,
 			JobRepository taskJobRepository) {
 		Assert.notNull(job, "Job must not be null");
 		Assert.notNull(job.getJobParametersIncrementer(),
@@ -267,9 +269,9 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 		}
 
 		// start with parameters from the incrementer
-		Map<String, JobParameter<?>> nextParametersMap = new HashMap<>(nextParameters.getParameters());
+		Set<JobParameter<?>> nextParametersMap = new HashSet<>(nextParameters.parameters());
 		// append new parameters (overriding those with the same key)
-		nextParametersMap.putAll(parameterMap);
+		nextParametersMap.addAll(parameterMap);
 		parameterMap = nextParametersMap;
 		return new JobParameters(parameterMap);
 	}

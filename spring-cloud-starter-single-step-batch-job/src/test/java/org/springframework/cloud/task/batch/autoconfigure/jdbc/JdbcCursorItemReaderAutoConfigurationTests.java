@@ -32,10 +32,10 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.support.ListItemWriter;
-import org.springframework.batch.item.util.ExecutionContextUserSupport;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.item.database.JdbcCursorItemReader;
+import org.springframework.batch.infrastructure.item.support.ListItemWriter;
+import org.springframework.batch.infrastructure.item.util.ExecutionContextUserSupport;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -46,6 +46,7 @@ import org.springframework.cloud.task.batch.autoconfigure.SingleStepJobAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -88,8 +89,13 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("TRUNCATE TABLE item");
-		jdbcTemplate.execute("DROP TABLE BATCH_JOB_EXECUTION CASCADE");
-		jdbcTemplate.execute("DROP TABLE BATCH_JOB_INSTANCE CASCADE");
+		try {
+			jdbcTemplate.execute("DROP TABLE BATCH_JOB_EXECUTION CASCADE");
+			jdbcTemplate.execute("DROP TABLE BATCH_JOB_INSTANCE CASCADE");
+		}
+		catch (BadSqlGrammarException e) {
+			System.out.println("No tables to cleanup");
+		}
 	}
 
 	@Test
@@ -110,7 +116,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -156,7 +162,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -192,7 +198,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -293,7 +299,7 @@ public class JdbcCursorItemReaderAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 		});

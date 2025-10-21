@@ -16,13 +16,14 @@
 
 package org.springframework.cloud.task.batch.autoconfigure;
 
-import org.springframework.batch.item.file.transform.Range;
+import org.springframework.batch.infrastructure.item.file.transform.Range;
 import org.springframework.core.convert.converter.Converter;
 
 /**
  * Converter for taking properties of format {@code start-end} or {@code start} (where
  * start and end are both integers) and converting them into {@link Range} instances for
- * configuring a {@link org.springframework.batch.item.file.FlatFileItemReader}.
+ * configuring a
+ * {@link org.springframework.batch.infrastructure.item.file.FlatFileItemReader}.
  *
  * @author Michael Minella
  * @since 2.3

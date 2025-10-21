@@ -23,12 +23,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.util.Assert;
 
 /**
  * This is a StepExecution DTO created so that a
- * {@link org.springframework.batch.core.StepExecution} can be serialized into Json
+ * {@link org.springframework.batch.core.step.StepExecution} can be serialized into Json
  * without having to add mixins to an ObjectMapper.
  *
  * @author Glenn Renfro
@@ -72,7 +72,7 @@ public class StepExecutionEvent extends Entity {
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 
 	public StepExecutionEvent() {
-		super();
+		super(0);
 	}
 
 	/**
@@ -80,11 +80,10 @@ public class StepExecutionEvent extends Entity {
 	 * @param stepExecution the StepExecution to build this DTO around.
 	 */
 	public StepExecutionEvent(StepExecution stepExecution) {
-		super();
+		super(stepExecution.getJobExecutionId());
 		Assert.notNull(stepExecution, "StepExecution must be provided to re-hydrate an existing StepExecutionEvent");
 		Assert.notNull(stepExecution.getJobExecution(),
 				"JobExecution must be provided to re-hydrate an existing StepExecutionEvent");
-		setId(stepExecution.getId());
 		this.jobExecutionId = stepExecution.getJobExecutionId();
 		this.stepName = stepExecution.getStepName();
 
@@ -386,13 +385,13 @@ public class StepExecutionEvent extends Entity {
 	@Override
 	public boolean equals(Object obj) {
 
-		if (!(obj instanceof StepExecution) || getId() == null) {
+		if (!(obj instanceof StepExecution)) {
 			return super.equals(obj);
 		}
 		StepExecution other = (StepExecution) obj;
 
 		return this.stepName.equals(other.getStepName()) && (this.jobExecutionId == other.getJobExecutionId())
-				&& getId().equals(other.getId());
+				&& getId() == other.getId();
 	}
 
 	/*

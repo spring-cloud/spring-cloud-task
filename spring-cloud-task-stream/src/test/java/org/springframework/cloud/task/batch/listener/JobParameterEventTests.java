@@ -42,12 +42,12 @@ public class JobParameterEventTests {
 	public void testConstructor() {
 		final String EXPECTED_VALUE = "FOO";
 		final LocalDateTime EXPECTED_DATE_VALUE = LocalDateTime.now();
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
+		JobParameter<?> jobParameter = new JobParameter<>(EXPECTED_VALUE + "Key", EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_VALUE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
 
-		jobParameter = new JobParameter(EXPECTED_DATE_VALUE, LocalDateTime.class);
+		jobParameter = new JobParameter<>("dateKey", EXPECTED_DATE_VALUE, LocalDateTime.class);
 		jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.getValue()).isEqualTo(EXPECTED_DATE_VALUE);
 		assertThat(jobParameterEvent.isIdentifying()).isTrue();
@@ -57,7 +57,7 @@ public class JobParameterEventTests {
 	@Test
 	public void testEquals() {
 		final String EXPECTED_VALUE = "FOO";
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
+		JobParameter<?> jobParameter = new JobParameter<>(EXPECTED_VALUE + "Key", EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		JobParameterEvent anotherJobParameterEvent = new JobParameterEvent(jobParameter);
 
@@ -69,7 +69,7 @@ public class JobParameterEventTests {
 	@Test
 	public void testValidHashCode() {
 		final String EXPECTED_VALUE = "FOO";
-		JobParameter jobParameter = new JobParameter(EXPECTED_VALUE, String.class);
+		JobParameter<?> jobParameter = new JobParameter<>(EXPECTED_VALUE + "Key", EXPECTED_VALUE, String.class);
 		JobParameterEvent jobParameterEvent = new JobParameterEvent(jobParameter);
 		assertThat(jobParameterEvent.hashCode()).isNotNull();
 	}

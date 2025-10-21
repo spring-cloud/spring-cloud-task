@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.cloud.task.repository.support.DatabaseType;

@@ -86,17 +86,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>junit-jupiter</artifactId>
+			<artifactId>testcontainers-junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>rabbitmq</artifactId>
+			<artifactId>testcontainers-rabbitmq</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>db2</artifactId>
+			<artifactId>testcontainers-db2</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -117,7 +117,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>mariadb</artifactId>
+			<artifactId>testcontainers-mariadb</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
