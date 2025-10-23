@@ -21,9 +21,9 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mariadb.jdbc.MariaDbDataSource;
-import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mariadb.MariaDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -48,7 +48,7 @@ public class MariaDbTaskRepositoryIntegrationTests {
 	 * Provide a mariadb test container for tests.
 	 */
 	@Container
-	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
+	public static MariaDBContainer mariaDBContainer = new MariaDBContainer(MARIADB_IMAGE);
 
 	@Test
 	public void testTaskExplorer() {

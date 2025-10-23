@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.configuration;
 
+import java.time.Duration;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -151,12 +153,11 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 	private LockRegistry getDefaultLockRegistry(long executionId) {
 		DefaultLockRepository lockRepository = new DefaultLockRepository(this.dataSource, String.valueOf(executionId));
 		lockRepository.setPrefix(this.taskProperties.getTablePrefix());
-		lockRepository.setTimeToLive(this.taskProperties.getSingleInstanceLockTtl());
 		lockRepository.setApplicationContext(this.applicationContext);
 		lockRepository.afterPropertiesSet();
 		lockRepository.setTransactionManager(this.platformTransactionManager);
 		lockRepository.afterSingletonsInstantiated();
-		return new JdbcLockRegistry(lockRepository);
+		return new JdbcLockRegistry(lockRepository, Duration.ofSeconds(this.taskProperties.getSingleInstanceLockTtl()));
 	}
 
 }

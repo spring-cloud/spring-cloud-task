@@ -21,8 +21,8 @@ import org.springframework.util.Assert;
 
 /**
  * This is a JobInstance DTO created so that a
- * {@link org.springframework.batch.core.JobInstance} can be serialized into Json without
- * having to add mixins to an ObjectMapper.
+ * {@link org.springframework.batch.core.job.JobInstance} can be serialized into Json
+ * without having to add mixins to an ObjectMapper.
  *
  * @author Glenn Renfro
  */

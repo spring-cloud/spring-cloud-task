@@ -27,9 +27,9 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mariadb.MariaDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class TaskInitializerTests {
 	 * Provide mariadb test container for tests.
 	 */
 	@Container
-	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
+	public static MariaDBContainer mariaDBContainer = new MariaDBContainer(MARIADB_IMAGE);
 
 	@AfterEach
 	public void tearDown() {
