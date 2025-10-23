@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
@@ -44,7 +43,7 @@ public class JobExecutionEvent extends Entity {
 
 	private JobInstanceEvent jobInstance;
 
-	private Collection<StepExecutionEvent> stepExecutions = new CopyOnWriteArraySet<>();
+	private Collection<StepExecutionEvent> stepExecutions = Collections.synchronizedList(new ArrayList<>());
 
 	private BatchStatus status = BatchStatus.STARTING;
 

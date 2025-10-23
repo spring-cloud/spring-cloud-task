@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.task.batch.configuration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -31,7 +30,6 @@ import org.springframework.batch.infrastructure.support.transaction.Resourceless
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
-import org.springframework.boot.batch.autoconfigure.BatchProperties;
 import org.springframework.boot.batch.autoconfigure.JobLauncherApplicationRunner;
 import org.springframework.boot.jdbc.autoconfigure.EmbeddedDataSourceConfiguration;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
@@ -99,7 +97,6 @@ public class TaskJobLauncherAutoConfigurationTests {
 		assertThat(names).isEqualTo(jobNames);
 	}
 
-	@Disabled
 	@Test
 	public void testAutoBuiltDataSourceWithTaskJobLauncherCLRDisabled() {
 		this.contextRunner.run(context -> {
@@ -131,11 +128,6 @@ public class TaskJobLauncherAutoConfigurationTests {
 		@Bean
 		JobRegistry jobRegistry() {
 			return new MapJobRegistry();
-		}
-
-		@Bean
-		BatchProperties batchProperties() {
-			return new BatchProperties();
 		}
 
 	}

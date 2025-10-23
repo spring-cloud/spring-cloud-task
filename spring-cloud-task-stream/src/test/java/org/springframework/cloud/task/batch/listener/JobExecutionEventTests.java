@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.BatchStatus;
@@ -74,7 +73,6 @@ public class JobExecutionEventTests {
 
 	private JobInstance jobInstance;
 
-	//
 	@BeforeEach
 	public void setup() {
 		this.jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
@@ -119,7 +117,6 @@ public class JobExecutionEventTests {
 				new JobParameterEvent(PARAMETERS[3]));
 	}
 
-	@Disabled
 	@Test
 	public void testStepExecutions() {
 		JobExecution jobExecution;

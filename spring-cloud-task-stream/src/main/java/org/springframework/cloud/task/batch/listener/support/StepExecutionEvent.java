@@ -107,7 +107,6 @@ public class StepExecutionEvent extends Entity {
 		this.rollbackCount = stepExecution.getRollbackCount();
 		this.writeCount = stepExecution.getWriteCount();
 		this.writeSkipCount = stepExecution.getWriteSkipCount();
-
 	}
 
 	/**
