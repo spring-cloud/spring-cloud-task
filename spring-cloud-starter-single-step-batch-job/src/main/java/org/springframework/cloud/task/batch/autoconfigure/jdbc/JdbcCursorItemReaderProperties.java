@@ -27,9 +27,10 @@ public class JdbcCursorItemReaderProperties {
 
 	/**
 	 * Configure whether the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
-	 * Defaults to {@code true}.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes. Defaults to {@code true}.
 	 */
 	private boolean saveState = true;
 
@@ -104,8 +105,10 @@ public class JdbcCursorItemReaderProperties {
 
 	/**
 	 * Configure if the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes.
 	 * @param saveState defaults to true
 	 */
 	public void setSaveState(boolean saveState) {
@@ -123,10 +126,10 @@ public class JdbcCursorItemReaderProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}. Required if
 	 * {@link #setSaveState} is set to true.
 	 * @param name name of the reader instance
-	 * @see org.springframework.batch.item.ItemStreamSupport#setName(String)
+	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -143,7 +146,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Configure the max number of items to be read.
 	 * @param maxItemCount the max items to be read
-	 * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setMaxItemCount(int)
+	 * @see org.springframework.batch.infrastructure.item.support.AbstractItemCountingItemStreamItemReader#setMaxItemCount(int)
 	 */
 	public void setMaxItemCount(int maxItemCount) {
 		this.maxItemCount = maxItemCount;
@@ -160,7 +163,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Index for the current item. Also used on restarts to indicate where to start from.
 	 * @param currentItemCount current index
-	 * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setCurrentItemCount(int)
+	 * @see org.springframework.batch.infrastructure.item.support.AbstractItemCountingItemStreamItemReader#setCurrentItemCount(int)
 	 */
 	public void setCurrentItemCount(int currentItemCount) {
 		this.currentItemCount = currentItemCount;
@@ -178,7 +181,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets the number of items to return each time the cursor fetches from the server.
 	 * @param fetchSize the number of items
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#fetchSize(int)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#fetchSize(int)
 	 */
 	public void setFetchSize(int fetchSize) {
 		this.fetchSize = fetchSize;
@@ -195,7 +198,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets the maximum number of rows to be read with this reader.
 	 * @param maxRows maximum number of items
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#maxRows(int)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#maxRows(int)
 	 */
 	public void setMaxRows(int maxRows) {
 		this.maxRows = maxRows;
@@ -212,7 +215,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets the time in milliseconds for the query to timeout.
 	 * @param queryTimeout milliseconds
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#queryTimeout(int)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#queryTimeout(int)
 	 */
 	public void setQueryTimeout(int queryTimeout) {
 		this.queryTimeout = queryTimeout;
@@ -229,7 +232,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets if SQL warnings should be ignored.
 	 * @param ignoreWarnings indicator if the warnings should be ignored
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#ignoreWarnings(boolean)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#ignoreWarnings(boolean)
 	 */
 	public void setIgnoreWarnings(boolean ignoreWarnings) {
 		this.ignoreWarnings = ignoreWarnings;
@@ -247,7 +250,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Provides if the cursor's position should be validated with each item read.
 	 * @param verifyCursorPosition true if the position should be validated
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#verifyCursorPosition(boolean)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#verifyCursorPosition(boolean)
 	 */
 	public void setVerifyCursorPosition(boolean verifyCursorPosition) {
 		this.verifyCursorPosition = verifyCursorPosition;
@@ -264,7 +267,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets if the driver supports absolute positioning of a cursor.
 	 * @param driverSupportsAbsolute true if the driver supports absolute positioning
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#driverSupportsAbsolute(boolean)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#driverSupportsAbsolute(boolean)
 	 */
 	public void setDriverSupportsAbsolute(boolean driverSupportsAbsolute) {
 		this.driverSupportsAbsolute = driverSupportsAbsolute;
@@ -284,7 +287,7 @@ public class JdbcCursorItemReaderProperties {
 	 * processing and is, therefore, part of the same transaction.
 	 * @param useSharedExtendedConnection true if the connection is shared beyond this
 	 * query
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#useSharedExtendedConnection(boolean)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#useSharedExtendedConnection(boolean)
 	 */
 	public void setUseSharedExtendedConnection(boolean useSharedExtendedConnection) {
 		this.useSharedExtendedConnection = useSharedExtendedConnection;
@@ -301,7 +304,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * Sets the SQL query to be executed.
 	 * @param sql the query
-	 * @see org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder#sql(String)
+	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#sql(String)
 	 */
 	public void setSql(String sql) {
 		this.sql = sql;
