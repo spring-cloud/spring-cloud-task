@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -73,6 +74,19 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			jobLauncherContext.executeJob(new JobParameters());
 			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
 			jobLauncherContext.executeJob(new JobParametersBuilder().addLong("id", 1L).toJobParameters());
+			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
+		});
+	}
+
+	@Disabled("Disabled until Spring Batch allows a incrementer to set identifyable to true.")
+	@Test
+	void incrementExistingExecution() {
+		this.contextRunner.run((context) -> {
+			JobLauncherApplicationRunnerContext jobLauncherContext = new JobLauncherApplicationRunnerContext(context);
+			Job job = jobLauncherContext.configureJob().incrementer(new RunIdIncrementer()).build();
+
+			jobLauncherContext.runner.execute(job, new JobParameters());
+			jobLauncherContext.runner.execute(job, new JobParameters());
 			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
 		});
 	}

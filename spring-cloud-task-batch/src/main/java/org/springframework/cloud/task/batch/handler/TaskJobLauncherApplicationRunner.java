@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -107,7 +108,11 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 	@Override
 	public void run(String... args) throws JobExecutionException {
 		logger.info("Running default command line with: " + Arrays.asList(args));
-		launchJobFromProperties(StringUtils.splitArrayElementsIntoProperties(args, "="));
+		Properties properties = StringUtils.splitArrayElementsIntoProperties(args, "=");
+		if (properties == null) {
+			properties = new Properties();
+		}
+		launchJobFromProperties(properties);
 		monitorJobExecutions();
 	}
 
