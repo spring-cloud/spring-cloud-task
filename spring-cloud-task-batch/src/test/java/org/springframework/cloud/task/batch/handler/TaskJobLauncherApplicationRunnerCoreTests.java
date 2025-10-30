@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -29,7 +28,6 @@ import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepo
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecutionException;
 import org.springframework.batch.core.job.JobInstance;
-import org.springframework.batch.core.job.UnexpectedJobExecutionException;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.job.parameters.JobParameters;
@@ -55,7 +53,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
@@ -78,7 +76,6 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		});
 	}
 
-	@Disabled("Disabled until Spring Batch allows a incrementer to set identifyable to true.")
 	@Test
 	void incrementExistingExecution() {
 		this.contextRunner.run((context) -> {
@@ -122,10 +119,18 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 				.incrementer(new RunIdIncrementer())
 				.build();
 			runFailedJob(jobLauncherContext, job, new JobParameters());
-			assertThatThrownBy(() -> runFailedJob(jobLauncherContext, job, new JobParameters()))
-				.isInstanceOf(UnexpectedJobExecutionException.class)
-				.hasMessageContaining(
-						"Illegal state (only happens on a race condition): job not restartable with name=job and parameters=");
+
+			// A failed job that is not restartable does not re-use the job params of
+			// the last execution, but creates a new job instance when running it again.
+			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
+			assertThatExceptionOfType(TaskException.class).isThrownBy(() -> {
+				// try to re-run a failed execution
+				// In this case the change from the previous behavior is that a new job
+				// instance is created
+				// https://github.com/spring-projects/spring-batch/issues/4910
+				jobLauncherContext.runner.execute(job,
+						new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
+			}).withMessageContaining("Job job failed during execution for job instance id 2 with jobExecutionId of 2 ");
 		});
 	}
 
@@ -148,7 +153,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 			// https://github.com/spring-projects/spring-batch/issues/4910
 			runFailedJob(jobLauncherContext, job,
 					new JobParametersBuilder(jobParameters).addLong("run.id", 1L).toJobParameters());
-			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
+			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
 		});
 	}
 
