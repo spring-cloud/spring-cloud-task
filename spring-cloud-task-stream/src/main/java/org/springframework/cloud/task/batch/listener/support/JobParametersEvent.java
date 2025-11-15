@@ -16,10 +16,8 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.batch.core.job.parameters.JobParameter;
 
@@ -32,133 +30,16 @@ import org.springframework.batch.core.job.parameters.JobParameter;
  */
 public class JobParametersEvent {
 
-	private final Map<String, JobParameterEvent> parameters;
+	private final Set<JobParameterEvent> parameters;
 
 	public JobParametersEvent() {
-		this.parameters = new LinkedHashMap<>();
+		this.parameters = new HashSet<>();
 	}
 
-	public JobParametersEvent(Map<String, JobParameter<?>> jobParameters) {
-		this.parameters = new LinkedHashMap<>();
-		for (Map.Entry<String, JobParameter<?>> entry : jobParameters.entrySet()) {
-			this.parameters.put(entry.getKey(), new JobParameterEvent(entry.getValue()));
-		}
-	}
-
-	/**
-	 * Typesafe Getter for the Long represented by the provided key.
-	 * @param key The key to get a value for
-	 * @return The <code>Long</code> value
-	 */
-	@Deprecated(since = "3.0")
-	public Long getLong(String key) {
-		if (!this.parameters.containsKey(key)) {
-			return 0L;
-		}
-		Object value = this.parameters.get(key).getValue();
-		return value == null ? 0L : ((Long) value).longValue();
-	}
-
-	/**
-	 * Typesafe Getter for the Long represented by the provided key. If the key does not
-	 * exist, the default value will be returned.
-	 * @param key to return the value for
-	 * @param defaultValue to return if the value doesn't exist
-	 * @return the parameter represented by the provided key, defaultValue otherwise.
-	 */
-	@Deprecated(since = "3.0")
-	public Long getLong(String key, long defaultValue) {
-		if (this.parameters.containsKey(key)) {
-			return getLong(key);
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Typesafe Getter for the String represented by the provided key.
-	 * @param key The key to get a value for
-	 * @return The <code>String</code> value
-	 */
-	@Deprecated(since = "3.0")
-	public String getString(String key) {
-		JobParameterEvent value = this.parameters.get(key);
-		return value == null ? null : value.toString();
-	}
-
-	/**
-	 * Typesafe Getter for the String represented by the provided key. If the key does not
-	 * exist, the default value will be returned.
-	 * @param key to return the value for
-	 * @param defaultValue to return if the value doesn't exist
-	 * @return the parameter represented by the provided key, defaultValue otherwise.
-	 */
-	@Deprecated(since = "3.0")
-	public String getString(String key, String defaultValue) {
-		if (this.parameters.containsKey(key)) {
-			return getString(key);
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Typesafe Getter for the Long represented by the provided key.
-	 * @param key The key to get a value for
-	 * @return The <code>Double</code> value
-	 */
-	@Deprecated(since = "3.0")
-	public Double getDouble(String key) {
-		if (!this.parameters.containsKey(key)) {
-			return 0.0;
-		}
-		Double value = (Double) this.parameters.get(key).getValue();
-		return value == null ? 0.0 : value.doubleValue();
-	}
-
-	/**
-	 * Typesafe Getter for the Double represented by the provided key. If the key does not
-	 * exist, the default value will be returned.
-	 * @param key to return the value for
-	 * @param defaultValue to return if the value doesn't exist
-	 * @return the parameter represented by the provided key, defaultValue otherwise.
-	 */
-	@Deprecated(since = "3.0")
-	public Double getDouble(String key, double defaultValue) {
-		if (this.parameters.containsKey(key)) {
-			return getDouble(key);
-		}
-		else {
-			return defaultValue;
-		}
-	}
-
-	/**
-	 * Typesafe Getter for the Date represented by the provided key.
-	 * @param key The key to get a value for
-	 * @return The <code>java.util.Date</code> value
-	 */
-	@Deprecated(since = "3.0")
-	public Date getDate(String key) {
-		return this.getDate(key, null);
-	}
-
-	/**
-	 * Typesafe Getter for the Date represented by the provided key. If the key does not
-	 * exist, the default value will be returned.
-	 * @param key to return the value for
-	 * @param defaultValue to return if the value doesn't exist
-	 * @return the parameter represented by the provided key, defaultValue otherwise.
-	 */
-	@Deprecated(since = "3.0")
-	public Date getDate(String key, Date defaultValue) {
-		if (this.parameters.containsKey(key)) {
-			return (Date) this.parameters.get(key).getValue();
-		}
-		else {
-			return defaultValue;
+	public JobParametersEvent(Set<JobParameter<?>> jobParameters) {
+		this.parameters = new HashSet<>();
+		for (JobParameter<?> entry : jobParameters) {
+			this.parameters.add(new JobParameterEvent(entry));
 		}
 	}
 
@@ -166,8 +47,8 @@ public class JobParametersEvent {
 	 * Get a map of all parameters, including string, long, and date.
 	 * @return an unmodifiable map containing all parameters.
 	 */
-	public Map<String, JobParameterEvent> getParameters() {
-		return new LinkedHashMap<>(this.parameters);
+	public Set<JobParameterEvent> getParameters() {
+		return new HashSet<>(this.parameters);
 	}
 
 	/**
@@ -201,18 +82,6 @@ public class JobParametersEvent {
 	@Override
 	public String toString() {
 		return this.parameters.toString();
-	}
-
-	public Properties toProperties() {
-		Properties props = new Properties();
-
-		for (Map.Entry<String, JobParameterEvent> param : this.parameters.entrySet()) {
-			if (param.getValue() != null) {
-				props.put(param.getKey(), param.getValue().toString());
-			}
-		}
-
-		return props;
 	}
 
 }

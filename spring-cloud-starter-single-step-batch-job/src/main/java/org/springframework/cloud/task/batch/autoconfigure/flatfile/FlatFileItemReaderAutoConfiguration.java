@@ -21,15 +21,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.LineCallbackHandler;
-import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.separator.RecordSeparatorPolicy;
-import org.springframework.batch.item.file.transform.FieldSet;
-import org.springframework.batch.item.file.transform.LineTokenizer;
-import org.springframework.batch.item.file.transform.Range;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
+import org.springframework.batch.infrastructure.item.file.LineCallbackHandler;
+import org.springframework.batch.infrastructure.item.file.LineMapper;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.file.mapping.FieldSetMapper;
+import org.springframework.batch.infrastructure.item.file.separator.RecordSeparatorPolicy;
+import org.springframework.batch.infrastructure.item.file.transform.FieldSet;
+import org.springframework.batch.infrastructure.item.file.transform.LineTokenizer;
+import org.springframework.batch.infrastructure.item.file.transform.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -51,6 +54,8 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties(FlatFileItemReaderProperties.class)
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class FlatFileItemReaderAutoConfiguration {
+
+	private static final Log logger = LogFactory.getLog(FlatFileItemReaderAutoConfiguration.class);
 
 	private final FlatFileItemReaderProperties properties;
 
@@ -77,7 +82,6 @@ public class FlatFileItemReaderAutoConfiguration {
 			.linesToSkip(this.properties.getLinesToSkip())
 			.comments(this.properties.getComments().toArray(new String[this.properties.getComments().size()]));
 
-		mapFlatFileItemReaderBuilder.lineTokenizer(lineTokenizer);
 		if (recordSeparatorPolicy != null) {
 			mapFlatFileItemReaderBuilder.recordSeparatorPolicy(recordSeparatorPolicy);
 		}
@@ -104,6 +108,15 @@ public class FlatFileItemReaderAutoConfiguration {
 				.fieldSetMapper(new MapFieldSetMapper())
 				.beanMapperStrict(this.properties.isParsingStrict());
 		}
+		else {
+			mapFlatFileItemReaderBuilder.lineTokenizer(lineTokenizer);
+		}
+
+		if (lineTokenizer != null && (this.properties.isDelimited() || this.properties.isFixedLength())) {
+			logger.warn("Custom LineTokenizer bean provided but will be ignored because "
+					+ "delimited or fixed-length properties are configured. "
+					+ "Remove the custom bean or clear delimited/fixedLength properties.");
+		}
 
 		return mapFlatFileItemReaderBuilder.build();
 	}
@@ -116,7 +129,9 @@ public class FlatFileItemReaderAutoConfiguration {
 
 		@Override
 		public Map<String, Object> mapFieldSet(FieldSet fieldSet) {
-			return new HashMap<String, Object>((Map) fieldSet.getProperties());
+			Map<String, Object> map = new HashMap<>();
+			fieldSet.getProperties().forEach((key, value) -> map.put(key.toString(), value));
+			return map;
 		}
 
 	}

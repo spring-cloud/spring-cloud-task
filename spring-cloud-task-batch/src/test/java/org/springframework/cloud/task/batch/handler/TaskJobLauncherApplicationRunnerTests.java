@@ -26,17 +26,20 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
+import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.repeat.RepeatStatus;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
@@ -83,7 +86,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 		}
 	}
 
-	@Disabled
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
@@ -103,7 +105,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 				TaskJobLauncherApplicationRunnerTests.JobWithFailureAnnotatedConfiguration.class, enabledArgs);
 	}
 
-	@Disabled
 	@Test
 	public void testTaskJobLauncherCLRSuccessFailWithTaskExecutor() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true",
@@ -112,7 +113,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 				TaskJobLauncherApplicationRunnerTests.JobWithFailureTaskExecutorConfiguration.class, enabledArgs);
 	}
 
-	@Disabled
 	@Test
 	public void testNoTaskJobLauncher() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true",
@@ -123,7 +123,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 		assertThat(jobRepository.getJobNames().size()).isEqualTo(0);
 	}
 
-	@Disabled
 	@Test
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.fail-on-job-failure=true",
@@ -141,7 +140,6 @@ public class TaskJobLauncherApplicationRunnerTests {
 		validateContext();
 	}
 
-	@Disabled
 	@Test
 	public void testApplicationRunnerSetToFalse() {
 		String[] enabledArgs = new String[] {};
@@ -198,8 +196,10 @@ public class TaskJobLauncherApplicationRunnerTests {
 	}
 
 	@EnableTask
-	@Import({ EmbeddedDataSourceConfiguration.class, JobExecutionEventListener.class })
-	@ImportAutoConfiguration({ SimpleTaskAutoConfiguration.class, PropertyPlaceholderAutoConfiguration.class })
+	@Import({ JobExecutionEventListener.class })
+	@EnableAutoConfiguration(exclude = TaskJobLauncherAutoConfiguration.class)
+	@EnableBatchProcessing
+	@Configuration
 	public static class JobConfiguration {
 
 		@Bean
@@ -210,6 +210,11 @@ public class TaskJobLauncherApplicationRunnerTests {
 					return RepeatStatus.FINISHED;
 				}, transactionManager).build())
 				.build();
+		}
+
+		@Bean
+		public JobRegistry jobRegistry() {
+			return new MapJobRegistry();
 		}
 
 		@Bean
@@ -234,6 +239,11 @@ public class TaskJobLauncherApplicationRunnerTests {
 		}
 
 		@Bean
+		public JobRegistry jobRegistry() {
+			return new MapJobRegistry();
+		}
+
+		@Bean
 		DataSourceScriptDatabaseInitializer batchDataSourceInitializer(DataSource dataSource) {
 			DatabaseInitializationSettings settings = new DatabaseInitializationSettings();
 			settings.setSchemaLocations(Arrays.asList("classpath:org/springframework/batch/core/schema-h2.sql"));
@@ -246,8 +256,8 @@ public class TaskJobLauncherApplicationRunnerTests {
 	@EnableJdbcJobRepository
 	@ImportAutoConfiguration({ PropertyPlaceholderAutoConfiguration.class, BatchAutoConfiguration.class,
 			TaskBatchAutoConfiguration.class, TaskJobLauncherAutoConfiguration.class, SingleTaskConfiguration.class,
-			SimpleTaskAutoConfiguration.class, TransactionManagerTestConfiguration.class })
-	@Import(EmbeddedDataSourceConfiguration.class)
+			SimpleTaskAutoConfiguration.class, SimpleTaskAutoConfiguration.class })
+	@Import({ EmbeddedDataSourceConfiguration.class, TransactionManagerTestConfiguration.class })
 	@EnableTask
 	public static class JobWithFailureConfiguration {
 

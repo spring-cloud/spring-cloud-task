@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mariadb.jdbc.MariaDbDataSource;
-import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mariadb.MariaDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 	 * Provide mariadb test container for tests.
 	 */
 	@Container
-	public static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_IMAGE);
+	public static MariaDBContainer mariaDBContainer = new MariaDBContainer(MARIADB_IMAGE);
 
 	@Autowired
 	TaskRepository repository;

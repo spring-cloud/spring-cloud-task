@@ -32,7 +32,7 @@ public class KafkaItemReaderProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 */
 	private String name;
 
@@ -55,9 +55,10 @@ public class KafkaItemReaderProperties {
 
 	/**
 	 * Configure whether the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
-	 * Defaults to {@code true}.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes. Defaults to {@code true}.
 	 */
 	private boolean saveState = true;
 
@@ -72,9 +73,9 @@ public class KafkaItemReaderProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 * @param name name of the writer instance
-	 * @see org.springframework.batch.item.ItemStreamSupport#setName(String)
+	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -132,9 +133,10 @@ public class KafkaItemReaderProperties {
 
 	/**
 	 * Configure if the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
-	 * Defaults to true.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes. Defaults to true.
 	 * @return current status of the saveState flag.
 	 */
 	public boolean isSaveState() {
@@ -143,8 +145,10 @@ public class KafkaItemReaderProperties {
 
 	/**
 	 * Configure if the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes.
 	 * @param saveState true if state should be persisted. Defaults to true.
 	 */
 	public void setSaveState(boolean saveState) {

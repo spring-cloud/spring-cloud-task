@@ -29,7 +29,7 @@ public class JdbcBatchItemWriterProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 */
 	private String name;
 
@@ -86,9 +86,9 @@ public class JdbcBatchItemWriterProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}.
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 * @param name name of the writer instance
-	 * @see org.springframework.batch.item.ItemStreamSupport#setName(String)
+	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
 	public void setName(String name) {
 		this.name = name;

@@ -31,8 +31,8 @@ import org.springframework.context.annotation.Primary;
 /**
  * Establishes the default {@link DataSource} for the Task when creating a
  * {@link DataSource} for
- * {@link org.springframework.batch.item.database.JdbcCursorItemReader} or
- * {@link org.springframework.batch.item.database.JdbcBatchItemWriter}.
+ * {@link org.springframework.batch.infrastructure.item.database.JdbcCursorItemReader} or
+ * {@link org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter}.
  *
  * @author Glenn Renfro
  * @since 3.0

@@ -18,7 +18,7 @@ package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.task.repository.TaskExplorer;

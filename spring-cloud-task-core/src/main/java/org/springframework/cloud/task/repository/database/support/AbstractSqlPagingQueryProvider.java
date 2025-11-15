@@ -24,8 +24,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.batch.item.database.JdbcParameterUtils;
-import org.springframework.batch.item.database.Order;
+import org.springframework.batch.infrastructure.item.database.JdbcParameterUtils;
+import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.util.Assert;

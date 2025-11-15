@@ -17,13 +17,13 @@
 package org.springframework.cloud.task.batch.listener;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import org.springframework.batch.core.job.parameters.JobParameter;
+import org.springframework.cloud.task.batch.listener.support.JobParameterEvent;
 import org.springframework.cloud.task.batch.listener.support.JobParametersEvent;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,14 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class JobParametersEventTests {
 
-	private final static JobParameter STRING_PARAM = new JobParameter("FOO", String.class);
-
-	private final static JobParameter DATE_PARAM = new JobParameter(new Date(), Date.class);
-
-	private final static JobParameter LONG_PARAM = new JobParameter(1L, Long.class);
-
-	private final static JobParameter DOUBLE_PARAM = new JobParameter(2D, Double.class);
-
 	private final static String DATE_KEY = "DATE_KEY";
 
 	private final static String STRING_KEY = "STRING_KEY";
@@ -48,6 +40,14 @@ public class JobParametersEventTests {
 	private final static String LONG_KEY = "LONG_KEY";
 
 	private final static String DOUBLE_KEY = "DOUBLE_KEY";
+
+	private final static JobParameter<String> STRING_PARAM = new JobParameter<>(STRING_KEY, "FOO", String.class);
+
+	private final static JobParameter<Date> DATE_PARAM = new JobParameter<>(DATE_KEY, new Date(), Date.class);
+
+	private final static JobParameter<Long> LONG_PARAM = new JobParameter<>(LONG_KEY, 1L, Long.class);
+
+	private final static JobParameter<Double> DOUBLE_PARAM = new JobParameter<>(DOUBLE_KEY, 2D, Double.class);
 
 	@Test
 	public void testDefaultConstructor() {
@@ -59,11 +59,10 @@ public class JobParametersEventTests {
 	@Test
 	public void testConstructor() {
 		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
-		assertThat(jobParametersEvent.getString(STRING_KEY)).isEqualTo(STRING_PARAM.getValue());
-		assertThat(jobParametersEvent.getLong(LONG_KEY)).isEqualTo(LONG_PARAM.getValue());
-		assertThat(jobParametersEvent.getDate(DATE_KEY)).isEqualTo(DATE_PARAM.getValue());
-		assertThat(jobParametersEvent.getDouble(DOUBLE_KEY)).isEqualTo(DOUBLE_PARAM.getValue());
-
+		Set<JobParameterEvent> jobParameters = jobParametersEvent.getParameters();
+		assertThat(jobParametersEvent.getParameters()).contains(new JobParameterEvent(STRING_PARAM),
+				new JobParameterEvent(DATE_PARAM), new JobParameterEvent(LONG_PARAM),
+				new JobParameterEvent(DOUBLE_PARAM));
 		JobParametersEvent jobParametersEventNew = getPopulatedParametersEvent();
 		assertThat(jobParametersEvent).isEqualTo(jobParametersEventNew);
 	}
@@ -86,45 +85,17 @@ public class JobParametersEventTests {
 	}
 
 	@Test
-	public void testToProperties() {
-		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
-		Properties properties = jobParametersEvent.toProperties();
-		assertThat(jobParametersEvent.getString(DATE_KEY)).isEqualTo(properties.getProperty(DATE_KEY));
-		assertThat(jobParametersEvent.getString(STRING_KEY)).isEqualTo(properties.getProperty(STRING_KEY));
-		assertThat(jobParametersEvent.getString(LONG_KEY)).isEqualTo(properties.getProperty(LONG_KEY));
-		assertThat(jobParametersEvent.getString(DOUBLE_KEY)).isEqualTo(properties.getProperty(DOUBLE_KEY));
-	}
-
-	@Test
 	public void testToString() {
 		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
 		assertThat(toString()).isNotNull();
 	}
 
-	@Test
-	public void testGetterSetterDefaults() {
-		JobParametersEvent jobParametersEvent = getPopulatedParametersEvent();
-		assertThat(jobParametersEvent.getDouble("FOOBAR")).isEqualTo(Double.valueOf(0));
-		assertThat(jobParametersEvent.getLong("FOOBAR")).isEqualTo(Long.valueOf(0));
-		assertThat(jobParametersEvent.getDouble("FOOBAR", 5)).isEqualTo(Double.valueOf(5));
-		assertThat(jobParametersEvent.getDouble(DOUBLE_KEY, 0)).isEqualTo(DOUBLE_PARAM.getValue());
-		assertThat(jobParametersEvent.getLong("FOOBAR", 5)).isEqualTo(Long.valueOf(5));
-		assertThat(jobParametersEvent.getLong(LONG_KEY, 5)).isEqualTo(LONG_PARAM.getValue());
-		assertThat(jobParametersEvent.getString("FOOBAR", "TESTVAL")).isEqualTo("TESTVAL");
-		assertThat(jobParametersEvent.getString(STRING_KEY, "TESTVAL")).isEqualTo(STRING_PARAM.getValue());
-
-		Date date = new Date();
-		assertThat(jobParametersEvent.getDate("FOOBAR", date)).isEqualTo(date);
-		assertThat(jobParametersEvent.getDate(DATE_KEY, date)).isEqualTo(DATE_PARAM.getValue());
-
-	}
-
 	public JobParametersEvent getPopulatedParametersEvent() {
-		Map<String, JobParameter<?>> jobParameters = new HashMap<>();
-		jobParameters.put(DATE_KEY, DATE_PARAM);
-		jobParameters.put(STRING_KEY, STRING_PARAM);
-		jobParameters.put(LONG_KEY, LONG_PARAM);
-		jobParameters.put(DOUBLE_KEY, DOUBLE_PARAM);
+		Set<JobParameter<?>> jobParameters = new HashSet<>();
+		jobParameters.add(DATE_PARAM);
+		jobParameters.add(STRING_PARAM);
+		jobParameters.add(LONG_PARAM);
+		jobParameters.add(DOUBLE_PARAM);
 		return new JobParametersEvent(jobParameters);
 	}
 

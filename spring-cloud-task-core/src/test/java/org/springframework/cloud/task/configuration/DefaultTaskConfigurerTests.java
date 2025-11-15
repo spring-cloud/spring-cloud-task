@@ -55,10 +55,10 @@ public class DefaultTaskConfigurerTests {
 	public void resourcelessTransactionManagerTest() {
 		DefaultTaskConfigurer defaultTaskConfigurer = new DefaultTaskConfigurer();
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-			.isEqualTo("org.springframework.batch.support.transaction.ResourcelessTransactionManager");
+			.isEqualTo("org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager");
 		defaultTaskConfigurer = new DefaultTaskConfigurer("foo");
 		assertThat(defaultTaskConfigurer.getTransactionManager().getClass().getName())
-			.isEqualTo("org.springframework.batch.support.transaction.ResourcelessTransactionManager");
+			.isEqualTo("org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager");
 	}
 
 	@Test

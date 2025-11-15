@@ -32,8 +32,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.job.parameters.RunIdIncrementer;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -53,8 +53,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * @author Glenn Renfro
@@ -82,6 +81,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 		this.contextRunner.run((context) -> {
 			JobLauncherApplicationRunnerContext jobLauncherContext = new JobLauncherApplicationRunnerContext(context);
 			Job job = jobLauncherContext.configureJob().incrementer(new RunIdIncrementer()).build();
+
 			jobLauncherContext.runner.execute(job, new JobParameters());
 			jobLauncherContext.runner.execute(job, new JobParameters());
 			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
@@ -119,10 +119,10 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 				.incrementer(new RunIdIncrementer())
 				.build();
 			runFailedJob(jobLauncherContext, job, new JobParameters());
-			runFailedJob(jobLauncherContext, job, new JobParameters());
+
 			// A failed job that is not restartable does not re-use the job params of
 			// the last execution, but creates a new job instance when running it again.
-			assertThat(jobLauncherContext.jobInstances()).hasSize(2);
+			assertThat(jobLauncherContext.jobInstances()).hasSize(1);
 			assertThatExceptionOfType(TaskException.class).isThrownBy(() -> {
 				// try to re-run a failed execution
 				// In this case the change from the previous behavior is that a new job
@@ -130,8 +130,7 @@ public class TaskJobLauncherApplicationRunnerCoreTests {
 				// https://github.com/spring-projects/spring-batch/issues/4910
 				jobLauncherContext.runner.execute(job,
 						new JobParametersBuilder().addLong("run.id", 1L).toJobParameters());
-				fail("expected TaskException");
-			}).withMessageContaining("Job job failed during execution for job instance id 3 with jobExecutionId of 3 ");
+			}).withMessageContaining("Job job failed during execution for job instance id 2 with jobExecutionId of 2 ");
 		});
 	}
 

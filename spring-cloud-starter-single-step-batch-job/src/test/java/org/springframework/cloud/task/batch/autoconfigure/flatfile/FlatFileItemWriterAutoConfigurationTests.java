@@ -34,14 +34,14 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.file.FlatFileFooterCallback;
-import org.springframework.batch.item.file.FlatFileHeaderCallback;
-import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.transform.FieldExtractor;
-import org.springframework.batch.item.file.transform.LineAggregator;
-import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
-import org.springframework.batch.item.support.ListItemReader;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.item.file.FlatFileFooterCallback;
+import org.springframework.batch.infrastructure.item.file.FlatFileHeaderCallback;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
+import org.springframework.batch.infrastructure.item.file.transform.FieldExtractor;
+import org.springframework.batch.infrastructure.item.file.transform.LineAggregator;
+import org.springframework.batch.infrastructure.item.file.transform.PassThroughLineAggregator;
+import org.springframework.batch.infrastructure.item.support.ListItemReader;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
@@ -160,7 +160,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -205,7 +205,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -242,7 +242,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -277,7 +277,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -311,7 +311,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 
@@ -347,7 +347,7 @@ public class FlatFileItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

@@ -35,11 +35,11 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.database.ItemPreparedStatementSetter;
-import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.infrastructure.item.database.ItemPreparedStatementSetter;
+import org.springframework.batch.infrastructure.item.database.ItemSqlParameterSourceProvider;
+import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.infrastructure.item.support.ListItemReader;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -50,6 +50,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.StatementCreatorUtils;
@@ -90,12 +91,17 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 		dataSource.setPassword(DATASOURCE_USER_PASSWORD);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("TRUNCATE TABLE item");
-		jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION_CONTEXT");
-		jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION");
-		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_PARAMS");
-		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_CONTEXT");
-		jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION");
-		jdbcTemplate.execute("DELETE FROM BATCH_JOB_INSTANCE");
+		try {
+			jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION_CONTEXT");
+			jdbcTemplate.execute("DELETE FROM BATCH_STEP_EXECUTION");
+			jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_PARAMS");
+			jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION_CONTEXT");
+			jdbcTemplate.execute("DELETE FROM BATCH_JOB_EXECUTION");
+			jdbcTemplate.execute("DELETE FROM BATCH_JOB_INSTANCE");
+		}
+		catch (BadSqlGrammarException e) {
+			System.out.println("No tables to cleanup");
+		}
 	}
 
 	@Test
@@ -210,7 +216,7 @@ public class JdbcBatchItemWriterAutoConfigurationTests {
 
 			JobRepository jobRepository = context.getBean(JobRepository.class);
 
-			while (jobRepository.getJobExecution(jobExecution.getJobId()).isRunning()) {
+			while (jobRepository.getJobExecution(jobExecution.getId()).isRunning()) {
 				Thread.sleep(1000);
 			}
 

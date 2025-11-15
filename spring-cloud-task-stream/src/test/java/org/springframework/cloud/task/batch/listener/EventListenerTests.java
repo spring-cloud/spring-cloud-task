@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobInstance;
@@ -34,7 +34,7 @@ import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.Chunk;
+import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -75,11 +75,11 @@ public class EventListenerTests {
 
 	private final TaskEventProperties taskEventProperties = new TaskEventProperties();
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	public void beforeTests() {
-		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper = JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
 
 		this.applicationContext = new SpringApplicationBuilder()
 			.sources(TestChannelBinderConfiguration.getCompleteConfiguration(BatchEventsApplication.class))
@@ -88,7 +88,6 @@ public class EventListenerTests {
 			.run();
 		StreamBridge streamBridge = this.applicationContext.getBean(StreamBridge.class);
 		MessagePublisher messagePublisher = new MessagePublisher(streamBridge);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		this.eventEmittingSkipListener = new EventEmittingSkipListener(messagePublisher, this.taskEventProperties);
 		this.eventEmittingItemProcessListener = new EventEmittingItemProcessListener(messagePublisher,
@@ -266,7 +265,7 @@ public class EventListenerTests {
 	@Test
 	public void EventEmittingChunkExecutionListenerBeforeChunk() {
 		final String CHUNK_MESSAGE = "Before Chunk Processing";
-		this.eventEmittingChunkListener.beforeChunk(getChunkContext());
+		this.eventEmittingChunkListener.beforeChunk(new Chunk<>(CHUNK_MESSAGE));
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);
 	}
@@ -274,7 +273,7 @@ public class EventListenerTests {
 	@Test
 	public void EventEmittingChunkExecutionListenerAfterChunk() {
 		final String CHUNK_MESSAGE = "After Chunk Processing";
-		this.eventEmittingChunkListener.afterChunk(getChunkContext());
+		this.eventEmittingChunkListener.afterChunk(new Chunk<>());
 		assertThat(getStringFromDestination(this.taskEventProperties.getChunkEventBindingName()))
 			.isEqualTo(CHUNK_MESSAGE);
 	}
@@ -288,7 +287,7 @@ public class EventListenerTests {
 	private JobExecution getJobExecution() {
 		final String JOB_NAME = UUID.randomUUID().toString();
 		JobInstance jobInstance = new JobInstance(1L, JOB_NAME);
-		return new JobExecution(jobInstance, 1L, new JobParameters());
+		return new JobExecution(1L, jobInstance, new JobParameters());
 	}
 
 	private Chunk<String> getSampleList() {

@@ -19,10 +19,10 @@ package org.springframework.cloud.task.batch.listener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import org.springframework.batch.core.job.JobInstance;
 import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.step.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,6 +41,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
+import org.springframework.cloud.task.batch.listener.support.JobParameterEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
@@ -72,7 +73,6 @@ public class JobExecutionEventTests {
 
 	private JobInstance jobInstance;
 
-	//
 	@BeforeEach
 	public void setup() {
 		this.jobInstance = new JobInstance(JOB_INSTANCE_ID, JOB_NAME);
@@ -82,7 +82,7 @@ public class JobExecutionEventTests {
 	@Test
 	public void testBasic() {
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters);
+		jobExecution = new JobExecution(JOB_EXECUTION_ID, this.jobInstance, this.jobParameters);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
 		assertThat(jobExecutionEvent.getJobInstance()).as("jobInstance should not be null").isNotNull();
 		assertThat(jobExecutionEvent.getJobParameters()).as("jobParameters should not be null").isNotNull();
@@ -100,41 +100,31 @@ public class JobExecutionEventTests {
 	public void testJobParameters() {
 		String[] JOB_PARAM_KEYS = { "A", "B", "C", "D" };
 		Date testDate = new Date();
-		JobParameter[] PARAMETERS = { new JobParameter("FOO", String.class), new JobParameter(1L, Long.class),
-				new JobParameter(1D, Double.class), new JobParameter(testDate, Date.class) };
+		JobParameter[] PARAMETERS = { new JobParameter("A", "FOO", String.class), new JobParameter("B", 1L, Long.class),
+				new JobParameter("C", 1D, Double.class), new JobParameter("D", testDate, Date.class) };
 
-		Map<String, JobParameter<?>> jobParamMap = new LinkedHashMap<>();
+		Set<JobParameter<?>> jobParamMap = new HashSet<>();
 		for (int paramCount = 0; paramCount < JOB_PARAM_KEYS.length; paramCount++) {
-			jobParamMap.put(JOB_PARAM_KEYS[paramCount], PARAMETERS[paramCount]);
+			jobParamMap.add(PARAMETERS[paramCount]);
 		}
 		this.jobParameters = new JobParameters(jobParamMap);
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters);
+		jobExecution = new JobExecution(JOB_EXECUTION_ID, this.jobInstance, this.jobParameters);
 		JobExecutionEvent jobExecutionEvent = new JobExecutionEvent(jobExecution);
 
-		assertThat(jobExecutionEvent.getJobParameters().getString("A")).as("Job Parameter A was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getLong("B")).as("Job Parameter B was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getDouble("C")).as("Job Parameter C was expected").isNotNull();
-		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D was expected").isNotNull();
-
-		assertThat(jobExecutionEvent.getJobParameters().getString("A")).as("Job Parameter A value was not correct")
-			.isEqualTo("FOO");
-		assertThat(jobExecutionEvent.getJobParameters().getLong("B")).as("Job Parameter B value was not correct")
-			.isEqualTo(Long.valueOf(1));
-		assertThat(jobExecutionEvent.getJobParameters().getDouble("C")).as("Job Parameter C value was not correct")
-			.isEqualTo(Double.valueOf(1));
-		assertThat(jobExecutionEvent.getJobParameters().getDate("D")).as("Job Parameter D value was not correct")
-			.isEqualTo(testDate);
+		assertThat(jobExecutionEvent.getJobParameters().getParameters()).contains(new JobParameterEvent(PARAMETERS[0]),
+				new JobParameterEvent(PARAMETERS[1]), new JobParameterEvent(PARAMETERS[2]),
+				new JobParameterEvent(PARAMETERS[3]));
 	}
 
 	@Test
 	public void testStepExecutions() {
 		JobExecution jobExecution;
-		jobExecution = new JobExecution(this.jobInstance, JOB_EXECUTION_ID, this.jobParameters);
+		jobExecution = new JobExecution(JOB_EXECUTION_ID, this.jobInstance, this.jobParameters);
 		List<StepExecution> stepsExecutions = new ArrayList<>();
-		stepsExecutions.add(new StepExecution("foo", jobExecution));
-		stepsExecutions.add(new StepExecution("bar", jobExecution));
-		stepsExecutions.add(new StepExecution("baz", jobExecution));
+		stepsExecutions.add(new StepExecution(0, "foo", jobExecution));
+		stepsExecutions.add(new StepExecution(1, "bar", jobExecution));
+		stepsExecutions.add(new StepExecution(2, "baz", jobExecution));
 		jobExecution.addStepExecutions(stepsExecutions);
 
 		JobExecutionEvent jobExecutionsEvent = new JobExecutionEvent(jobExecution);

@@ -94,7 +94,7 @@
 		},
 		{
 			"name": "spring.batch.job.flatfilereader.ranges",
-			"type": "java.util.List<org.springframework.batch.item.file.transform.Range>",
+			"type": "java.util.List<org.springframework.batch.infrastructure.item.file.transform.Range>",
 			"sourceType": "org.springframework.cloud.task.batch.autoconfigure.flatfile.FlatFileItemReaderProperties"
 		},
 		{

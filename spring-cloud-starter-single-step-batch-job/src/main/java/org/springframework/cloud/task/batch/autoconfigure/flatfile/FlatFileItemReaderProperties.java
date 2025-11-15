@@ -19,9 +19,9 @@ package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.batch.item.file.transform.Range;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
+import org.springframework.batch.infrastructure.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.infrastructure.item.file.transform.Range;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 
@@ -41,7 +41,7 @@ public class FlatFileItemReaderProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}. Required if
 	 * {@link #setSaveState} is set to {@code true}.
 	 */
 	private String name;
@@ -105,8 +105,8 @@ public class FlatFileItemReaderProperties {
 
 	/**
 	 * Indicates that a
-	 * {@link org.springframework.batch.item.file.transform.FixedLengthTokenizer} should
-	 * be used to parse the records in the file.
+	 * {@link org.springframework.batch.infrastructure.item.file.transform.FixedLengthTokenizer}
+	 * should be used to parse the records in the file.
 	 */
 	private boolean fixedLength = false;
 
@@ -135,8 +135,10 @@ public class FlatFileItemReaderProperties {
 
 	/**
 	 * Configure if the state of the
-	 * {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-	 * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+	 * {@link org.springframework.batch.infrastructure.item.ItemStreamSupport} should be
+	 * persisted within the
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext} for restart
+	 * purposes.
 	 * @param saveState defaults to true
 	 */
 	public void setSaveState(boolean saveState) {
@@ -154,10 +156,10 @@ public class FlatFileItemReaderProperties {
 
 	/**
 	 * The name used to calculate the key within the
-	 * {@link org.springframework.batch.item.ExecutionContext}. Required if
+	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}. Required if
 	 * {@link #setSaveState} is set to true.
 	 * @param name name of the reader instance
-	 * @see org.springframework.batch.item.ItemStreamSupport#setName(String)
+	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -174,7 +176,7 @@ public class FlatFileItemReaderProperties {
 	/**
 	 * Configure the max number of items to be read.
 	 * @param maxItemCount the max items to be read
-	 * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setMaxItemCount(int)
+	 * @see org.springframework.batch.infrastructure.item.support.AbstractItemCountingItemStreamItemReader#setMaxItemCount(int)
 	 */
 	public void setMaxItemCount(int maxItemCount) {
 		this.maxItemCount = maxItemCount;
@@ -191,7 +193,7 @@ public class FlatFileItemReaderProperties {
 	/**
 	 * Index for the current item. Also used on restarts to indicate where to start from.
 	 * @param currentItemCount current index
-	 * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setCurrentItemCount(int)
+	 * @see org.springframework.batch.infrastructure.item.support.AbstractItemCountingItemStreamItemReader#setCurrentItemCount(int)
 	 */
 	public void setCurrentItemCount(int currentItemCount) {
 		this.currentItemCount = currentItemCount;
@@ -361,8 +363,8 @@ public class FlatFileItemReaderProperties {
 
 	/**
 	 * Indicates that a
-	 * {@link org.springframework.batch.item.file.transform.FixedLengthTokenizer} should
-	 * be used to parse the records in the file.
+	 * {@link org.springframework.batch.infrastructure.item.file.transform.FixedLengthTokenizer}
+	 * should be used to parse the records in the file.
 	 * @param fixedLength true if the records should be tokenized by column index
 	 */
 	public void setFixedLength(boolean fixedLength) {
