@@ -180,7 +180,7 @@ public class TaskJobLauncherApplicationRunnerTests {
 	}
 
 	@Component
-	private static class JobExecutionEventListener implements ApplicationListener<JobExecutionEvent> {
+	private static final class JobExecutionEventListener implements ApplicationListener<JobExecutionEvent> {
 
 		private int eventCounter = 0;
 

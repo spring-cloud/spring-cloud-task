@@ -152,7 +152,7 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 		}
 	}
 
-	private static class MethodGetter<T extends Annotation> {
+	private static final class MethodGetter<T extends Annotation> {
 
 		public Map<Method, T> getMethods(final Class<?> type, final Class<T> annotationClass) {
 			return MethodIntrospector.selectMethods(type,

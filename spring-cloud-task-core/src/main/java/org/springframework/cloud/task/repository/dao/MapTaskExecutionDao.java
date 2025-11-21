@@ -339,7 +339,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		}
 	}
 
-	private static class TaskExecutionComparator implements Comparator<TaskExecution>, Serializable {
+	private static final class TaskExecutionComparator implements Comparator<TaskExecution>, Serializable {
 
 		@Override
 		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {

@@ -337,7 +337,7 @@ public class TaskLifecycleListenerTests {
 
 	}
 
-	private static class TestListener2 extends TestListener {
+	private static final class TestListener2 extends TestListener {
 
 	}
 
