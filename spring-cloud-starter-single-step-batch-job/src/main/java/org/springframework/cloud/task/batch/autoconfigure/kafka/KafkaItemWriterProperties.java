@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.kafka;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,7 +32,7 @@ public class KafkaItemWriterProperties {
 	/**
 	 * The topic name from which the messages are written.
 	 */
-	private String topic;
+	private @Nullable String topic;
 
 	/**
 	 * Indicate whether the items being passed to the writer are all to be sent as delete
@@ -42,7 +44,7 @@ public class KafkaItemWriterProperties {
 	 * Returns the name of the topic from which messages will be written.
 	 * @return the name of the topic.
 	 */
-	public String getTopic() {
+	public @Nullable String getTopic() {
 		return topic;
 	}
 
@@ -50,7 +52,7 @@ public class KafkaItemWriterProperties {
 	 * The topic name from which the messages are written.
 	 * @param topic name of the topic
 	 */
-	public void setTopic(String topic) {
+	public void setTopic(@Nullable String topic) {
 		this.topic = topic;
 	}
 

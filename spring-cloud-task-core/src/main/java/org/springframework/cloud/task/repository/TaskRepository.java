@@ -19,6 +19,8 @@ package org.springframework.cloud.task.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -40,7 +42,9 @@ public interface TaskRepository {
 	 * @return the updated {@link TaskExecution}
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage);
+	@Nullable
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			@Nullable String exitMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution has completed.
@@ -53,8 +57,9 @@ public interface TaskRepository {
 	 * @since 1.1.0
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
-			String errorMessage);
+	@Nullable
+	TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			@Nullable String exitMessage, @Nullable String errorMessage);
 
 	/**
 	 * Notifies the repository that a taskExecution needs to be created.
@@ -77,7 +82,7 @@ public interface TaskRepository {
 	 * @return the initial {@link TaskExecution}
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution createTaskExecution(String name);
+	TaskExecution createTaskExecution(@Nullable String name);
 
 	/**
 	 * Creates an empty TaskExecution with just an id provided. This is intended to be
@@ -122,7 +127,7 @@ public interface TaskRepository {
 	 * a TaskExecution.
 	 */
 	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
-	TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId);
+	TaskExecution startTaskExecution(long executionid, @Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId, @Nullable Long parentExecutionId);
 
 }

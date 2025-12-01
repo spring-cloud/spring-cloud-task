@@ -17,4 +17,7 @@
 /**
  * Base package for spring cloud task.
  */
+@NullMarked
 package org.springframework.cloud.task;
+
+import org.jspecify.annotations.NullMarked;

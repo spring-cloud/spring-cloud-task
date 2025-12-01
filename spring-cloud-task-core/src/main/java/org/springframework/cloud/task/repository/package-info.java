@@ -17,4 +17,7 @@
 /**
  * Core repository interfaces and classes for Spring Cloud Task.
  */
+@NullMarked
 package org.springframework.cloud.task.repository;
+
+import org.jspecify.annotations.NullMarked;

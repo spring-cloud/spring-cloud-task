@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.batch.autoconfigure;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,23 +32,23 @@ public class SingleStepJobProperties {
 	/**
 	 * Name of the step in the single step job.
 	 */
-	private String stepName;
+	private @Nullable String stepName;
 
 	/**
 	 * The number of items to process per transaction or chunk.
 	 */
-	private Integer chunkSize;
+	private @Nullable Integer chunkSize;
 
 	/**
 	 * The name of the job.
 	 */
-	private String jobName;
+	private @Nullable String jobName;
 
 	/**
 	 * Name of the step in the single step job.
 	 * @return name
 	 */
-	public String getStepName() {
+	public @Nullable String getStepName() {
 		return stepName;
 	}
 
@@ -54,7 +56,7 @@ public class SingleStepJobProperties {
 	 * Set the name of the step.
 	 * @param stepName name
 	 */
-	public void setStepName(String stepName) {
+	public void setStepName(@Nullable String stepName) {
 		this.stepName = stepName;
 	}
 
@@ -62,7 +64,7 @@ public class SingleStepJobProperties {
 	 * The number of items to process per transaction/chunk.
 	 * @return number of items
 	 */
-	public Integer getChunkSize() {
+	public @Nullable Integer getChunkSize() {
 		return chunkSize;
 	}
 
@@ -70,7 +72,7 @@ public class SingleStepJobProperties {
 	 * Set the number of items within a transaction/chunk.
 	 * @param chunkSize number of items
 	 */
-	public void setChunkSize(Integer chunkSize) {
+	public void setChunkSize(@Nullable Integer chunkSize) {
 		this.chunkSize = chunkSize;
 	}
 
@@ -78,7 +80,7 @@ public class SingleStepJobProperties {
 	 * The name of the job.
 	 * @return name
 	 */
-	public String getJobName() {
+	public @Nullable String getJobName() {
 		return jobName;
 	}
 
@@ -86,7 +88,7 @@ public class SingleStepJobProperties {
 	 * Set the name of the job.
 	 * @param jobName name
 	 */
-	public void setJobName(String jobName) {
+	public void setJobName(@Nullable String jobName) {
 		this.jobName = jobName;
 	}
 

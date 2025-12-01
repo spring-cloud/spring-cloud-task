@@ -83,8 +83,9 @@ public class EventEmittingItemWriteListener implements ItemWriteListener, Ordere
 			logger.debug("Executing onWriteError: " + exception.getMessage(), exception);
 		}
 		String payload = "Exception while " + items.size() + " items are attempted to be written.";
+		String message = exception.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getItemWriteEventBindingName(), payload,
-				exception.getMessage());
+				message != null ? message : exception.getClass().getName());
 	}
 
 	@Override

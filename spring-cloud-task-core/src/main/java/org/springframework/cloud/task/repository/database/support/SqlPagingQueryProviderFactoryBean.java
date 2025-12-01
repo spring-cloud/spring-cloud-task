@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
@@ -51,16 +53,20 @@ import static org.springframework.cloud.task.repository.support.DatabaseType.SQL
  */
 public class SqlPagingQueryProviderFactoryBean implements FactoryBean<PagingQueryProvider> {
 
+	@SuppressWarnings("NullAway.Init")
 	private DataSource dataSource;
 
-	private String databaseType;
+	private @Nullable String databaseType;
 
+	@SuppressWarnings("NullAway.Init")
 	private String fromClause;
 
-	private String whereClause;
+	private @Nullable String whereClause;
 
+	@SuppressWarnings("NullAway.Init")
 	private String selectClause;
 
+	@SuppressWarnings("NullAway.Init")
 	private Map<String, Order> sortKeys;
 
 	private Map<DatabaseType, AbstractSqlPagingQueryProvider> providers = new HashMap<>();

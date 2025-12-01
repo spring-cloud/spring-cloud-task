@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.batch.infrastructure.item.database.JdbcParameterUtils;
 import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.cloud.task.repository.database.PagingQueryProvider;
@@ -46,11 +48,13 @@ import org.springframework.util.StringUtils;
  */
 public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvider {
 
+	@SuppressWarnings("NullAway.Init")
 	private String selectClause;
 
+	@SuppressWarnings("NullAway.Init")
 	private String fromClause;
 
-	private String whereClause;
+	private @Nullable String whereClause;
 
 	private Map<String, Order> sortKeys = new LinkedHashMap<>();
 
@@ -89,14 +93,14 @@ public abstract class AbstractSqlPagingQueryProvider implements PagingQueryProvi
 	/**
 	 * @return SQL WHERE clause part of SQL query string
 	 */
-	protected String getWhereClause() {
+	protected @Nullable String getWhereClause() {
 		return this.whereClause;
 	}
 
 	/**
 	 * @param whereClause WHERE clause part of SQL query string
 	 */
-	public void setWhereClause(String whereClause) {
+	public void setWhereClause(@Nullable String whereClause) {
 		if (StringUtils.hasText(whereClause)) {
 			this.whereClause = removeKeyWord("where", whereClause);
 		}

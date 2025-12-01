@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.batch.autoconfigure;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.batch.infrastructure.item.file.transform.Range;
 import org.springframework.core.convert.converter.Converter;
 
@@ -31,7 +33,7 @@ import org.springframework.core.convert.converter.Converter;
 public class RangeConverter implements Converter<String, Range> {
 
 	@Override
-	public Range convert(String source) {
+	public @Nullable Range convert(String source) {
 		if (source == null) {
 			return null;
 		}

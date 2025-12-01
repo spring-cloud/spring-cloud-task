@@ -32,6 +32,7 @@ import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -63,6 +64,8 @@ public class KafkaItemReaderAutoConfiguration {
 			kafkaItemReaderProperties.setPartitions(new ArrayList<>(1));
 			kafkaItemReaderProperties.getPartitions().add(0);
 		}
+		Assert.state(kafkaItemReaderProperties.getName() != null, "name must not be null");
+		Assert.state(kafkaItemReaderProperties.getTopic() != null, "topic must not be null");
 		return new KafkaItemReaderBuilder<Object, Map<String, Object>>()
 			.partitions(kafkaItemReaderProperties.getPartitions())
 			.consumerProperties(consumerProperties)

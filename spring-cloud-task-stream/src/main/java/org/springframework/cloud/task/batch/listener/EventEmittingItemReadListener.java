@@ -75,9 +75,9 @@ public class EventEmittingItemReadListener implements ItemReadListener, Ordered 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onReadError: " + ex.getMessage(), ex);
 		}
-
+		String message = ex.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getItemReadEventBindingName(),
-				"Exception while item was being read", ex.getMessage());
+				"Exception while item was being read", message != null ? message : ex.getClass().getName());
 	}
 
 	@Override

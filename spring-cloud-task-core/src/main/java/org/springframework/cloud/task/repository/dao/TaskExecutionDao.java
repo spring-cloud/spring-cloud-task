@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,8 +44,8 @@ public interface TaskExecutionDao {
 	 * @param externalExecutionId id assigned to the task by the platform
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 */
-	TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId);
+	TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId);
 
 	/**
 	 * Save a new {@link TaskExecution}.
@@ -55,8 +57,8 @@ public interface TaskExecutionDao {
 	 * @return A fully qualified {@link TaskExecution} instance.
 	 * @since 1.2.0
 	 */
-	TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId);
+	TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId, @Nullable Long parentExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as started.
@@ -84,8 +86,8 @@ public interface TaskExecutionDao {
 	 * start.
 	 * @since 1.2.0
 	 */
-	TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId);
+	TaskExecution startTaskExecution(long executionId, @Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId, @Nullable Long parentExecutionId);
 
 	/**
 	 * Update and existing {@link TaskExecution} to mark it as completed.
@@ -96,8 +98,8 @@ public interface TaskExecutionDao {
 	 * @param errorMessage error information available upon failure of a task.
 	 * @since 1.1.0
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
-			String errorMessage);
+	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, @Nullable String exitMessage,
+			@Nullable String errorMessage);
 
 	/**
 	 * Update and existing {@link TaskExecution}.
@@ -106,13 +108,14 @@ public interface TaskExecutionDao {
 	 * @param endTime the time the task completed.
 	 * @param exitMessage the message assigned to the task upon completion.
 	 */
-	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage);
+	void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, @Nullable String exitMessage);
 
 	/**
 	 * Retrieves a task execution from the task repository.
 	 * @param executionId the id associated with the task execution.
 	 * @return a fully qualified TaskExecution instance.
 	 */
+	@Nullable
 	TaskExecution getTaskExecution(long executionId);
 
 	/**
@@ -203,6 +206,7 @@ public interface TaskExecutionDao {
 	 * @param jobExecutionId the id of the JobExecution
 	 * @return the id of the {@link TaskExecution}
 	 */
+	@Nullable
 	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
 
 	/**
@@ -247,6 +251,7 @@ public interface TaskExecutionDao {
 	 * @return The latest Task Execution or null
 	 * @see #getLatestTaskExecutionsByTaskNames(String...)
 	 */
+	@Nullable
 	TaskExecution getLatestTaskExecutionForTaskName(String taskName);
 
 }

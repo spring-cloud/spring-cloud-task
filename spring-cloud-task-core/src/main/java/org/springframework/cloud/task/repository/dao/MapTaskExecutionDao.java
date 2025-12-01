@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,14 +60,14 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId) {
+	public TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId) {
 		return createTaskExecution(taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
-			String externalExecutionId, Long parentExecutionId) {
+	public TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
+			List<String> arguments, @Nullable String externalExecutionId, @Nullable Long parentExecutionId) {
 		long taskExecutionId = getNextExecutionId();
 		TaskExecution taskExecution = new TaskExecution(taskExecutionId, null, taskName, startTime, null, null,
 				arguments, null, externalExecutionId, parentExecutionId);
@@ -80,9 +82,11 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
-			List<String> arguments, String externalExecutionid, Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, @Nullable String taskName,
+			@Nullable LocalDateTime startTime, List<String> arguments, @Nullable String externalExecutionid,
+			@Nullable Long parentExecutionId) {
 		TaskExecution taskExecution = this.taskExecutions.get(executionId);
+		Assert.state(taskExecution != null, "TaskExecution with ID " + executionId + " not found.");
 		taskExecution.setTaskName(taskName);
 		taskExecution.setStartTime(startTime);
 		taskExecution.setArguments(arguments);
@@ -94,8 +98,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
-			String errorMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			@Nullable String exitMessage, @Nullable String errorMessage) {
 		if (!this.taskExecutions.containsKey(executionId)) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + executionId + " not found.");
 		}
@@ -108,12 +112,13 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime, String exitMessage) {
+	public void completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			@Nullable String exitMessage) {
 		completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override
-	public TaskExecution getTaskExecution(long executionId) {
+	public @Nullable TaskExecution getTaskExecution(long executionId) {
 		return this.taskExecutions.get(executionId);
 	}
 
@@ -121,7 +126,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public long getTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName)) {
+			String entryTaskName = entry.getValue().getTaskName();
+			if (entryTaskName != null && entryTaskName.equals(taskName)) {
 				count++;
 			}
 		}
@@ -132,7 +138,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public long getTaskExecutionCountByExternalExecutionId(String externalExecutionId) {
 		int count = 0;
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getExternalExecutionId().equals(externalExecutionId)) {
+			String entryExternalId = entry.getValue().getExternalExecutionId();
+			if (entryExternalId != null && entryExternalId.equals(externalExecutionId)) {
 				count++;
 			}
 		}
@@ -143,7 +150,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public long getRunningTaskExecutionCountByTaskName(String taskName) {
 		int count = 0;
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName) && entry.getValue().getEndTime() == null) {
+			String entryTaskName = entry.getValue().getTaskName();
+			if (entryTaskName != null && entryTaskName.equals(taskName) && entry.getValue().getEndTime() == null) {
 				count++;
 			}
 		}
@@ -170,7 +178,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public Page<TaskExecution> findRunningTaskExecutions(String taskName, Pageable pageable) {
 		Set<TaskExecution> result = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName) && entry.getValue().getEndTime() == null) {
+			String entryTaskName = entry.getValue().getTaskName();
+			if (entryTaskName != null && entryTaskName.equals(taskName) && entry.getValue().getEndTime() == null) {
 				result.add(entry.getValue());
 			}
 		}
@@ -181,7 +190,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public Page<TaskExecution> findTaskExecutionsByExternalExecutionId(String externalExecutionId, Pageable pageable) {
 		Set<TaskExecution> result = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getExternalExecutionId().equals(externalExecutionId)) {
+			String entryExternalId = entry.getValue().getExternalExecutionId();
+			if (entryExternalId != null && entryExternalId.equals(externalExecutionId)) {
 				result.add(entry.getValue());
 			}
 		}
@@ -193,7 +203,8 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	public Page<TaskExecution> findTaskExecutionsByName(String taskName, Pageable pageable) {
 		Set<TaskExecution> filteredSet = getTaskExecutionTreeSet();
 		for (Map.Entry<Long, TaskExecution> entry : this.taskExecutions.entrySet()) {
-			if (entry.getValue().getTaskName().equals(taskName)) {
+			String entryTaskName = entry.getValue().getTaskName();
+			if (entryTaskName != null && entryTaskName.equals(taskName)) {
 				filteredSet.add(entry.getValue());
 			}
 		}
@@ -226,7 +237,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+	public @Nullable Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
 		Long taskId = null;
 
 		found:
@@ -268,7 +279,11 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 		return new TreeSet<>(new Comparator<TaskExecution>() {
 			@Override
 			public int compare(TaskExecution e1, TaskExecution e2) {
-				int result = e1.getStartTime().compareTo(e2.getStartTime());
+				LocalDateTime startTime1 = e1.getStartTime();
+				LocalDateTime startTime2 = e2.getStartTime();
+				Assert.state(startTime1 != null, "TaskExecution start time must not be null");
+				Assert.state(startTime2 != null, "TaskExecution start time must not be null");
+				int result = startTime1.compareTo(startTime2);
 				if (result == 0) {
 					result = Long.valueOf(e1.getExecutionId()).compareTo(e2.getExecutionId());
 				}
@@ -284,6 +299,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
+	@SuppressWarnings("NullAway")
 	public List<TaskExecution> getLatestTaskExecutionsByTaskNames(String... taskNames) {
 
 		Assert.notEmpty(taskNames, "At least 1 task name must be provided.");
@@ -324,7 +340,7 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
+	public @Nullable TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
 		Assert.hasText(taskName, "The task name must not be empty.");
 		final List<TaskExecution> taskExecutions = this.getLatestTaskExecutionsByTaskNames(taskName);
 		if (taskExecutions.isEmpty()) {
@@ -343,11 +359,15 @@ public class MapTaskExecutionDao implements TaskExecutionDao {
 
 		@Override
 		public int compare(TaskExecution firstTaskExecution, TaskExecution secondTaskExecution) {
-			if (firstTaskExecution.getStartTime().equals(secondTaskExecution.getStartTime())) {
+			LocalDateTime firstStartTime = firstTaskExecution.getStartTime();
+			LocalDateTime secondStartTime = secondTaskExecution.getStartTime();
+			Assert.state(firstStartTime != null, "TaskExecution start time must not be null");
+			Assert.state(secondStartTime != null, "TaskExecution start time must not be null");
+			if (firstStartTime.equals(secondStartTime)) {
 				return Long.compare(firstTaskExecution.getExecutionId(), secondTaskExecution.getExecutionId());
 			}
 			else {
-				return secondTaskExecution.getStartTime().compareTo(firstTaskExecution.getStartTime());
+				return secondStartTime.compareTo(firstStartTime);
 			}
 		}
 

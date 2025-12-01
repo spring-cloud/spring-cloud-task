@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.step.StepExecution;
@@ -37,7 +39,7 @@ public class StepExecutionEvent extends Entity {
 
 	private long jobExecutionId;
 
-	private String stepName;
+	private @Nullable String stepName;
 
 	private BatchStatus status = BatchStatus.STARTING;
 
@@ -55,11 +57,11 @@ public class StepExecutionEvent extends Entity {
 
 	private long writeSkipCount = 0;
 
-	private LocalDateTime startTime = LocalDateTime.now();
+	private @Nullable LocalDateTime startTime = LocalDateTime.now();
 
-	private LocalDateTime endTime = null;
+	private @Nullable LocalDateTime endTime = null;
 
-	private LocalDateTime lastUpdated = null;
+	private @Nullable LocalDateTime lastUpdated = null;
 
 	private ExecutionContext executionContext = new ExecutionContext();
 
@@ -145,7 +147,7 @@ public class StepExecutionEvent extends Entity {
 	 * Returns the time that this execution ended.
 	 * @return the time that this execution ended
 	 */
-	public LocalDateTime getEndTime() {
+	public @Nullable LocalDateTime getEndTime() {
 		return this.endTime;
 	}
 
@@ -153,7 +155,7 @@ public class StepExecutionEvent extends Entity {
 	 * Sets the time that this execution ended.
 	 * @param endTime the time that this execution ended
 	 */
-	public void setEndTime(LocalDateTime endTime) {
+	public void setEndTime(@Nullable LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
@@ -225,7 +227,7 @@ public class StepExecutionEvent extends Entity {
 	 * Gets the time this execution started.
 	 * @return the time this execution started
 	 */
-	public LocalDateTime getStartTime() {
+	public @Nullable LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
@@ -233,7 +235,7 @@ public class StepExecutionEvent extends Entity {
 	 * Sets the time this execution started.
 	 * @param startTime the time this execution started
 	 */
-	public void setStartTime(LocalDateTime startTime) {
+	public void setStartTime(@Nullable LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
@@ -256,11 +258,11 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the name of the step.
 	 */
-	public String getStepName() {
+	public @Nullable String getStepName() {
 		return this.stepName;
 	}
 
-	public void setStepName(String stepName) {
+	public void setStepName(@Nullable String stepName) {
 		this.stepName = stepName;
 	}
 
@@ -355,7 +357,7 @@ public class StepExecutionEvent extends Entity {
 	/**
 	 * @return the Date representing the last time this execution was persisted.
 	 */
-	public LocalDateTime getLastUpdated() {
+	public @Nullable LocalDateTime getLastUpdated() {
 		return this.lastUpdated;
 	}
 
@@ -363,7 +365,7 @@ public class StepExecutionEvent extends Entity {
 	 * Set the time when the StepExecution was last updated before persisting.
 	 * @param lastUpdated the {@link LocalDateTime} the StepExecution was last updated.
 	 */
-	public void setLastUpdated(LocalDateTime lastUpdated) {
+	public void setLastUpdated(@Nullable LocalDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
 
@@ -389,8 +391,8 @@ public class StepExecutionEvent extends Entity {
 		}
 		StepExecution other = (StepExecution) obj;
 
-		return this.stepName.equals(other.getStepName()) && (this.jobExecutionId == other.getJobExecutionId())
-				&& getId() == other.getId();
+		return (this.stepName != null && this.stepName.equals(other.getStepName()))
+				&& (this.jobExecutionId == other.getJobExecutionId()) && getId() == other.getId();
 	}
 
 	/*

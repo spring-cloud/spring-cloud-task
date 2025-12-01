@@ -27,24 +27,31 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class TaskObservationCloudKeyValues {
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.org_name:default}")
 	private String organizationName;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.space_id:unknown}")
 	private String spaceId;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.space_name:unknown}")
 	private String spaceName;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.application_name:unknown}")
 	private String applicationName;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.application_id:unknown}")
 	private String applicationId;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.application_version:unknown}")
 	private String applicationVersion;
 
+	@SuppressWarnings("NullAway.Init")
 	@Value("${vcap.application.instance_index:0}")
 	private String instanceIndex;
 

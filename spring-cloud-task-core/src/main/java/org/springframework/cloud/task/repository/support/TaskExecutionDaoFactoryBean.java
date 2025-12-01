@@ -22,6 +22,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.batch.infrastructure.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.infrastructure.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -45,9 +47,9 @@ import org.springframework.util.StringUtils;
  */
 public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao> {
 
-	private DataSource dataSource;
+	private @Nullable DataSource dataSource;
 
-	private TaskExecutionDao dao = null;
+	private @Nullable TaskExecutionDao dao;
 
 	private String tablePrefix = TaskProperties.DEFAULT_TABLE_PREFIX;
 
@@ -80,6 +82,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 	}
 
 	@Override
+	@SuppressWarnings("NullAway")
 	public TaskExecutionDao getObject() throws Exception {
 		if (this.dao == null) {
 			if (this.dataSource != null) {
@@ -92,7 +95,9 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		if (this.dataSource != null) {
 			String databaseType = null;
 			try {
-				databaseType = DatabaseType.fromMetaData(dataSource).name();
+				DatabaseType dbType = DatabaseType.fromMetaData(dataSource);
+				Assert.state(dbType != null, "DatabaseType must not be null");
+				databaseType = dbType.name();
 			}
 			catch (MetaDataAccessException e) {
 				throw new IllegalStateException(e);
@@ -128,7 +133,9 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 		this.dao = new JdbcTaskExecutionDao(dataSource, this.tablePrefix);
 		String databaseType;
 		try {
-			databaseType = DatabaseType.fromMetaData(dataSource).name();
+			DatabaseType dbType = DatabaseType.fromMetaData(dataSource);
+			Assert.state(dbType != null, "DatabaseType must not be null");
+			databaseType = dbType.name();
 		}
 		catch (MetaDataAccessException e) {
 			throw new IllegalStateException(e);
@@ -140,6 +147,7 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 			.setTaskIncrementer(incrementerFactory.getIncrementer(databaseType, this.tablePrefix + "SEQ"));
 	}
 
+	@SuppressWarnings("NullAway")
 	private boolean isSqlServerTableSequenceAvailable(String incrementerName) {
 		boolean result = false;
 		DatabaseMetaData metaData = null;
@@ -155,7 +163,8 @@ public class TaskExecutionDaoFactoryBean implements FactoryBean<TaskExecutionDao
 			}
 		}
 		catch (SQLException sqe) {
-			throw new TaskException(sqe.getMessage());
+			String message = sqe.getMessage();
+			throw new TaskException(message != null ? message : "SQL error occurred");
 		}
 		return result;
 	}

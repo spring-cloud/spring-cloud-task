@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.util.Assert;
 
 /**
@@ -40,46 +42,46 @@ public class TaskExecution {
 	/**
 	 * The parent task execution id.
 	 */
-	private Long parentExecutionId;
+	private @Nullable Long parentExecutionId;
 
 	/**
 	 * The recorded exit code for the task.
 	 */
-	private Integer exitCode;
+	private @Nullable Integer exitCode;
 
 	/**
 	 * User defined name for the task.
 	 */
-	private String taskName;
+	private @Nullable String taskName;
 
 	/**
 	 * Time of when the task was started.
 	 */
-	private LocalDateTime startTime;
+	private @Nullable LocalDateTime startTime;
 
 	/**
 	 * Timestamp of when the task was completed/terminated.
 	 */
-	private LocalDateTime endTime;
+	private @Nullable LocalDateTime endTime;
 
 	/**
 	 * Message returned from the task or stacktrace.
 	 */
-	private String exitMessage;
+	private @Nullable String exitMessage;
 
 	/**
 	 * Id assigned to the task by the platform.
 	 *
 	 * @since 1.1.0
 	 */
-	private String externalExecutionId;
+	private @Nullable String externalExecutionId;
 
 	/**
 	 * Error information available upon the failure of a task.
 	 *
 	 * @since 1.1.0
 	 */
-	private String errorMessage;
+	private @Nullable String errorMessage;
 
 	/**
 	 * The arguments that were used for this task execution.
@@ -90,9 +92,10 @@ public class TaskExecution {
 		this.arguments = new ArrayList<>();
 	}
 
-	public TaskExecution(long executionId, Integer exitCode, String taskName, LocalDateTime startTime,
-			LocalDateTime endTime, String exitMessage, List<String> arguments, String errorMessage,
-			String externalExecutionId, Long parentExecutionId) {
+	public TaskExecution(long executionId, @Nullable Integer exitCode, @Nullable String taskName,
+			@Nullable LocalDateTime startTime, @Nullable LocalDateTime endTime, @Nullable String exitMessage,
+			List<String> arguments, @Nullable String errorMessage, @Nullable String externalExecutionId,
+			@Nullable Long parentExecutionId) {
 
 		Assert.notNull(arguments, "arguments must not be null");
 		this.executionId = executionId;
@@ -107,9 +110,9 @@ public class TaskExecution {
 		this.parentExecutionId = parentExecutionId;
 	}
 
-	public TaskExecution(long executionId, Integer exitCode, String taskName, LocalDateTime startTime,
-			LocalDateTime endTime, String exitMessage, List<String> arguments, String errorMessage,
-			String externalExecutionId) {
+	public TaskExecution(long executionId, @Nullable Integer exitCode, @Nullable String taskName,
+			@Nullable LocalDateTime startTime, @Nullable LocalDateTime endTime, @Nullable String exitMessage,
+			List<String> arguments, @Nullable String errorMessage, @Nullable String externalExecutionId) {
 
 		this(executionId, exitCode, taskName, startTime, endTime, exitMessage, arguments, errorMessage,
 				externalExecutionId, null);
@@ -119,43 +122,43 @@ public class TaskExecution {
 		return this.executionId;
 	}
 
-	public Integer getExitCode() {
+	public @Nullable Integer getExitCode() {
 		return this.exitCode;
 	}
 
-	public void setExitCode(Integer exitCode) {
+	public void setExitCode(@Nullable Integer exitCode) {
 		this.exitCode = exitCode;
 	}
 
-	public String getTaskName() {
+	public @Nullable String getTaskName() {
 		return this.taskName;
 	}
 
-	public void setTaskName(String taskName) {
+	public void setTaskName(@Nullable String taskName) {
 		this.taskName = taskName;
 	}
 
-	public LocalDateTime getStartTime() {
+	public @Nullable LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
-	public void setStartTime(LocalDateTime startTime) {
+	public void setStartTime(@Nullable LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public LocalDateTime getEndTime() {
+	public @Nullable LocalDateTime getEndTime() {
 		return this.endTime;
 	}
 
-	public void setEndTime(LocalDateTime endTime) {
+	public void setEndTime(@Nullable LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
-	public String getExitMessage() {
+	public @Nullable String getExitMessage() {
 		return this.exitMessage;
 	}
 
-	public void setExitMessage(String exitMessage) {
+	public void setExitMessage(@Nullable String exitMessage) {
 		this.exitMessage = exitMessage;
 	}
 
@@ -167,27 +170,27 @@ public class TaskExecution {
 		this.arguments = new ArrayList<>(arguments);
 	}
 
-	public String getErrorMessage() {
+	public @Nullable String getErrorMessage() {
 		return this.errorMessage;
 	}
 
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(@Nullable String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
-	public String getExternalExecutionId() {
+	public @Nullable String getExternalExecutionId() {
 		return this.externalExecutionId;
 	}
 
-	public void setExternalExecutionId(String externalExecutionId) {
+	public void setExternalExecutionId(@Nullable String externalExecutionId) {
 		this.externalExecutionId = externalExecutionId;
 	}
 
-	public Long getParentExecutionId() {
+	public @Nullable Long getParentExecutionId() {
 		return this.parentExecutionId;
 	}
 
-	public void setParentExecutionId(Long parentExecutionId) {
+	public void setParentExecutionId(@Nullable Long parentExecutionId) {
 		this.parentExecutionId = parentExecutionId;
 	}
 

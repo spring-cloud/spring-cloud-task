@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.jdbc;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -31,12 +33,12 @@ public class JdbcBatchItemWriterProperties {
 	 * The name used to calculate the key within the
 	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 */
-	private String name;
+	private @Nullable String name;
 
 	/**
 	 * The SQL statement to be used to update the database.
 	 */
-	private String sql;
+	private @Nullable String sql;
 
 	/**
 	 * If set to {@code true}, confirms that every insert results in the update of at
@@ -47,7 +49,7 @@ public class JdbcBatchItemWriterProperties {
 	/**
 	 * @return The current sql statement used to update the database.
 	 */
-	public String getSql() {
+	public @Nullable String getSql() {
 		return sql;
 	}
 
@@ -55,7 +57,7 @@ public class JdbcBatchItemWriterProperties {
 	 * Sets the sql statement to be used to update the database.
 	 * @param sql the sql statement to be used.
 	 */
-	public void setSql(String sql) {
+	public void setSql(@Nullable String sql) {
 		this.sql = sql;
 	}
 
@@ -80,7 +82,7 @@ public class JdbcBatchItemWriterProperties {
 	 * keys.
 	 * @return the name
 	 */
-	public String getName() {
+	public @Nullable String getName() {
 		return name;
 	}
 
@@ -90,7 +92,7 @@ public class JdbcBatchItemWriterProperties {
 	 * @param name name of the writer instance
 	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
-	public void setName(String name) {
+	public void setName(@Nullable String name) {
 		this.name = name;
 	}
 

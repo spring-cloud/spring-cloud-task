@@ -18,6 +18,8 @@ package org.springframework.cloud.task.configuration;
 
 import javax.sql.DataSource;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskNameResolver;
 import org.springframework.cloud.task.repository.TaskRepository;
@@ -57,6 +59,7 @@ public interface TaskConfigurer {
 	 * return null.
 	 * @return {@link DataSource} that will be used for task operations.
 	 */
+	@Nullable
 	DataSource getTaskDataSource();
 
 	/**

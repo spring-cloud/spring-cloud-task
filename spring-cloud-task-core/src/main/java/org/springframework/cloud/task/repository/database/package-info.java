@@ -17,4 +17,7 @@
 /**
  * Database-specific components for Spring Cloud Task repository.
  */
+@NullMarked
 package org.springframework.cloud.task.repository.database;
+
+import org.jspecify.annotations.NullMarked;

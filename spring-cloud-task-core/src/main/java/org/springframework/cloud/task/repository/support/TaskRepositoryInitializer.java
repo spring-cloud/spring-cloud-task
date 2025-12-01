@@ -18,6 +18,7 @@ package org.springframework.cloud.task.repository.support;
 
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.sql.DataSource;
 
@@ -61,8 +62,10 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 	 */
 	private static String schema = DEFAULT_SCHEMA_LOCATION;
 
+	@SuppressWarnings("NullAway.Init")
 	private DataSource dataSource;
 
+	@SuppressWarnings("NullAway.Init")
 	private ResourceLoader resourceLoader;
 
 	@Value("${spring.cloud.task.initialize.enable:true}")
@@ -85,7 +88,10 @@ public final class TaskRepositoryInitializer implements InitializingBean {
 
 	private String getDatabaseType(DataSource dataSource) {
 		try {
-			return JdbcUtils.commonDatabaseName(DatabaseType.fromMetaData(dataSource).toString())
+			DatabaseType databaseType = DatabaseType.fromMetaData(dataSource);
+			String databaseTypeName = (databaseType != null) ? databaseType.toString() : null;
+			return Objects
+				.requireNonNull(JdbcUtils.commonDatabaseName(databaseTypeName), "Common database name is required")
 				.toLowerCase(Locale.ROOT);
 		}
 		catch (MetaDataAccessException ex) {

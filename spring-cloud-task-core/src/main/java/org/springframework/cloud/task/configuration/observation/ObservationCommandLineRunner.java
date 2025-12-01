@@ -18,6 +18,7 @@ package org.springframework.cloud.task.configuration.observation;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -37,9 +38,9 @@ class ObservationCommandLineRunner implements CommandLineRunner {
 
 	private final String beanName;
 
-	private ObservationRegistry registry;
+	private @Nullable ObservationRegistry registry;
 
-	private TaskObservationConvention taskObservationConvention;
+	private @Nullable TaskObservationConvention taskObservationConvention;
 
 	ObservationCommandLineRunner(BeanFactory beanFactory, CommandLineRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;

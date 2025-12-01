@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.job.Job;
@@ -79,7 +80,7 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private final List<JobExecution> jobExecutionList = new ArrayList<>();
 
-	private ApplicationEventPublisher taskApplicationEventPublisher;
+	private @Nullable ApplicationEventPublisher taskApplicationEventPublisher;
 
 	private final TaskBatchProperties taskBatchProperties;
 
@@ -183,7 +184,10 @@ public class TaskJobLauncherApplicationRunner extends JobLauncherApplicationRunn
 
 	private BatchStatus getCurrentBatchStatus(JobExecution jobExecution) {
 		if (jobExecution.getStatus().isRunning()) {
-			return this.taskJobRepository.getJobExecution(jobExecution.getId()).getStatus();
+			JobExecution jobExecutionWithStatus = this.taskJobRepository.getJobExecution(jobExecution.getId());
+			Assert.state(jobExecutionWithStatus != null,
+					"Job execution with id " + jobExecution.getId() + " not found");
+			return jobExecutionWithStatus.getStatus();
 		}
 		return jobExecution.getStatus();
 	}

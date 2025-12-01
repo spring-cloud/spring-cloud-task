@@ -18,4 +18,7 @@
  * Auto-configuration classes for flat file item readers and writers in single-step batch
  * jobs.
  */
+@NullMarked
 package org.springframework.cloud.task.batch.autoconfigure.flatfile;
+
+import org.jspecify.annotations.NullMarked;

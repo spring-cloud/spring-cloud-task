@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.Assert;
 
 /**
  * @author Michael Minella
@@ -84,6 +85,8 @@ public class JdbcCursorItemReaderAutoConfiguration {
 			logger.info("Using Default Data Source for the JdbcCursorItemReader");
 
 		}
+		Assert.state(this.properties.getSql() != null, "sql must not be null");
+		Assert.state(this.properties.getName() != null, "name must not be null");
 		return new JdbcCursorItemReaderBuilder<Map<String, Object>>().name(this.properties.getName())
 			.currentItemCount(this.properties.getCurrentItemCount())
 			.dataSource(readerDataSource)

@@ -17,4 +17,7 @@
 /**
  * Handler components for Spring Cloud Task Batch integration.
  */
+@NullMarked
 package org.springframework.cloud.task.batch.handler;
+
+import org.jspecify.annotations.NullMarked;

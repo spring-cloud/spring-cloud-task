@@ -57,10 +57,13 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 
 	private ConfigurableApplicationContext context;
 
+	@SuppressWarnings("NullAway.Init")
 	private Map<Method, Set<Object>> beforeTaskInstances;
 
+	@SuppressWarnings("NullAway.Init")
 	private Map<Method, Set<Object>> afterTaskInstances;
 
+	@SuppressWarnings("NullAway.Init")
 	private Map<Method, Set<Object>> failedTaskInstances;
 
 	public TaskListenerExecutorObjectFactory(ConfigurableApplicationContext context) {
@@ -76,6 +79,7 @@ public class TaskListenerExecutorObjectFactory implements ObjectFactory<TaskExec
 		return new TaskListenerExecutor(this.beforeTaskInstances, this.afterTaskInstances, this.failedTaskInstances);
 	}
 
+	@SuppressWarnings("NullAway")
 	private void initializeExecutor() {
 		ConfigurableListableBeanFactory factory = this.context.getBeanFactory();
 		for (String beanName : this.context.getBeanDefinitionNames()) {

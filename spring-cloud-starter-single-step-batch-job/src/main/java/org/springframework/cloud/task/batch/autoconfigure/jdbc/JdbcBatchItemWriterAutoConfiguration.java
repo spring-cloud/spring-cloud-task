@@ -40,6 +40,7 @@ import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.util.Assert;
 
 /**
  * Autconfiguration for a {@code JdbcBatchItemWriter}.
@@ -85,7 +86,7 @@ public class JdbcBatchItemWriterAutoConfiguration {
 		catch (Exception ex) {
 			logger.info("Using Default Data Source for the JdbcBatchItemWriter");
 		}
-
+		Assert.state(this.properties.getSql() != null, "sql must not be null");
 		JdbcBatchItemWriterBuilder<Map<String, Object>> jdbcBatchItemWriterBuilder = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
 			.dataSource(writerDataSource)
 			.sql(this.properties.getSql());

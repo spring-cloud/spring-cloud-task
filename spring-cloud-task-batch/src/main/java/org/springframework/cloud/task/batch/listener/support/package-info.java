@@ -17,4 +17,7 @@
 /**
  * Support classes for Spring Cloud Task Batch listener implementations.
  */
+@NullMarked
 package org.springframework.cloud.task.batch.listener.support;
+
+import org.jspecify.annotations.NullMarked;

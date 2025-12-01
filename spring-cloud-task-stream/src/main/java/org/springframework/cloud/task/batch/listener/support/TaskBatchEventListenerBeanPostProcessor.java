@@ -18,6 +18,8 @@ package org.springframework.cloud.task.batch.listener.support;
 
 import java.lang.reflect.Field;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -42,6 +44,7 @@ import org.springframework.cloud.task.batch.listener.BatchEventAutoConfiguration
 import org.springframework.cloud.task.batch.listener.support.TaskBatchEventListenerBeanPostProcessor.RuntimeHint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ImportRuntimeHints;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -88,13 +91,17 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 
 				if (tasklet instanceof ChunkOrientedTasklet) {
 					Field chunkProviderField = ReflectionUtils.findField(ChunkOrientedTasklet.class, "chunkProvider");
+					Assert.state(chunkProviderField != null, "chunkProvider field must exist");
 					ReflectionUtils.makeAccessible(chunkProviderField);
 					SimpleChunkProvider chunkProvider = (SimpleChunkProvider) ReflectionUtils
 						.getField(chunkProviderField, tasklet);
 					Field chunkProcessorField = ReflectionUtils.findField(ChunkOrientedTasklet.class, "chunkProcessor");
+					Assert.state(chunkProcessorField != null, "chunkProcessor field must exist");
 					ReflectionUtils.makeAccessible(chunkProcessorField);
 					SimpleChunkProcessor chunkProcessor = (SimpleChunkProcessor) ReflectionUtils
 						.getField(chunkProcessorField, tasklet);
+					Assert.state(chunkProvider != null, "chunkProvider must not be null");
+					Assert.state(chunkProcessor != null, "chunkProcessor must not be null");
 					registerItemReadEvents(chunkProvider);
 					registerSkipEvents(chunkProvider);
 					registerItemProcessEvents(chunkProcessor);
@@ -176,7 +183,7 @@ public class TaskBatchEventListenerBeanPostProcessor implements BeanPostProcesso
 	static class RuntimeHint implements RuntimeHintsRegistrar {
 
 		@Override
-		public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+		public void registerHints(RuntimeHints hints, @Nullable ClassLoader classLoader) {
 			hints.reflection().registerType(ChunkOrientedTasklet.class, MemberCategory.DECLARED_FIELDS);
 		}
 

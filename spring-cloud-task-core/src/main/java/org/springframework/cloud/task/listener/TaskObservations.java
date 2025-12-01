@@ -19,6 +19,7 @@ package org.springframework.cloud.task.listener;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.cloud.task.configuration.TaskObservationCloudKeyValues;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -60,12 +61,16 @@ public class TaskObservations {
 		this.customObservationConvention = customObservationConvention;
 	}
 
+	@SuppressWarnings("NullAway.Init")
 	private Observation.Scope scope;
 
+	@SuppressWarnings("NullAway.Init")
 	private TaskExecutionObservationConvention observationsProvider = new DefaultTaskExecutionObservationConvention();
 
+	@SuppressWarnings("NullAway.Init")
 	private TaskExecutionObservationContext taskObservationContext;
 
+	@Nullable
 	TaskObservationCloudKeyValues taskObservationCloudKeyValues;
 
 	public void onTaskStartup(TaskExecution taskExecution) {
@@ -107,7 +112,7 @@ public class TaskObservations {
 		this.scope = observation.openScope();
 	}
 
-	private String getValueOrDefault(Object value) {
+	private String getValueOrDefault(@Nullable Object value) {
 		return (value != null) ? value.toString() : UNKNOWN;
 	}
 

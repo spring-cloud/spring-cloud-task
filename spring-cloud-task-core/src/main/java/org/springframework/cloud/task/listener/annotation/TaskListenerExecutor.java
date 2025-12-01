@@ -81,7 +81,9 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	private void executeTaskListener(TaskExecution taskExecution, Set<Method> methods,
 			Map<Method, Set<Object>> instances) {
 		for (Method method : methods) {
-			for (Object instance : instances.get(method)) {
+			Set<Object> instanceSet = instances.get(method);
+			org.springframework.util.Assert.state(instanceSet != null, "instanceSet must not be null");
+			for (Object instance : instanceSet) {
 				try {
 					method.invoke(instance, taskExecution);
 				}
@@ -106,7 +108,9 @@ public class TaskListenerExecutor implements TaskExecutionListener {
 	private void executeTaskListenerWithThrowable(TaskExecution taskExecution, Throwable throwable, Set<Method> methods,
 			Map<Method, Set<Object>> instances) {
 		for (Method method : methods) {
-			for (Object instance : instances.get(method)) {
+			Set<Object> instanceSet = instances.get(method);
+			org.springframework.util.Assert.state(instanceSet != null, "instanceSet must not be null");
+			for (Object instance : instanceSet) {
 				try {
 					method.invoke(instance, taskExecution, throwable);
 				}

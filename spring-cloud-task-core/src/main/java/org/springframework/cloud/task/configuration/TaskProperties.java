@@ -18,6 +18,7 @@ package org.springframework.cloud.task.configuration;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -43,18 +44,18 @@ public class TaskProperties {
 	/**
 	 * An id that can be associated with a task.
 	 */
-	private String externalExecutionId;
+	private @Nullable String externalExecutionId;
 
 	/**
 	 * An id that will be used by the task when updating the task execution.
 	 */
-	private Long executionid;
+	private @Nullable Long executionid;
 
 	/**
 	 * The id of the parent task execution id that launched this task execution. Defaults
 	 * to null if task execution had no parent.
 	 */
-	private Long parentExecutionId;
+	private @Nullable Long parentExecutionId;
 
 	/**
 	 * The prefix to append to the table names created by Spring Cloud Task.
@@ -94,21 +95,21 @@ public class TaskProperties {
 	 * that we can support the <code>spring.cloud.task.initialize.enable</code> until it
 	 * is removed.
 	 */
-	private Boolean initializeEnabled;
+	private @Nullable Boolean initializeEnabled;
 
-	public String getExternalExecutionId() {
+	public @Nullable String getExternalExecutionId() {
 		return this.externalExecutionId;
 	}
 
-	public void setExternalExecutionId(String externalExecutionId) {
+	public void setExternalExecutionId(@Nullable String externalExecutionId) {
 		this.externalExecutionId = externalExecutionId;
 	}
 
-	public Long getExecutionid() {
+	public @Nullable Long getExecutionid() {
 		return this.executionid;
 	}
 
-	public void setExecutionid(Long executionid) {
+	public void setExecutionid(@Nullable Long executionid) {
 		this.executionid = executionid;
 	}
 
@@ -128,11 +129,11 @@ public class TaskProperties {
 		this.tablePrefix = tablePrefix;
 	}
 
-	public Long getParentExecutionId() {
+	public @Nullable Long getParentExecutionId() {
 		return this.parentExecutionId;
 	}
 
-	public void setParentExecutionId(Long parentExecutionId) {
+	public void setParentExecutionId(@Nullable Long parentExecutionId) {
 		this.parentExecutionId = parentExecutionId;
 	}
 
@@ -160,11 +161,11 @@ public class TaskProperties {
 		this.singleInstanceLockCheckInterval = singleInstanceLockCheckInterval;
 	}
 
-	public Boolean isInitializeEnabled() {
-		return initializeEnabled;
+	public @Nullable Boolean isInitializeEnabled() {
+		return this.initializeEnabled;
 	}
 
-	public void setInitializeEnabled(Boolean initializeEnabled) {
+	public void setInitializeEnabled(@Nullable Boolean initializeEnabled) {
 		this.initializeEnabled = initializeEnabled;
 	}
 

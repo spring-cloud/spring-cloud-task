@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.batch.core.listener.ItemProcessListener;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
@@ -69,7 +70,7 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 	}
 
 	@Override
-	public void afterProcess(Object item, Object result) {
+	public void afterProcess(Object item, @Nullable Object result) {
 		if (result == null) {
 			this.messagePublisher.publish(this.properties.getItemProcessEventBindingName(), "1 item was filtered");
 		}
@@ -88,8 +89,9 @@ public class EventEmittingItemProcessListener implements ItemProcessListener, Or
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onProcessError: " + e.getMessage(), e);
 		}
+		String message = e.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getItemProcessEventBindingName(),
-				"Exception while item was being processed", e.getMessage());
+				"Exception while item was being processed", message != null ? message : e.getClass().getName());
 	}
 
 	@Override

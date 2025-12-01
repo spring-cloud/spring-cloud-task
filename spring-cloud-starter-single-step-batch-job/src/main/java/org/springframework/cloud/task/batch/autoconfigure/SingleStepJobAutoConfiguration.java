@@ -22,8 +22,7 @@ import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
-import org.springframework.batch.core.step.builder.SimpleStepBuilder;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.builder.ChunkOrientedStepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.batch.infrastructure.item.ItemReader;
 import org.springframework.batch.infrastructure.item.ItemWriter;
@@ -78,16 +77,16 @@ public class SingleStepJobAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job", name = "job-name")
 	public Job job(ItemReader<Map<String, Object>> itemReader, ItemWriter<Map<String, Object>> itemWriter) {
-
-		SimpleStepBuilder<Map<String, Object>, Map<String, Object>> stepBuilder = new StepBuilder(
-				this.properties.getStepName(), this.jobRepository)
-			.<Map<String, Object>, Map<String, Object>>chunk(this.properties.getChunkSize(), this.transactionManager)
+		Assert.state(properties.getStepName() != null, "A step name is required");
+		Assert.state(properties.getChunkSize() != null, "A chunkSize is required");
+		var chunkOrientedStepBuilder = new ChunkOrientedStepBuilder(properties.getStepName(), this.jobRepository,
+				this.properties.getChunkSize())
+			.transactionManager(this.transactionManager)
 			.reader(itemReader);
+		chunkOrientedStepBuilder.processor(this.itemProcessor);
+		Step step = chunkOrientedStepBuilder.writer(itemWriter).build();
 
-		stepBuilder.processor(this.itemProcessor);
-
-		Step step = stepBuilder.writer(itemWriter).build();
-
+		Assert.state(this.properties.getJobName() != null, "A job name is required");
 		return new JobBuilder(this.properties.getJobName(), this.jobRepository).start(step).build();
 	}
 
