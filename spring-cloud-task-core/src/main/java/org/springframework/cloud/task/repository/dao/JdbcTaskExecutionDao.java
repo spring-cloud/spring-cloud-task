@@ -33,8 +33,6 @@ import java.util.TreeSet;
 
 import javax.sql.DataSource;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.infrastructure.item.database.Order;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -183,7 +181,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	private LinkedHashMap<String, Order> orderMap;
 
-	@SuppressWarnings("NullAway.Init")
 	private DataFieldMaxValueIncrementer taskIncrementer;
 
 	/**
@@ -212,14 +209,14 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
-			List<String> arguments, @Nullable String externalExecutionId) {
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
+			String externalExecutionId) {
 		return createTaskExecution(taskName, startTime, arguments, externalExecutionId, null);
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(@Nullable String taskName, @Nullable LocalDateTime startTime,
-			List<String> arguments, @Nullable String externalExecutionId, @Nullable Long parentExecutionId) {
+	public TaskExecution createTaskExecution(String taskName, LocalDateTime startTime, List<String> arguments,
+			String externalExecutionId, Long parentExecutionId) {
 		long nextExecutionId = getNextExecutionId();
 
 		TaskExecution taskExecution = new TaskExecution(nextExecutionId, null, taskName, startTime, null, null,
@@ -246,9 +243,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionId, @Nullable String taskName,
-			@Nullable LocalDateTime startTime, List<String> arguments, @Nullable String externalExecutionId,
-			@Nullable Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionId, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId, Long parentExecutionId) {
 		TaskExecution taskExecution = new TaskExecution(executionId, null, taskName, startTime, null, null, arguments,
 				null, externalExecutionId, parentExecutionId);
 
@@ -276,16 +272,15 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public void completeTaskExecution(long taskExecutionId, Integer exitCode, LocalDateTime endTime,
-			@Nullable String exitMessage, @Nullable String errorMessage) {
+	public void completeTaskExecution(long taskExecutionId, Integer exitCode, LocalDateTime endTime, String exitMessage,
+			String errorMessage) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource().addValue("taskExecutionId",
 				taskExecutionId, Types.BIGINT);
 
 		// Check if given TaskExecution's Id already exists, if none is found
 		// it is invalid and an exception should be thrown.
-		Integer count = this.jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), queryParameters,
-				Integer.class);
-		if (count == null || count != 1) {
+		if (this.jdbcTemplate.queryForObject(getQuery(CHECK_TASK_EXECUTION_EXISTS), queryParameters,
+				Integer.class) != 1) {
 			throw new IllegalStateException("Invalid TaskExecution, ID " + taskExecutionId + " not found.");
 		}
 
@@ -302,19 +297,18 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 	@Override
 	public void completeTaskExecution(long taskExecutionId, Integer exitCode, LocalDateTime endTime,
-			@Nullable String exitMessage) {
+			String exitMessage) {
 		completeTaskExecution(taskExecutionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override
-	public @Nullable TaskExecution getTaskExecution(long executionId) {
+	public TaskExecution getTaskExecution(long executionId) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource().addValue("taskExecutionId",
 				executionId, Types.BIGINT);
 
 		try {
 			TaskExecution taskExecution = this.jdbcTemplate.queryForObject(getQuery(GET_EXECUTION_BY_ID),
 					queryParameters, new TaskExecutionRowMapper());
-			Assert.state(taskExecution != null, "TaskExecution must not be null");
 			taskExecution.setArguments(getTaskArguments(executionId));
 			return taskExecution;
 		}
@@ -330,9 +324,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				Types.VARCHAR);
 
 		try {
-			Long count = this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT_BY_NAME), queryParameters,
+			return this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT_BY_NAME), queryParameters,
 					Long.class);
-			return count != null ? count : 0;
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
@@ -345,9 +338,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				Types.VARCHAR);
 
 		try {
-			Long count = this.jdbcTemplate.queryForObject(getQuery(RUNNING_TASK_EXECUTION_COUNT_BY_NAME),
-					queryParameters, Long.class);
-			return count != null ? count : 0;
+			return this.jdbcTemplate.queryForObject(getQuery(RUNNING_TASK_EXECUTION_COUNT_BY_NAME), queryParameters,
+					Long.class);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
@@ -359,9 +351,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 
 		try {
 			final MapSqlParameterSource queryParameters = new MapSqlParameterSource();
-			Long count = this.jdbcTemplate.queryForObject(getQuery(RUNNING_TASK_EXECUTION_COUNT), queryParameters,
+			return this.jdbcTemplate.queryForObject(getQuery(RUNNING_TASK_EXECUTION_COUNT), queryParameters,
 					Long.class);
-			return count != null ? count : 0;
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
@@ -395,7 +386,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public @Nullable TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
+	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
 		Assert.hasText(taskName, "The task name must not be empty.");
 		final List<TaskExecution> taskExecutions = this.getLatestTaskExecutionsByTaskNames(taskName);
 		if (taskExecutions.isEmpty()) {
@@ -414,9 +405,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	public long getTaskExecutionCount() {
 
 		try {
-			Long count = this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT), new MapSqlParameterSource(),
+			return this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT), new MapSqlParameterSource(),
 					Long.class);
-			return count != null ? count : 0;
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
@@ -442,9 +432,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				externalExecutionId, Types.VARCHAR);
 
 		try {
-			Long count = this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT_BY_EXTERNAL_EXECUTION_ID),
+			return this.jdbcTemplate.queryForObject(getQuery(TASK_EXECUTION_COUNT_BY_EXTERNAL_EXECUTION_ID),
 					queryParameters, Long.class);
-			return count != null ? count : 0;
 		}
 		catch (EmptyResultDataAccessException e) {
 			return 0;
@@ -458,7 +447,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	@SuppressWarnings("NullAway")
 	public List<String> getTaskNames() {
 		return this.jdbcTemplate.queryForList(getQuery(FIND_TASK_NAMES), new MapSqlParameterSource(), String.class);
 	}
@@ -478,14 +466,13 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	@Override
-	public @Nullable Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
 		final MapSqlParameterSource queryParameters = new MapSqlParameterSource().addValue("jobExecutionId",
 				jobExecutionId, Types.BIGINT);
 
 		try {
-			Long taskExecutionId = this.jdbcTemplate.queryForObject(getQuery(FIND_TASK_EXECUTION_BY_JOB_EXECUTION_ID),
-					queryParameters, Long.class);
-			return taskExecutionId;
+			return this.jdbcTemplate.queryForObject(getQuery(FIND_TASK_EXECUTION_BY_JOB_EXECUTION_ID), queryParameters,
+					Long.class);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return null;
@@ -498,8 +485,8 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				taskExecutionId, Types.BIGINT);
 
 		try {
-			Set<Long> result = this.jdbcTemplate.query(getQuery(FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID),
-					queryParameters, new ResultSetExtractor<Set<Long>>() {
+			return this.jdbcTemplate.query(getQuery(FIND_JOB_EXECUTION_BY_TASK_EXECUTION_ID), queryParameters,
+					new ResultSetExtractor<Set<Long>>() {
 						@Override
 						public Set<Long> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
 							Set<Long> jobExecutionIds = new TreeSet<>();
@@ -511,7 +498,6 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 							return jobExecutionIds;
 						}
 					});
-			return result != null ? result : Collections.emptySet();
 		}
 		catch (DataAccessException e) {
 			return Collections.emptySet();
@@ -530,7 +516,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 	}
 
 	private Page<TaskExecution> queryForPageableResults(Pageable pageable, String selectClause, String fromClause,
-			@Nullable String whereClause, MapSqlParameterSource queryParameters, long totalCount) {
+			String whereClause, MapSqlParameterSource queryParameters, long totalCount) {
 		SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
 		factoryBean.setSelectClause(selectClause);
 		factoryBean.setFromClause(fromClause);
@@ -638,8 +624,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				startTime = rs.getObject("START_TIME", LocalDateTime.class);
 			}
 			catch (NullPointerException npe) {
-				String message = npe.getMessage();
-				if (message == null || !message.contains("<local4>")) {
+				if (!npe.getMessage().contains("<local4>")) {
 					throw npe;
 				}
 			}
@@ -648,8 +633,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 				endTime = rs.getObject("END_TIME", LocalDateTime.class);
 			}
 			catch (NullPointerException npe) {
-				String message = npe.getMessage();
-				if (message == null || !message.contains("<local4>")) {
+				if (!npe.getMessage().contains("<local4>")) {
 					throw npe;
 				}
 			}
@@ -658,7 +642,7 @@ public class JdbcTaskExecutionDao implements TaskExecutionDao {
 					rs.getString("EXTERNAL_EXECUTION_ID"), parentExecutionId);
 		}
 
-		private @Nullable Integer getNullableExitCode(ResultSet rs) throws SQLException {
+		private Integer getNullableExitCode(ResultSet rs) throws SQLException {
 			int exitCode = rs.getInt("EXIT_CODE");
 			return !rs.wasNull() ? exitCode : null;
 		}

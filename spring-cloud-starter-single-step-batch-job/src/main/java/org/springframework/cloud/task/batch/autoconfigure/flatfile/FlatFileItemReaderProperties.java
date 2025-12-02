@@ -19,8 +19,6 @@ package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.infrastructure.item.file.transform.Range;
@@ -46,7 +44,7 @@ public class FlatFileItemReaderProperties {
 	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}. Required if
 	 * {@link #setSaveState} is set to {@code true}.
 	 */
-	private @Nullable String name;
+	private String name;
 
 	/**
 	 * Configure the maximum number of items to be read.
@@ -66,7 +64,7 @@ public class FlatFileItemReaderProperties {
 	/**
 	 * The {@link Resource} to be used as input.
 	 */
-	private @Nullable Resource resource;
+	private Resource resource;
 
 	/**
 	 * Configure whether the reader should be in strict mode (require the input
@@ -120,7 +118,7 @@ public class FlatFileItemReaderProperties {
 	/**
 	 * The names of the fields to be parsed from the file.
 	 */
-	private String @Nullable [] names;
+	private String[] names;
 
 	/**
 	 * Indicates whether the number of tokens must match the number of configured fields.
@@ -152,7 +150,7 @@ public class FlatFileItemReaderProperties {
 	 * keys.
 	 * @return the name
 	 */
-	public @Nullable String getName() {
+	public String getName() {
 		return this.name;
 	}
 
@@ -163,7 +161,7 @@ public class FlatFileItemReaderProperties {
 	 * @param name name of the reader instance
 	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
-	public void setName(@Nullable String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -221,7 +219,7 @@ public class FlatFileItemReaderProperties {
 	 * The input file for the {@code FlatFileItemReader}.
 	 * @return a Resource
 	 */
-	public @Nullable Resource getResource() {
+	public Resource getResource() {
 		return this.resource;
 	}
 
@@ -230,7 +228,7 @@ public class FlatFileItemReaderProperties {
 	 * @param resource the input to the reader.
 	 * @see FlatFileItemReader#setResource(Resource)
 	 */
-	public void setResource(@Nullable Resource resource) {
+	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
 
@@ -393,7 +391,7 @@ public class FlatFileItemReaderProperties {
 	 * Names of each column.
 	 * @return names
 	 */
-	public String @Nullable [] getNames() {
+	public String[] getNames() {
 		return this.names;
 	}
 
@@ -401,7 +399,7 @@ public class FlatFileItemReaderProperties {
 	 * The names of the fields to be parsed from the file.
 	 * @param names names of fields
 	 */
-	public void setNames(String @Nullable [] names) {
+	public void setNames(String[] names) {
 		this.names = names;
 	}
 

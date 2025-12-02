@@ -17,7 +17,4 @@
 /**
  * Classes used for setting up and supporting a task repositories.
  */
-@NullMarked
 package org.springframework.cloud.task.repository.support;
-
-import org.jspecify.annotations.NullMarked;

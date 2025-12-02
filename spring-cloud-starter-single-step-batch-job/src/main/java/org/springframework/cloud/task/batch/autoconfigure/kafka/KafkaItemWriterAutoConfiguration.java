@@ -57,7 +57,6 @@ public class KafkaItemWriterAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = "spring.batch.job.kafkaitemwriter", name = "topic")
-	@SuppressWarnings("NullAway")
 	public KafkaItemWriter<Object, Map<String, Object>> kafkaItemWriter(
 			KafkaItemWriterProperties kafkaItemWriterProperties,
 			ProducerFactory<Object, Map<String, Object>> producerFactory,

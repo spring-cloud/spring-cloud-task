@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.core.Entity;
 import org.springframework.util.Assert;
 
@@ -31,7 +29,7 @@ import org.springframework.util.Assert;
 
 public class JobInstanceEvent extends Entity {
 
-	private @Nullable String jobName;
+	private String jobName;
 
 	public JobInstanceEvent() {
 		super(-1L);
@@ -46,7 +44,7 @@ public class JobInstanceEvent extends Entity {
 	/**
 	 * @return the job name. (Equivalent to getJob().getName())
 	 */
-	public @Nullable String getJobName() {
+	public String getJobName() {
 		return this.jobName;
 	}
 

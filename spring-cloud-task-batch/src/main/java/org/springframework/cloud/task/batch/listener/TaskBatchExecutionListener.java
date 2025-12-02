@@ -36,7 +36,6 @@ public class TaskBatchExecutionListener implements JobExecutionListener, Ordered
 
 	private static final Log logger = LogFactory.getLog(TaskBatchExecutionListener.class);
 
-	@SuppressWarnings("NullAway.Init")
 	private TaskExecution taskExecution;
 
 	private final TaskBatchDao taskBatchDao;

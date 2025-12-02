@@ -23,8 +23,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.jdbc.support.DatabaseMetaDataCallback;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
@@ -116,8 +114,7 @@ public enum DatabaseType {
 	 * @return DatabaseType The database type associated with the datasource.
 	 * @throws MetaDataAccessException thrown if failure occurs on metadata lookup.
 	 */
-	public static @Nullable DatabaseType fromMetaData(DataSource dataSource)
-			throws SQLException, MetaDataAccessException {
+	public static DatabaseType fromMetaData(DataSource dataSource) throws SQLException, MetaDataAccessException {
 		String databaseProductName = JdbcUtils.extractDatabaseMetaData(dataSource, new DatabaseMetaDataCallback() {
 
 			@Override
@@ -166,7 +163,7 @@ public enum DatabaseType {
 	 * @return DatabaseType for given product name.
 	 * @throws IllegalArgumentException if none is found.
 	 */
-	public static DatabaseType fromProductName(@Nullable String productName) {
+	public static DatabaseType fromProductName(String productName) {
 		if (!dbNameMap.containsKey(productName)) {
 			throw new IllegalArgumentException("DatabaseType not found for product name: [" + productName + "]");
 		}

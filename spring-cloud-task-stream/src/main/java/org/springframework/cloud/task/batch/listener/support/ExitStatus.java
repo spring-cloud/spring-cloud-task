@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.batch.listener.support;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
 
 /**
@@ -28,9 +26,9 @@ import org.springframework.util.Assert;
  */
 public class ExitStatus {
 
-	private @Nullable String exitCode;
+	private String exitCode;
 
-	private @Nullable String exitDescription;
+	private String exitDescription;
 
 	public ExitStatus() {
 	}
@@ -42,7 +40,7 @@ public class ExitStatus {
 		this.exitDescription = exitStatus.getExitDescription();
 	}
 
-	public @Nullable String getExitCode() {
+	public String getExitCode() {
 		return this.exitCode;
 	}
 
@@ -50,7 +48,7 @@ public class ExitStatus {
 		this.exitCode = exitCode;
 	}
 
-	public @Nullable String getExitDescription() {
+	public String getExitDescription() {
 		return this.exitDescription;
 	}
 

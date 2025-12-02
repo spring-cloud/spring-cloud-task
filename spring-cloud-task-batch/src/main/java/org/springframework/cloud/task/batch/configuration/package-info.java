@@ -17,7 +17,4 @@
 /**
  * Configuration classes for Spring Cloud Task Batch integration.
  */
-@NullMarked
 package org.springframework.cloud.task.batch.configuration;
-
-import org.jspecify.annotations.NullMarked;

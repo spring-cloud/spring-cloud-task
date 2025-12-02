@@ -18,7 +18,6 @@ package org.springframework.cloud.task.configuration.observation;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -39,9 +38,9 @@ class ObservationApplicationRunner implements ApplicationRunner {
 
 	private final String beanName;
 
-	private @Nullable ObservationRegistry registry;
+	private ObservationRegistry registry;
 
-	private @Nullable TaskObservationConvention taskObservationConvention;
+	private TaskObservationConvention taskObservationConvention;
 
 	ObservationApplicationRunner(BeanFactory beanFactory, ApplicationRunner delegate, String beanName) {
 		this.beanFactory = beanFactory;

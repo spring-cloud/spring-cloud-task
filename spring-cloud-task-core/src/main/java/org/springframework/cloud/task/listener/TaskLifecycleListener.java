@@ -30,7 +30,6 @@ import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,9 +102,8 @@ public class TaskLifecycleListener
 	@Autowired(required = false)
 	private ObservationConvention observationConvention;
 
-	private @Nullable List<TaskExecutionListener> taskExecutionListeners;
+	private List<TaskExecutionListener> taskExecutionListeners;
 
-	@SuppressWarnings("NullAway.Init")
 	private TaskExecution taskExecution;
 
 	private TaskProperties taskProperties;
@@ -116,15 +114,15 @@ public class TaskLifecycleListener
 
 	private boolean listenerFailed = false;
 
-	private @Nullable Throwable listenerException;
+	private Throwable listenerException;
 
-	private final TaskNameResolver taskNameResolver;
+	private TaskNameResolver taskNameResolver;
 
-	private final ApplicationArguments applicationArguments;
+	private ApplicationArguments applicationArguments;
 
-	private @Nullable Throwable applicationFailedException;
+	private Throwable applicationFailedException;
 
-	private @Nullable ExitCodeEvent exitCodeEvent;
+	private ExitCodeEvent exitCodeEvent;
 
 	/**
 	 * @param taskRepository {@link TaskRepository} to record executions.
@@ -205,11 +203,8 @@ public class TaskLifecycleListener
 			}
 
 			setExitMessage(invokeOnTaskEnd(this.taskExecution));
-			Integer exitCode = this.taskExecution.getExitCode();
-			LocalDateTime endTime = this.taskExecution.getEndTime();
-			Assert.state(exitCode != null, "exitCode must not be null");
-			Assert.state(endTime != null, "endTime must not be null");
-			this.taskRepository.completeTaskExecution(this.taskExecution.getExecutionId(), exitCode, endTime,
+			this.taskRepository.completeTaskExecution(this.taskExecution.getExecutionId(),
+					this.taskExecution.getExitCode(), this.taskExecution.getEndTime(),
 					this.taskExecution.getExitMessage(), this.taskExecution.getErrorMessage());
 
 			this.finished = true;

@@ -18,8 +18,6 @@ package org.springframework.cloud.task.batch.autoconfigure.flatfile;
 
 import java.util.Locale;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
@@ -36,7 +34,7 @@ public class FlatFileItemWriterProperties {
 	/**
 	 * The {@link Resource} to be used as output.
 	 */
-	private @Nullable Resource resource;
+	private Resource resource;
 
 	/**
 	 * Configure the use of the {@code DelimitedLineAggregator} to generate the output per
@@ -53,7 +51,7 @@ public class FlatFileItemWriterProperties {
 	/**
 	 * Configure the format the {@code FormatterLineAggregator} uses for each item.
 	 */
-	private @Nullable String format;
+	private String format;
 
 	/**
 	 * Configure the {@code Locale} to use when generating the output.
@@ -90,7 +88,7 @@ public class FlatFileItemWriterProperties {
 	/**
 	 * Names of the fields to be extracted into the output.
 	 */
-	private String @Nullable [] names;
+	private String[] names;
 
 	/**
 	 * Configure if the output file is found if it should be appended to. Defaults to
@@ -109,7 +107,7 @@ public class FlatFileItemWriterProperties {
 	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}. Required if
 	 * {@link #setSaveState} is set to {@code true}.
 	 */
-	private @Nullable String name;
+	private String name;
 
 	/**
 	 * Returns the configured value of whether the state of the reader is persisted.
@@ -159,7 +157,7 @@ public class FlatFileItemWriterProperties {
 	 * keys.
 	 * @return the name
 	 */
-	public @Nullable String getName() {
+	public String getName() {
 		return this.name;
 	}
 
@@ -170,7 +168,7 @@ public class FlatFileItemWriterProperties {
 	 * @param name name of the reader instance
 	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
-	public void setName(@Nullable String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -178,7 +176,7 @@ public class FlatFileItemWriterProperties {
 	 * The output file for the {@code FlatFileItemWriter}.
 	 * @return a {@code Resource}
 	 */
-	public @Nullable Resource getResource() {
+	public Resource getResource() {
 		return this.resource;
 	}
 
@@ -187,7 +185,7 @@ public class FlatFileItemWriterProperties {
 	 * @param resource the input to the reader.
 	 * @see FlatFileItemWriter#setResource
 	 */
-	public void setResource(@Nullable Resource resource) {
+	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
 
@@ -229,7 +227,7 @@ public class FlatFileItemWriterProperties {
 	 * Names of the fields to be extracted into the output.
 	 * @return An array of field names
 	 */
-	public String @Nullable [] getNames() {
+	public String[] getNames() {
 		return names;
 	}
 
@@ -237,7 +235,7 @@ public class FlatFileItemWriterProperties {
 	 * Provide an ordered array of field names used to generate the output of a file.
 	 * @param names An array of field names
 	 */
-	public void setNames(String @Nullable [] names) {
+	public void setNames(String[] names) {
 		this.names = names;
 	}
 
@@ -387,7 +385,7 @@ public class FlatFileItemWriterProperties {
 	 * Format used with the {@code FormatterLineAggregator}.
 	 * @return the format for each item's output.
 	 */
-	public @Nullable String getFormat() {
+	public String getFormat() {
 		return format;
 	}
 
@@ -395,7 +393,7 @@ public class FlatFileItemWriterProperties {
 	 * Configure the format the {@code FormatterLineAggregator} will use for each item.
 	 * @param format the format for each item's output.
 	 */
-	public void setFormat(@Nullable String format) {
+	public void setFormat(String format) {
 		this.format = format;
 	}
 

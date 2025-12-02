@@ -17,7 +17,4 @@
 /**
  * Stream-based task lifecycle listener support for Spring Cloud Task.
  */
-@NullMarked
 package org.springframework.cloud.task.listener;
-
-import org.jspecify.annotations.NullMarked;

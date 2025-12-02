@@ -17,7 +17,4 @@
 /**
  * Observation support for Spring Cloud Task configuration.
  */
-@NullMarked
 package org.springframework.cloud.task.configuration.observation;
-
-import org.jspecify.annotations.NullMarked;

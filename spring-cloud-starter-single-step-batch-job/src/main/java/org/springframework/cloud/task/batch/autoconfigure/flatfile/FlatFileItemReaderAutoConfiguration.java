@@ -42,7 +42,6 @@ import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.task.batch.autoconfigure.RangeConverter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.util.Assert;
 
 /**
  * Autconfiguration for a {@code FlatFileItemReader}.
@@ -72,8 +71,6 @@ public class FlatFileItemReaderAutoConfiguration {
 			@Autowired(required = false) LineMapper<Map<String, Object>> lineMapper,
 			@Autowired(required = false) LineCallbackHandler skippedLinesCallback,
 			@Autowired(required = false) RecordSeparatorPolicy recordSeparatorPolicy) {
-		Assert.state(this.properties.getName() != null, "A name is required");
-		Assert.state(this.properties.getResource() != null, "A resource is required");
 		FlatFileItemReaderBuilder<Map<String, Object>> mapFlatFileItemReaderBuilder = new FlatFileItemReaderBuilder<Map<String, Object>>()
 			.name(this.properties.getName())
 			.resource(this.properties.getResource())
@@ -93,7 +90,6 @@ public class FlatFileItemReaderAutoConfiguration {
 		mapFlatFileItemReaderBuilder.skippedLinesCallback(skippedLinesCallback);
 
 		if (this.properties.isDelimited()) {
-			Assert.state(this.properties.getNames() != null, "Names are required");
 			mapFlatFileItemReaderBuilder.delimited()
 				.quoteCharacter(this.properties.getQuoteCharacter())
 				.delimiter(this.properties.getDelimiter())
@@ -103,14 +99,9 @@ public class FlatFileItemReaderAutoConfiguration {
 				.fieldSetMapper(new MapFieldSetMapper());
 		}
 		else if (this.properties.isFixedLength()) {
-			Assert.state(this.properties.getNames() != null, "Names are required");
 			RangeConverter rangeConverter = new RangeConverter();
 			List<Range> ranges = new ArrayList<>();
-			this.properties.getRanges().forEach(range -> {
-				Range result = rangeConverter.convert(range);
-				Assert.state(result != null, "Range String could not converted to non-null range");
-				ranges.add(result);
-			});
+			this.properties.getRanges().forEach(range -> ranges.add(rangeConverter.convert(range)));
 			mapFlatFileItemReaderBuilder.fixedLength()
 				.columns(ranges.toArray(new Range[0]))
 				.names(this.properties.getNames())

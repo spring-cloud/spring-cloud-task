@@ -21,7 +21,6 @@ import javax.sql.DataSource;
 import jakarta.persistence.EntityManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -37,7 +36,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.util.Assert;
 
 /**
  * Default implementation of the TaskConfigurer interface. If no {@link TaskConfigurer}
@@ -58,17 +56,17 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 
 	private static final Log logger = LogFactory.getLog(DefaultTaskConfigurer.class);
 
-	private @Nullable TaskProperties taskProperties;
+	private TaskProperties taskProperties;
 
 	private TaskRepository taskRepository;
 
 	private TaskExplorer taskExplorer;
 
-	private @Nullable PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager transactionManager;
 
-	private @Nullable DataSource dataSource;
+	private DataSource dataSource;
 
-	private @Nullable ApplicationContext context;
+	private ApplicationContext context;
 
 	public DefaultTaskConfigurer() {
 		this(TaskProperties.DEFAULT_TABLE_PREFIX);
@@ -89,7 +87,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * repository. If none is provided, a Map will be used (not recommended for production
 	 * use).
 	 */
-	public DefaultTaskConfigurer(@Nullable DataSource dataSource) {
+	public DefaultTaskConfigurer(DataSource dataSource) {
 		this(dataSource, TaskProperties.DEFAULT_TABLE_PREFIX, null);
 	}
 
@@ -102,7 +100,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
 	 * tablePrefix field.
 	 */
-	public DefaultTaskConfigurer(@Nullable DataSource dataSource, TaskProperties taskProperties) {
+	public DefaultTaskConfigurer(DataSource dataSource, TaskProperties taskProperties) {
 		this(dataSource, null, null, taskProperties);
 	}
 
@@ -111,7 +109,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param tablePrefix the prefix to apply to the task table names used by task
 	 * infrastructure.
 	 */
-	public DefaultTaskConfigurer(@Nullable String tablePrefix) {
+	public DefaultTaskConfigurer(String tablePrefix) {
 		this(null, tablePrefix, null);
 	}
 
@@ -122,7 +120,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
 	 * tablePrefix field.
 	 */
-	public DefaultTaskConfigurer(@Nullable String tablePrefix, TaskProperties taskProperties) {
+	public DefaultTaskConfigurer(String tablePrefix, TaskProperties taskProperties) {
 		this(null, tablePrefix, null, taskProperties);
 	}
 
@@ -135,8 +133,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * infrastructure.
 	 * @param context the context to be used.
 	 */
-	public DefaultTaskConfigurer(@Nullable DataSource dataSource, @Nullable String tablePrefix,
-			@Nullable ApplicationContext context) {
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context) {
 		this(dataSource, tablePrefix, context, null);
 	}
 
@@ -151,8 +148,8 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	 * @param taskProperties the task properties used to obtain tablePrefix if not set by
 	 * tablePrefix field.
 	 */
-	public DefaultTaskConfigurer(@Nullable DataSource dataSource, @Nullable String tablePrefix,
-			@Nullable ApplicationContext context, @Nullable TaskProperties taskProperties) {
+	public DefaultTaskConfigurer(DataSource dataSource, String tablePrefix, ApplicationContext context,
+			TaskProperties taskProperties) {
 		this.dataSource = dataSource;
 		this.context = context;
 
@@ -186,7 +183,7 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 	}
 
 	@Override
-	public @Nullable DataSource getTaskDataSource() {
+	public DataSource getTaskDataSource() {
 		return this.dataSource;
 	}
 
@@ -211,7 +208,6 @@ public class DefaultTaskConfigurer implements TaskConfigurer {
 				}
 				finally {
 					if (this.transactionManager == null) {
-						Assert.state(this.dataSource != null, "DataSource must be non-null when available");
 						this.transactionManager = new JdbcTransactionManager(this.dataSource);
 					}
 				}

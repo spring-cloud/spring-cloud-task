@@ -17,7 +17,4 @@
 /**
  * Annotation-based listener support for Spring Cloud Task.
  */
-@NullMarked
 package org.springframework.cloud.task.listener.annotation;
-
-import org.jspecify.annotations.NullMarked;

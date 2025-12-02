@@ -49,7 +49,6 @@ public class TaskLifecycleConfiguration {
 
 	private ConfigurableApplicationContext context;
 
-	@SuppressWarnings("NullAway.Init")
 	private ApplicationArguments applicationArguments;
 
 	private TaskRepository taskRepository;
@@ -58,7 +57,6 @@ public class TaskLifecycleConfiguration {
 
 	private TaskNameResolver taskNameResolver;
 
-	@SuppressWarnings("NullAway.Init")
 	private TaskLifecycleListener taskLifecycleListener;
 
 	private boolean initialized = false;
@@ -67,7 +65,6 @@ public class TaskLifecycleConfiguration {
 
 	private TaskObservationCloudKeyValues taskObservationCloudKeyValues;
 
-	@SuppressWarnings("NullAway")
 	@Autowired
 	public TaskLifecycleConfiguration(TaskProperties taskProperties, ConfigurableApplicationContext context,
 			TaskRepository taskRepository, TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,

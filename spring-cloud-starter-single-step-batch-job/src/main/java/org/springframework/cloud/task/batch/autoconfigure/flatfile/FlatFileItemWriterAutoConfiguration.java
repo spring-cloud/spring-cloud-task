@@ -35,7 +35,6 @@ import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.WritableResource;
-import org.springframework.util.Assert;
 
 /**
  * Autoconfiguration for a {@code FlatFileItemWriter}.
@@ -48,7 +47,7 @@ import org.springframework.util.Assert;
 @AutoConfigureAfter(BatchAutoConfiguration.class)
 public class FlatFileItemWriterAutoConfiguration {
 
-	private final FlatFileItemWriterProperties properties;
+	private FlatFileItemWriterProperties properties;
 
 	@Autowired(required = false)
 	private LineAggregator<Map<String, Object>> lineAggregator;
@@ -79,8 +78,7 @@ public class FlatFileItemWriterAutoConfiguration {
 			throw new IllegalStateException(
 					"A LineAggregator must be configured if the " + "output is not formatted or delimited");
 		}
-		Assert.state(this.properties.getName() != null, "name must not be null");
-		Assert.state(this.properties.getResource() != null, "resource must not be null");
+
 		FlatFileItemWriterBuilder<Map<String, Object>> builder = new FlatFileItemWriterBuilder<Map<String, Object>>()
 			.name(this.properties.getName())
 			.resource((WritableResource) this.properties.getResource())
@@ -103,13 +101,10 @@ public class FlatFileItemWriterAutoConfiguration {
 				delimitedBuilder.fieldExtractor(this.fieldExtractor);
 			}
 			else {
-				Assert.state(this.properties.getNames() != null, "names must not be null");
 				delimitedBuilder.fieldExtractor(new MapFieldExtractor(this.properties.getNames()));
 			}
 		}
 		else if (this.properties.isFormatted()) {
-			Assert.state(this.properties.getFormat() != null, "format must not be null");
-
 			FlatFileItemWriterBuilder.FormattedBuilder<Map<String, Object>> formattedBuilder = builder.formatted()
 				.format(this.properties.getFormat())
 				.locale(this.properties.getLocale())
@@ -120,7 +115,6 @@ public class FlatFileItemWriterAutoConfiguration {
 				formattedBuilder.fieldExtractor(this.fieldExtractor);
 			}
 			else {
-				Assert.state(this.properties.getNames() != null, "names must not be null");
 				formattedBuilder.fieldExtractor(new MapFieldExtractor(this.properties.getNames()));
 			}
 		}
@@ -137,7 +131,7 @@ public class FlatFileItemWriterAutoConfiguration {
 	 */
 	public static class MapFieldExtractor implements FieldExtractor<Map<String, Object>> {
 
-		private final String[] names;
+		private String[] names;
 
 		public MapFieldExtractor(String[] names) {
 			this.names = names;

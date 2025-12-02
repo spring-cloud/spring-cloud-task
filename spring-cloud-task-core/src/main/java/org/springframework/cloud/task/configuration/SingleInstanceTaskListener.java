@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.cloud.task.listener.TaskExecutionException;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
@@ -42,7 +41,6 @@ import org.springframework.integration.leader.event.OnGrantedEvent;
 import org.springframework.integration.support.leader.LockRegistryLeaderInitiator;
 import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.util.Assert;
 
 /**
  * When spring.cloud.task.single-instance-enabled is set to true this listener will create
@@ -58,10 +56,9 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 
 	private static final Log logger = LogFactory.getLog(SingleInstanceTaskListener.class);
 
-	@SuppressWarnings("NullAway.Init")
 	private LockRegistry lockRegistry;
 
-	private @Nullable LockRegistryLeaderInitiator lockRegistryLeaderInitiator;
+	private LockRegistryLeaderInitiator lockRegistryLeaderInitiator;
 
 	private TaskNameResolver taskNameResolver;
 
@@ -71,14 +68,12 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 
 	private boolean lockFailed;
 
-	@SuppressWarnings("NullAway.Init")
 	private DataSource dataSource;
 
 	private TaskProperties taskProperties;
 
 	private ApplicationContext applicationContext;
 
-	@SuppressWarnings("NullAway.Init")
 	private PlatformTransactionManager platformTransactionManager;
 
 	public SingleInstanceTaskListener(LockRegistry lockRegistry, TaskNameResolver taskNameResolver,
@@ -109,10 +104,8 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 		if (this.lockRegistry == null) {
 			this.lockRegistry = getDefaultLockRegistry(taskExecution.getExecutionId());
 		}
-		String taskName = this.taskNameResolver.getTaskName();
-		Assert.state(taskName != null, "No task name available");
-		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(this.lockRegistry,
-				new DefaultCandidate(String.valueOf(taskExecution.getExecutionId()), taskName));
+		this.lockRegistryLeaderInitiator = new LockRegistryLeaderInitiator(this.lockRegistry, new DefaultCandidate(
+				String.valueOf(taskExecution.getExecutionId()), this.taskNameResolver.getTaskName()));
 		this.lockRegistryLeaderInitiator.setApplicationEventPublisher(this.applicationEventPublisher);
 		this.lockRegistryLeaderInitiator.setPublishFailedEvents(true);
 		this.lockRegistryLeaderInitiator.start();
@@ -139,16 +132,12 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 
 	@AfterTask
 	public void unlockTaskOnEnd(TaskExecution taskExecution) throws Exception {
-		if (this.lockRegistryLeaderInitiator != null) {
-			this.lockRegistryLeaderInitiator.destroy();
-		}
+		this.lockRegistryLeaderInitiator.destroy();
 	}
 
 	@FailedTask
 	public void unlockTaskOnError(TaskExecution taskExecution, Throwable throwable) throws Exception {
-		if (this.lockRegistryLeaderInitiator != null) {
-			this.lockRegistryLeaderInitiator.destroy();
-		}
+		this.lockRegistryLeaderInitiator.destroy();
 	}
 
 	@Override

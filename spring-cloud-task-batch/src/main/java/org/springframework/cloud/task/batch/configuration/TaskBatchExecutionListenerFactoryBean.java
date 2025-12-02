@@ -20,8 +20,6 @@ import java.lang.reflect.Field;
 
 import javax.sql.DataSource;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -44,9 +42,9 @@ import org.springframework.util.ReflectionUtils;
  */
 public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBatchExecutionListener> {
 
-	private @Nullable TaskBatchExecutionListener listener;
+	private TaskBatchExecutionListener listener;
 
-	private @Nullable DataSource dataSource;
+	private DataSource dataSource;
 
 	private TaskExplorer taskExplorer;
 
@@ -58,7 +56,7 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 	 * @param dataSource the dataSource to use for the TaskBatchExecutionListener.
 	 * @param taskExplorer the taskExplorer to use for the TaskBatchExecutionListener.
 	 */
-	public TaskBatchExecutionListenerFactoryBean(@Nullable DataSource dataSource, TaskExplorer taskExplorer) {
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer) {
 		this.dataSource = dataSource;
 		this.taskExplorer = taskExplorer;
 	}
@@ -70,8 +68,7 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 	 * @param tablePrefix the prefix for the task tables accessed by the
 	 * TaskBatchExecutionListener.
 	 */
-	public TaskBatchExecutionListenerFactoryBean(@Nullable DataSource dataSource, TaskExplorer taskExplorer,
-			String tablePrefix) {
+	public TaskBatchExecutionListenerFactoryBean(DataSource dataSource, TaskExplorer taskExplorer, String tablePrefix) {
 		this(dataSource, taskExplorer);
 		Assert.hasText(tablePrefix, "tablePrefix must not be null nor empty.");
 		this.tablePrefix = tablePrefix;
@@ -104,7 +101,6 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 
 	private MapTaskBatchDao getMapTaskBatchDao() throws Exception {
 		Field taskExecutionDaoField = ReflectionUtils.findField(SimpleTaskExplorer.class, "taskExecutionDao");
-		Assert.state(taskExecutionDaoField != null, "taskExecutionDao field must exist in SimpleTaskExplorer");
 		taskExecutionDaoField.setAccessible(true);
 
 		MapTaskExecutionDao taskExecutionDao;
@@ -121,7 +117,6 @@ public class TaskBatchExecutionListenerFactoryBean implements FactoryBean<TaskBa
 			taskExecutionDao = (MapTaskExecutionDao) ReflectionUtils.getField(taskExecutionDaoField, this.taskExplorer);
 		}
 
-		Assert.state(taskExecutionDao != null, "taskExecutionDao must not be null");
 		return new MapTaskBatchDao(taskExecutionDao.getBatchJobAssociations());
 	}
 

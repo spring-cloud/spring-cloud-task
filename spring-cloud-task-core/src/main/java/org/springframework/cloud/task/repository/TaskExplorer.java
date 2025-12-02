@@ -19,8 +19,6 @@ package org.springframework.cloud.task.repository;
 import java.util.List;
 import java.util.Set;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -38,7 +36,6 @@ public interface TaskExplorer {
 	 * @param executionId the task execution id
 	 * @return the {@link TaskExecution} with this id, or null if not found
 	 */
-	@Nullable
 	TaskExecution getTaskExecution(long executionId);
 
 	/**
@@ -112,7 +109,6 @@ public interface TaskExplorer {
 	 * @param jobExecutionId the id of the JobExecution
 	 * @return the id of the {@link TaskExecution}
 	 */
-	@Nullable
 	Long getTaskExecutionIdByJobExecutionId(long jobExecutionId);
 
 	/**
@@ -151,7 +147,6 @@ public interface TaskExplorer {
 	 * @return The latest Task Execution or null
 	 * @see #getLatestTaskExecutionsByTaskNames(String...)
 	 */
-	@Nullable
 	TaskExecution getLatestTaskExecutionForTaskName(String taskName);
 
 }

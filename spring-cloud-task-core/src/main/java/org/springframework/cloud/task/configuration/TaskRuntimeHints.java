@@ -18,8 +18,6 @@ package org.springframework.cloud.task.configuration;
 
 import java.sql.Statement;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -36,7 +34,7 @@ import org.springframework.util.ClassUtils;
 public class TaskRuntimeHints implements RuntimeHintsRegistrar {
 
 	@Override
-	public void registerHints(RuntimeHints hints, @Nullable ClassLoader classLoader) {
+	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
 		hints.reflection().registerType(TypeReference.of("java.sql.DatabaseMetaData"), hint -> {
 		});
 		hints.resources().registerPattern("org/springframework/cloud/task/schema-db2.sql");

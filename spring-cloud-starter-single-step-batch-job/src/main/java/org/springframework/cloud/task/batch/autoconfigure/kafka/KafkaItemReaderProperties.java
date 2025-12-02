@@ -19,8 +19,6 @@ package org.springframework.cloud.task.batch.autoconfigure.kafka;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -36,12 +34,12 @@ public class KafkaItemReaderProperties {
 	 * The name used to calculate the key within the
 	 * {@link org.springframework.batch.infrastructure.item.ExecutionContext}.
 	 */
-	private @Nullable String name;
+	private String name;
 
 	/**
 	 * The topic name from which the messages is read.
 	 */
-	private @Nullable String topic;
+	private String topic;
 
 	/**
 	 * A list of partitions to manually assign to the consumer. Defaults to a single entry
@@ -69,7 +67,7 @@ public class KafkaItemReaderProperties {
 	 * keys.
 	 * @return the name
 	 */
-	public @Nullable String getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -79,7 +77,7 @@ public class KafkaItemReaderProperties {
 	 * @param name name of the writer instance
 	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
-	public void setName(@Nullable String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -87,7 +85,7 @@ public class KafkaItemReaderProperties {
 	 * Returns the name of the topic from which messages will be read.
 	 * @return the name of the topic.
 	 */
-	public @Nullable String getTopic() {
+	public String getTopic() {
 		return topic;
 	}
 
@@ -95,7 +93,7 @@ public class KafkaItemReaderProperties {
 	 * The topic name from which the messages will be read.
 	 * @param topic name of the topic
 	 */
-	public void setTopic(@Nullable String topic) {
+	public void setTopic(String topic) {
 		this.topic = topic;
 	}
 

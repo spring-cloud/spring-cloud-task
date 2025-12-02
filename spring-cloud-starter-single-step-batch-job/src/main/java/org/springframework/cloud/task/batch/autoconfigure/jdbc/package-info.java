@@ -17,7 +17,4 @@
 /**
  * Auto-configuration classes for JDBC item readers and writers in single-step batch jobs.
  */
-@NullMarked
 package org.springframework.cloud.task.batch.autoconfigure.jdbc;
-
-import org.jspecify.annotations.NullMarked;

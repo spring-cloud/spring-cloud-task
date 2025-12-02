@@ -17,7 +17,4 @@
 /**
  * Auto-configuration classes for Spring Cloud Task single-step batch jobs.
  */
-@NullMarked
 package org.springframework.cloud.task.batch.autoconfigure;
-
-import org.jspecify.annotations.NullMarked;

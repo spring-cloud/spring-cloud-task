@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -69,7 +67,7 @@ public class SimpleTaskAutoConfiguration {
 	protected static final Log logger = LogFactory.getLog(SimpleTaskAutoConfiguration.class);
 
 	@Autowired(required = false)
-	private @Nullable Collection<DataSource> dataSources;
+	private Collection<DataSource> dataSources;
 
 	@Autowired
 	private ConfigurableApplicationContext context;
@@ -79,37 +77,33 @@ public class SimpleTaskAutoConfiguration {
 
 	private boolean initialized = false;
 
-	private @Nullable TaskRepository taskRepository;
+	private TaskRepository taskRepository;
 
-	private @Nullable PlatformTransactionManager platformTransactionManager;
+	private PlatformTransactionManager platformTransactionManager;
 
-	private @Nullable TaskExplorer taskExplorer;
+	private TaskExplorer taskExplorer;
 
-	private @Nullable TaskNameResolver taskNameResolver;
+	private TaskNameResolver taskNameResolver;
 
 	@Bean
 	public SimpleTaskRepository taskRepository() {
-		Assert.state(this.taskRepository != null, "taskRepository must be initialized");
 		return (SimpleTaskRepository) this.taskRepository;
 	}
 
 	@Conditional(NoTransactionManagerProperty.class)
 	@Bean
 	public PlatformTransactionManager springCloudTaskTransactionManager() {
-		Assert.state(this.platformTransactionManager != null, "platformTransactionManager must be initialized");
 		return this.platformTransactionManager;
 	}
 
 	@Bean
 	public TaskExplorer taskExplorer() {
-		Assert.state(this.taskExplorer != null, "taskExplorer must be initialized");
 		return this.taskExplorer;
 	}
 
 	@Bean
 	public TaskNameResolver taskNameResolver() {
-		Assert.state(this.taskNameResolver != null, "taskNameResolver must be initialized");
-		return this.taskNameResolver;
+		return taskNameResolver;
 	}
 
 	@Bean

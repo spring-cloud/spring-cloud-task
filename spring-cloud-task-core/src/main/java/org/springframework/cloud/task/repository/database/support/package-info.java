@@ -17,7 +17,4 @@
 /**
  * Support classes for database-specific Spring Cloud Task repository implementations.
  */
-@NullMarked
 package org.springframework.cloud.task.repository.database.support;
-
-import org.jspecify.annotations.NullMarked;

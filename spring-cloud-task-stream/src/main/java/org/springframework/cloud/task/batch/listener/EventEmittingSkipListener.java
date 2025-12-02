@@ -67,9 +67,8 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInRead: " + t.getMessage(), t);
 		}
-		String message = t.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(),
-				"Skipped when reading.", message != null ? message : t.getClass().getName());
+				"Skipped when reading.", t.getMessage());
 	}
 
 	@Override
@@ -77,9 +76,8 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInWrite: " + t.getMessage(), t);
 		}
-		String message = t.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(), item,
-				message != null ? message : t.getClass().getName());
+				t.getMessage());
 	}
 
 	@Override
@@ -87,9 +85,8 @@ public class EventEmittingSkipListener implements SkipListener, Ordered {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing onSkipInProcess: " + t.getMessage(), t);
 		}
-		String message = t.getMessage();
 		this.messagePublisher.publishWithThrowableHeader(this.properties.getSkipEventBindingName(), item,
-				message != null ? message : t.getClass().getName());
+				t.getMessage());
 	}
 
 	@Override

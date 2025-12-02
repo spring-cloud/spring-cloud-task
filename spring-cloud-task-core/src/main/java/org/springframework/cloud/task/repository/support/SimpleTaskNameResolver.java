@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.repository.support;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.task.repository.TaskNameResolver;
@@ -38,10 +36,8 @@ import org.springframework.util.StringUtils;
  */
 public class SimpleTaskNameResolver implements TaskNameResolver, ApplicationContextAware {
 
-	@SuppressWarnings("NullAway.Init")
 	private ApplicationContext context;
 
-	@SuppressWarnings("NullAway.Init")
 	private String configuredName;
 
 	@Value("${spring.cloud.task.name:}")
@@ -55,12 +51,12 @@ public class SimpleTaskNameResolver implements TaskNameResolver, ApplicationCont
 	}
 
 	@Override
-	public @Nullable String getTaskName() {
+	public String getTaskName() {
 		if (StringUtils.hasText(this.configuredName)) {
 			return this.configuredName;
 		}
 		else {
-			return (this.context.getId() != null) ? this.context.getId().replace(":", "_") : null;
+			return this.context.getId().replace(":", "_");
 		}
 	}
 

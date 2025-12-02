@@ -18,7 +18,4 @@
  * Interface DAO and default implementations for storing and retrieving data for tasks
  * from a repository.
  */
-@NullMarked
 package org.springframework.cloud.task.repository.dao;
-
-import org.jspecify.annotations.NullMarked;

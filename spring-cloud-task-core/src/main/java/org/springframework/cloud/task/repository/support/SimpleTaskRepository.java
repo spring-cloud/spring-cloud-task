@@ -19,11 +19,9 @@ package org.springframework.cloud.task.repository.support;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.cloud.task.repository.TaskExecution;
@@ -55,7 +53,6 @@ public class SimpleTaskRepository implements TaskRepository {
 
 	private static final Log logger = LogFactory.getLog(SimpleTaskRepository.class);
 
-	@SuppressWarnings("NullAway.Init")
 	private TaskExecutionDao taskExecutionDao;
 
 	private FactoryBean<TaskExecutionDao> taskExecutionDaoFactoryBean;
@@ -90,21 +87,19 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public @Nullable TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
-			@Nullable String exitMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			String exitMessage) {
 		return completeTaskExecution(executionId, exitCode, endTime, exitMessage, null);
 	}
 
 	@Override
-	public @Nullable TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
-			@Nullable String exitMessage, @Nullable String errorMessage) {
+	public TaskExecution completeTaskExecution(long executionId, Integer exitCode, LocalDateTime endTime,
+			String exitMessage, String errorMessage) {
 		initialize();
 
 		validateCompletedTaskExitInformation(executionId, exitCode, endTime);
 		exitMessage = trimMessage(exitMessage, this.maxExitMessageSize);
-		if (errorMessage != null) {
-			errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
-		}
+		errorMessage = trimMessage(errorMessage, this.maxErrorMessageSize);
 		this.taskExecutionDao.completeTaskExecution(executionId, exitCode, endTime, exitMessage, errorMessage);
 		logger.debug("Updating: TaskExecution with executionId=" + executionId + " with the following {" + "exitCode="
 				+ exitCode + ", endTime=" + endTime + ", exitMessage='" + exitMessage + '\'' + ", errorMessage='"
@@ -125,7 +120,7 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution createTaskExecution(@Nullable String name) {
+	public TaskExecution createTaskExecution(String name) {
 		initialize();
 		TaskExecution taskExecution = this.taskExecutionDao.createTaskExecution(name, null,
 				Collections.<String>emptyList(), null);
@@ -151,9 +146,8 @@ public class SimpleTaskRepository implements TaskRepository {
 	}
 
 	@Override
-	public TaskExecution startTaskExecution(long executionid, @Nullable String taskName,
-			@Nullable LocalDateTime startTime, List<String> arguments, @Nullable String externalExecutionId,
-			@Nullable Long parentExecutionId) {
+	public TaskExecution startTaskExecution(long executionid, String taskName, LocalDateTime startTime,
+			List<String> arguments, String externalExecutionId, Long parentExecutionId) {
 		initialize();
 		TaskExecution taskExecution = this.taskExecutionDao.startTaskExecution(executionid, taskName, startTime,
 				arguments, externalExecutionId, parentExecutionId);
@@ -173,8 +167,7 @@ public class SimpleTaskRepository implements TaskRepository {
 	private void initialize() {
 		if (!this.initialized) {
 			try {
-				this.taskExecutionDao = Objects.requireNonNull(this.taskExecutionDaoFactoryBean.getObject(),
-						"taskexecutionDaoFactoryBean object is required");
+				this.taskExecutionDao = this.taskExecutionDaoFactoryBean.getObject();
 				this.initialized = true;
 			}
 			catch (Exception e) {
@@ -201,7 +194,7 @@ public class SimpleTaskRepository implements TaskRepository {
 		Assert.notNull(endTime, "TaskExecution endTime cannot be null.");
 	}
 
-	private @Nullable String trimMessage(@Nullable String exitMessage, int maxSize) {
+	private String trimMessage(String exitMessage, int maxSize) {
 		String result = exitMessage;
 		if (exitMessage != null && exitMessage.length() > maxSize) {
 			result = exitMessage.substring(0, maxSize);

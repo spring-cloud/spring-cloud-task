@@ -53,7 +53,6 @@ public class TaskJobLauncherApplicationRunnerFactoryBean
 
 	private final JobRepository jobRepository;
 
-	@SuppressWarnings("NullAway.Init")
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	public TaskJobLauncherApplicationRunnerFactoryBean(JobOperator jobOperator, List<Job> jobs,

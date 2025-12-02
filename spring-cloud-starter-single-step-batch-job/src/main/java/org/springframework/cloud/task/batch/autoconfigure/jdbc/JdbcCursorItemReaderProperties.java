@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.batch.autoconfigure.jdbc;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -40,7 +38,7 @@ public class JdbcCursorItemReaderProperties {
 	 * Returns the configured value of the name used to calculate {@code ExecutionContext}
 	 * keys.
 	 */
-	private @Nullable String name;
+	private String name;
 
 	/**
 	 * Configure the maximum number of items to be read.
@@ -95,7 +93,7 @@ public class JdbcCursorItemReaderProperties {
 	/**
 	 * The SQL query to be executed.
 	 */
-	private @Nullable String sql;
+	private String sql;
 
 	/**
 	 * Returns the configured value of if the state of the reader will be persisted.
@@ -122,7 +120,7 @@ public class JdbcCursorItemReaderProperties {
 	 * keys.
 	 * @return the name
 	 */
-	public @Nullable String getName() {
+	public String getName() {
 		return this.name;
 	}
 
@@ -133,7 +131,7 @@ public class JdbcCursorItemReaderProperties {
 	 * @param name name of the reader instance
 	 * @see org.springframework.batch.infrastructure.item.ItemStreamSupport#setName(String)
 	 */
-	public void setName(@Nullable String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -299,7 +297,7 @@ public class JdbcCursorItemReaderProperties {
 	 * Returns the SQL query to be executed.
 	 * @return the SQL query
 	 */
-	public @Nullable String getSql() {
+	public String getSql() {
 		return sql;
 	}
 
@@ -308,7 +306,7 @@ public class JdbcCursorItemReaderProperties {
 	 * @param sql the query
 	 * @see org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder#sql(String)
 	 */
-	public void setSql(@Nullable String sql) {
+	public void setSql(String sql) {
 		this.sql = sql;
 	}
 

@@ -19,8 +19,6 @@ package org.springframework.cloud.task.batch.listener.support;
 import java.util.Date;
 import java.util.Objects;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.core.job.parameters.JobParameter;
 
 /**
@@ -32,7 +30,7 @@ import org.springframework.batch.core.job.parameters.JobParameter;
  */
 public class JobParameterEvent {
 
-	private @Nullable Object parameter;
+	private Object parameter;
 
 	private boolean identifying;
 
@@ -51,10 +49,10 @@ public class JobParameterEvent {
 	/**
 	 * @return the value contained within this JobParameter.
 	 */
-	public @Nullable Object getValue() {
+	public Object getValue() {
 
-		if (this.parameter instanceof Date dateParameter) {
-			return new Date((dateParameter).getTime());
+		if (this.parameter != null && this.parameter.getClass().isInstance(Date.class)) {
+			return new Date(((Date) this.parameter).getTime());
 		}
 		else {
 			return this.parameter;
@@ -76,15 +74,15 @@ public class JobParameterEvent {
 	}
 
 	@Override
-	public @Nullable String toString() {
-		return this.parameter == null ? "" : this.parameter.toString();
+	public String toString() {
+		return this.parameter == null ? null : this.parameter.toString();
 	}
 
 	@Override
 	public int hashCode() {
 		final int BASE_HASH = 7;
 		final int MULTIPLIER_HASH = 21;
-		return BASE_HASH + MULTIPLIER_HASH * (this.parameter != null ? this.parameter.hashCode() : 0);
+		return BASE_HASH + MULTIPLIER_HASH * this.parameter.hashCode();
 	}
 
 }

@@ -18,7 +18,4 @@
  * Auto-configuration classes for RabbitMQ item readers and writers in single-step batch
  * jobs.
  */
-@NullMarked
 package org.springframework.cloud.task.batch.autoconfigure.rabbit;
-
-import org.jspecify.annotations.NullMarked;

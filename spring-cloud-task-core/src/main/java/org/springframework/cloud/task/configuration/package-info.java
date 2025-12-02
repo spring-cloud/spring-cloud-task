@@ -17,7 +17,4 @@
 /**
  * Interfaces for configuring Spring Cloud Task and a default implementations.
  */
-@NullMarked
 package org.springframework.cloud.task.configuration;
-
-import org.jspecify.annotations.NullMarked;

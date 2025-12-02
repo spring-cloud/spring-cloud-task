@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.job.JobExecution;
@@ -41,21 +39,21 @@ import org.springframework.batch.infrastructure.item.ExecutionContext;
  */
 public class JobExecutionEvent extends Entity {
 
-	private @Nullable JobParametersEvent jobParameters;
+	private JobParametersEvent jobParameters;
 
-	private @Nullable JobInstanceEvent jobInstance;
+	private JobInstanceEvent jobInstance;
 
 	private Collection<StepExecutionEvent> stepExecutions = Collections.synchronizedList(new ArrayList<>());
 
 	private BatchStatus status = BatchStatus.STARTING;
 
-	private @Nullable LocalDateTime startTime = null;
+	private LocalDateTime startTime = null;
 
 	private LocalDateTime createTime = LocalDateTime.now();
 
-	private @Nullable LocalDateTime endTime = null;
+	private LocalDateTime endTime = null;
 
-	private @Nullable LocalDateTime lastUpdated = null;
+	private LocalDateTime lastUpdated = null;
 
 	private ExitStatus exitStatus = new ExitStatus(new org.springframework.batch.core.ExitStatus("UNKNOWN"));
 
@@ -87,29 +85,26 @@ public class JobExecutionEvent extends Entity {
 		this.exitStatus = new ExitStatus(original.getExitStatus());
 		this.executionContext = original.getExecutionContext();
 		this.failureExceptions = original.getFailureExceptions();
-		Integer version = original.getVersion();
-		if (version != null) {
-			this.setVersion(version);
-		}
+		this.setVersion(original.getVersion());
 	}
 
-	public @Nullable JobParametersEvent getJobParameters() {
+	public JobParametersEvent getJobParameters() {
 		return this.jobParameters;
 	}
 
-	public @Nullable LocalDateTime getEndTime() {
+	public LocalDateTime getEndTime() {
 		return this.endTime;
 	}
 
-	public void setEndTime(@Nullable LocalDateTime endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
-	public @Nullable LocalDateTime getStartTime() {
+	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
-	public void setStartTime(@Nullable LocalDateTime startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
@@ -139,7 +134,7 @@ public class JobExecutionEvent extends Entity {
 	 * Convenience getter for the id of the enclosing job. Useful for DAO implementations.
 	 * @return the id of the enclosing job
 	 */
-	public @Nullable Long getJobId() {
+	public Long getJobId() {
 		if (this.jobInstance != null) {
 			return this.jobInstance.getId();
 		}
@@ -163,11 +158,11 @@ public class JobExecutionEvent extends Entity {
 	/**
 	 * @return the Job that is executing.
 	 */
-	public @Nullable JobInstanceEvent getJobInstance() {
+	public JobInstanceEvent getJobInstance() {
 		return this.jobInstance;
 	}
 
-	public void setJobInstance(@Nullable JobInstanceEvent jobInstance) {
+	public void setJobInstance(JobInstanceEvent jobInstance) {
 		this.jobInstance = jobInstance;
 	}
 
@@ -215,7 +210,7 @@ public class JobExecutionEvent extends Entity {
 	 * JobRepository.
 	 * @return Date representing the last time this JobExecution was updated.
 	 */
-	public @Nullable LocalDateTime getLastUpdated() {
+	public LocalDateTime getLastUpdated() {
 		return this.lastUpdated;
 	}
 
@@ -223,7 +218,7 @@ public class JobExecutionEvent extends Entity {
 	 * Set the last time this {@link JobExecution} was updated.
 	 * @param lastUpdated The date the {@link JobExecution} was updated.
 	 */
-	public void setLastUpdated(@Nullable LocalDateTime lastUpdated) {
+	public void setLastUpdated(LocalDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
 

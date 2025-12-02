@@ -17,7 +17,4 @@
 /**
  * Support classes for stream-based batch listener components in Spring Cloud Task.
  */
-@NullMarked
 package org.springframework.cloud.task.batch.listener.support;
-
-import org.jspecify.annotations.NullMarked;

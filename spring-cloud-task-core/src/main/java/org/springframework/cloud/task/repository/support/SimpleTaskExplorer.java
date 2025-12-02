@@ -19,8 +19,6 @@ package org.springframework.cloud.task.repository.support;
 import java.util.List;
 import java.util.Set;
 
-import org.jspecify.annotations.Nullable;
-
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.dao.TaskExecutionDao;
@@ -52,7 +50,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
-	public @Nullable TaskExecution getTaskExecution(long executionId) {
+	public TaskExecution getTaskExecution(long executionId) {
 		return this.taskExecutionDao.getTaskExecution(executionId);
 	}
 
@@ -102,7 +100,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
-	public @Nullable Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
+	public Long getTaskExecutionIdByJobExecutionId(long jobExecutionId) {
 		return this.taskExecutionDao.getTaskExecutionIdByJobExecutionId(jobExecutionId);
 	}
 
@@ -117,7 +115,7 @@ public class SimpleTaskExplorer implements TaskExplorer {
 	}
 
 	@Override
-	public @Nullable TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
+	public TaskExecution getLatestTaskExecutionForTaskName(String taskName) {
 		return this.taskExecutionDao.getLatestTaskExecutionForTaskName(taskName);
 	}
 

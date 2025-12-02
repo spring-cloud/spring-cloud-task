@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task.repository;
 
-import org.jspecify.annotations.Nullable;
-
 /**
  * Strategy interface for customizing how the name of a task is determined.
  *
@@ -28,7 +26,6 @@ public interface TaskNameResolver {
 	/**
 	 * @return the name of the task being executed within this context.
 	 */
-	@Nullable
 	String getTaskName();
 
 }
