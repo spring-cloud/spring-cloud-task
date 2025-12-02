@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>multiple-datasources</artifactId>
 	<packaging>jar</packaging>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.1-SNAPSHOT</version>
 	<description>To show users how to enable a task with a multiple DataSources.
 	</description>
 
