@@ -11,7 +11,7 @@
 	<name>spring-cloud-starter-single-step-batch-job</name>
 
 	<properties>
-		<spring-cloud-commons.version>4.2.4-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>4.2.5-SNAPSHOT</spring-cloud-commons.version>
 	</properties>
 
 	<dependencies>
