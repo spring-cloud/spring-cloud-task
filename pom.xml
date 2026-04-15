@@ -232,7 +232,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				<version>0.8.13</version>
+				<version>0.8.14</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
