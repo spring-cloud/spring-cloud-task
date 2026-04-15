@@ -111,7 +111,7 @@
 		<maven-checkstyle-plugin.includeTestSourceDirectory>true
 		</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<java.version>17</java.version>
-		<spring-javaformat-maven-plugin.version>0.0.40</spring-javaformat-maven-plugin.version>
+		<spring-javaformat-maven-plugin.version>0.0.47</spring-javaformat-maven-plugin.version>
 	</properties>
 
 	<build>
