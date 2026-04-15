@@ -2,7 +2,7 @@ name: PR
 
 on:
     pull_request:
-        branches: [ 3.3.x ]
+        branches: [ main, 3.3.x ]
 
 jobs:
     build:
