@@ -98,9 +98,9 @@ public class DeployerStepExecutionHandlerTests {
 	@Test
 	public void testValidationOfRequestStepFound() throws Exception {
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
-				.thenReturn(true);
+			.thenReturn(true);
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
-				.thenReturn(true);
+			.thenReturn(true);
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
 		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("foo");
 		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] { "bar", "baz" });
@@ -116,14 +116,14 @@ public class DeployerStepExecutionHandlerTests {
 	@Test
 	public void testMissingStepExecution() throws Exception {
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID))
-				.thenReturn(true);
+			.thenReturn(true);
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
-				.thenReturn(true);
+			.thenReturn(true);
 		when(this.environment.containsProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn(true);
 		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_NAME)).thenReturn("foo");
 		when(this.beanFactory.getBeanNamesForType(Step.class)).thenReturn(new String[] { "foo", "bar", "baz" });
 		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_STEP_EXECUTION_ID))
-				.thenReturn("2");
+			.thenReturn("2");
 		when(this.environment.getProperty(DeployerPartitionHandler.SPRING_CLOUD_TASK_JOB_EXECUTION_ID)).thenReturn("1");
 
 		try {
@@ -131,7 +131,7 @@ public class DeployerStepExecutionHandlerTests {
 		}
 		catch (NoSuchStepException nsse) {
 			assertThat(nsse.getMessage())
-					.isEqualTo("No StepExecution could be located for step execution id 2 within job execution 1");
+				.isEqualTo("No StepExecution could be located for step execution id 2 within job execution 1");
 		}
 	}
 
