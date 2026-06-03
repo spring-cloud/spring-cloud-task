@@ -569,7 +569,7 @@ You can also specify JDBC DataSource specifically for the writer by using the fo
 | `spring.batch.job.jdbcbatchitemwriter.datasource.enable`
 | `boolean`
 | `false`
-| Determines whether `JdbcCursorItemReader` `DataSource` should be enabled.
+| Determines whether `JdbcBatchItemWriter` `DataSource` should be enabled.
 
 | `jdbcbatchitemwriter.datasource.url`
 | `String`
@@ -586,7 +586,7 @@ You can also specify JDBC DataSource specifically for the writer by using the fo
 | `null`
 | Login password of the database.
 
-| `jdbcbatchitemreader.datasource.driver-class-name`
+| `jdbcbatchitemwriter.datasource.driver-class-name`
 | `String`
 | `null`
 | Fully qualified name of the JDBC driver.
