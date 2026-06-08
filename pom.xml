@@ -247,7 +247,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				<version>0.8.14</version>
+				<version>0.8.15</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
