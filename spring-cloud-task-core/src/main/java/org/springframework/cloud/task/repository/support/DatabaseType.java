@@ -90,7 +90,12 @@ public enum DatabaseType {
 	/**
 	 * DB2AS400 DB.
 	 */
-	DB2AS400("DB2AS400");
+	DB2AS400("DB2AS400"),
+
+	/**
+	 * MongoDB.
+	 */
+	MONGODB("MongoDB");
 
 	private static final Map<String, DatabaseType> dbNameMap;
 
@@ -170,6 +175,23 @@ public enum DatabaseType {
 		else {
 			return dbNameMap.get(productName);
 		}
+	}
+
+	/**
+	 * Determine if the provided object represents a MongoDB data source or template.
+	 * This method checks for MongoDB-specific classes to identify MongoDB usage.
+	 * @param dataSourceOrTemplate the data source or MongoDB template object
+	 * @return true if MongoDB is detected, false otherwise
+	 */
+	public static boolean isMongoDB(Object dataSourceOrTemplate) {
+		if (dataSourceOrTemplate == null) {
+			return false;
+		}
+		String className = dataSourceOrTemplate.getClass().getName();
+		return className.contains("org.springframework.data.mongodb") ||
+			className.contains("com.mongodb") ||
+			className.contains("MongoTemplate") ||
+			className.contains("MongoOperations");
 	}
 
 	private String getProductName() {
