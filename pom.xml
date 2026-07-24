@@ -276,6 +276,15 @@
 						<configuration>
 							<excludeArtifacts>
 								<artifact>spring-cloud-task-integration-tests</artifact>
+								<artifact>spring-cloud-task-samples</artifact>
+								<artifact>timestamp-task</artifact>
+								<artifact>batch-job</artifact>
+								<artifact>task-events</artifact>
+								<artifact>batch-events</artifact>
+								<artifact>jpa-sample</artifact>
+								<artifact>task-observations</artifact>
+								<artifact>multiple-datasources</artifact>
+								<artifact>single-step-batch-job</artifact>
 							</excludeArtifacts>
 						</configuration>
 					</plugin>
