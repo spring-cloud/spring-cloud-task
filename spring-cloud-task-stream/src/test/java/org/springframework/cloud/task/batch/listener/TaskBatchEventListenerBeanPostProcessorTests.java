@@ -83,7 +83,7 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 	@BeforeEach
 	public void setupMock() {
 		when(this.taskletStep.getTasklet())
-				.thenReturn(new ChunkOrientedTasklet(this.chunkProvider, this.chunkProcessor));
+			.thenReturn(new ChunkOrientedTasklet(this.chunkProvider, this.chunkProcessor));
 		when(this.taskletStep.getName()).thenReturn("FOOOBAR");
 
 		registerAlias(ItemProcessListener.class, BatchEventAutoConfiguration.ITEM_PROCESS_EVENTS_LISTENER);
