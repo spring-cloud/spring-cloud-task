@@ -24,12 +24,12 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.batch.infrastructure.item.amqp.AmqpItemReader;
 import org.springframework.batch.infrastructure.item.amqp.builder.AmqpItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.amqp.autoconfigure.RabbitProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.rabbitmq.autoconfigure.RabbitProperties;
 import org.springframework.context.annotation.Bean;
 
 /**
