@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>batch-job</artifactId>
 	<packaging>jar</packaging>
-	<version>5.1.0-INTERNAL-SNAPSHOT</version>
+	<version>5.1.0-M1</version>
 	<description>Spring Cloud Task Batch Example</description>
 
 	<name>Batch Job Sample Application</name>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.2.0-INTERNAL-SNAPSHOT</version>
+		<version>4.2.0-M2</version>
 		<relativePath />
 	</parent>
 

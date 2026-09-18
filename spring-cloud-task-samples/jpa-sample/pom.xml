@@ -5,7 +5,7 @@
 	<groupId>io.spring.cloud</groupId>
 	<artifactId>jpa-sample</artifactId>
 	<packaging>jar</packaging>
-	<version>5.1.0-INTERNAL-SNAPSHOT</version>
+	<version>5.1.0-M1</version>
 	<description>To show users how to enable a task with a JPA application.</description>
 
 	<name>Spring Cloud Task JPA Sample Application</name>
@@ -13,12 +13,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.2.0-INTERNAL-SNAPSHOT</version>
+		<version>4.2.0-M2</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<spring-cloud-commons.version>5.1.0-INTERNAL-SNAPSHOT</spring-cloud-commons.version>
+		<spring-cloud-commons.version>5.1.0-M1</spring-cloud-commons.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 	</properties>

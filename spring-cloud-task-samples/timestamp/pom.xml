@@ -7,13 +7,13 @@
 	<artifactId>timestamp-task</artifactId>
 	<packaging>jar</packaging>
 	<name>Timestamp Task</name>
-	<version>5.1.0-INTERNAL-SNAPSHOT</version>
+	<version>5.1.0-M1</version>
 	<description>Spring Cloud Timestamp Task</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.2.0-INTERNAL-SNAPSHOT</version>
+		<version>4.2.0-M2</version>
 		<relativePath />
 	</parent>
 
