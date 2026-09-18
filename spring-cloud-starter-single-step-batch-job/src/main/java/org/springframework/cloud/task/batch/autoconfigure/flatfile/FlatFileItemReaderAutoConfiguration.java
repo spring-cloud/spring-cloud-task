@@ -105,8 +105,8 @@ public class FlatFileItemReaderAutoConfiguration {
 			mapFlatFileItemReaderBuilder.fixedLength()
 				.columns(ranges.toArray(new Range[0]))
 				.names(this.properties.getNames())
-				.fieldSetMapper(new MapFieldSetMapper())
-				.beanMapperStrict(this.properties.isParsingStrict());
+				.beanMapperStrict(this.properties.isParsingStrict())
+				.fieldSetMapper(new MapFieldSetMapper());
 		}
 		else {
 			mapFlatFileItemReaderBuilder.lineTokenizer(lineTokenizer);

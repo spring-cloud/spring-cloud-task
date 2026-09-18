@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-single-step-batch-job</artifactId>
-			<version>5.0.0-SNAPSHOT</version>
+			<version>5.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
