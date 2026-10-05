@@ -273,6 +273,9 @@ public class JdbcTaskExecutionDaoMariaDBIntegrationTests extends BaseTaskExecuti
 	@Configuration
 	static class TestDataSourceConfiguration {
 
+		/**
+		 * If true indicates that the configuration has not been run.
+		 */
 		public static boolean firstTime = true;
 
 		@Bean

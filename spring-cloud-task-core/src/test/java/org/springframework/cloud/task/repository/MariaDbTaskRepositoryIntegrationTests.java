@@ -69,6 +69,9 @@ public class MariaDbTaskRepositoryIntegrationTests {
 	@ImportAutoConfiguration(SimpleTaskAutoConfiguration.class)
 	static class TestConfiguration {
 
+		/**
+		 * If true indicates that the configuration has not been run.
+		 */
 		public static boolean firstTime = true;
 
 		@Bean
