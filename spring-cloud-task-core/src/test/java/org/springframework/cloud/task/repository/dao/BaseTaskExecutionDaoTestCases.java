@@ -25,7 +25,7 @@ import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 /**
  * Defines test cases that shall be between {@link TaskExecutionDao} tests.
@@ -39,41 +39,24 @@ public abstract class BaseTaskExecutionDaoTestCases {
 	@Test
 	@DirtiesContext
 	public void getLatestTaskExecutionsByTaskNamesWithNullParameter() {
-		try {
-			this.dao.getLatestTaskExecutionsByTaskNames(null);
-		}
-		catch (IllegalArgumentException e) {
-			assertThat(e.getMessage()).isEqualTo("At least 1 task name must be provided.");
-			return;
-		}
-		fail("Expected an IllegalArgumentException to be thrown.");
+		assertThatIllegalArgumentException().isThrownBy(() -> this.dao.getLatestTaskExecutionsByTaskNames(null))
+			.withMessage("At least 1 task name must be provided.");
 	}
 
 	@Test
 	@DirtiesContext
 	public void getLatestTaskExecutionsByTaskNamesWithEmptyArrayParameter() {
-		try {
-			this.dao.getLatestTaskExecutionsByTaskNames(new String[0]);
-		}
-		catch (IllegalArgumentException e) {
-			assertThat(e.getMessage()).isEqualTo("At least 1 task name must be provided.");
-			return;
-		}
-		fail("Expected an IllegalArgumentException to be thrown.");
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> this.dao.getLatestTaskExecutionsByTaskNames(new String[0]))
+			.withMessage("At least 1 task name must be provided.");
 	}
 
 	@Test
 	@DirtiesContext
 	public void getLatestTaskExecutionsByTaskNamesWithArrayParametersContainingNullAndEmptyValues() {
-		try {
-			this.dao.getLatestTaskExecutionsByTaskNames("foo", null, "bar", " ");
-		}
-		catch (IllegalArgumentException e) {
-			assertThat(e.getMessage())
-				.isEqualTo("Task names must not contain any empty elements but 2 of 4 were empty or null.");
-			return;
-		}
-		fail("Expected an IllegalArgumentException to be thrown.");
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> this.dao.getLatestTaskExecutionsByTaskNames("foo", null, "bar", " "))
+			.withMessage("Task names must not contain any empty elements but 2 of 4 were empty or null.");
 	}
 
 	@Test
@@ -161,27 +144,15 @@ public abstract class BaseTaskExecutionDaoTestCases {
 	@Test
 	@DirtiesContext
 	public void getLatestTaskExecutionForTaskNameWithNullParameter() {
-		try {
-			this.dao.getLatestTaskExecutionForTaskName(null);
-		}
-		catch (IllegalArgumentException e) {
-			assertThat(e.getMessage()).isEqualTo("The task name must not be empty.");
-			return;
-		}
-		fail("Expected an IllegalArgumentException to be thrown.");
+		assertThatIllegalArgumentException().isThrownBy(() -> this.dao.getLatestTaskExecutionForTaskName(null))
+			.withMessage("The task name must not be empty.");
 	}
 
 	@Test
 	@DirtiesContext
 	public void getLatestTaskExecutionForTaskNameWithEmptyStringParameter() {
-		try {
-			this.dao.getLatestTaskExecutionForTaskName("");
-		}
-		catch (IllegalArgumentException e) {
-			assertThat(e.getMessage()).isEqualTo("The task name must not be empty.");
-			return;
-		}
-		fail("Expected an IllegalArgumentException to be thrown.");
+		assertThatIllegalArgumentException().isThrownBy(() -> this.dao.getLatestTaskExecutionForTaskName(""))
+			.withMessage("The task name must not be empty.");
 	}
 
 	@Test
