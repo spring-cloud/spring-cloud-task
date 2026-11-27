@@ -16,35 +16,68 @@
 
 package io.spring;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.springframework.boot.SpringApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.cloud.task.configuration.TaskConfigurer;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael Minella
  */
+@SpringBootTest(
+	classes = MultipleDataSourcesApplication.class,
+	args = "--spring.profiles.active=embedded"
+)
 @ExtendWith(OutputCaptureExtension.class)
 public class MultiDataSourcesApplicationTests {
 
-	@Test
-	public void testTimeStampApp(CapturedOutput capturedOutput) throws Exception {
+	@Autowired
+	@Qualifier("secondDataSource")
+	private DataSource secondDataSource;
 
-		SpringApplication.run(MultipleDataSourcesApplication.class, "--spring.profiles.active=embedded");
+	@Autowired
+	private TaskConfigurer taskConfigurer;
+
+	@Autowired
+	private PlatformTransactionManager springCloudTaskTransactionManager;
+
+	@Test
+	public void testTimeStampApp(CapturedOutput capturedOutput) {
 
 		String output = capturedOutput.toString();
 
-		assertThat(output.contains("There are 2 DataSources within this application"))
-			.as("Unable to find CommandLineRunner output: " + output)
-			.isTrue();
-		assertThat(output.contains("Creating: TaskExecution{")).as("Unable to find start task message: " + output)
-			.isTrue();
-		assertThat(output.contains("Updating: TaskExecution")).as("Unable to find update task message: " + output)
-			.isTrue();
+		assertThat(output).contains("There are 2 DataSources within this application");
+		assertThat(output).contains("Creating: TaskExecution{");
+		assertThat(output).contains("Updating: TaskExecution");
+	}
+
+	@Test
+	public void shouldConfigureTaskTransactionManagerWithSecondDataSource() {
+
+		PlatformTransactionManager transactionManager = this.taskConfigurer.getTransactionManager();
+
+		assertThat(this.springCloudTaskTransactionManager)
+			.isSameAs(transactionManager);
+
+		assertThat(transactionManager)
+			.isInstanceOf(DataSourceTransactionManager.class);
+
+		DataSourceTransactionManager dataSourceTransactionManager =
+			(DataSourceTransactionManager) transactionManager;
+
+		assertThat(dataSourceTransactionManager.getDataSource())
+			.isSameAs(this.secondDataSource);
 	}
 
 }
